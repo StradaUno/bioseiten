@@ -30,20 +30,18 @@
     .success h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: #111; }
     .success p { color: #888; font-size: 14px; }
     .error-msg { background: #fff0f0; color: #cc0000; padding: 12px 14px; border-radius: 10px; font-size: 14px; margin-bottom: 16px; display: none; }
-    .loading { display: none; text-align: center; padding: 60px 0; color: #888; }
+    .loading { text-align: center; padding: 60px 0; color: #888; }
     .required { color: #cc0000; }
   </style>
 </head>
 <body>
   <div class="card">
 
-    <!-- Ladezustand -->
     <div class="loading" id="loading">
       <p>Lade Creator-Profil…</p>
     </div>
 
-    <!-- Formular -->
-    <div id="form-wrapper">
+    <div id="form-wrapper" style="display:none">
       <div class="creator-header">
         <img id="creator-avatar" class="creator-avatar" src="" alt="">
         <div>
@@ -59,12 +57,12 @@
 
       <div class="field">
         <label>Dein Name <span class="required">*</span></label>
-        <input type="text" id="sender_name" placeholder="Max Mustermann" required>
+        <input type="text" id="sender_name" placeholder="Max Mustermann">
       </div>
 
       <div class="field">
         <label>Deine E-Mail <span class="required">*</span></label>
-        <input type="email" id="sender_email" placeholder="max@firma.de" required>
+        <input type="email" id="sender_email" placeholder="max@firma.de">
       </div>
 
       <div class="field">
@@ -74,7 +72,7 @@
 
       <div class="field">
         <label>Was planst du? <span class="required">*</span></label>
-        <textarea id="message" placeholder="Beschreibe kurz dein Produkt, die gewünschte Kooperation und den Zeitraum…" required></textarea>
+        <textarea id="message" placeholder="Beschreibe kurz dein Produkt, die gewünschte Kooperation und den Zeitraum…"></textarea>
       </div>
 
       <div class="field">
@@ -94,7 +92,6 @@
       </button>
     </div>
 
-    <!-- Erfolgsmeldung -->
     <div class="success" id="success">
       <div class="success-icon">✓</div>
       <h3>Anfrage gesendet!</h3>
@@ -104,13 +101,12 @@
   </div>
 
   <script>
-    const SUPABASE_URL = 'DEINE_SUPABASE_URL';
-    const SUPABASE_ANON_KEY = 'DEIN_SUPABASE_ANON_KEY';
+    const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo';
 
     let creatorId = null;
     let bioPageId = null;
 
-    // Slug aus URL lesen
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('creator');
 
@@ -130,37 +126,31 @@
 
     async function loadCreator() {
       if (!slug) {
-        document.getElementById('creator-name').textContent = 'Creator nicht gefunden';
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('form-wrapper').style.display = 'block';
+        showError('Kein Creator-Link angegeben.');
         return;
       }
 
-      document.getElementById('loading').style.display = 'block';
-      document.getElementById('form-wrapper').style.display = 'none';
-
       try {
-        // User laden
         const users = await supabaseFetch(
           `users?bio_page_slug=eq.${encodeURIComponent(slug)}&select=id,full_name,profile_image_url,niche`
         );
 
-        if (!users.length) throw new Error('Creator nicht gefunden');
+        if (!users.length) throw new Error('Nicht gefunden');
         const user = users[0];
         creatorId = user.id;
 
-        // Bio-Page laden
         const bioPages = await supabaseFetch(
           `bio_pages?user_id=eq.${user.id}&is_active=eq.true&select=id`
         );
         if (!bioPages.length) throw new Error('Bio-Page nicht aktiv');
         bioPageId = bioPages[0].id;
 
-        // UI befüllen
         document.getElementById('creator-name').textContent = user.full_name || 'Creator';
         document.getElementById('creator-sub').textContent = user.niche || 'Creator';
         if (user.profile_image_url) {
           document.getElementById('creator-avatar').src = user.profile_image_url;
-        } else {
-          document.getElementById('creator-avatar').style.background = '#e0e0e0';
         }
 
         document.getElementById('loading').style.display = 'none';
@@ -169,7 +159,6 @@
       } catch (err) {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('form-wrapper').style.display = 'block';
-        document.getElementById('creator-name').textContent = 'Creator nicht gefunden';
         showError('Dieser Creator-Link ist nicht mehr aktiv.');
       }
     }
