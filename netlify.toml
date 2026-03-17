@@ -1,0 +1,11 @@
+[build]
+  functions = "netlify/functions"
+  publish = "public"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/u/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
