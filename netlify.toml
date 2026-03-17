@@ -1,11 +1,12 @@
-[build]
-  functions = "netlify/functions"
-  publish = "public"
-
-[functions]
-  node_bundler = "esbuild"
-
-[[headers]]
-  for = "/u/*"
-  [headers.values]
-    Cache-Control = "public, max-age=3600"
+{
+  "name": "bioseiten",
+  "version": "1.0.0",
+  "description": "CreatorOS Bio Pages",
+  "scripts": {
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}
