@@ -132,3 +132,7 @@ calc();
 </script>
 </body>
 </html>
+[[redirects]]
+  from = "/rechner"
+  to = "/rechner/index.html"
+  status = 200
