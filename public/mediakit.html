@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media Kit · biouno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:#F0EDE8;min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:32px 16px 48px}
+.kit{width:100%;max-width:400px;background:#FAFAF8;border-radius:20px;border:1px solid #E2DDD8;overflow:hidden;opacity:0;transform:translateY(12px);transition:opacity 0.4s ease,transform 0.4s ease}
+.kit.loaded{opacity:1;transform:translateY(0)}
+.hero{background:#F3F1ED;padding:24px 22px 20px;border-bottom:1px solid #E2DDD8}
+.hero-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+.avatar{width:56px;height:56px;border-radius:50%;background:#1C1A18;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:20px;color:#E8FF59;flex-shrink:0}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.name{font-family:'DM Serif Display',serif;font-size:21px;line-height:1.2;color:#1C1A18;margin-bottom:3px}
+.loc{font-size:11px;color:#9B9490;margin-bottom:8px}
+.tags{display:flex;flex-wrap:wrap;gap:5px}
+.tag{font-size:10px;background:#E8E4DF;color:#6F6A66;padding:3px 9px;border-radius:20px}
+.bio{font-size:12.5px;color:#6F6A66;line-height:1.55}
+.stats{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #E2DDD8}
+.stat{text-align:center;padding:16px 8px}
+.stat:first-child{border-right:1px solid #E2DDD8}
+.stat-val{font-size:26px;font-weight:500;color:#1C1A18;line-height:1}
+.stat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:#9B9490;margin-top:4px}
+.section{padding:16px 20px;border-bottom:1px solid #E2DDD8}
+.sec-title{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:#9B9490;margin-bottom:14px}
+.platform-block{margin-bottom:16px}
+.platform-block:last-child{margin-bottom:0}
+.platform-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.platform-name{font-size:15px;font-weight:500;color:#1C1A18}
+.platform-handle{font-size:12px;color:#9B9490}
+.pnums{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.pnum{background:#F3F1ED;border-radius:10px;padding:10px}
+.pnum-val{font-size:18px;font-weight:500;color:#1C1A18;line-height:1}
+.pnum-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.05em;color:#9B9490;margin-top:3px}
+.aud-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.aud-box{background:#F3F1ED;border-radius:10px;padding:12px}
+.aud-box.full{grid-column:span 2}
+.aud-lbl{font-size:9px;text-transform:uppercase;letter-spacing:0.06em;color:#9B9490;margin-bottom:5px}
+.aud-val{font-size:15px;font-weight:500;color:#1C1A18}
+.aud-row{display:flex;justify-content:space-between}
+.aud-row span{font-size:13px;font-weight:500;color:#1C1A18}
+.offers{display:flex;flex-wrap:wrap;gap:6px}
+.offer{font-size:12px;padding:7px 14px;border-radius:20px;background:#F3F1ED;color:#1C1A18}
+.cta-section{padding:16px 20px 20px}
+.cta-btn{display:block;width:100%;background:#1C1A18;color:#fff;text-align:center;padding:14px;border-radius:12px;font-weight:500;font-size:13px;font-family:'DM Sans',sans-serif;text-decoration:none;border:none;cursor:pointer;transition:opacity 0.15s}
+.cta-btn:hover{opacity:0.85}
+.footer{text-align:center;padding:0 20px 18px;font-size:10px;color:#9B9490}
+.footer a{color:#9B9490;text-decoration:none}
+.footer a:hover{color:#1C1A18}
+.state-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:12px;color:#9B9490;font-size:13px}
+.spinner{width:24px;height:24px;border-radius:50%;border:2px solid #E2DDD8;border-top-color:#1C1A18;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="kit" id="kit">
+  <div class="state-screen" id="loading-screen"><div class="spinner"></div><span>Lade Media Kit…</span></div>
+  <div class="state-screen hidden" id="error-screen"><span>Media Kit nicht gefunden.</span></div>
+  <div id="kit-content" class="hidden"></div>
+</div>
+<script>
+const SUPABASE_URL='https://bzejndghppuipnedasuv.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo';
+
+function getSlug(){
+  const parts=window.location.pathname.split('/').filter(Boolean);
+  if(parts[0]==='mediakit'&&parts[1])return parts[1];
+  if(parts[0]&&parts[0]!=='mediakit')return parts[0];
+  return null;
+}
+function fmt(n){
+  if(!n&&n!==0)return'—';
+  const v=parseFloat(n);
+  if(v>=1000000)return(v/1000000).toFixed(1).replace('.0','')+'M';
+  if(v>=1000)return(v/1000).toFixed(1).replace('.0','')+'K';
+  return String(Math.round(v));
+}
+function pct(n){if(!n&&n!==0)return'—';return parseFloat(n).toFixed(1)+'%';}
+function initials(n){return(n||'').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';}
+
+const H={apikey:SUPABASE_ANON_KEY,Authorization:`Bearer ${SUPABASE_ANON_KEY}`,'Content-Type':'application/json'};
+
+async function fetchData(slug){
+  const uRes=await fetch(`${SUPABASE_URL}/rest/v1/users?bio_page_slug=eq.${encodeURIComponent(slug)}&select=id,full_name,display_name,bio,niche,city,country,profile_image_url,contact_email,audience_female_pct,audience_male_pct,top_country_1,top_country_1_pct,top_country_2,top_country_2_pct,mediakit_ugc,mediakit_reel,mediakit_post,mediakit_story&limit=1`,{headers:H});
+  const users=await uRes.json();
+  if(!users||!users.length)throw new Error('not_found');
+  const u=users[0];
+  const pRes=await fetch(`${SUPABASE_URL}/rest/v1/platform_accounts?user_id=eq.${u.id}&is_active=eq.true&select=platform,username,follower_count,avg_likes,avg_views,mediakit_engagement_rate`,{headers:H});
+  return{user:u,platforms:await pRes.json()||[]};
+}
+
+async function trackView(userId){
+  const today=new Date().toISOString().split('T')[0];
+  const check=await fetch(`${SUPABASE_URL}/rest/v1/mediakit_views?user_id=eq.${userId}&viewed_date=eq.${today}&select=id,view_count`,{headers:H});
+  const rows=await check.json();
+  if(rows&&rows.length>0){
+    await fetch(`${SUPABASE_URL}/rest/v1/mediakit_views?id=eq.${rows[0].id}`,{method:'PATCH',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify({view_count:(rows[0].view_count||1)+1})});
+  }else{
+    await fetch(`${SUPABASE_URL}/rest/v1/mediakit_views`,{method:'POST',headers:{...H,Prefer:'return=minimal'},body:JSON.stringify({user_id:userId,viewed_date:today,view_count:1})});
+  }
+}
+
+function buildPlat(p){
+  const name=p.platform==='instagram'?'Instagram':p.platform==='tiktok'?'TikTok':p.platform;
+  const handle=p.username?`@${p.username}`:'';
+  const eL=p.platform==='tiktok'?'Ø Views':'Ø Likes';
+  const eV=p.platform==='tiktok'?fmt(p.avg_views):fmt(p.avg_likes);
+  return`<div class="platform-block"><div class="platform-head"><div class="platform-name">${name}</div><div class="platform-handle">${handle}</div></div><div class="pnums"><div class="pnum"><div class="pnum-val">${fmt(p.follower_count)}</div><div class="pnum-lbl">Follower</div></div><div class="pnum"><div class="pnum-val">${eV}</div><div class="pnum-lbl">${eL}</div></div><div class="pnum"><div class="pnum-val">${p.mediakit_engagement_rate||'—'}</div><div class="pnum-lbl">Engagement</div></div></div></div>`;
+}
+
+function buildAud(u){
+  const hC=u.top_country_1||u.top_country_2,hG=u.audience_female_pct||u.audience_male_pct;
+  if(!hC&&!hG)return'';
+  let h=`<div class="section"><div class="sec-title">Audience</div><div class="aud-grid">`;
+  if(u.top_country_1)h+=`<div class="aud-box"><div class="aud-lbl">Top Land</div><div class="aud-val">${u.top_country_1}${u.top_country_1_pct?' '+pct(u.top_country_1_pct):''}</div></div>`;
+  if(u.top_country_2)h+=`<div class="aud-box"><div class="aud-lbl">2. Land</div><div class="aud-val">${u.top_country_2}${u.top_country_2_pct?' '+pct(u.top_country_2_pct):''}</div></div>`;
+  if(hG)h+=`<div class="aud-box full"><div class="aud-lbl">Geschlecht</div><div class="aud-row"><span>Weiblich ${pct(u.audience_female_pct)}</span><span>Männlich ${pct(u.audience_male_pct)}</span></div></div>`;
+  return h+'</div></div>';
+}
+
+function buildOffers(u){
+  const m=[[u.mediakit_ugc,'UGC Video'],[u.mediakit_reel,'Instagram Reel'],[u.mediakit_post,'TikTok Post'],[u.mediakit_story,'Story Package']];
+  return m.filter(([on])=>on).map(([,l])=>`<div class="offer">${l}</div>`).join('');
+}
+
+function totalFol(platforms){return platforms.reduce((s,p)=>s+(parseInt(p.follower_count)||0),0);}
+function avgEng(platforms){
+  const r=platforms.map(p=>parseFloat(p.mediakit_engagement_rate)).filter(n=>!isNaN(n));
+  return r.length?(r.reduce((s,n)=>s+n,0)/r.length).toFixed(1)+'%':null;
+}
+
+function render({user:u,platforms}){
+  const name=u.display_name||u.full_name||'Creator';
+  const loc=[u.city,u.country].filter(Boolean).join(', ');
+  const niches=(u.niche||'').split(',').map(s=>s.trim()).filter(Boolean);
+  const av=u.profile_image_url?`<img src="${u.profile_image_url}" alt="${name}">`:`${initials(name)}`;
+  const href=u.contact_email?`mailto:${u.contact_email}?subject=Kooperationsanfrage`:'mailto:?subject=Kooperationsanfrage';
+  const offers=buildOffers(u);
+  return`
+    <div class="hero"><div class="hero-row"><div class="avatar">${av}</div><div>
+    <div class="name">${name}</div>
+    ${loc?`<div class="loc">${loc}</div>`:''}
+    ${niches.length?`<div class="tags">${niches.map(n=>`<div class="tag">${n}</div>`).join('')}</div>`:''}
+    </div></div>${u.bio?`<p class="bio">${u.bio}</p>`:''}</div>
+    <div class="stats">
+      <div class="stat"><div class="stat-val">${fmt(totalFol(platforms))}</div><div class="stat-lbl">Follower gesamt</div></div>
+      <div class="stat"><div class="stat-val">${avgEng(platforms)||'—'}</div><div class="stat-lbl">Ø Engagement</div></div>
+    </div>
+    ${platforms.length?`<div class="section"><div class="sec-title">Plattformen</div>${platforms.map(buildPlat).join('')}</div>`:''}
+    ${buildAud(u)}
+    ${offers?`<div class="section"><div class="sec-title">Leistungen</div><div class="offers">${offers}</div></div>`:''}
+    <div class="cta-section"><a class="cta-btn" href="${href}">Kooperation anfragen</a></div>
+    <div class="footer">biouno — by <a href="https://biouno.de">Creator:OS</a></div>`;
+}
+
+async function init(){
+  const slug=getSlug();
+  if(!slug){
+    document.getElementById('loading-screen').classList.add('hidden');
+    document.getElementById('error-screen').classList.remove('hidden');
+    document.getElementById('kit').classList.add('loaded');
+    return;
+  }
+  try{
+    const data=await fetchData(slug);
+    const c=document.getElementById('kit-content');
+    c.innerHTML=render(data);
+    document.getElementById('loading-screen').classList.add('hidden');
+    c.classList.remove('hidden');
+    setTimeout(()=>document.getElementById('kit').classList.add('loaded'),50);
+    trackView(data.user.id).catch(()=>{});
+  }catch(e){
+    document.getElementById('loading-screen').classList.add('hidden');
+    document.getElementById('error-screen').classList.remove('hidden');
+    document.getElementById('kit').classList.add('loaded');
+  }
+}
+init();
+</script>
+</body>
+</html>
