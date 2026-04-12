@@ -1,402 +1,146 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creator:OS — Dein Betriebssystem als Creator</title>
-    <meta name="description" content="Creator:OS ist die All-in-One App für Content Creator. Bio-Link, Content-Planung, Analytics, Deals und mehr — alles an einem Ort.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg:#0A0A0B;--bg2:#111113;--card:#161618;--brd:#222225;--brd2:#333338;
-            --tx:#FAFAF9;--tx2:#8B8B8D;--tx3:#5A5A5C;
-            --acc:#E8FF59;--mint:#59FFB4;--accg:rgba(232,255,89,0.10);
-        }
-        *{margin:0;padding:0;box-sizing:border-box;}
-        html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;}
-        body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;}
-        body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;}
-        .glow{position:fixed;border-radius:50%;filter:blur(160px);pointer-events:none;z-index:0;}
-        .g1{width:500px;height:500px;top:-150px;left:50%;transform:translateX(-50%);background:var(--acc);opacity:0.05;}
-        .g2{width:400px;height:400px;bottom:10%;right:-100px;background:var(--mint);opacity:0.04;}
-        section{position:relative;z-index:1;}
-        .wrap{max-width:960px;margin:0 auto;padding:0 24px;}
-
-        /* NAV */
-        nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 32px;display:flex;justify-content:space-between;align-items:center;background:rgba(10,10,11,0.85);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--brd);}
-        .logo{font-size:1.2rem;font-weight:700;letter-spacing:-0.03em;display:flex;align-items:center;gap:8px;}
-        .logo-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--acc),var(--mint));display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;color:var(--bg);}
-        .nav-links{display:flex;align-items:center;gap:24px;}
-        .nav-links a{font-size:0.85rem;color:var(--tx2);text-decoration:none;font-weight:400;transition:color 0.3s;}
-        .nav-links a:hover{color:var(--tx);}
-        .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:100px;font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.3s ease;border:none;}
-        .btn-acc{background:var(--acc);color:var(--bg);}
-        .btn-acc:hover{transform:translateY(-1px);box-shadow:0 8px 32px var(--accg);}
-        .btn-lg{padding:16px 40px;font-size:1rem;}
-        .btn svg{width:16px;height:16px;transition:transform 0.3s;}
-        .btn:hover svg{transform:translateX(3px);}
-
-        /* HERO */
-        .hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 24px 40px;}
-        .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:5px 14px 5px 5px;background:var(--bg2);border:1px solid var(--brd);border-radius:100px;font-size:0.78rem;color:var(--tx2);margin-bottom:28px;animation:fadeUp 0.7s ease both;}
-        .hero-badge-dot{width:22px;height:22px;border-radius:50%;background:rgba(232,255,89,0.15);display:flex;align-items:center;justify-content:center;}
-        .hero-badge-dot span{width:7px;height:7px;border-radius:50%;background:var(--acc);animation:pulse 2s infinite;}
-        @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.75);}}
-        h1{font-size:clamp(3rem,8vw,6rem);font-weight:900;line-height:0.92;letter-spacing:-0.05em;margin-bottom:20px;animation:fadeUp 0.7s 0.08s ease both;}
-        .grad{background:linear-gradient(135deg,var(--acc),var(--mint));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-        .hero-desc{font-size:clamp(1rem,2vw,1.15rem);color:var(--tx2);max-width:480px;line-height:1.6;font-weight:300;margin-bottom:36px;animation:fadeUp 0.7s 0.16s ease both;}
-
-        /* WAITLIST */
-        .waitlist{display:flex;gap:8px;max-width:420px;width:100%;animation:fadeUp 0.7s 0.24s ease both;}
-        .waitlist input{flex:1;padding:14px 18px;border-radius:100px;border:1px solid var(--brd);background:var(--bg2);color:var(--tx);font-family:'Outfit',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.3s;}
-        .waitlist input::placeholder{color:var(--tx3);}
-        .waitlist input:focus{border-color:var(--acc);}
-        .waitlist-btn{padding:14px 28px;border-radius:100px;background:var(--acc);color:var(--bg);font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:600;border:none;cursor:pointer;transition:all 0.3s;white-space:nowrap;}
-        .waitlist-btn:hover{box-shadow:0 8px 32px var(--accg);transform:translateY(-1px);}
-        .hero-hint{font-size:0.75rem;color:var(--tx3);margin-top:12px;animation:fadeUp 0.7s 0.32s ease both;}
-
-        /* PHONE MOCKUP */
-        .mockup-area{padding:20px 24px 60px;display:flex;justify-content:center;}
-        .phone-outer{position:relative;width:300px;animation:fadeUp 0.9s 0.5s ease both;}
-        .phone-glow{position:absolute;inset:-40px;border-radius:60px;background:radial-gradient(ellipse at center,var(--accg) 0%,transparent 70%);z-index:-1;}
-        .phone{background:var(--card);border:1px solid var(--brd);border-radius:32px;padding:12px;box-shadow:0 40px 80px -20px rgba(0,0,0,0.6);}
-        .phone-notch{width:100px;height:5px;background:var(--bg);border-radius:10px;margin:0 auto 10px;}
-        .phone-screen{background:var(--bg2);border-radius:22px;padding:20px 14px;min-height:400px;}
-        .ps-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
-        .ps-greet-sm{font-size:0.6rem;color:var(--tx3);}
-        .ps-greet{font-size:0.95rem;font-weight:700;letter-spacing:-0.02em;}
-        .ps-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--mint));display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;color:var(--bg);}
-        .ps-card{background:var(--card);border:1px solid var(--brd);border-radius:12px;padding:12px;margin-bottom:8px;}
-        .ps-tag{font-size:0.55rem;color:var(--tx3);text-transform:uppercase;letter-spacing:0.06em;}
-        .ps-badge{font-size:0.5rem;font-weight:600;color:var(--mint);background:rgba(89,255,180,0.1);padding:2px 6px;border-radius:100px;}
-        .ps-url{font-family:'JetBrains Mono',monospace;font-size:0.7rem;font-weight:500;margin:6px 0;}
-        .ps-url span{color:var(--acc);}
-        .ps-stats{display:flex;gap:4px;}
-        .ps-stat{flex:1;background:var(--bg2);border-radius:6px;padding:6px;text-align:center;}
-        .ps-stat-val{font-size:0.75rem;font-weight:700;}
-        .ps-stat-lbl{font-size:0.45rem;color:var(--tx3);}
-        .ps-row{display:flex;gap:6px;margin-bottom:8px;}
-        .ps-mini{flex:1;background:var(--card);border:1px solid var(--brd);border-radius:10px;padding:8px;}
-        .ps-mini-icon{width:18px;height:18px;border-radius:5px;display:flex;align-items:center;justify-content:center;margin-bottom:4px;}
-        .ps-mini-icon.lime{background:var(--accg);}
-        .ps-mini-icon.mint{background:rgba(89,255,180,0.1);}
-        .ps-mini-val{font-size:0.72rem;font-weight:700;}
-        .ps-mini-lbl{font-size:0.45rem;color:var(--tx3);}
-        .ps-item{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--brd);border-radius:8px;padding:8px;margin-bottom:5px;}
-        .ps-plat{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-        .ps-plat svg{width:12px;height:12px;fill:#fff;}
-        .ps-plat.ig{background:linear-gradient(135deg,#833AB4,#E1306C,#F77737);}
-        .ps-plat.yt{background:#FF0000;}
-        .ps-item-title{font-size:0.62rem;font-weight:500;}
-        .ps-item-meta{font-size:0.48rem;color:var(--tx3);}
-        .ps-item-badge{font-size:0.45rem;font-weight:600;padding:2px 5px;border-radius:100px;margin-left:auto;}
-        .ps-item-badge.green{color:var(--mint);background:rgba(89,255,180,0.1);}
-        .ps-item-badge.gray{color:var(--tx2);background:rgba(139,139,141,0.1);}
-
-        /* FEATURES */
-        .features{padding:40px 24px 50px;}
-        .stag{font-size:0.72rem;font-family:'JetBrains Mono',monospace;font-weight:500;color:var(--acc);text-transform:uppercase;letter-spacing:0.14em;margin-bottom:12px;text-align:center;}
-        .stitle{font-size:clamp(1.8rem,4vw,2.5rem);font-weight:800;text-align:center;letter-spacing:-0.03em;margin-bottom:40px;line-height:1.1;}
-        .fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:960px;margin:0 auto;}
-        .fcard{background:var(--card);border:1px solid var(--brd);border-radius:18px;padding:28px 22px;transition:all 0.4s ease;}
-        .fcard:hover{border-color:var(--brd2);transform:translateY(-3px);}
-        .ficon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
-        .ficon svg{width:20px;height:20px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-        .ficon.lime{background:var(--accg);}
-        .ficon.lime svg{stroke:var(--acc);}
-        .ficon.mint{background:rgba(89,255,180,0.1);}
-        .ficon.mint svg{stroke:var(--mint);}
-        .fcard h3{font-size:1rem;font-weight:600;margin-bottom:6px;}
-        .fcard p{font-size:0.84rem;color:var(--tx2);line-height:1.5;font-weight:300;}
-
-        /* BIO LINK PREVIEW */
-        .bio-preview{padding:40px 24px 50px;}
-        .bio-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
-        .bio-phone{width:200px;background:var(--card);border:1px solid var(--brd);border-radius:20px;padding:8px;box-shadow:0 20px 40px rgba(0,0,0,0.3);transition:transform 0.4s;}
-        .bio-phone:hover{transform:translateY(-4px);}
-        .bio-screen{border-radius:14px;padding:16px 10px;min-height:280px;display:flex;flex-direction:column;align-items:center;}
-        .bio-screen.dark{background:#111113;}
-        .bio-screen.light{background:#FFFFFF;}
-        .bio-screen.color{background:linear-gradient(160deg,#7C5CFC 0%,#C23D8E 40%,#F59E0B 100%);}
-        .bio-av{width:36px;height:36px;border-radius:50%;margin-bottom:6px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;}
-        .dark .bio-av{background:linear-gradient(135deg,var(--acc),var(--mint));color:var(--bg);}
-        .light .bio-av{background:linear-gradient(135deg,#34D076,#B8E63C);color:#fff;}
-        .color .bio-av{background:rgba(255,255,255,0.25);color:#fff;}
-        .bio-name{font-size:0.65rem;font-weight:600;margin-bottom:2px;}
-        .dark .bio-name{color:#F5F5F4;}
-        .light .bio-name{color:#111113;}
-        .color .bio-name{color:#fff;}
-        .bio-handle{font-size:0.48rem;color:var(--tx3);margin-bottom:10px;font-family:'JetBrains Mono',monospace;}
-        .light .bio-handle{color:#9D9DA3;}
-        .color .bio-handle{color:rgba(255,255,255,0.5);}
-        .bio-link{width:100%;padding:7px;border-radius:8px;text-align:center;font-size:0.5rem;font-weight:500;margin-bottom:5px;}
-        .dark .bio-link{background:#1C1C1F;border:1px solid #2A2A2E;color:#F5F5F4;}
-        .dark .bio-link.hl{background:var(--acc);border-color:var(--acc);color:var(--bg);font-weight:600;}
-        .light .bio-link{background:#F0F0F3;border:1px solid #E4E4E7;color:#111113;}
-        .light .bio-link.hl{background:#2D7A4F;border-color:#2D7A4F;color:#fff;font-weight:600;}
-        .color .bio-link{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.18);color:#fff;}
-        .color .bio-link.hl{background:#fff;color:#7C5CFC;font-weight:600;border-color:#fff;}
-        .bio-label{font-size:0.65rem;color:var(--tx3);margin-top:8px;font-weight:400;}
-
-        /* BOTTOM CTA */
-        .bottom-cta{padding:50px 24px 40px;text-align:center;}
-        .bottom-cta h2{font-size:clamp(2rem,5vw,3rem);font-weight:900;letter-spacing:-0.04em;margin-bottom:14px;line-height:1;}
-        .bottom-cta p{font-size:1rem;color:var(--tx2);margin-bottom:28px;font-weight:300;}
-        .waitlist-bottom{display:flex;gap:8px;max-width:420px;margin:0 auto;}
-        .waitlist-bottom input{flex:1;padding:14px 18px;border-radius:100px;border:1px solid var(--brd);background:var(--bg2);color:var(--tx);font-family:'Outfit',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.3s;}
-        .waitlist-bottom input::placeholder{color:var(--tx3);}
-        .waitlist-bottom input:focus{border-color:var(--acc);}
-
-        /* FOOTER */
-        footer{padding:32px 24px 40px;border-top:1px solid var(--brd);position:relative;z-index:1;}
-        .footer-inner{max-width:960px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-start;}
-        .footer-logo{display:flex;align-items:center;gap:6px;font-size:0.85rem;font-weight:600;text-decoration:none;color:var(--tx);margin-bottom:4px;}
-        .footer-logo-mark{width:18px;height:18px;border-radius:5px;background:linear-gradient(135deg,var(--acc),var(--mint));display:flex;align-items:center;justify-content:center;font-size:0.5rem;font-weight:800;color:var(--bg);}
-        .footer-by{font-size:0.7rem;color:var(--tx3);font-weight:300;}
-        .footer-right{text-align:right;}
-        .footer-legal{display:flex;gap:20px;margin-bottom:6px;}
-        .footer-legal a{font-size:0.78rem;color:var(--tx3);text-decoration:none;transition:color 0.3s;}
-        .footer-legal a:hover{color:var(--tx);}
-        .footer-copy{font-size:0.7rem;color:var(--tx3);font-weight:300;}
-
-        @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-
-        @media(max-width:768px){
-            nav{padding:14px 18px;}
-            .nav-links a:not(.btn){display:none;}
-            .fgrid{grid-template-columns:1fr;gap:10px;}
-            .bio-row{gap:10px;}
-            .bio-phone{width:160px;}
-            .phone-outer{width:260px;}
-            .waitlist,.waitlist-bottom{flex-direction:column;}
-            .footer-inner{flex-direction:column;gap:20px;}
-            .footer-right{text-align:left;}
-            .glow{display:none;}
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>viuno — Wachse smarter. Nicht härter.</title>
+<meta name="description" content="Jeden Morgen genau wissen, was du posten musst, um zu wachsen — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0C0C0F;--surface:#141417;--border:#1E1E24;--text:#F0F0EE;--muted:#6B6B78;--grad:linear-gradient(135deg,#7C5CFC,#C23D8E);}*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden;}nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(12,12,15,0.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.05);}.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}.nav-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:#fff;letter-spacing:-0.02em;}.nav-logo-text{font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:-0.03em;}.nav-cta{background:var(--grad);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity 0.2s;}.nav-cta:hover{opacity:0.85;}.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden;}.hero-glow{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(124,92,252,0.18) 0%,rgba(194,61,142,0.1) 40%,transparent 70%);pointer-events:none;}.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(124,92,252,0.12);border:1px solid rgba(124,92,252,0.25);border-radius:30px;padding:6px 16px;font-size:0.75rem;font-weight:500;color:#A78BFA;margin-bottom:28px;opacity:0;animation:fadeUp 0.6s ease 0.1s forwards;}.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#A78BFA;animation:pulse 2s infinite;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}.hero h1{font-size:clamp(2.4rem,7vw,4.5rem);font-weight:800;line-height:1.1;letter-spacing:-0.04em;color:var(--text);max-width:700px;margin-bottom:12px;opacity:0;animation:fadeUp 0.6s ease 0.2s forwards;}.hero h1 .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.hero-sub{font-size:clamp(1rem,2.5vw,1.15rem);font-weight:300;color:var(--muted);max-width:480px;line-height:1.65;margin-bottom:40px;opacity:0;animation:fadeUp 0.6s ease 0.35s forwards;}.hero-actions{display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;animation:fadeUp 0.6s ease 0.5s forwards;}.btn-primary{display:inline-block;background:var(--grad);color:#fff;text-decoration:none;border-radius:14px;padding:16px 36px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;border:none;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 8px 32px rgba(124,92,252,0.3);}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(124,92,252,0.4);}.hero-note{font-size:0.75rem;color:var(--muted);}.mockup-strip{padding:0 24px 80px;display:flex;justify-content:center;opacity:0;animation:fadeUp 0.8s ease 0.7s forwards;}.mockup-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:20px;max-width:340px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.5);}.mockup-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}.mockup-avatar{width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}.mockup-name{font-size:0.88rem;font-weight:600;color:var(--text);}.mockup-handle{font-size:0.72rem;color:var(--muted);}.mockup-digest{background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.15);border-radius:12px;padding:12px 14px;margin-bottom:12px;}.mockup-digest-label{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#A78BFA;margin-bottom:6px;}.mockup-digest-text{font-size:0.78rem;color:rgba(240,240,238,0.7);line-height:1.5;}.mockup-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}.mockup-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;}.mockup-stat-val{font-size:1rem;font-weight:700;color:var(--text);line-height:1;}.mockup-stat-label{font-size:0.6rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.05em;}.features{padding:80px 24px;}.features-inner{max-width:900px;margin:0 auto;}.features-header{margin-bottom:48px;}.features-header h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-0.04em;line-height:1.15;color:var(--text);margin-bottom:12px;}.features-header p{font-size:1rem;color:var(--muted);font-weight:300;max-width:440px;line-height:1.6;}.feature-grid{display:grid;grid-template-columns:1fr;gap:16px;}@media(min-width:640px){.feature-grid{grid-template-columns:1fr 1fr;}.feature-card:first-child{grid-column:span 2;}}.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 26px;transition:border-color 0.2s;}.feature-card:hover{border-color:rgba(124,92,252,0.3);}.feature-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:1.3rem;}.feature-icon.purple{background:rgba(124,92,252,0.12);}.feature-icon.pink{background:rgba(194,61,142,0.12);}.feature-icon.amber{background:rgba(245,158,11,0.12);}.feature-card h3{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;color:var(--text);margin-bottom:8px;}.feature-card p{font-size:0.88rem;color:var(--muted);line-height:1.65;font-weight:300;}.feature-tag{display:inline-block;margin-top:14px;font-size:0.68rem;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(124,92,252,0.1);color:#A78BFA;border:1px solid rgba(124,92,252,0.2);}.how{padding:80px 24px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.how-inner{max-width:900px;margin:0 auto;}.how h2{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;letter-spacing:-0.04em;color:var(--text);margin-bottom:48px;}.steps{display:grid;grid-template-columns:1fr;gap:0;}@media(min-width:640px){.steps{grid-template-columns:1fr 1fr 1fr;}}.step{padding:0 0 32px;position:relative;}@media(min-width:640px){.step{padding:0 32px 0 0;border-right:1px solid var(--border);}.step:last-child{border-right:none;padding-right:0;padding-left:32px;}.step:nth-child(2){padding:0 32px;}}.step-num{width:36px;height:36px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:800;color:#fff;margin-bottom:16px;}.step h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.02em;}.step p{font-size:0.85rem;color:var(--muted);line-height:1.6;font-weight:300;}.pricing{padding:80px 24px;}.pricing-inner{max-width:900px;margin:0 auto;}.pricing h2{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;letter-spacing:-0.04em;color:var(--text);margin-bottom:8px;}.pricing-sub{font-size:1rem;color:var(--muted);font-weight:300;margin-bottom:48px;}.pricing-grid{display:grid;grid-template-columns:1fr;gap:16px;}@media(min-width:640px){.pricing-grid{grid-template-columns:1fr 1fr;}}.pricing-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 26px;}.pricing-card.featured{background:linear-gradient(160deg,rgba(124,92,252,0.12),rgba(194,61,142,0.08));border-color:rgba(124,92,252,0.3);}.pricing-badge{display:inline-block;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;border-radius:20px;background:var(--grad);color:#fff;margin-bottom:20px;}.pricing-card h3{font-size:1rem;font-weight:600;color:var(--muted);margin-bottom:8px;}.pricing-price{font-size:2.4rem;font-weight:800;letter-spacing:-0.04em;color:var(--text);line-height:1;margin-bottom:4px;}.pricing-price span{font-size:1rem;font-weight:400;color:var(--muted);}.pricing-note{font-size:0.78rem;color:var(--muted);margin-bottom:24px;font-weight:300;}.pricing-features{list-style:none;margin-bottom:28px;}.pricing-features li{font-size:0.85rem;color:rgba(240,240,238,0.7);padding:7px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;font-weight:300;}.pricing-features li:last-child{border-bottom:none;}.check{width:18px;height:18px;border-radius:50%;background:rgba(124,92,252,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}.check svg{width:10px;height:10px;}.btn-pricing{display:block;width:100%;text-align:center;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;text-decoration:none;border:none;transition:all 0.2s;}.btn-pricing.primary{background:var(--grad);color:#fff;box-shadow:0 8px 24px rgba(124,92,252,0.25);}.btn-pricing.primary:hover{opacity:0.9;transform:translateY(-1px);}.btn-pricing.secondary{background:rgba(255,255,255,0.05);color:var(--text);border:1px solid var(--border);}.btn-pricing.secondary:hover{background:rgba(255,255,255,0.08);}.bottom-cta{padding:80px 24px 100px;text-align:center;}.bottom-cta h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-0.04em;line-height:1.15;color:var(--text);margin-bottom:16px;}.bottom-cta p{font-size:1rem;color:var(--muted);font-weight:300;margin-bottom:36px;}footer{border-top:1px solid var(--border);padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.footer-logo{display:flex;align-items:center;gap:7px;text-decoration:none;}.footer-logo-mark{width:22px;height:22px;border-radius:6px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#fff;}.footer-logo-text{font-size:0.88rem;font-weight:600;color:var(--muted);}.footer-links{display:flex;gap:20px;}.footer-links a{font-size:0.75rem;color:var(--muted);text-decoration:none;transition:color 0.2s;}.footer-links a:hover{color:var(--text);}@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}.reveal.visible{opacity:1;transform:translateY(0);}
+</style>
 </head>
 <body>
-
-<div class="glow g1"></div>
-<div class="glow g2"></div>
-
-<!-- NAV -->
 <nav>
-    <div class="logo">
-        <div class="logo-mark">C</div>
-        Creator:OS
-    </div>
-    <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#biolink">BioUno</a>
-        <a href="#waitlist" class="btn btn-acc">
-            Waitlist beitreten
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-    </div>
+  <a href="https://viuno.de" class="nav-logo">
+    <div class="nav-logo-mark">v</div>
+    <span class="nav-logo-text">viuno</span>
+  </a>
+  <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="nav-cta">Kostenlos starten</a>
 </nav>
-
-<!-- HERO -->
 <section class="hero">
-    <div class="hero-badge">
-        <div class="hero-badge-dot"><span></span></div>
-        Bald verfügbar
+  <div class="hero-glow"></div>
+  <div class="hero-badge"><div class="hero-badge-dot"></div>Für Creator die wachsen wollen</div>
+  <h1>Wachse smarter.<br><span class="grad-text">Nicht härter.</span></h1>
+  <p class="hero-sub">Jeden Morgen genau wissen, was du posten musst, um zu wachsen — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.</p>
+  <div class="hero-actions">
+    <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-primary">Kostenlos starten</a>
+    <span class="hero-note">Keine Kreditkarte nötig.</span>
+  </div>
+</section>
+<div class="mockup-strip">
+  <div class="mockup-card">
+    <div class="mockup-header">
+      <div class="mockup-avatar">L</div>
+      <div><div class="mockup-name">Lisa Hoffmann</div><div class="mockup-handle">@lisahoffmann · 12.4K Follower</div></div>
     </div>
-
-    <h1>Dein<br><span class="grad">Betriebssystem</span><br>als Creator.</h1>
-
-    <p class="hero-desc">Creator:OS ist die All-in-One App für Content Creator. Bio-Link, Content-Planung, Analytics und mehr — alles an einem Ort.</p>
-
-    <form class="waitlist" id="waitlistTop" onsubmit="submitWaitlist(event, this)">
-        <input type="email" placeholder="Deine E-Mail Adresse" required>
-        <button type="submit" class="waitlist-btn">Eintragen</button>
-    </form>
-    <p class="hero-hint">Kostenlos. Kein Spam. Wir melden uns wenn es losgeht.</p>
-</section>
-
-<!-- PHONE MOCKUP -->
-<section class="mockup-area">
-    <div class="phone-outer">
-        <div class="phone-glow"></div>
-        <div class="phone">
-            <div class="phone-notch"></div>
-            <div class="phone-screen">
-                <div class="ps-header">
-                    <div>
-                        <div class="ps-greet-sm">Guten Morgen</div>
-                        <div class="ps-greet">Hey Mehmet 👋</div>
-                    </div>
-                    <div class="ps-avatar">M</div>
-                </div>
-                <div class="ps-card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                        <span class="ps-tag">Dein Bio-Link</span>
-                        <span class="ps-badge">Live</span>
-                    </div>
-                    <div class="ps-url">biouno.de<span>/</span>mehmet</div>
-                    <div class="ps-stats">
-                        <div class="ps-stat"><div class="ps-stat-val">1.247</div><div class="ps-stat-lbl">Klicks</div></div>
-                        <div class="ps-stat"><div class="ps-stat-val">83</div><div class="ps-stat-lbl">Visitors</div></div>
-                        <div class="ps-stat"><div class="ps-stat-val">4,2%</div><div class="ps-stat-lbl">CTR</div></div>
-                    </div>
-                </div>
-                <div class="ps-row">
-                    <div class="ps-mini">
-                        <div class="ps-mini-icon lime"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#E8FF59" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
-                        <div class="ps-mini-val">24.8K</div>
-                        <div class="ps-mini-lbl">Follower</div>
-                    </div>
-                    <div class="ps-mini">
-                        <div class="ps-mini-icon mint"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#59FFB4" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
-                        <div class="ps-mini-val">5.3%</div>
-                        <div class="ps-mini-lbl">Engagement</div>
-                    </div>
-                </div>
-                <div class="ps-item">
-                    <div class="ps-plat ig"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/></svg></div>
-                    <div style="flex:1;"><div class="ps-item-title">BTS Reel</div><div class="ps-item-meta">Morgen, 14:00</div></div>
-                    <span class="ps-item-badge green">Geplant</span>
-                </div>
-                <div class="ps-item">
-                    <div class="ps-plat yt"><svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
-                    <div style="flex:1;"><div class="ps-item-title">Setup 2026</div><div class="ps-item-meta">Freitag, 18:00</div></div>
-                    <span class="ps-item-badge gray">Entwurf</span>
-                </div>
-            </div>
-        </div>
+    <div class="mockup-digest">
+      <div class="mockup-digest-label">☀ Dein Daily Digest — heute</div>
+      <div class="mockup-digest-text">In deiner Nische performen kurze Tutorials momentan 3× besser als Story-Formate. Dein letzter Reel hatte 2,1% Engagement — dein Schnitt liegt bei 1,4%. Weitermachen.</div>
     </div>
-</section>
-
-<!-- FEATURES -->
-<section class="features" id="features">
-    <div class="wrap">
-        <p class="stag">Alles in einer App</p>
-        <h2 class="stitle">Weniger Tools.<br>Mehr Wirkung.</h2>
-        <div class="fgrid">
-            <div class="fcard">
-                <div class="ficon lime"><svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div>
-                <h3>BioUno — Bio-Link</h3>
-                <p>Erstelle deine persönliche Bio-Link Seite. Alle Links, alle Plattformen — ein Auftritt.</p>
-            </div>
-            <div class="fcard">
-                <div class="ficon mint"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-                <h3>Content planen</h3>
-                <p>Plane deinen Content visuell. Kein Spreadsheet-Chaos — alles im Blick.</p>
-            </div>
-            <div class="fcard">
-                <div class="ficon lime"><svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg></div>
-                <h3>Analytics</h3>
-                <p>Klicks, Views, Follower und Engagement — einfach erklärt, alles auf einen Blick.</p>
-            </div>
-            <div class="fcard">
-                <div class="ficon mint"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
-                <h3>Deals & Kooperationen</h3>
-                <p>Verwalte Brand-Deals direkt in der App. Kein Excel, kein E-Mail-Chaos.</p>
-            </div>
-            <div class="fcard">
-                <div class="ficon lime"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></div>
-                <h3>Dein Design</h3>
-                <p>Passe deine Bio-Seite an — Farben, Layout, Stil. Drei Themes zur Auswahl.</p>
-            </div>
-            <div class="fcard">
-                <div class="ficon mint"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-                <h3>Media Kit</h3>
-                <p>Zeig Brands auf einen Blick was du drauf hast. Automatisch erstellt.</p>
-            </div>
-        </div>
+    <div class="mockup-stats">
+      <div class="mockup-stat"><div class="mockup-stat-val">2.1%</div><div class="mockup-stat-label">Ø Engagement</div></div>
+      <div class="mockup-stat"><div class="mockup-stat-val">4.8K</div><div class="mockup-stat-label">Ø Reach</div></div>
+      <div class="mockup-stat"><div class="mockup-stat-val">↑12%</div><div class="mockup-stat-label">Trend</div></div>
     </div>
-</section>
-
-<!-- BIO LINK PREVIEW -->
-<section class="bio-preview" id="biolink">
-    <div class="wrap">
-        <p class="stag">BioUno</p>
-        <h2 class="stitle">Dein Link. Drei Designs.</h2>
-        <div class="bio-row">
-            <div class="bio-phone">
-                <div class="bio-screen dark">
-                    <div class="bio-av">S</div>
-                    <div class="bio-name">Sarah Creator</div>
-                    <div class="bio-handle">biouno.de/sarah</div>
-                    <div class="bio-link hl">Neues Video</div>
-                    <div class="bio-link">Podcast</div>
-                    <div class="bio-link">E-Book</div>
-                    <div class="bio-link">Coaching</div>
-                </div>
-                <p class="bio-label" style="text-align:center;margin-top:10px;">Dark</p>
-            </div>
-            <div class="bio-phone">
-                <div class="bio-screen light">
-                    <div class="bio-av">S</div>
-                    <div class="bio-name">Sarah Creator</div>
-                    <div class="bio-handle">biouno.de/sarah</div>
-                    <div class="bio-link hl">Neues Video</div>
-                    <div class="bio-link">Podcast</div>
-                    <div class="bio-link">E-Book</div>
-                    <div class="bio-link">Coaching</div>
-                </div>
-                <p class="bio-label" style="text-align:center;margin-top:10px;">Light</p>
-            </div>
-            <div class="bio-phone">
-                <div class="bio-screen color">
-                    <div class="bio-av">S</div>
-                    <div class="bio-name">Sarah Creator</div>
-                    <div class="bio-handle">biouno.de/sarah</div>
-                    <div class="bio-link hl">Neues Video</div>
-                    <div class="bio-link">Podcast</div>
-                    <div class="bio-link">E-Book</div>
-                    <div class="bio-link">Coaching</div>
-                </div>
-                <p class="bio-label" style="text-align:center;margin-top:10px;">Color</p>
-            </div>
-        </div>
+  </div>
+</div>
+<div class="features">
+  <div class="features-inner">
+    <div class="features-header reveal">
+      <h2>Alles was du brauchst,<br>um als Creator zu wachsen.</h2>
+      <p>Keine Genéric-Tipps. Echte Daten. Dein Wachstum.</p>
     </div>
-</section>
-
-<!-- BOTTOM CTA -->
-<section class="bottom-cta" id="waitlist">
-    <h2>Bereit?<br><span class="grad">Trag dich ein.</span></h2>
-    <p>Sei unter den Ersten wenn Creator:OS startet.</p>
-    <form class="waitlist-bottom" onsubmit="submitWaitlist(event, this)">
-        <input type="email" placeholder="Deine E-Mail Adresse" required>
-        <button type="submit" class="waitlist-btn">Eintragen</button>
-    </form>
-</section>
-
-<!-- FOOTER -->
+    <div class="feature-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon purple">⚡</div>
+        <h3>Daily Digest</h3>
+        <p>Jeden Morgen dein persönlicher Wachstumsplan — basierend auf deinen Analytics und den aktuellen Trends in deiner Nische.</p>
+        <span class="feature-tag">KI-powered</span>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon pink">📈</div>
+        <h3>Viral Trends</h3>
+        <p>Sieh welche Themen gerade in deiner Nische explodieren — bevor sie mainstream werden.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon amber">🔗</div>
+        <h3>BioLink & Media Kit</h3>
+        <p>Professionelle BioLink-Seite und Media Kit für Brands — in Sekunden erstellt.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="how">
+  <div class="how-inner">
+    <h2 class="reveal">So einfach geht's.</h2>
+    <div class="steps">
+      <div class="step reveal"><div class="step-num">1</div><h3>Account erstellen</h3><p>Kostenlos registrieren und Instagram oder TikTok verbinden.</p></div>
+      <div class="step reveal"><div class="step-num">2</div><h3>Daten analysieren</h3><p>viuno analysiert deine letzten Posts und erkennt was wirklich funktioniert.</p></div>
+      <div class="step reveal"><div class="step-num">3</div><h3>Wachsen</h3><p>Jeden Morgen deinen Daily Digest lesen und umsetzen. So einfach.</p></div>
+    </div>
+  </div>
+</div>
+<div class="pricing">
+  <div class="pricing-inner">
+    <h2 class="reveal">Einfache Preise.</h2>
+    <p class="pricing-sub reveal">14 Tage kostenlos testen — keine Kreditkarte nötig.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <h3>Monatlich</h3>
+        <div class="pricing-price">€14,99 <span>/ Monat</span></div>
+        <div class="pricing-note">Jederzeit kündbar.</div>
+        <ul class="pricing-features">
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Daily Digest</li>
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Viral Trends</li>
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Post-Analyse</li>
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>BioLink &amp; Media Kit</li>
+        </ul>
+        <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-pricing secondary">Kostenlos starten</a>
+      </div>
+      <div class="pricing-card featured reveal">
+        <div class="pricing-badge">Bestes Angebot</div>
+        <h3>Jährlich</h3>
+        <div class="pricing-price">€99 <span>/ Jahr</span></div>
+        <div class="pricing-note">Entspricht €8,25/Monat — spare 45%.</div>
+        <ul class="pricing-features">
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Daily Digest</li>
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Viral Trends</li>
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Post-Analyse</li>
+          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>BioLink &amp; Media Kit</li>
+        </ul>
+        <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-pricing primary">Kostenlos starten</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bottom-cta">
+  <h2 class="reveal">Bereit zu wachsen?</h2>
+  <p class="reveal">Keine Kreditkarte. Kein Risiko. Einfach loslegen.</p>
+  <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-primary reveal">14 Tage kostenlos testen</a>
+</div>
 <footer>
-    <div class="footer-inner">
-        <div>
-            <a href="https://biouno.de" class="footer-logo">
-                <div class="footer-logo-mark">C</div>
-                Creator:OS
-            </a>
-            <p class="footer-by">Ein Produkt von StradaUno</p>
-        </div>
-        <div class="footer-right">
-            <div class="footer-legal">
-                <a href="https://biouno.de/impressum">Impressum</a>
-                <a href="https://biouno.de/datenschutz">Datenschutz</a>
-                <a href="https://biouno.de/nutzungsbedingungen">AGB</a>
-            </div>
-            <p class="footer-copy">&copy; 2026 StradaUno. Alle Rechte vorbehalten.</p>
-        </div>
-    </div>
+  <a href="https://viuno.de" class="footer-logo">
+    <div class="footer-logo-mark">v</div>
+    <span class="footer-logo-text">viuno</span>
+  </a>
+  <div class="footer-links">
+    <a href="https://viuno.de/impressum">Impressum</a>
+    <a href="https://viuno.de/datenschutz">Datenschutz</a>
+  </div>
 </footer>
-
 <script>
-function submitWaitlist(e, form) {
-    e.preventDefault();
-    var email = form.querySelector('input[type="email"]').value;
-    var subject = encodeURIComponent('Creator:OS Waitlist — Neue Anmeldung');
-    var body = encodeURIComponent('Neue Waitlist-Anmeldung:\n\nE-Mail: ' + email + '\n\nDiese Nachricht wurde automatisch von der Creator:OS Landingpage generiert.');
-    window.location.href = 'mailto:kontakt@stradauno.de?subject=' + subject + '&body=' + body;
-    form.querySelector('input[type="email"]').value = '';
-    alert('Danke! Dein E-Mail Programm öffnet sich gleich.');
-}
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry) => {
+    if (entry.isIntersecting) {
+      setTimeout(() => { entry.target.classList.add('visible'); }, 60);
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 </script>
-
 </body>
 </html>
