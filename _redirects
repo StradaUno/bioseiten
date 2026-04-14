@@ -1,1 +1,1 @@
-/kit/:slug  /kit/index.html  200
+/kit/*  /kit/index.html  200
