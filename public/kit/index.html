@@ -33,22 +33,18 @@
     .sl { font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; color: #9B9490; margin-top: 4px; }
     .section { padding: 16px 20px; border-bottom: 1px solid #E2DDD8; }
     .st { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: #9B9490; margin-bottom: 14px; }
-    .pb { margin-bottom: 16px; }
-    .pb:last-child { margin-bottom: 0; }
+    .pb { margin-bottom: 16px; } .pb:last-child { margin-bottom: 0; }
     .ph { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .pn { font-size: 15px; font-weight: 500; color: #1C1A18; }
-    .phd { font-size: 12px; color: #9B9490; }
+    .pn { font-size: 15px; font-weight: 500; color: #1C1A18; } .phd { font-size: 12px; color: #9B9490; }
     .pnums { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
     .pnum { background: #F3F1ED; border-radius: 10px; padding: 10px; }
     .pv { font-size: 18px; font-weight: 500; color: #1C1A18; line-height: 1; }
     .pl { font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: #9B9490; margin-top: 3px; }
     .agrid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .ab { background: #F3F1ED; border-radius: 10px; padding: 12px; }
-    .ab.full { grid-column: span 2; }
+    .ab { background: #F3F1ED; border-radius: 10px; padding: 12px; } .ab.full { grid-column: span 2; }
     .al { font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: #9B9490; margin-bottom: 5px; }
     .av { font-size: 15px; font-weight: 500; color: #1C1A18; }
-    .arow { display: flex; justify-content: space-between; }
-    .arow span { font-size: 13px; font-weight: 500; color: #1C1A18; }
+    .arow { display: flex; justify-content: space-between; } .arow span { font-size: 13px; font-weight: 500; color: #1C1A18; }
     .offers { display: flex; flex-wrap: wrap; gap: 6px; }
     .offer { font-size: 12px; padding: 7px 14px; border-radius: 20px; background: #F3F1ED; color: #1C1A18; }
     .cta { padding: 16px 20px 20px; }
@@ -102,8 +98,9 @@
       document.getElementById('kit').innerHTML='<div class="hero"><div class="hero-row"><div class="avatar">'+avatarInner+'</div><div><div class="name">'+name+'</div>'+(loc?'<div class="loc">'+loc+'</div>':'')+(niches.length?'<div class="tags">'+niches.map(n=>'<div class="tag">'+esc(n)+'</div>').join('')+'</div>':'')+'</div></div>'+(d.bio?'<p class="bio">'+esc(d.bio)+'</p>':'')+'</div><div class="stats"><div class="stat"><div class="sv">'+fmt(totalFol)+'</div><div class="sl">Follower gesamt</div></div><div class="stat"><div class="sv">'+avgEng+'</div><div class="sl">Ø Engagement</div></div></div>'+(platforms.length?'<div class="section"><div class="st">Plattformen</div>'+platformsHtml+'</div>':'')+audienceHtml+offersHtml+'<div class="cta"><a class="btn" href="'+contactHref+'">Kooperation anfragen</a></div><div class="footer">erstellt mit <a href="https://veuno.de">veuno</a></div>'
     }
     async function load(){
-      const params=new URLSearchParams(window.location.search)
-      const slug=params.get('slug')
+      // Slug aus Pfad lesen: /kit/stradauno → 'stradauno'
+      const parts = window.location.pathname.split('/').filter(Boolean)
+      const slug = parts[1] || null
       if(!slug){document.getElementById('kit').innerHTML='<div class="error"><strong>Kein Profil gefunden</strong>Bitte überprüfe den Link.</div>';return}
       const{data,error}=await db.from('media_kit_public').select('*').eq('slug',slug).single()
       if(error||!data){document.getElementById('kit').innerHTML='<div class="error"><strong>Media Kit nicht verfügbar</strong>Dieses Profil hat noch kein Media Kit veröffentlicht.</div>';return}
