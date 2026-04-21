@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="it">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Antonietta — viuno</title>
-<meta name="description" content="Antonietta — Fashion · Mamma · Real Life. Outfit, consigli di stile e momenti di vita da una mamma italiana in Germania." />
+<meta name="description" content="Antonietta — Fashion & Mamma. Outfit, consigli di stile e momenti di vita da una mamma italiana in Germania." />
 <meta property="og:title" content="Antonietta — viuno" />
-<meta property="og:description" content="Fashion · Mamma · Real Life. Outfit, consigli di stile e momenti di vita da una mamma italiana in Germania." />
+<meta property="og:description" content="Outfit, consigli di stile e momenti di vita da una mamma italiana in Germania." />
 <meta property="og:image" content="https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/profile-images/5620b0b6-3050-46d2-8853-5ef0f9a123c2/1776811201619000.jpeg" />
 <link rel="icon" href="data:," />
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,7 +72,7 @@
     width: 100%;
     max-width: 480px;
     min-height: 100vh;
-    padding: 48px 24px 36px;
+    padding: 80px 24px 36px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -82,20 +82,20 @@
   /* ===== PHOTO ===== */
   .photo-wrap {
     position: relative;
-    width: 88px; height: 88px;
-    margin: 0 auto 12px;
+    width: 110px; height: 110px;
+    margin: 0 auto 14px;
   }
   .photo-wrap::before {
     content: '';
     position: absolute;
-    inset: -6px;
+    inset: -8px;
     border-radius: 50%;
     background: conic-gradient(from 0deg,
       var(--accent-1) 0%,
       var(--accent-2) 33%,
       var(--accent-3) 66%,
       var(--accent-1) 100%);
-    filter: blur(10px);
+    filter: blur(12px);
     opacity: .55;
     animation: spinA 8s linear infinite;
   }
@@ -249,6 +249,13 @@
   .link-brand:hover .link-arrow { color: #fff; }
 
   /* ===== FOOTER ===== */
+  .page-footer {
+    margin-top: auto;
+    padding-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
   .branding {
     display: flex;
     align-items: center;
@@ -277,8 +284,6 @@
   }
   .impressum {
     display: block;
-    margin-top: auto;
-    padding-top: 14px;
     font-size: 10px;
     color: var(--ink-muted);
     opacity: .45;
@@ -287,6 +292,44 @@
     transition: opacity .2s;
   }
   .impressum:hover { opacity: .9; }
+
+  /* ===== LANGUAGE TOGGLE (oben rechts, dezent) ===== */
+  .lang-toggle {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    display: flex;
+    background: rgba(255,255,255,.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 999px;
+    padding: 3px;
+    box-shadow: 0 4px 12px -4px rgba(45,31,61,.15);
+  }
+  .lang-btn {
+    background: none;
+    border: none;
+    padding: 5px 10px;
+    font-family: inherit;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--ink-muted);
+    cursor: pointer;
+    border-radius: 999px;
+    transition: all .2s ease;
+    letter-spacing: .04em;
+    line-height: 1;
+  }
+  .lang-btn.active {
+    background: linear-gradient(135deg, var(--accent-3), var(--accent-1));
+    color: #fff;
+    box-shadow: 0 2px 6px -2px rgba(155,127,255,.4);
+  }
+  .lang-btn:not(.active):hover {
+    color: var(--ink);
+  }
 
   /* ===== ENTRY ANIMATIONS ===== */
   .reveal { opacity: 0; transform: translateY(12px); animation: reveal .7s cubic-bezier(.2,.8,.2,1) forwards; }
@@ -403,6 +446,12 @@
 </head>
 <body>
 
+<!-- Language Toggle (oben rechts, wechselt zwischen IT und DE) -->
+<div class="lang-toggle" role="group" aria-label="Lingua / Sprache">
+  <button type="button" class="lang-btn active" data-lang="it" onclick="setLang('it')">IT</button>
+  <button type="button" class="lang-btn" data-lang="de" onclick="setLang('de')">DE</button>
+</div>
+
 <div class="page">
 
   <!-- Photo -->
@@ -418,18 +467,18 @@
 
   <!-- Niche Pill (sanft, zwischen Name und Bio) -->
   <div class="niche reveal reveal-3">
-    <span>Fashion</span>
+    <span data-i18n="niche_1">Fashion</span>
     <span class="sep">&amp;</span>
-    <span>Mamma</span>
+    <span data-i18n="niche_2">Mamma</span>
   </div>
 
   <!-- Bio -->
-  <p class="bio reveal reveal-3">
+  <p class="bio reveal reveal-3" data-i18n-html="bio">
     Outfit, consigli di stile e momenti di vita<br/>da una mamma italiana in Germania.
   </p>
 
   <!-- Handwritten quote -->
-  <p class="bio-quote reveal reveal-3">dolce vita, ogni giorno ✨</p>
+  <p class="bio-quote reveal reveal-3" data-i18n="quote">dolce vita, ogni giorno ✨</p>
 
   <!-- Links -->
   <div class="links reveal reveal-4" id="links-container">
@@ -472,8 +521,8 @@
         </svg>
       </div>
       <div class="link-text">
-        <div class="link-label">Amazon Storefront</div>
-        <div class="link-sub">My favourites</div>
+        <div class="link-label" data-i18n="amz_label">Amazon Storefront</div>
+        <div class="link-sub" data-i18n="amz_sub">I miei preferiti</div>
       </div>
       <span class="link-arrow">→</span>
     </a>
@@ -484,7 +533,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
       </div>
       <div class="link-text">
-        <div class="link-label">Anfragen</div>
+        <div class="link-label" data-i18n="contact">Contatti</div>
       </div>
       <span class="link-arrow">→</span>
     </button>
@@ -492,63 +541,66 @@
   </div>
 
   <!-- Footer -->
-  <a href="https://viuno.de" target="_blank" rel="noopener" class="branding reveal reveal-5">
-    <div class="branding-logo">v</div>
-    <span class="branding-text">Managed with ❤️ by viuno</span>
-  </a>
-  <a href="https://viuno.de/impressum" target="_blank" rel="noopener" class="impressum reveal reveal-5">Impressum</a>
+  <!-- Footer (pushed to bottom) -->
+  <div class="page-footer">
+    <a href="https://viuno.de" target="_blank" rel="noopener" class="branding reveal reveal-5">
+      <div class="branding-logo">v</div>
+      <span class="branding-text" data-i18n="managed_by">Gestito con ❤️ da viuno</span>
+    </a>
+    <a href="https://viuno.de/impressum" target="_blank" rel="noopener" class="impressum reveal reveal-5" data-i18n="impressum">Note legali</a>
+  </div>
 
 </div>
 
-<!-- ============ ANFRAGE-MODAL ============ -->
+<!-- ============ ANFRAGE-MODAL / MODAL CONTATTI ============ -->
 <div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal()" aria-label="Schließen">&times;</button>
-    <h2>Anfrage an Antonietta</h2>
-    <p class="modal-sub">Antonietta meldet sich bei dir.</p>
+    <button class="modal-close" onclick="closeModal()" aria-label="Chiudi">&times;</button>
+    <h2 data-i18n="m_title">Scrivi ad Antonietta</h2>
+    <p class="modal-sub" data-i18n="m_sub">Antonietta ti risponderà al più presto.</p>
 
     <form id="collab-form" onsubmit="submitCollab(event)">
-      <label for="collab-type">Art der Anfrage</label>
+      <label for="collab-type" data-i18n="m_type_label">Tipo di richiesta</label>
       <select id="collab-type" required onchange="updateFields()">
-        <option value="" disabled selected>Bitte wählen</option>
-        <option value="brand">Brand Deal</option>
-        <option value="collab">Collab</option>
-        <option value="event">Event / Einladung</option>
-        <option value="sonstiges">Sonstiges</option>
+        <option value="" disabled selected data-i18n="m_type_placeholder">Seleziona un'opzione</option>
+        <option value="brand" data-i18n="m_type_brand">Collaborazione Brand</option>
+        <option value="collab" data-i18n="m_type_collab">Collab con Creator</option>
+        <option value="event" data-i18n="m_type_event">Evento / Invito</option>
+        <option value="sonstiges" data-i18n="m_type_other">Altro</option>
       </select>
 
-      <label for="collab-name">Name / Firma</label>
-      <input id="collab-name" type="text" required placeholder="Dein Name oder Firmenname" />
+      <label for="collab-name" data-i18n="m_name_label">Nome / Azienda</label>
+      <input id="collab-name" type="text" required data-i18n-placeholder="m_name_ph" placeholder="Il tuo nome o il nome dell'azienda" />
 
-      <label for="collab-email">E-Mail</label>
-      <input id="collab-email" type="email" required placeholder="deine@email.de" />
+      <label for="collab-email" data-i18n="m_email_label">E-mail</label>
+      <input id="collab-email" type="email" required data-i18n-placeholder="m_email_ph" placeholder="tua@email.it" />
 
       <div id="row-website" style="display:none;">
-        <label for="collab-website">Website (optional)</label>
-        <input id="collab-website" type="text" placeholder="www.ihrewebsite.de" />
+        <label for="collab-website" data-i18n="m_web_label">Sito web (opzionale)</label>
+        <input id="collab-website" type="text" data-i18n-placeholder="m_web_ph" placeholder="www.iltuosito.it" />
       </div>
 
       <div id="row-budget" style="display:none;">
-        <label for="collab-budget">Budget-Rahmen (optional)</label>
+        <label for="collab-budget" data-i18n="m_budget_label">Budget previsto (opzionale)</label>
         <select id="collab-budget">
-          <option value="">Keine Angabe</option>
-          <option value="250">unter 250 €</option>
-          <option value="500">250 – 500 €</option>
-          <option value="1000">500 – 1.000 €</option>
-          <option value="1001">1.000 €+</option>
+          <option value="" data-i18n="m_budget_none">Non specificato</option>
+          <option value="250" data-i18n="m_budget_1">fino a 250 €</option>
+          <option value="500" data-i18n="m_budget_2">250 – 500 €</option>
+          <option value="1000" data-i18n="m_budget_3">500 – 1.000 €</option>
+          <option value="1001" data-i18n="m_budget_4">1.000 €+</option>
         </select>
       </div>
 
-      <label for="collab-msg">Nachricht</label>
-      <textarea id="collab-msg" required rows="3" placeholder="Kurze Beschreibung deiner Anfrage..."></textarea>
+      <label for="collab-msg" data-i18n="m_msg_label">Messaggio</label>
+      <textarea id="collab-msg" required rows="3" data-i18n-placeholder="m_msg_ph" placeholder="Breve descrizione della tua richiesta..."></textarea>
 
-      <button type="submit" id="collab-submit" class="modal-submit">Anfrage senden</button>
+      <button type="submit" id="collab-submit" class="modal-submit" data-i18n="m_submit">Invia richiesta</button>
     </form>
 
     <div id="collab-success" class="modal-success">
       <div class="check">✓</div>
-      <div class="title">Anfrage gesendet!</div>
-      <div class="sub">Antonietta meldet sich bald bei dir.</div>
+      <div class="title" data-i18n="m_success_title">Richiesta inviata!</div>
+      <div class="sub" data-i18n="m_success_sub">Antonietta ti risponderà al più presto.</div>
     </div>
   </div>
 </div>
@@ -562,6 +614,121 @@
 
   // Amazon-Storefront URL: hier eintragen, Button erscheint automatisch
   var AMAZON_URL = ''; // z.B. 'https://amazon.de/shop/antonietta'
+
+  // ====== i18n DICTIONARY ======
+  var I18N = {
+    it: {
+      // Page
+      niche_1: 'Fashion',
+      niche_2: 'Mamma',
+      bio: "Outfit, consigli di stile e momenti di vita<br/>da una mamma italiana in Germania.",
+      quote: 'dolce vita, ogni giorno ✨',
+      amz_label: 'Amazon Storefront',
+      amz_sub: 'I miei preferiti',
+      contact: 'Contatti',
+      managed_by: 'Gestito con ❤️ da viuno',
+      impressum: 'Note legali',
+      // Modal
+      m_title: 'Scrivi ad Antonietta',
+      m_sub: 'Antonietta ti risponderà al più presto.',
+      m_type_label: 'Tipo di richiesta',
+      m_type_placeholder: "Seleziona un'opzione",
+      m_type_brand: 'Collaborazione Brand',
+      m_type_collab: 'Collab con Creator',
+      m_type_event: 'Evento / Invito',
+      m_type_other: 'Altro',
+      m_name_label: 'Nome / Azienda',
+      m_name_ph: "Il tuo nome o il nome dell'azienda",
+      m_email_label: 'E-mail',
+      m_email_ph: 'tua@email.it',
+      m_web_label: 'Sito web (opzionale)',
+      m_web_ph: 'www.iltuosito.it',
+      m_budget_label: 'Budget previsto (opzionale)',
+      m_budget_none: 'Non specificato',
+      m_budget_1: 'fino a 250 €',
+      m_budget_2: '250 – 500 €',
+      m_budget_3: '500 – 1.000 €',
+      m_budget_4: '1.000 €+',
+      m_msg_label: 'Messaggio',
+      m_msg_ph: 'Breve descrizione della tua richiesta...',
+      m_submit: 'Invia richiesta',
+      m_sending: 'Invio in corso...',
+      m_error: "Errore durante l'invio. Riprova.",
+      m_success_title: 'Richiesta inviata!',
+      m_success_sub: 'Antonietta ti risponderà al più presto.'
+    },
+    de: {
+      // Page
+      niche_1: 'Fashion',
+      niche_2: 'Mama',
+      bio: "Outfits, Styling-Tipps und Momente aus dem Alltag<br/>einer italienischen Mama in Deutschland.",
+      quote: 'dolce vita, jeden Tag ✨',
+      amz_label: 'Amazon Storefront',
+      amz_sub: 'Meine Favoriten',
+      contact: 'Anfragen',
+      managed_by: 'Gemanaged mit ❤️ von viuno',
+      impressum: 'Impressum',
+      // Modal
+      m_title: 'Anfrage an Antonietta',
+      m_sub: 'Antonietta meldet sich bei dir.',
+      m_type_label: 'Art der Anfrage',
+      m_type_placeholder: 'Bitte wählen',
+      m_type_brand: 'Brand Deal',
+      m_type_collab: 'Collab',
+      m_type_event: 'Event / Einladung',
+      m_type_other: 'Sonstiges',
+      m_name_label: 'Name / Firma',
+      m_name_ph: 'Dein Name oder Firmenname',
+      m_email_label: 'E-Mail',
+      m_email_ph: 'deine@email.de',
+      m_web_label: 'Website (optional)',
+      m_web_ph: 'www.ihrewebsite.de',
+      m_budget_label: 'Budget-Rahmen (optional)',
+      m_budget_none: 'Keine Angabe',
+      m_budget_1: 'unter 250 €',
+      m_budget_2: '250 – 500 €',
+      m_budget_3: '500 – 1.000 €',
+      m_budget_4: '1.000 €+',
+      m_msg_label: 'Nachricht',
+      m_msg_ph: 'Kurze Beschreibung deiner Anfrage...',
+      m_submit: 'Anfrage senden',
+      m_sending: 'Wird gesendet...',
+      m_error: 'Fehler beim Senden. Bitte versuche es erneut.',
+      m_success_title: 'Anfrage gesendet!',
+      m_success_sub: 'Antonietta meldet sich bald bei dir.'
+    }
+  };
+
+  var currentLang = 'it'; // Default: Italienisch
+
+  function setLang(lang) {
+    if (!I18N[lang]) return;
+    currentLang = lang;
+    var dict = I18N[lang];
+    // Alle Texte übersetzen
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      if (dict[key] != null) el.textContent = dict[key];
+    });
+    // HTML-Content (z.B. Bio mit <br/>)
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-html');
+      if (dict[key] != null) el.innerHTML = dict[key];
+    });
+    // Placeholder
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-placeholder');
+      if (dict[key] != null) el.setAttribute('placeholder', dict[key]);
+    });
+    // HTML lang-Attribut
+    document.documentElement.lang = lang;
+    // Toggle-Button active-State
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
+  }
+
+  // Beim Start: Italienisch (ist schon im HTML gesetzt — kein setLang-Call nötig)
 
   // ====== AMAZON-BUTTON: auto show/hide ======
   (function() {
@@ -595,9 +762,10 @@
 
   async function submitCollab(e) {
     e.preventDefault();
+    var dict = I18N[currentLang];
     var btn = document.getElementById('collab-submit');
     btn.disabled = true;
-    btn.textContent = 'Wird gesendet...';
+    btn.textContent = dict.m_sending;
 
     var type = document.getElementById('collab-type').value;
     var name = document.getElementById('collab-name').value;
@@ -631,13 +799,13 @@
         document.getElementById('collab-success').style.display = 'block';
       } else {
         btn.disabled = false;
-        btn.textContent = 'Anfrage senden';
-        alert('Fehler beim Senden. Bitte versuche es erneut.');
+        btn.textContent = dict.m_submit;
+        alert(dict.m_error);
       }
     } catch (err) {
       btn.disabled = false;
-      btn.textContent = 'Anfrage senden';
-      alert('Fehler beim Senden. Bitte versuche es erneut.');
+      btn.textContent = dict.m_submit;
+      alert(dict.m_error);
     }
   }
 
