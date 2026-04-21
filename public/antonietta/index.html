@@ -442,6 +442,44 @@
     font-size: .82rem;
     color: var(--ink-muted);
   }
+
+  /* ===== DESKTOP: dezenter Rahmen wie bei anderen Themes ===== */
+  @media (min-width: 540px) {
+    body {
+      align-items: center;
+      padding: 48px 20px;
+    }
+    .page {
+      min-height: auto;
+      border-radius: 32px;
+      border: 1px solid rgba(155, 127, 255, 0.12);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow:
+        0 20px 48px -12px rgba(155, 127, 255, 0.18),
+        0 8px 24px -8px rgba(255, 107, 157, 0.1);
+      padding: 64px 36px 40px;
+    }
+    /* Page-Footer etwas weniger aggressiv nach unten drücken, da Card jetzt begrenzt */
+    .page-footer {
+      padding-top: 40px;
+    }
+    /* Glow-Blobs ragen jetzt hinter die Card — dezenter positionieren */
+    body::before {
+      top: 10%;
+      right: -60px;
+    }
+    body::after {
+      bottom: 10%;
+      left: -60px;
+    }
+  }
+  @media (min-width: 900px) {
+    body {
+      padding: 64px 40px;
+    }
+  }
 </style>
 </head>
 <body>
