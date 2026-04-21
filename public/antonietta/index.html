@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Antonietta — viuno</title>
+<meta name="description" content="Antonietta — Fashion · Mamma · Real Life. Outfit, consigli di stile e momenti di vita da una mamma italiana in Germania." />
+<meta property="og:title" content="Antonietta — viuno" />
+<meta property="og:description" content="Fashion · Mamma · Real Life. Outfit, consigli di stile e momenti di vita da una mamma italiana in Germania." />
+<meta property="og:image" content="https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/profile-images/5620b0b6-3050-46d2-8853-5ef0f9a123c2/1776811201619000.jpeg" />
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-font-smoothing: antialiased; }
+  body {
+    --bg-1: #fff5ee;
+    --bg-2: #ffe4ec;
+    --bg-3: #f0e7ff;
+    --ink: #2d1f3d;
+    --ink-muted: #6d5b84;
+    --accent-1: #ff6b9d;
+    --accent-2: #ff9f43;
+    --accent-3: #9b7fff;
+    font-family: 'Bricolage Grotesque', -apple-system, 'Inter', sans-serif;
+    background:
+      radial-gradient(ellipse at top left, var(--bg-2) 0%, transparent 50%),
+      radial-gradient(ellipse at bottom right, var(--bg-3) 0%, transparent 50%),
+      linear-gradient(180deg, var(--bg-1) 0%, #fff 100%);
+    color: var(--ink);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  body::before {
+    content: '';
+    position: absolute;
+    top: 8%; right: -80px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,107,157,.28) 0%, transparent 70%);
+    filter: blur(50px);
+    animation: floatA 8s ease-in-out infinite;
+    z-index: 0;
+    pointer-events: none;
+  }
+  body::after {
+    content: '';
+    position: absolute;
+    bottom: 15%; left: -70px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(155,127,255,.28) 0%, transparent 70%);
+    filter: blur(50px);
+    animation: floatA 10s ease-in-out infinite reverse;
+    z-index: 0;
+    pointer-events: none;
+  }
+  @keyframes floatA {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, -30px) scale(1.1); }
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    padding: 48px 24px 36px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  /* ===== PHOTO ===== */
+  .photo-wrap {
+    position: relative;
+    width: 88px; height: 88px;
+    margin: 0 auto 12px;
+  }
+  .photo-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -6px;
+    border-radius: 50%;
+    background: conic-gradient(from 0deg,
+      var(--accent-1) 0%,
+      var(--accent-2) 33%,
+      var(--accent-3) 66%,
+      var(--accent-1) 100%);
+    filter: blur(10px);
+    opacity: .55;
+    animation: spinA 8s linear infinite;
+  }
+  @keyframes spinA { to { transform: rotate(360deg); } }
+  .avatar {
+    position: relative;
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    display: block;
+    object-fit: cover;
+    border: 3px solid #fff;
+    box-shadow: 0 8px 24px -6px rgba(255,107,157,.4);
+  }
+
+  /* ===== NAME ===== */
+  .name {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--ink) 0%, var(--accent-3) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* ===== NICHE PILL (unter Name) ===== */
+  .niche {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--accent-3);
+    background: rgba(155, 127, 255, 0.1);
+    border: 1px solid rgba(155, 127, 255, 0.2);
+    padding: 5px 14px;
+    border-radius: 999px;
+    letter-spacing: .02em;
+    margin-bottom: 16px;
+  }
+  .niche .sep {
+    opacity: .4;
+    font-weight: 400;
+  }
+
+  /* ===== BIO ===== */
+  .bio {
+    font-size: 0.85rem;
+    line-height: 1.55;
+    color: var(--ink-muted);
+    max-width: 300px;
+    margin: 0 auto 6px;
+    font-weight: 300;
+  }
+  .bio-quote {
+    font-family: 'Caveat', cursive;
+    font-size: 20px;
+    color: var(--accent-1);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  /* ===== LINKS ===== */
+  .links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+    text-align: left;
+  }
+  .link-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: rgba(255,255,255,.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255,255,255,.9);
+    border-radius: 20px;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all .25s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 4px 16px -6px rgba(45,31,61,.12);
+  }
+  .link-btn:hover {
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 12px 28px -8px rgba(45,31,61,.2);
+    border-color: rgba(255,107,157,.3);
+  }
+  .link-icon {
+    width: 42px; height: 42px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px -2px rgba(0,0,0,.08);
+  }
+  .link-icon.ig { background: linear-gradient(135deg, #833AB4, #E1306C, #F77737); }
+  .link-icon.tt { background: #1A1A2E; }
+  .link-icon.amz { background: linear-gradient(135deg, #FF9900 0%, #FFB84D 100%); }
+  .link-icon svg { display: block; }
+  .link-text { flex: 1; min-width: 0; }
+  .link-label {
+    font-size: 0.94rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -.2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .link-sub {
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+    margin-top: 1px;
+  }
+  .link-arrow {
+    color: var(--ink-muted);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    transition: transform .25s ease, color .25s ease;
+  }
+  .link-btn:hover .link-arrow {
+    transform: translateX(3px);
+    color: var(--accent-1);
+  }
+
+  /* Anfragen (Brand-Button) */
+  .link-brand {
+    background: linear-gradient(135deg, var(--accent-3) 0%, var(--accent-1) 100%);
+    color: #fff;
+    border-color: transparent;
+    box-shadow: 0 10px 28px -8px rgba(155,127,255,.5);
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+  }
+  .link-brand .link-label { color: #fff; }
+  .link-brand .link-icon { background: rgba(255,255,255,.22); backdrop-filter: blur(10px); }
+  .link-brand .link-arrow { color: rgba(255,255,255,.85); }
+  .link-brand:hover { transform: translateY(-3px) scale(1.015); }
+  .link-brand:hover .link-arrow { color: #fff; }
+
+  /* ===== FOOTER ===== */
+  .branding {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+    opacity: .5;
+    transition: opacity .2s;
+    margin-bottom: 10px;
+  }
+  .branding:hover { opacity: .9; }
+  .branding-logo {
+    width: 15px; height: 15px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--accent-3), var(--accent-1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .45rem;
+    font-weight: 800;
+    color: #fff;
+  }
+  .branding-text {
+    font-size: .72rem;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .impressum {
+    display: block;
+    margin-top: auto;
+    padding-top: 14px;
+    font-size: 10px;
+    color: var(--ink-muted);
+    opacity: .45;
+    text-decoration: none;
+    letter-spacing: .3px;
+    transition: opacity .2s;
+  }
+  .impressum:hover { opacity: .9; }
+
+  /* ===== ENTRY ANIMATIONS ===== */
+  .reveal { opacity: 0; transform: translateY(12px); animation: reveal .7s cubic-bezier(.2,.8,.2,1) forwards; }
+  .reveal-1 { animation-delay: .05s; }
+  .reveal-2 { animation-delay: .18s; }
+  .reveal-3 { animation-delay: .28s; }
+  .reveal-4 { animation-delay: .36s; }
+  .reveal-5 { animation-delay: .50s; }
+  @keyframes reveal { to { opacity: 1; transform: translateY(0); } }
+
+  /* ===== MODAL (Anfrage-Form) ===== */
+  .modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(45,31,61,.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-bg.open { display: flex; }
+  .modal {
+    background: #fff;
+    border: 1px solid rgba(155,127,255,.2);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 420px;
+    padding: 28px 24px;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(45,31,61,.25);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: none;
+    border: none;
+    color: var(--ink-muted);
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px 8px;
+  }
+  .modal h2 {
+    font-family: 'Bricolage Grotesque', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .modal .modal-sub {
+    font-size: .78rem;
+    color: var(--ink-muted);
+    margin-bottom: 20px;
+  }
+  .modal label {
+    font-size: .7rem;
+    color: var(--ink-muted);
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+  .modal input, .modal select, .modal textarea {
+    width: 100%;
+    background: var(--bg-1);
+    border: 1px solid rgba(155,127,255,.2);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: .88rem;
+    color: var(--ink);
+    margin-bottom: 14px;
+    font-family: inherit;
+  }
+  .modal select { appearance: none; cursor: pointer; }
+  .modal textarea { resize: none; }
+  .modal input:focus, .modal select:focus, .modal textarea:focus {
+    outline: none;
+    border-color: var(--accent-3);
+  }
+  .modal-submit {
+    width: 100%;
+    background: linear-gradient(135deg, var(--accent-3), var(--accent-1));
+    border: none;
+    border-radius: 14px;
+    padding: 14px;
+    font-size: .95rem;
+    font-weight: 700;
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 8px 20px -6px rgba(155,127,255,.5);
+    font-family: inherit;
+    margin-top: 4px;
+  }
+  .modal-submit:disabled { opacity: .6; cursor: not-allowed; }
+  .modal-success { display: none; text-align: center; padding: 20px 0; }
+  .modal-success .check { font-size: 2rem; margin-bottom: 12px; color: var(--accent-3); }
+  .modal-success .title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--accent-3);
+    margin-bottom: 6px;
+  }
+  .modal-success .sub {
+    font-size: .82rem;
+    color: var(--ink-muted);
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Photo -->
+  <div class="photo-wrap reveal reveal-1">
+    <img class="avatar"
+         src="https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/profile-images/5620b0b6-3050-46d2-8853-5ef0f9a123c2/1776811201619000.jpeg"
+         alt="Antonietta"
+         onerror="this.outerHTML='<div class=&quot;avatar&quot; style=&quot;background:linear-gradient(135deg,var(--accent-1) 0%,var(--accent-2) 100%);display:grid;place-items:center;color:#fff;font-weight:700;font-size:2rem;&quot;>A</div>'" />
+  </div>
+
+  <!-- Name -->
+  <h1 class="name reveal reveal-2">Antonietta</h1>
+
+  <!-- Niche Pill (sanft, zwischen Name und Bio) -->
+  <div class="niche reveal reveal-3">
+    <span>Fashion</span>
+    <span class="sep">&amp;</span>
+    <span>Mamma</span>
+  </div>
+
+  <!-- Bio -->
+  <p class="bio reveal reveal-3">
+    Outfit, consigli di stile e momenti di vita<br/>da una mamma italiana in Germania.
+  </p>
+
+  <!-- Handwritten quote -->
+  <p class="bio-quote reveal reveal-3">dolce vita, ogni giorno ✨</p>
+
+  <!-- Links -->
+  <div class="links reveal reveal-4" id="links-container">
+
+    <!-- Instagram -->
+    <a href="https://instagram.com/antonietta_chiquita" target="_blank" rel="noopener" class="link-btn">
+      <div class="link-icon ig">
+        <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+      </div>
+      <div class="link-text">
+        <div class="link-label">Instagram</div>
+        <div class="link-sub">@antonietta_chiquita</div>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+    <!-- TikTok -->
+    <a href="https://tiktok.com/@antonietta_chiquita" target="_blank" rel="noopener" class="link-btn">
+      <div class="link-icon tt">
+        <svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.98a8.18 8.18 0 004.76 1.52V7.05a4.84 4.84 0 01-1-.36z"/></svg>
+      </div>
+      <div class="link-text">
+        <div class="link-label">TikTok</div>
+        <div class="link-sub">@antonietta_chiquita</div>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+    <!--
+      AMAZON STOREFRONT
+      Aktivieren: href="" durch die echte URL ersetzen UND style="display:none" entfernen.
+      So einfach ist's.
+    -->
+    <a href="" target="_blank" rel="noopener" class="link-btn" id="amz-btn" style="display:none;">
+      <div class="link-icon amz">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <text x="12" y="15.5" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="900" font-size="14" fill="white">a</text>
+          <path d="M5 17.5 Q 12 21 19 17.5" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <path d="M18 17.2 l1.2 .3 -.3 1.2" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        </svg>
+      </div>
+      <div class="link-text">
+        <div class="link-label">Amazon Storefront</div>
+        <div class="link-sub">My favourites</div>
+      </div>
+      <span class="link-arrow">→</span>
+    </a>
+
+    <!-- Anfragen (öffnet Modal) -->
+    <button class="link-btn link-brand" onclick="openModal()">
+      <div class="link-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <div class="link-text">
+        <div class="link-label">Anfragen</div>
+      </div>
+      <span class="link-arrow">→</span>
+    </button>
+
+  </div>
+
+  <!-- Footer -->
+  <a href="https://viuno.de" target="_blank" rel="noopener" class="branding reveal reveal-5">
+    <div class="branding-logo">v</div>
+    <span class="branding-text">Managed with ❤️ by viuno</span>
+  </a>
+  <a href="https://viuno.de/impressum" target="_blank" rel="noopener" class="impressum reveal reveal-5">Impressum</a>
+
+</div>
+
+<!-- ============ ANFRAGE-MODAL ============ -->
+<div class="modal-bg" id="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Schließen">&times;</button>
+    <h2>Anfrage an Antonietta</h2>
+    <p class="modal-sub">Antonietta meldet sich bei dir.</p>
+
+    <form id="collab-form" onsubmit="submitCollab(event)">
+      <label for="collab-type">Art der Anfrage</label>
+      <select id="collab-type" required onchange="updateFields()">
+        <option value="" disabled selected>Bitte wählen</option>
+        <option value="brand">Brand Deal</option>
+        <option value="collab">Collab</option>
+        <option value="event">Event / Einladung</option>
+        <option value="sonstiges">Sonstiges</option>
+      </select>
+
+      <label for="collab-name">Name / Firma</label>
+      <input id="collab-name" type="text" required placeholder="Dein Name oder Firmenname" />
+
+      <label for="collab-email">E-Mail</label>
+      <input id="collab-email" type="email" required placeholder="deine@email.de" />
+
+      <div id="row-website" style="display:none;">
+        <label for="collab-website">Website (optional)</label>
+        <input id="collab-website" type="text" placeholder="www.ihrewebsite.de" />
+      </div>
+
+      <div id="row-budget" style="display:none;">
+        <label for="collab-budget">Budget-Rahmen (optional)</label>
+        <select id="collab-budget">
+          <option value="">Keine Angabe</option>
+          <option value="250">unter 250 €</option>
+          <option value="500">250 – 500 €</option>
+          <option value="1000">500 – 1.000 €</option>
+          <option value="1001">1.000 €+</option>
+        </select>
+      </div>
+
+      <label for="collab-msg">Nachricht</label>
+      <textarea id="collab-msg" required rows="3" placeholder="Kurze Beschreibung deiner Anfrage..."></textarea>
+
+      <button type="submit" id="collab-submit" class="modal-submit">Anfrage senden</button>
+    </form>
+
+    <div id="collab-success" class="modal-success">
+      <div class="check">✓</div>
+      <div class="title">Anfrage gesendet!</div>
+      <div class="sub">Antonietta meldet sich bald bei dir.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ====== KONFIGURATION ======
+  // Creator-ID von Antonietta (fest, wird für collab_requests gebraucht)
+  var CREATOR_ID = '5620b0b6-3050-46d2-8853-5ef0f9a123c2';
+  var SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co';
+  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo';
+
+  // Amazon-Storefront URL: hier eintragen, Button erscheint automatisch
+  var AMAZON_URL = ''; // z.B. 'https://amazon.de/shop/antonietta'
+
+  // ====== AMAZON-BUTTON: auto show/hide ======
+  (function() {
+    if (AMAZON_URL && AMAZON_URL.trim() !== '') {
+      var btn = document.getElementById('amz-btn');
+      btn.href = AMAZON_URL;
+      btn.style.display = 'flex';
+    }
+  })();
+
+  // ====== MODAL ======
+  function openModal() {
+    document.getElementById('modal-bg').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    document.getElementById('modal-bg').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  function updateFields() {
+    var type = document.getElementById('collab-type').value;
+    var showWebsite = ['brand', 'collab'].indexOf(type) !== -1;
+    var showBudget = type === 'brand';
+    document.getElementById('row-website').style.display = showWebsite ? 'block' : 'none';
+    document.getElementById('row-budget').style.display = showBudget ? 'block' : 'none';
+  }
+
+  async function submitCollab(e) {
+    e.preventDefault();
+    var btn = document.getElementById('collab-submit');
+    btn.disabled = true;
+    btn.textContent = 'Wird gesendet...';
+
+    var type = document.getElementById('collab-type').value;
+    var name = document.getElementById('collab-name').value;
+    var email = document.getElementById('collab-email').value;
+    var rawUrl = document.getElementById('collab-website').value.trim();
+    var website = rawUrl ? (/^https?:\/\//.test(rawUrl) ? rawUrl : 'https://' + rawUrl) : null;
+    var budget = document.getElementById('collab-budget').value;
+    var msg = document.getElementById('collab-msg').value;
+
+    try {
+      var res = await fetch(SUPABASE_URL + '/rest/v1/collab_requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY,
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          creator_id: CREATOR_ID,
+          request_type: type,
+          sender_name: name,
+          sender_email: email,
+          sender_website: website,
+          budget: budget ? parseFloat(budget) : null,
+          message: msg
+        })
+      });
+
+      if (res.ok || res.status === 201) {
+        document.getElementById('collab-form').style.display = 'none';
+        document.getElementById('collab-success').style.display = 'block';
+      } else {
+        btn.disabled = false;
+        btn.textContent = 'Anfrage senden';
+        alert('Fehler beim Senden. Bitte versuche es erneut.');
+      }
+    } catch (err) {
+      btn.disabled = false;
+      btn.textContent = 'Anfrage senden';
+      alert('Fehler beim Senden. Bitte versuche es erneut.');
+    }
+  }
+
+  // ====== VIEW TRACKING ======
+  (function() {
+    try {
+      var referrer = document.referrer || 'direct';
+      var hour = new Date().getHours();
+      fetch(SUPABASE_URL + '/functions/v1/track-bio-view', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: CREATOR_ID,
+          referrer_source: referrer,
+          hour_of_day: hour
+        })
+      });
+    } catch (e) {}
+  })();
+</script>
+
+</body>
+</html>
