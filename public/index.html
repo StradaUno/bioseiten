@@ -1,44 +1,322 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" style="color-scheme: dark;">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="color-scheme" content="dark">
 <title>viuno — Wachse smarter. Nicht härter.</title>
-<meta name="description" content="Jeden Morgen genau wissen, was du posten musst, um zu wachsen — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.">
+<meta name="description" content="Jeden Morgen genau wissen, was du posten musst — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0C0C0F;--surface:#141417;--border:#1E1E24;--text:#F0F0EE;--muted:#6B6B78;--grad:linear-gradient(135deg,#7C5CFC,#C23D8E);}*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden;}nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;background:rgba(12,12,15,0.8);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.05);}.nav-logo{display:flex;align-items:center;gap:8px;text-decoration:none;}.nav-logo-mark{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;color:#fff;letter-spacing:-0.02em;}.nav-logo-text{font-size:1.1rem;font-weight:700;color:var(--text);letter-spacing:-0.03em;}.nav-cta{background:var(--grad);color:#fff;border:none;border-radius:10px;padding:9px 20px;font-family:'Outfit',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;text-decoration:none;transition:opacity 0.2s;}.nav-cta:hover{opacity:0.85;}.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden;}.hero-glow{position:absolute;top:-20%;left:50%;transform:translateX(-50%);width:700px;height:700px;background:radial-gradient(ellipse,rgba(124,92,252,0.18) 0%,rgba(194,61,142,0.1) 40%,transparent 70%);pointer-events:none;}.hero-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(124,92,252,0.12);border:1px solid rgba(124,92,252,0.25);border-radius:30px;padding:6px 16px;font-size:0.75rem;font-weight:500;color:#A78BFA;margin-bottom:28px;opacity:0;animation:fadeUp 0.6s ease 0.1s forwards;}.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:#A78BFA;animation:pulse 2s infinite;}@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}.hero h1{font-size:clamp(2.4rem,7vw,4.5rem);font-weight:800;line-height:1.1;letter-spacing:-0.04em;color:var(--text);max-width:700px;margin-bottom:12px;opacity:0;animation:fadeUp 0.6s ease 0.2s forwards;}.hero h1 .grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}.hero-sub{font-size:clamp(1rem,2.5vw,1.15rem);font-weight:300;color:var(--muted);max-width:480px;line-height:1.65;margin-bottom:40px;opacity:0;animation:fadeUp 0.6s ease 0.35s forwards;}.hero-actions{display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;animation:fadeUp 0.6s ease 0.5s forwards;}.btn-primary{display:inline-block;background:var(--grad);color:#fff;text-decoration:none;border-radius:14px;padding:16px 36px;font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;border:none;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 8px 32px rgba(124,92,252,0.3);}.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(124,92,252,0.4);}.hero-note{font-size:0.75rem;color:var(--muted);}.mockup-strip{padding:0 24px 80px;display:flex;justify-content:center;opacity:0;animation:fadeUp 0.8s ease 0.7s forwards;}.mockup-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:20px;max-width:340px;width:100%;box-shadow:0 32px 80px rgba(0,0,0,0.5);}.mockup-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}.mockup-avatar{width:36px;height:36px;border-radius:50%;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:#fff;flex-shrink:0;}.mockup-name{font-size:0.88rem;font-weight:600;color:var(--text);}.mockup-handle{font-size:0.72rem;color:var(--muted);}.mockup-digest{background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.15);border-radius:12px;padding:12px 14px;margin-bottom:12px;}.mockup-digest-label{font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#A78BFA;margin-bottom:6px;}.mockup-digest-text{font-size:0.78rem;color:rgba(240,240,238,0.7);line-height:1.5;}.mockup-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}.mockup-stat{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px 8px;text-align:center;}.mockup-stat-val{font-size:1rem;font-weight:700;color:var(--text);line-height:1;}.mockup-stat-label{font-size:0.6rem;color:var(--muted);margin-top:3px;text-transform:uppercase;letter-spacing:0.05em;}.features{padding:80px 24px;}.features-inner{max-width:900px;margin:0 auto;}.features-header{margin-bottom:48px;}.features-header h2{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-0.04em;line-height:1.15;color:var(--text);margin-bottom:12px;}.features-header p{font-size:1rem;color:var(--muted);font-weight:300;max-width:440px;line-height:1.6;}.feature-grid{display:grid;grid-template-columns:1fr;gap:16px;}@media(min-width:640px){.feature-grid{grid-template-columns:1fr 1fr;}.feature-card:first-child{grid-column:span 2;}}.feature-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 26px;transition:border-color 0.2s;}.feature-card:hover{border-color:rgba(124,92,252,0.3);}.feature-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;font-size:1.3rem;}.feature-icon.purple{background:rgba(124,92,252,0.12);}.feature-icon.pink{background:rgba(194,61,142,0.12);}.feature-icon.amber{background:rgba(245,158,11,0.12);}.feature-card h3{font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;color:var(--text);margin-bottom:8px;}.feature-card p{font-size:0.88rem;color:var(--muted);line-height:1.65;font-weight:300;}.feature-tag{display:inline-block;margin-top:14px;font-size:0.68rem;font-weight:600;padding:3px 10px;border-radius:20px;background:rgba(124,92,252,0.1);color:#A78BFA;border:1px solid rgba(124,92,252,0.2);}.how{padding:80px 24px;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}.how-inner{max-width:900px;margin:0 auto;}.how h2{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;letter-spacing:-0.04em;color:var(--text);margin-bottom:48px;}.steps{display:grid;grid-template-columns:1fr;gap:0;}@media(min-width:640px){.steps{grid-template-columns:1fr 1fr 1fr;}}.step{padding:0 0 32px;position:relative;}@media(min-width:640px){.step{padding:0 32px 0 0;border-right:1px solid var(--border);}.step:last-child{border-right:none;padding-right:0;padding-left:32px;}.step:nth-child(2){padding:0 32px;}}.step-num{width:36px;height:36px;border-radius:10px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:800;color:#fff;margin-bottom:16px;}.step h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px;letter-spacing:-0.02em;}.step p{font-size:0.85rem;color:var(--muted);line-height:1.6;font-weight:300;}.pricing{padding:80px 24px;}.pricing-inner{max-width:900px;margin:0 auto;}.pricing h2{font-size:clamp(1.8rem,4vw,2.4rem);font-weight:800;letter-spacing:-0.04em;color:var(--text);margin-bottom:8px;}.pricing-sub{font-size:1rem;color:var(--muted);font-weight:300;margin-bottom:48px;}.pricing-grid{display:grid;grid-template-columns:1fr;gap:16px;}@media(min-width:640px){.pricing-grid{grid-template-columns:1fr 1fr;}}.pricing-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 26px;}.pricing-card.featured{background:linear-gradient(160deg,rgba(124,92,252,0.12),rgba(194,61,142,0.08));border-color:rgba(124,92,252,0.3);}.pricing-badge{display:inline-block;font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;padding:4px 10px;border-radius:20px;background:var(--grad);color:#fff;margin-bottom:20px;}.pricing-card h3{font-size:1rem;font-weight:600;color:var(--muted);margin-bottom:8px;}.pricing-price{font-size:2.4rem;font-weight:800;letter-spacing:-0.04em;color:var(--text);line-height:1;margin-bottom:4px;}.pricing-price span{font-size:1rem;font-weight:400;color:var(--muted);}.pricing-note{font-size:0.78rem;color:var(--muted);margin-bottom:24px;font-weight:300;}.pricing-features{list-style:none;margin-bottom:28px;}.pricing-features li{font-size:0.85rem;color:rgba(240,240,238,0.7);padding:7px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;font-weight:300;}.pricing-features li:last-child{border-bottom:none;}.check{width:18px;height:18px;border-radius:50%;background:rgba(124,92,252,0.15);display:flex;align-items:center;justify-content:center;flex-shrink:0;}.check svg{width:10px;height:10px;}.btn-pricing{display:block;width:100%;text-align:center;padding:14px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;text-decoration:none;border:none;transition:all 0.2s;}.btn-pricing.primary{background:var(--grad);color:#fff;box-shadow:0 8px 24px rgba(124,92,252,0.25);}.btn-pricing.primary:hover{opacity:0.9;transform:translateY(-1px);}.btn-pricing.secondary{background:rgba(255,255,255,0.05);color:var(--text);border:1px solid var(--border);}.btn-pricing.secondary:hover{background:rgba(255,255,255,0.08);}.bottom-cta{padding:80px 24px 100px;text-align:center;}.bottom-cta h2{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;letter-spacing:-0.04em;line-height:1.15;color:var(--text);margin-bottom:16px;}.bottom-cta p{font-size:1rem;color:var(--muted);font-weight:300;margin-bottom:36px;}footer{border-top:1px solid var(--border);padding:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}.footer-logo{display:flex;align-items:center;gap:7px;text-decoration:none;}.footer-logo-mark{width:22px;height:22px;border-radius:6px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#fff;}.footer-logo-text{font-size:0.88rem;font-weight:600;color:var(--muted);}.footer-links{display:flex;gap:20px;}.footer-links a{font-size:0.75rem;color:var(--muted);text-decoration:none;transition:color 0.2s;}.footer-links a:hover{color:var(--text);}@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}.reveal.visible{opacity:1;transform:translateY(0);}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { color-scheme: dark; scroll-behavior: smooth; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #0C0C0F !important;
+  color: #F0F0EE !important;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  forced-color-adjust: none;
+}
+:root {
+  --bg: #0C0C0F;
+  --surface: #141417;
+  --border: #1E1E24;
+  --text: #F0F0EE;
+  --muted: #6B6B78;
+  --subtle: #44444F;
+  --accent: #7C5CFC;
+  --grad: linear-gradient(135deg, #7C5CFC, #C23D8E);
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 16px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(12,12,15,0.85);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.nav-logo-mark {
+  width: 28px; height: 28px; border-radius: 8px; background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 800; color: #fff;
+}
+.nav-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
+.nav-cta {
+  background: var(--grad); color: #fff; border: none; border-radius: 10px;
+  padding: 9px 20px; font-family: 'Outfit', sans-serif; font-size: 0.84rem; font-weight: 600;
+  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+}
+.nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* HERO */
+.hero {
+  min-height: 100dvh;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; padding: 120px 24px 60px; position: relative; overflow: hidden;
+}
+.hero-glow {
+  position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 700px;
+  background: radial-gradient(ellipse, rgba(124,92,252,0.18) 0%, rgba(194,61,142,0.1) 40%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 680px; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: rgba(124,92,252,0.12); border: 1px solid rgba(124,92,252,0.25);
+  border-radius: 30px; padding: 6px 16px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #A78BFA; margin-bottom: 26px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.1s forwards;
+}
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #A78BFA; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.hero h1 {
+  font-size: clamp(2.4rem, 7vw, 4.5rem);
+  font-weight: 800; line-height: 1.1; letter-spacing: -0.04em; color: var(--text);
+  margin-bottom: 16px; opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards;
+}
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.hero-sub {
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem); font-weight: 300; color: var(--muted);
+  max-width: 420px; line-height: 1.65; margin: 0 auto 40px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.35s forwards;
+}
+.hero-actions {
+  display: flex; flex-direction: column; align-items: center; gap: 11px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.5s forwards;
+}
+.btn-primary {
+  display: inline-block; background: var(--grad); color: #fff;
+  text-decoration: none; border-radius: 14px; padding: 16px 36px;
+  font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700;
+  cursor: pointer; border: none;
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 32px rgba(124,92,252,0.3);
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,92,252,0.4); }
+.hero-note { font-size: 0.73rem; color: var(--muted); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(18px);} to{opacity:1;transform:translateY(0);} }
+
+/* MOCKUP */
+.mockup-strip {
+  padding: 0 24px 80px; display: flex; justify-content: center;
+  position: relative; z-index: 1;
+  opacity: 0; animation: fadeUp 0.8s ease 0.7s forwards;
+}
+.mockup-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
+  padding: 20px; max-width: 340px; width: 100%;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+}
+.mockup-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 14px; padding-bottom: 13px; border-bottom: 1px solid var(--border);
+}
+.mockup-avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.mockup-name { font-size: 0.86rem; font-weight: 600; color: var(--text); }
+.mockup-handle { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
+.mockup-digest {
+  background: rgba(124,92,252,0.07); border: 1px solid rgba(124,92,252,0.15);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+}
+.mockup-digest-label {
+  font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: #A78BFA; margin-bottom: 6px;
+}
+.mockup-digest-text { font-size: 0.76rem; color: rgba(240,240,238,0.7); line-height: 1.55; font-weight: 300; }
+.mockup-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
+.mockup-stat {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 8px; text-align: center;
+}
+.mockup-stat-val { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1; }
+.mockup-stat-label { font-size: 0.58rem; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* DIVIDER */
+.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0 24px; }
+
+/* FEATURES */
+.features { padding: 80px 24px; }
+.features-inner { max-width: 900px; margin: 0 auto; }
+.feature-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+@media(min-width:640px) {
+  .feature-grid { grid-template-columns: 1fr 1fr; }
+  .feature-card:first-child { grid-column: span 2; }
+}
+.feature-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+  padding: 28px 26px; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+.feature-card:hover {
+  border-color: rgba(124,92,252,0.35);
+  box-shadow: 0 8px 32px rgba(124,92,252,0.1); transform: translateY(-2px);
+}
+.feature-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 16px; font-size: 1.3rem;
+}
+.feature-icon.purple { background: rgba(124,92,252,0.12); }
+.feature-icon.pink   { background: rgba(194,61,142,0.12); }
+.feature-icon.amber  { background: rgba(245,158,11,0.12); }
+.feature-card h3 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 8px; }
+.feature-card p { font-size: 0.87rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
+.feature-tag {
+  display: inline-block; margin-top: 14px; font-size: 0.66rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 20px;
+  background: rgba(124,92,252,0.1); color: #A78BFA; border: 1px solid rgba(124,92,252,0.2);
+}
+
+/* BOTTOM CTA */
+.bottom-cta { padding: 80px 24px 100px; text-align: center; }
+.bottom-cta-inner { max-width: 520px; margin: 0 auto; }
+.bottom-cta h2 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1.15; color: var(--text); margin-bottom: 14px;
+}
+.bottom-cta p { font-size: 0.95rem; color: var(--muted); font-weight: 300; margin-bottom: 32px; line-height: 1.6; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border); padding: 22px 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+}
+.footer-logo { display: flex; align-items: center; gap: 7px; text-decoration: none; }
+.footer-logo-mark {
+  width: 22px; height: 22px; border-radius: 6px; background: var(--grad);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.6rem; font-weight: 800; color: #fff;
+}
+.footer-logo-text { font-size: 0.86rem; font-weight: 600; color: var(--muted); }
+.footer-links { display: flex; gap: 18px; }
+.footer-links a { font-size: 0.73rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--text); }
+
+/* BOTTOM SHEET */
+.sheet-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
+}
+.sheet-backdrop.open { opacity: 1; pointer-events: all; }
+.bottom-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #18181D; border-radius: 24px 24px 0 0; z-index: 101;
+  border-top: 1px solid var(--border);
+  padding: 0 26px 44px;
+  padding-bottom: max(44px, env(safe-area-inset-bottom));
+  transform: translateY(100%);
+  transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
+  max-width: 520px; margin: 0 auto;
+  box-shadow: 0 -8px 60px rgba(0,0,0,0.4);
+}
+.bottom-sheet.open { transform: translateY(0); }
+.sheet-handle { width: 38px; height: 4px; background: var(--border); border-radius: 2px; margin: 13px auto 26px; }
+.sheet-title { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); margin-bottom: 7px; line-height: 1.2; }
+.sheet-sub { font-size: 0.88rem; color: var(--muted); font-weight: 300; line-height: 1.6; margin-bottom: 26px; }
+.sheet-field { margin-bottom: 12px; }
+.sheet-field label {
+  display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+}
+.sheet-field input {
+  width: 100%; padding: 13px 15px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  background: var(--bg); color: var(--text);
+  font-family: 'Outfit', sans-serif; font-size: 0.95rem; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.sheet-field input::placeholder { color: var(--subtle); }
+.sheet-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(124,92,252,0.15); }
+.sheet-field input.error { border-color: #EF4444; }
+.sheet-submit {
+  width: 100%; background: var(--grad); color: #fff; border: none;
+  border-radius: 12px; padding: 15px;
+  font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700;
+  cursor: pointer; margin-top: 6px;
+  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 6px 24px rgba(124,92,252,0.25);
+}
+.sheet-submit:hover { opacity: 0.88; box-shadow: 0 8px 32px rgba(124,92,252,0.4); }
+.sheet-submit:active { transform: scale(0.98); }
+.sheet-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+.sheet-note { font-size: 0.7rem; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; }
+.sheet-error { font-size: 0.78rem; color: #F87171; text-align: center; margin-top: 10px; }
+
+.sheet-success { display: none; text-align: center; padding: 20px 0 10px; }
+.success-icon {
+  width: 60px; height: 60px; background: rgba(34,197,94,0.1); border-radius: 50%;
+  display: grid; place-items: center; font-size: 26px; margin: 0 auto 18px;
+}
+.success-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); margin-bottom: 8px; }
+.success-sub { font-size: 0.86rem; color: var(--muted); font-weight: 300; line-height: 1.65; }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* MOBILE */
+@media(max-width:600px) {
+  nav { padding: 14px 18px; }
+  .hero { padding: 96px 20px 60px; }
+  .mockup-strip { padding: 0 20px 60px; }
+  .features { padding: 60px 20px; }
+  .bottom-cta { padding: 60px 20px 80px; }
+  footer { padding: 18px 20px; }
+  .bottom-sheet { padding: 0 20px 36px; padding-bottom: max(36px, env(safe-area-inset-bottom)); }
+}
 </style>
 </head>
 <body>
+
 <nav>
   <a href="https://viuno.de" class="nav-logo">
     <div class="nav-logo-mark">v</div>
     <span class="nav-logo-text">viuno</span>
   </a>
-  <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="nav-cta">Kostenlos starten</a>
+  <button class="nav-cta" onclick="openSheet()">Vormerken lassen</button>
 </nav>
+
 <section class="hero">
   <div class="hero-glow"></div>
-  <div class="hero-badge"><div class="hero-badge-dot"></div>Für Creator die wachsen wollen</div>
-  <h1>Wachse smarter.<br><span class="grad-text">Nicht härter.</span></h1>
-  <p class="hero-sub">Jeden Morgen genau wissen, was du posten musst, um zu wachsen — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.</p>
-  <div class="hero-actions">
-    <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-primary">Kostenlos starten</a>
-    <span class="hero-note">Keine Kreditkarte nötig.</span>
+  <div class="hero-inner">
+    <div class="hero-badge"><div class="badge-dot"></div>Bald verfügbar · DACH</div>
+    <h1>Wachse smarter.<br><span class="grad-text">Nicht härter.</span></h1>
+    <p class="hero-sub">Jeden Morgen genau wissen, was du posten musst — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openSheet()">Jetzt vormerken lassen</button>
+      <span class="hero-note">Kostenlos · Kein Spam · Du erfährst es als Erster</span>
+    </div>
   </div>
 </section>
+
 <div class="mockup-strip">
   <div class="mockup-card">
     <div class="mockup-header">
       <div class="mockup-avatar">L</div>
-      <div><div class="mockup-name">Lisa Hoffmann</div><div class="mockup-handle">@lisahoffmann · 12.4K Follower</div></div>
+      <div>
+        <div class="mockup-name">Lisa Hoffmann</div>
+        <div class="mockup-handle">@lisahoffmann · 12.4K Follower</div>
+      </div>
     </div>
     <div class="mockup-digest">
       <div class="mockup-digest-label">☀ Dein Daily Digest — heute</div>
-      <div class="mockup-digest-text">In deiner Nische performen kurze Tutorials momentan 3× besser als Story-Formate. Dein letzter Reel hatte 2,1% Engagement — dein Schnitt liegt bei 1,4%. Weitermachen.</div>
+      <div class="mockup-digest-text">In deiner Nische performen kurze Tutorials momentan 3× besser als Story-Formate. Dein letzter Reel hatte 2,1 % Engagement — dein Schnitt liegt bei 1,4 %. Weitermachen.</div>
     </div>
     <div class="mockup-stats">
       <div class="mockup-stat"><div class="mockup-stat-val">2.1%</div><div class="mockup-stat-label">Ø Engagement</div></div>
@@ -47,12 +325,11 @@
     </div>
   </div>
 </div>
-<div class="features">
+
+<div class="divider"></div>
+
+<section class="features">
   <div class="features-inner">
-    <div class="features-header reveal">
-      <h2>Alles was du brauchst,<br>um als Creator zu wachsen.</h2>
-      <p>Keine Genéric-Tipps. Echte Daten. Dein Wachstum.</p>
-    </div>
     <div class="feature-grid">
       <div class="feature-card reveal">
         <div class="feature-icon purple">⚡</div>
@@ -63,64 +340,25 @@
       <div class="feature-card reveal">
         <div class="feature-icon pink">📈</div>
         <h3>Viral Trends</h3>
-        <p>Sieh welche Themen gerade in deiner Nische explodieren — bevor sie mainstream werden.</p>
+        <p>Sieh, welche Themen gerade in deiner Nische explodieren — bevor sie mainstream werden.</p>
       </div>
       <div class="feature-card reveal">
         <div class="feature-icon amber">🔗</div>
-        <h3>BioLink & Media Kit</h3>
+        <h3>BioLink &amp; Media Kit</h3>
         <p>Professionelle BioLink-Seite und Media Kit für Brands — in Sekunden erstellt.</p>
       </div>
     </div>
   </div>
-</div>
-<div class="how">
-  <div class="how-inner">
-    <h2 class="reveal">So einfach geht's.</h2>
-    <div class="steps">
-      <div class="step reveal"><div class="step-num">1</div><h3>Account erstellen</h3><p>Kostenlos registrieren und Instagram oder TikTok verbinden.</p></div>
-      <div class="step reveal"><div class="step-num">2</div><h3>Daten analysieren</h3><p>viuno analysiert deine letzten Posts und erkennt was wirklich funktioniert.</p></div>
-      <div class="step reveal"><div class="step-num">3</div><h3>Wachsen</h3><p>Jeden Morgen deinen Daily Digest lesen und umsetzen. So einfach.</p></div>
-    </div>
+</section>
+
+<section class="bottom-cta">
+  <div class="bottom-cta-inner">
+    <h2 class="reveal">Sei dabei,<br>wenn wir starten.</h2>
+    <p class="reveal">Früh-Zugang sichern — kostenlos, kein Risiko.</p>
+    <button class="btn-primary reveal" onclick="openSheet()">Vormerken lassen</button>
   </div>
-</div>
-<div class="pricing">
-  <div class="pricing-inner">
-    <h2 class="reveal">Einfache Preise.</h2>
-    <p class="pricing-sub reveal">14 Tage kostenlos testen — keine Kreditkarte nötig.</p>
-    <div class="pricing-grid">
-      <div class="pricing-card reveal">
-        <h3>Monatlich</h3>
-        <div class="pricing-price">€14,99 <span>/ Monat</span></div>
-        <div class="pricing-note">Jederzeit kündbar.</div>
-        <ul class="pricing-features">
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Daily Digest</li>
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Viral Trends</li>
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Post-Analyse</li>
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>BioLink &amp; Media Kit</li>
-        </ul>
-        <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-pricing secondary">Kostenlos starten</a>
-      </div>
-      <div class="pricing-card featured reveal">
-        <div class="pricing-badge">Bestes Angebot</div>
-        <h3>Jährlich</h3>
-        <div class="pricing-price">€99 <span>/ Jahr</span></div>
-        <div class="pricing-note">Entspricht €8,25/Monat — spare 45%.</div>
-        <ul class="pricing-features">
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Daily Digest</li>
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Viral Trends</li>
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>Post-Analyse</li>
-          <li><div class="check"><svg viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5 3.5-4" stroke="#A78BFA" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>BioLink &amp; Media Kit</li>
-        </ul>
-        <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-pricing primary">Kostenlos starten</a>
-      </div>
-    </div>
-  </div>
-</div>
-<div class="bottom-cta">
-  <h2 class="reveal">Bereit zu wachsen?</h2>
-  <p class="reveal">Keine Kreditkarte. Kein Risiko. Einfach loslegen.</p>
-  <a href="https://creator-o4jpmt.flutterflow.app" target="_blank" class="btn-primary reveal">14 Tage kostenlos testen</a>
-</div>
+</section>
+
 <footer>
   <a href="https://viuno.de" class="footer-logo">
     <div class="footer-logo-mark">v</div>
@@ -131,16 +369,93 @@
     <a href="https://viuno.de/datenschutz">Datenschutz</a>
   </div>
 </footer>
+
+<div class="sheet-backdrop" id="backdrop" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div id="sheet-form-view">
+    <div class="sheet-title">Früh-Zugang sichern.</div>
+    <p class="sheet-sub">Einmal eintragen — als Erster informiert werden, sobald viuno live geht.</p>
+    <div class="sheet-field">
+      <label>Dein Name</label>
+      <input type="text" id="input-name" placeholder="Wie heißt du?" autocomplete="given-name" />
+    </div>
+    <div class="sheet-field">
+      <label>E-Mail-Adresse</label>
+      <input type="email" id="input-email" placeholder="du@beispiel.de" autocomplete="email" />
+    </div>
+    <button class="sheet-submit" id="submit-btn" onclick="handleSubmit()">Jetzt vormerken lassen →</button>
+    <div class="sheet-error hidden" id="sheet-error"></div>
+    <p class="sheet-note">Kein Spam. Keine Weitergabe. Nur eine E-Mail, wenn es losgeht.</p>
+  </div>
+  <div class="sheet-success" id="sheet-success">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">Du bist dabei!</div>
+    <p class="success-sub">Wir melden uns, sobald viuno startet.<br>Bis dahin — mach weiter und wachse.</p>
+  </div>
+</div>
+
 <script>
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      setTimeout(() => { entry.target.classList.add('visible'); }, 60);
-      observer.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+const EDGE_URL = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/waitlist-signup'
+
+function openSheet() {
+  document.getElementById('backdrop').classList.add('open')
+  document.getElementById('sheet').classList.add('open')
+  document.body.style.overflow = 'hidden'
+  setTimeout(() => document.getElementById('input-name').focus(), 380)
+}
+function closeSheet() {
+  document.getElementById('backdrop').classList.remove('open')
+  document.getElementById('sheet').classList.remove('open')
+  document.body.style.overflow = ''
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet() })
+
+async function handleSubmit() {
+  const name = document.getElementById('input-name').value.trim()
+  const emailEl = document.getElementById('input-email')
+  const email = emailEl.value.trim()
+  const btn = document.getElementById('submit-btn')
+  const errEl = document.getElementById('sheet-error')
+
+  emailEl.classList.remove('error')
+  errEl.classList.add('hidden')
+  errEl.textContent = ''
+
+  if (!email || !email.includes('@')) {
+    emailEl.classList.add('error')
+    emailEl.focus()
+    return
+  }
+
+  btn.disabled = true
+  btn.textContent = '…'
+
+  try {
+    const res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name || null, email })
+    })
+    const data = await res.json()
+    if (!res.ok || data.success === false) throw new Error(data.error || 'Fehler')
+
+    document.getElementById('sheet-form-view').style.display = 'none'
+    document.getElementById('sheet-success').style.display = 'block'
+  } catch (err) {
+    errEl.textContent = 'Etwas ist schiefgelaufen. Bitte versuch es nochmal.'
+    errEl.classList.remove('hidden')
+    btn.disabled = false
+    btn.textContent = 'Jetzt vormerken lassen →'
+  }
+}
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), 60); obs.unobserve(e.target) }
+  })
+}, { threshold: 0.1 })
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
 </script>
 </body>
 </html>
