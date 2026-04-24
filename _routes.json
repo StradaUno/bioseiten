@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [
+    "/",
+    "/index.html",
+    "/bio-template.html",
+    "/antonietta/*",
+    "/stradauno/*",
+    "/impressum/*",
+    "/datenschutz/*",
+    "/agb/*",
+    "/widerruf/*",
+    "/kit/*",
+    "/favicon.ico",
+    "/robots.txt"
+  ]
+}
