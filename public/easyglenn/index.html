@@ -46,8 +46,9 @@
   body {
     min-height: 100dvh;
     display: flex;
-    justify-content: center;
-    padding: 40px 20px 60px;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 0;
   }
 
   main {
@@ -56,6 +57,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    flex: 1;
   }
 
   /* ---------- HEADER ---------- */
@@ -228,7 +230,8 @@
 
   /* ---------- FOOTER ---------- */
   footer {
-    margin-top: 44px;
+    width: 100%;
+    padding: 0 20px 32px;
     font-size: 11px;
     color: var(--text-faint);
     letter-spacing: .02em;
@@ -649,7 +652,7 @@
   <!-- ================ BUTTONS ================ -->
   <nav class="links" aria-label="Easyglenns Links">
 
-    <button class="btn btn-primary" type="button" id="open-coaching">
+    <button class="btn btn-primary js-open-coaching" type="button">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <path d="M12 2L2 7l10 5 10-5-10-5z"/>
         <path d="M2 17l10 5 10-5"/>
@@ -717,7 +720,7 @@
     <!-- Abschnitt 3: Heute -->
     <article class="story-item">
       <div class="story-image">
-        <img src="https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/Glenn/Glenn3.jpeg" alt="Glenn heute" />
+        <img src="https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/Glenn/Glenn3.1.jpeg" alt="Glenn heute" />
       </div>
       <h2>Heute – Was Fitness für mich bedeutet</h2>
       <p>Heute weiß ich, dass Fitness viel mehr ist als nur Training. Durch bewusste Ernährung, Bewegung und Sport habe ich nicht nur meinen Körper verändert, sondern auch mein Selbstbewusstsein aufgebaut.</p>
@@ -726,13 +729,28 @@
 
   </section>
 
-  <!-- ================ FOOTER ================ -->
-  <footer>
-    powered by <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
-    <div style="margin-top: 4px;"><a href="https://viuno.de/impressum" target="_blank" rel="noopener">Impressum</a></div>
-  </footer>
+  <!-- ================ ZWEITER COACHING-CTA ================ -->
+  <div style="width: 100%; margin-top: 36px;">
+    <button class="btn btn-primary js-open-coaching" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+      <span>Coaching</span>
+    </button>
+  </div>
+
+  <!-- ================ ABSCHLUSS-DIVIDER ================ -->
+  <div class="divider" aria-hidden="true">⸻</div>
 
 </main>
+
+<!-- ================ FOOTER (immer am Seitenende) ================ -->
+<footer>
+  powered by <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
+  <div style="margin-top: 4px;"><a href="https://viuno.de/impressum" target="_blank" rel="noopener">Impressum</a></div>
+</footer>
 
 <!-- ================ COACHING FORM OVERLAY ================ -->
 <div class="cf-overlay" id="cf-overlay" role="dialog" aria-modal="true" aria-labelledby="cf-current-title">
@@ -1170,8 +1188,10 @@
     }
   });
 
-  // Open button
-  document.getElementById('open-coaching').addEventListener('click', open);
+  // Open button(s) – alle Elemente mit .js-open-coaching
+  document.querySelectorAll('.js-open-coaching').forEach(btn => {
+    btn.addEventListener('click', open);
+  });
 
   // Close
   document.getElementById('cf-close').addEventListener('click', close);
