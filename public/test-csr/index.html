@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>{{DISPLAY_NAME}} — viuno</title>
 <meta name="description" content="{{BIO}}" />
-<meta name="theme-color" content="#EAEAEE" />
+<meta name="theme-color" content="#14171f" />
 
 <!-- Open Graph / Social Preview — Platzhalter für späteren Cloudflare Worker (Stufe B) -->
 <meta property="og:type" content="website" />
@@ -17,17 +17,17 @@
 
 <style>
   :root {
-    --bg: #EAEAEE;
-    --surface: #FAFAF9;
-    --border: #D4D4D8;
-    --border-strong: #A1A1AA;
-    --text: #1A1A2E;
-    --text-muted: #71717A;
-    --text-subtle: #9292A0;
-    --text-faint: #C4C4CC;
-    --primary: #1A1A2E;
-    --primary-hover: #000000;
-    --primary-text: #FFFFFF;
+    --bg: #14171f;
+    --surface: #1e2230;
+    --border: #2a2f40;
+    --border-strong: #3a4058;
+    --text: #f0f2f8;
+    --text-muted: #a8b0c4;
+    --text-subtle: #7a8096;
+    --text-faint: #4a5068;
+    --primary: #c4b5f5;
+    --primary-hover: #d4c8f8;
+    --primary-text: #14171f;
     --radius-btn: 12px;
     --radius-img: 14px;
   }
@@ -249,7 +249,7 @@
   .imp-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(26, 26, 46, 0.35);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 999;
     opacity: 0;
     pointer-events: none;
@@ -273,7 +273,7 @@
     transition: transform .3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear .3s;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 -8px 24px rgba(26, 26, 46, 0.12);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
     visibility: hidden;
   }
   .imp-sheet.open {
@@ -399,7 +399,7 @@
       border: 1px solid var(--border);
       border-radius: 28px;
       padding: 56px 32px 24px;
-      box-shadow: 0 4px 16px rgba(26, 26, 46, 0.06);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
     }
     /* Avatar Ring Background passt sich an */
     .avatar {
@@ -626,7 +626,7 @@
   .cf-btn-next:disabled { opacity: .45; cursor: not-allowed; }
 
   .cf-error {
-    color: #DC2626;
+    color: #ff9a9a;
     font-size: 12px;
     margin-top: 8px;
     display: none;
@@ -1094,7 +1094,7 @@ async function loadBioPage() {
     const hour = new Date().getHours()
     fetch(SUPABASE_URL + '/functions/v1/track-bio-view', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ user_id: data.user_id, referrer_source: referrer, hour_of_day: hour })
     }).catch(() => {})
   } catch (_) {}
