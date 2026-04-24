@@ -1,53 +1,1228 @@
-# ═══════════════════════════════════════════════════════════════════
-# viuno BioPages — Cloudflare Pages Routing
-# ═══════════════════════════════════════════════════════════════════
-#
-# Funktionsweise: Jeder Request auf /{slug} oder /{slug}/ liefert
-# /index.html aus. Das JS liest dann den Slug aus window.location.pathname
-# und lädt die passenden Daten aus der biopage_public View.
-#
-# Status 200 (nicht 301/302) = Rewrite, nicht Redirect.
-# Die URL in der Browserleiste bleibt /antonietta, der User sieht index.html.
-#
-# WICHTIG zur Reihenfolge:
-# 1. Erst alle spezifischen Pfade (die bleiben wie sie sind)
-# 2. Dann die Catch-All Rewrites für Slugs
-#
-# ═══════════════════════════════════════════════════════════════════
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{{DISPLAY_NAME}} — viuno</title>
+<meta name="description" content="{{BIO}}" />
+<meta name="theme-color" content="#14171f" />
 
+<!-- Open Graph / Social Preview — Platzhalter für späteren Cloudflare Worker (Stufe B) -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{{DISPLAY_NAME}} — viuno" />
+<meta property="og:description" content="{{BIO}}" />
+<meta property="og:image" content="{{OG_IMAGE}}" />
 
-# ───── Spezifische Pfade die NICHT auf index.html gemappt werden ─────
-# Diese Routen leiten auf die viuno-Hauptseite weiter.
-# Falls du später z.B. /impressum als eigene Seite hier hostest, kannst
-# du die Zeilen hier rauswerfen oder anpassen.
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E" />
 
-/impressum       https://viuno.de/impressum     302
-/datenschutz     https://viuno.de/datenschutz   302
-/agb             https://viuno.de/agb           302
+<style>
+  :root {
+    --bg: #14171f;
+    --surface: #1e2230;
+    --border: #2a2f40;
+    --border-strong: #3a4058;
+    --text: #f0f2f8;
+    --text-muted: #a8b0c4;
+    --text-subtle: #7a8096;
+    --text-faint: #4a5068;
+    --primary: #c4b5f5;
+    --primary-hover: #d4c8f8;
+    --primary-text: #14171f;
+    --radius-btn: 12px;
+    --radius-img: 14px;
+  }
 
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-# ───── Kit / Media Kit Pfade (bereits vorhanden) ─────
-# Falls du die Media-Kit Seiten unter /kit/{slug} weiter statisch deployst,
-# greift diese Regel NICHT — Cloudflare findet die echten Dateien zuerst.
-# Diese Zeile ist nur ein Safety-Net für nicht existierende Kit-Slugs.
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-/kit/*           https://viuno.de               302
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 0;
+  }
 
+  main {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
 
-# ───── Haupt-Rewrite: alle Slugs → index.html ─────
-# /antonietta       → index.html (JS liest "antonietta" aus pathname)
-# /antonietta/      → index.html (JS behandelt beide Varianten)
-# /stradauno        → index.html
-# etc.
-#
-# :splat fängt einfach alles, index.html entscheidet was damit passiert.
+  .page-loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    z-index: 9999;
+    transition: opacity .25s ease;
+  }
+  .page-loader.hide { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-/:slug           /index.html                    200
-/:slug/          /index.html                    200
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
 
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 
-# ───── Root (viuno.de ohne Slug) ─────
-# Falls jemand viuno.de aufruft, leiten wir zur Haupt-Website weiter.
-# Falls du die Haupt-Landingpage eh hier hostest: diese Zeile raus.
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 15%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+    border-radius: 20px;
+    padding: 2px 8px;
+    letter-spacing: .02em;
+  }
 
-/                https://viuno.de               302
+  .tags {
+    display: flex;
+    gap: 6px;
+    margin: 8px 0 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tags:empty { display: none; }
+  .tag {
+    font-size: 11px;
+    color: var(--text-subtle);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .bio {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 28px;
+    max-width: 320px;
+    white-space: pre-line;
+  }
+  .bio:empty { display: none; }
+
+  .links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: var(--radius-btn);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform .12s ease, background .15s ease, border-color .15s ease;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn:active { transform: scale(.98); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--surface);
+    border-color: var(--border-strong);
+  }
+
+  .btn svg { flex-shrink: 0; }
+  .btn.hidden { display: none; }
+
+  .divider {
+    width: 100%;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 16px;
+    letter-spacing: 6px;
+    padding: 36px 0 32px;
+    user-select: none;
+  }
+
+  footer {
+    width: 100%;
+    padding: 0 20px 24px;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: .02em;
+    text-align: center;
+  }
+  footer a { color: var(--text-subtle); text-decoration: none; transition: color .15s ease; }
+  footer a:hover { color: var(--text-muted); }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--text); }
+  .lang-btn.active {
+    background: var(--primary);
+    color: var(--primary-text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 380px) {
+    body { padding: 28px 16px 40px; }
+    h1 { font-size: 17px; }
+    .btn { padding: 14px 18px; font-size: 14px; }
+  }
+
+  /* ================================================
+     ANFRAGE OVERLAY — 2 Slides
+     ================================================ */
+  .cf-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .cf-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cf-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .cf-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .cf-close:hover { background: var(--surface); border-color: var(--border-strong); }
+
+  .cf-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .cf-progress-label { font-size: 11px; color: var(--text-subtle); letter-spacing: .02em; }
+  .cf-progress-bar { height: 4px; background: var(--surface); border-radius: 999px; overflow: hidden; }
+  .cf-progress-fill { height: 100%; background: var(--primary); width: 50%; transition: width .35s ease; }
+
+  .cf-viewport { flex: 1; overflow: hidden; position: relative; }
+  .cf-track {
+    display: flex;
+    height: 100%;
+    transition: transform .35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+  }
+  .cf-slide {
+    flex: 0 0 100%;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 28px 20px 40px;
+  }
+  .cf-slide-inner { max-width: 480px; margin: 0 auto; width: 100%; }
+  .cf-slide h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+  .cf-slide .cf-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 22px 0;
+    line-height: 1.55;
+  }
+
+  .cf-field { margin-bottom: 14px; }
+  .cf-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .cf-field .req { color: var(--primary); margin-left: 2px; }
+  .cf-field input,
+  .cf-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .cf-field input:focus, .cf-field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg);
+  }
+  .cf-field textarea { resize: vertical; min-height: 120px; }
+  .cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--text-faint); }
+
+  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cf-chip {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .cf-chip:hover { border-color: var(--border-strong); color: var(--text); }
+  .cf-chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-text);
+  }
+
+  .cf-cards { display: flex; flex-direction: column; gap: 10px; }
+  .cf-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all .15s ease;
+    width: 100%;
+    color: var(--text);
+  }
+  .cf-card:hover { border-color: var(--border-strong); }
+  .cf-card.selected {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  }
+  .cf-card-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+  .cf-card.selected .cf-card-icon {
+    background: color-mix(in srgb, var(--primary) 20%, var(--bg));
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .cf-card-text { flex: 1; min-width: 0; }
+  .cf-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .cf-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+
+  .cf-conditional { display: none; }
+  .cf-conditional.show { display: block; }
+
+  .cf-actions {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .cf-btn {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid transparent;
+    transition: all .15s ease;
+  }
+  .cf-btn-back {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+    flex: 0 0 auto;
+    padding: 14px 22px;
+  }
+  .cf-btn-back:hover { background: var(--surface); border-color: var(--border-strong); }
+  .cf-btn-next {
+    background: var(--primary);
+    color: var(--primary-text);
+    border-color: var(--primary);
+  }
+  .cf-btn-next:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  .cf-btn-next:disabled { opacity: .45; cursor: not-allowed; }
+
+  .cf-error {
+    color: #ff9a9a;
+    font-size: 12px;
+    margin-top: 8px;
+    display: none;
+  }
+  .cf-error.show { display: block; }
+
+  .cf-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 30px;
+    min-height: 100%;
+  }
+  .cf-success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 20%, var(--surface));
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .cf-success h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .cf-success p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 320px;
+    margin-bottom: 28px;
+  }
+
+  body.cf-open { overflow: hidden; }
+
+  @media (max-width: 380px) {
+    .cf-slide { padding: 24px 16px 32px; }
+    .cf-slide h2 { font-size: 18px; }
+    .cf-actions { padding: 12px 14px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-loader" id="page-loader"><div class="spinner"></div></div>
+
+<main id="main" style="visibility: hidden;">
+
+  <section class="header">
+    <div class="avatar" id="avatar">
+      <img id="avatar-img" src="" alt="" style="display:none;" />
+    </div>
+
+    <h1>
+      <span id="display-name"></span>
+      <span class="verified" id="verified" style="display:none;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="verified">Verified</span>
+      </span>
+    </h1>
+
+    <div class="tags" id="tags"></div>
+
+    <p class="bio" id="bio"></p>
+  </section>
+
+  <nav class="links" aria-label="Links">
+
+    <a class="btn btn-secondary hidden" id="btn-instagram" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      </svg>
+      <span>Instagram</span>
+    </a>
+
+    <a class="btn btn-secondary hidden" id="btn-tiktok" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+      </svg>
+      <span>TikTok</span>
+    </a>
+
+    <a class="btn btn-secondary hidden" id="btn-custom" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+      </svg>
+      <span id="btn-custom-label"></span>
+    </a>
+
+    <button class="btn btn-primary" id="btn-inquiry" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <span data-i18n="inquiry_btn">Anfragen</span>
+    </button>
+
+  </nav>
+
+  <div class="divider" aria-hidden="true">⸻</div>
+
+</main>
+
+<footer id="footer" style="visibility: hidden;">
+  <span data-i18n="powered_by">powered by</span> <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
+  <div style="margin-top: 4px;"><a href="https://viuno.de/impressum" target="_blank" rel="noopener" data-i18n="imprint">Impressum</a></div>
+  <div class="lang-switch" role="group" aria-label="Sprache">
+    <button class="lang-btn" data-lang="de" type="button">DE</button>
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn" data-lang="it" type="button">IT</button>
+  </div>
+</footer>
+
+<!-- ================ ANFRAGE OVERLAY ================ -->
+<div class="cf-overlay" id="cf-overlay" role="dialog" aria-modal="true">
+
+  <div class="cf-topbar">
+    <button class="cf-close" id="cf-close" aria-label="Schließen">×</button>
+    <div class="cf-progress-wrap">
+      <div class="cf-progress-label">
+        <span id="cf-step-num">1</span>
+        <span data-i18n="of">von</span>
+        2 ·
+        <span id="cf-step-name"></span>
+      </div>
+      <div class="cf-progress-bar"><div class="cf-progress-fill" id="cf-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="cf-viewport">
+    <div class="cf-track" id="cf-track">
+
+      <!-- SLIDE 1: Art der Anfrage -->
+      <div class="cf-slide">
+        <div class="cf-slide-inner">
+          <h2 data-i18n="step1_title">Wie kann ich helfen?</h2>
+          <p class="cf-sub" data-i18n="step1_sub">Wähle, was zu deiner Anfrage passt.</p>
+
+          <div class="cf-cards" data-field="request_type" data-single="true">
+            <button type="button" class="cf-card" data-value="brand">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_brand">Brand Deal</div>
+                <div class="cf-card-desc" data-i18n="d_brand">Kooperation mit Unternehmen</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="collab">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_collab">Collab</div>
+                <div class="cf-card-desc" data-i18n="d_collab">Gemeinsames Projekt mit anderen Creatorn</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="event">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_event">Event / Einladung</div>
+                <div class="cf-card-desc" data-i18n="d_event">Auftritt, Launch, Presse-Event</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="sonstiges">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_other">Sonstiges</div>
+                <div class="cf-card-desc" data-i18n="d_other">Etwas anderes – erzähl mir davon</div>
+              </div>
+            </button>
+          </div>
+
+          <div class="cf-error" id="cf-err-1" data-i18n="err_choose">Bitte wähle eine Option.</div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Kontakt + Nachricht -->
+      <div class="cf-slide">
+        <div class="cf-slide-inner">
+          <h2 data-i18n="step2_title">Deine Angaben</h2>
+          <p class="cf-sub" data-i18n="step2_sub">Damit ich dich erreichen kann.</p>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_name">Name / Firma</span> <span class="req">*</span></label>
+            <input type="text" name="sender_name" data-i18n-placeholder="p_name" autocomplete="name" />
+          </div>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_email">E-Mail</span> <span class="req">*</span></label>
+            <input type="email" name="sender_email" data-i18n-placeholder="p_email" autocomplete="email" />
+          </div>
+
+          <div class="cf-conditional" id="cf-row-website">
+            <div class="cf-field">
+              <label data-i18n="l_web">Website (optional)</label>
+              <input type="text" name="sender_website" data-i18n-placeholder="p_web" autocomplete="url" />
+            </div>
+          </div>
+
+          <div class="cf-conditional" id="cf-row-budget">
+            <div class="cf-field">
+              <label data-i18n="l_budget">Budget-Rahmen (optional)</label>
+              <div class="cf-chips" data-field="budget" data-single="true">
+                <button type="button" class="cf-chip" data-value="" data-i18n="b_none">Keine Angabe</button>
+                <button type="button" class="cf-chip" data-value="250" data-i18n="b_1">unter 250 €</button>
+                <button type="button" class="cf-chip" data-value="500" data-i18n="b_2">250 – 500 €</button>
+                <button type="button" class="cf-chip" data-value="1000" data-i18n="b_3">500 – 1.000 €</button>
+                <button type="button" class="cf-chip" data-value="1001" data-i18n="b_4">1.000 €+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_msg">Nachricht</span> <span class="req">*</span></label>
+            <textarea name="message" data-i18n-placeholder="p_msg"></textarea>
+          </div>
+
+          <div class="cf-error" id="cf-err-2" data-i18n="err_required">Bitte fülle alle Pflichtfelder aus.</div>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="cf-slide">
+        <div class="cf-success">
+          <div class="cf-success-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 data-i18n="s_title">Anfrage gesendet!</h2>
+          <p id="cf-success-sub"></p>
+          <button class="cf-btn cf-btn-next" type="button" id="cf-done" style="flex: 0 0 auto; padding: 14px 32px;" data-i18n="close">Schließen</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="cf-actions" id="cf-actions">
+    <button class="cf-btn cf-btn-back" type="button" id="cf-back" data-i18n="back">Zurück</button>
+    <button class="cf-btn cf-btn-next" type="button" id="cf-next" data-i18n="next">Weiter</button>
+  </div>
+
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMzg4NzMsImV4cCI6MjA4OTYxNDg3M30.JERbMHkDyCrnMQCGNi9VBVbWNaE_PJXJnibxAVQcPBM'
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false }
+})
+
+// ====================================================================
+// I18N
+// ====================================================================
+const STRINGS = {
+  de: {
+    inquiry_btn: 'Anfragen',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum',
+    of: 'von',
+    back: 'Zurück',
+    next: 'Weiter',
+    close: 'Schließen',
+    send: 'Anfrage senden',
+    sending: 'Wird gesendet …',
+    step1_name: 'Art der Anfrage',
+    step2_name: 'Kontakt & Nachricht',
+    step1_title: 'Wie kann ich helfen?',
+    step1_sub: 'Wähle, was zu deiner Anfrage passt.',
+    step2_title: 'Deine Angaben',
+    step2_sub: 'Damit ich dich erreichen kann.',
+    o_brand: 'Brand Deal', d_brand: 'Kooperation mit Unternehmen',
+    o_collab: 'Collab', d_collab: 'Gemeinsames Projekt mit anderen Creatorn',
+    o_event: 'Event / Einladung', d_event: 'Auftritt, Launch, Presse-Event',
+    o_other: 'Sonstiges', d_other: 'Etwas anderes – erzähl mir davon',
+    l_name: 'Name / Firma', p_name: 'Dein Name oder Firmenname',
+    l_email: 'E-Mail', p_email: 'deine@email.de',
+    l_web: 'Website (optional)', p_web: 'www.deinewebsite.de',
+    l_budget: 'Budget-Rahmen (optional)',
+    b_none: 'Keine Angabe', b_1: 'unter 250 €', b_2: '250 – 500 €', b_3: '500 – 1.000 €', b_4: '1.000 €+',
+    l_msg: 'Nachricht', p_msg: 'Kurze Beschreibung deiner Anfrage...',
+    err_choose: 'Bitte wähle eine Option.',
+    err_required: 'Bitte fülle alle Pflichtfelder aus.',
+    err_email: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+    err_send: 'Senden fehlgeschlagen. Bitte versuche es erneut.',
+    s_title: 'Anfrage gesendet!',
+    s_sub: (name) => `${name} meldet sich bald bei dir.`
+  },
+  en: {
+    inquiry_btn: 'Request',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Imprint',
+    of: 'of',
+    back: 'Back',
+    next: 'Next',
+    close: 'Close',
+    send: 'Send request',
+    sending: 'Sending …',
+    step1_name: 'Request type',
+    step2_name: 'Contact & message',
+    step1_title: 'How can I help?',
+    step1_sub: 'Choose what fits your request.',
+    step2_title: 'Your details',
+    step2_sub: 'So I can get back to you.',
+    o_brand: 'Brand Deal', d_brand: 'Collaboration with companies',
+    o_collab: 'Collab', d_collab: 'Joint project with other creators',
+    o_event: 'Event / Invitation', d_event: 'Appearance, launch, press event',
+    o_other: 'Other', d_other: 'Something else – tell me about it',
+    l_name: 'Name / Company', p_name: 'Your name or company',
+    l_email: 'E-Mail', p_email: 'your@email.com',
+    l_web: 'Website (optional)', p_web: 'www.yourwebsite.com',
+    l_budget: 'Budget range (optional)',
+    b_none: 'No preference', b_1: 'under 250 €', b_2: '250 – 500 €', b_3: '500 – 1,000 €', b_4: '1,000 €+',
+    l_msg: 'Message', p_msg: 'Briefly describe your proposal...',
+    err_choose: 'Please select an option.',
+    err_required: 'Please fill in all required fields.',
+    err_email: 'Please enter a valid email address.',
+    err_send: 'Sending failed. Please try again.',
+    s_title: 'Request sent!',
+    s_sub: (name) => `${name} will get back to you soon.`
+  },
+  it: {
+    inquiry_btn: 'Scrivimi',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum',
+    of: 'di',
+    back: 'Indietro',
+    next: 'Avanti',
+    close: 'Chiudi',
+    send: 'Invia richiesta',
+    sending: 'Invio in corso …',
+    step1_name: 'Tipo di richiesta',
+    step2_name: 'Contatto e messaggio',
+    step1_title: 'Come posso aiutarti?',
+    step1_sub: 'Scegli cosa corrisponde alla tua richiesta.',
+    step2_title: 'I tuoi dati',
+    step2_sub: 'Così posso risponderti.',
+    o_brand: 'Brand Deal', d_brand: 'Collaborazione con aziende',
+    o_collab: 'Collab', d_collab: 'Progetto con altri creator',
+    o_event: 'Evento / Invito', d_event: 'Apparizione, lancio, evento stampa',
+    o_other: 'Altro', d_other: 'Qualcos\'altro – dimmelo tu',
+    l_name: 'Nome / Azienda', p_name: 'Il tuo nome o la tua azienda',
+    l_email: 'E-Mail', p_email: 'la-tua@email.com',
+    l_web: 'Sito web (opzionale)', p_web: 'www.tuosito.it',
+    l_budget: 'Budget indicativo (opzionale)',
+    b_none: 'Non specificato', b_1: 'meno di 250 €', b_2: '250 – 500 €', b_3: '500 – 1.000 €', b_4: '1.000 €+',
+    l_msg: 'Messaggio', p_msg: 'Descrivi brevemente la tua proposta...',
+    err_choose: 'Seleziona un\'opzione.',
+    err_required: 'Compila tutti i campi obbligatori.',
+    err_email: 'Inserisci un indirizzo email valido.',
+    err_send: 'Invio non riuscito. Riprova.',
+    s_title: 'Richiesta inviata!',
+    s_sub: (name) => `${name} ti risponderà presto.`
+  }
+}
+
+let currentLang = 'de'
+let creatorData = null
+
+function t(key, ...args) {
+  const v = STRINGS[currentLang]?.[key]
+  if (typeof v === 'function') return v(...args)
+  return v ?? key
+}
+
+function applyLanguage(lang) {
+  if (!STRINGS[lang]) lang = 'de'
+  currentLang = lang
+  document.documentElement.lang = lang
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n
+    const val = t(key)
+    if (typeof val === 'string') el.textContent = val
+  })
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder
+    const val = t(key)
+    if (typeof val === 'string') el.placeholder = val
+  })
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang)
+  })
+
+  if (creatorData?.display_name) {
+    const sub = document.getElementById('cf-success-sub')
+    if (sub) sub.textContent = t('s_sub', creatorData.display_name)
+  }
+
+  // Step-Name neu setzen je nach aktuellem Slide
+  const stepName = document.getElementById('cf-step-name')
+  if (stepName) {
+    stepName.textContent = t(currentStep === 0 ? 'step1_name' : 'step2_name')
+  }
+
+  // Action-Buttons
+  updateActionButtons()
+}
+
+// ====================================================================
+// SLUG + DATA LOADING
+// ====================================================================
+function getSlugFromPath() {
+  const path = window.location.pathname
+  const cleaned = path.replace(/^\/+|\/+$/g, '')
+  if (!cleaned) return null
+  return cleaned.split('/')[0]
+}
+
+async function loadBioPage() {
+  const slug = getSlugFromPath()
+  if (!slug) {
+    window.location.replace('https://viuno.de')
+    return
+  }
+
+  const { data, error } = await supabase
+    .from('biopage_public')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (error || !data) {
+    window.location.replace('https://viuno.de')
+    return
+  }
+
+  creatorData = data
+  renderBioPage(data)
+
+  const lang = ['de', 'en', 'it'].includes(data.default_language) ? data.default_language : 'de'
+  applyLanguage(lang)
+
+  document.getElementById('main').style.visibility = 'visible'
+  document.getElementById('footer').style.visibility = 'visible'
+  const loader = document.getElementById('page-loader')
+  loader.classList.add('hide')
+  setTimeout(() => loader.remove(), 250)
+}
+
+function renderBioPage(u) {
+  document.title = `${u.display_name} — viuno`
+  updateMetaTags(u)
+
+  const avatar = document.getElementById('avatar')
+  const avatarImg = document.getElementById('avatar-img')
+  if (u.profile_image_url) {
+    avatarImg.src = u.profile_image_url
+    avatarImg.alt = u.display_name || ''
+    avatarImg.style.display = 'block'
+    avatarImg.onerror = () => {
+      avatarImg.style.display = 'none'
+      avatar.textContent = (u.display_name || '?')[0].toUpperCase()
+    }
+  } else {
+    avatar.textContent = (u.display_name || '?')[0].toUpperCase()
+  }
+
+  document.getElementById('display-name').textContent = u.display_name || ''
+
+  if (u.is_verified) {
+    document.getElementById('verified').style.display = 'inline-flex'
+  }
+
+  const tagsEl = document.getElementById('tags')
+  tagsEl.innerHTML = ''
+  if (u.niche_category) {
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = capitalizeFirst(u.niche_category)
+    tagsEl.appendChild(s)
+  }
+  if (u.city) {
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = u.city
+    tagsEl.appendChild(s)
+  }
+
+  if (u.bio) document.getElementById('bio').textContent = u.bio
+
+  if (u.instagram_handle) {
+    const clean = u.instagram_handle.replace(/^@/, '')
+    const ig = document.getElementById('btn-instagram')
+    ig.href = `https://instagram.com/${encodeURIComponent(clean)}`
+    ig.classList.remove('hidden')
+  }
+
+  if (u.tiktok_handle) {
+    const clean = u.tiktok_handle.replace(/^@/, '')
+    const tt = document.getElementById('btn-tiktok')
+    tt.href = `https://tiktok.com/@${encodeURIComponent(clean)}`
+    tt.classList.remove('hidden')
+  }
+
+  if (u.custom_link_url && u.custom_link_title) {
+    const custom = document.getElementById('btn-custom')
+    custom.href = normalizeUrl(u.custom_link_url)
+    document.getElementById('btn-custom-label').textContent = u.custom_link_title
+    custom.classList.remove('hidden')
+  }
+}
+
+function updateMetaTags(u) {
+  const desc = u.bio || `${u.display_name} — viuno`
+  document.querySelector('meta[name="description"]')?.setAttribute('content', desc)
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${u.display_name} — viuno`)
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc)
+  if (u.profile_image_url) {
+    document.querySelector('meta[property="og:image"]')?.setAttribute('content', u.profile_image_url)
+  }
+}
+
+function capitalizeFirst(s) {
+  if (!s) return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+function normalizeUrl(url) {
+  if (!url) return '#'
+  return /^https?:\/\//.test(url) ? url : 'https://' + url
+}
+
+// ====================================================================
+// ANFRAGE OVERLAY
+// ====================================================================
+const overlay = document.getElementById('cf-overlay')
+const track = document.getElementById('cf-track')
+const stepNumEl = document.getElementById('cf-step-num')
+const stepNameEl = document.getElementById('cf-step-name')
+const progressFill = document.getElementById('cf-progress-fill')
+const actions = document.getElementById('cf-actions')
+const backBtn = document.getElementById('cf-back')
+const nextBtn = document.getElementById('cf-next')
+
+const TOTAL_STEPS = 2
+let currentStep = 0
+const formData = {}
+
+function openInquiry() {
+  overlay.classList.add('open')
+  document.body.classList.add('cf-open')
+  goToStep(0)
+}
+
+function closeInquiry() {
+  overlay.classList.remove('open')
+  document.body.classList.remove('cf-open')
+  setTimeout(resetInquiry, 300)
+}
+
+function resetInquiry() {
+  currentStep = 0
+  overlay.querySelectorAll('input, textarea').forEach(el => el.value = '')
+  overlay.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
+  document.getElementById('cf-row-website').classList.remove('show')
+  document.getElementById('cf-row-budget').classList.remove('show')
+  hideError(1); hideError(2)
+  actions.style.display = 'flex'
+  nextBtn.disabled = false
+  for (const k in formData) delete formData[k]
+  track.querySelectorAll('.cf-slide').forEach(s => s.scrollTop = 0)
+  goToStep(0)
+}
+
+function goToStep(i) {
+  currentStep = i
+  track.style.transform = `translateX(-${i * 100}%)`
+
+  if (i < TOTAL_STEPS) {
+    stepNumEl.textContent = i + 1
+    stepNameEl.textContent = t(i === 0 ? 'step1_name' : 'step2_name')
+    progressFill.style.width = `${((i + 1) / TOTAL_STEPS) * 100}%`
+    actions.style.display = 'flex'
+    backBtn.style.visibility = i === 0 ? 'hidden' : 'visible'
+    updateActionButtons()
+  } else {
+    actions.style.display = 'none'
+    progressFill.style.width = '100%'
+    stepNameEl.textContent = t('s_title')
+  }
+}
+
+function updateActionButtons() {
+  backBtn.textContent = t('back')
+  nextBtn.textContent = currentStep === TOTAL_STEPS - 1 ? t('send') : t('next')
+}
+
+function hideError(n) {
+  document.getElementById('cf-err-' + n).classList.remove('show')
+}
+function showError(n, msg) {
+  const el = document.getElementById('cf-err-' + n)
+  if (msg) el.textContent = msg
+  el.classList.add('show')
+}
+
+function collectSlide(slideIndex) {
+  const slide = track.children[slideIndex]
+  slide.querySelectorAll('input[name], textarea[name]').forEach(el => {
+    formData[el.name] = el.value.trim()
+  })
+  slide.querySelectorAll('[data-field][data-single="true"]').forEach(group => {
+    const selected = group.querySelector('.selected')
+    formData[group.dataset.field] = selected ? selected.dataset.value : null
+  })
+}
+
+function validateSlide(slideIndex) {
+  collectSlide(slideIndex)
+  if (slideIndex === 0) {
+    if (!formData.request_type) { showError(1, t('err_choose')); return false }
+    hideError(1); return true
+  }
+  if (slideIndex === 1) {
+    if (!formData.sender_name || !formData.sender_email || !formData.message) {
+      showError(2, t('err_required')); return false
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.sender_email)) {
+      showError(2, t('err_email')); return false
+    }
+    hideError(2); return true
+  }
+  return true
+}
+
+function updateConditionalFields() {
+  const type = formData.request_type
+  const showWebsite = type === 'brand' || type === 'collab'
+  const showBudget = type === 'brand'
+  document.getElementById('cf-row-website').classList.toggle('show', showWebsite)
+  document.getElementById('cf-row-budget').classList.toggle('show', showBudget)
+}
+
+track.addEventListener('click', (e) => {
+  const chip = e.target.closest('.cf-chip, .cf-card')
+  if (!chip) return
+  const group = chip.closest('[data-field]')
+  if (!group) return
+  group.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
+  chip.classList.add('selected')
+  if (group.dataset.field === 'request_type') {
+    formData.request_type = chip.dataset.value
+    updateConditionalFields()
+  }
+})
+
+document.getElementById('btn-inquiry').addEventListener('click', openInquiry)
+document.getElementById('cf-close').addEventListener('click', closeInquiry)
+document.getElementById('cf-done').addEventListener('click', closeInquiry)
+
+backBtn.addEventListener('click', () => {
+  if (currentStep > 0) goToStep(currentStep - 1)
+})
+
+nextBtn.addEventListener('click', async () => {
+  if (!validateSlide(currentStep)) return
+
+  if (currentStep < TOTAL_STEPS - 1) {
+    goToStep(currentStep + 1)
+    return
+  }
+
+  // Final submit
+  for (let i = 0; i < TOTAL_STEPS; i++) collectSlide(i)
+
+  const originalText = nextBtn.textContent
+  nextBtn.disabled = true
+  nextBtn.textContent = t('sending')
+
+  const payload = {
+    creator_id: creatorData.user_id,
+    request_type: formData.request_type,
+    sender_name: formData.sender_name,
+    sender_email: formData.sender_email,
+    sender_website: formData.sender_website ? normalizeUrl(formData.sender_website) : null,
+    budget: formData.budget ? parseFloat(formData.budget) : null,
+    message: formData.message
+  }
+
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/collab_requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (!res.ok && res.status !== 201) {
+      const errText = await res.text()
+      throw new Error('HTTP ' + res.status + ': ' + errText)
+    }
+
+    nextBtn.disabled = false
+    nextBtn.textContent = originalText
+    document.getElementById('cf-success-sub').textContent = t('s_sub', creatorData.display_name)
+    goToStep(TOTAL_STEPS)
+  } catch (err) {
+    console.error('[Anfrage Submit]', err)
+    nextBtn.disabled = false
+    nextBtn.textContent = originalText
+    showError(2, t('err_send'))
+  }
+})
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && overlay.classList.contains('open')) closeInquiry()
+})
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang))
+})
+
+// ====================================================================
+// INIT
+// ====================================================================
+loadBioPage()
+</script>
+
+</body>
+</html>
