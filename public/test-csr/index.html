@@ -47,7 +47,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 40px 20px 0;
+    padding: 64px 20px 0;
   }
 
   main {
@@ -101,6 +101,7 @@
     color: var(--text-muted);
     margin-bottom: 16px;
     overflow: hidden;
+    box-shadow: 0 0 0 6px var(--surface), 0 0 0 7px var(--border);
   }
   .avatar img {
     width: 100%;
@@ -229,6 +230,124 @@
   footer a { color: var(--text-subtle); text-decoration: none; transition: color .15s ease; }
   footer a:hover { color: var(--text-muted); }
 
+  .imprint-link {
+    background: none;
+    border: none;
+    color: var(--text-subtle);
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: .02em;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color .15s ease;
+  }
+  .imprint-link:hover { color: var(--text-muted); }
+
+  /* ================================================
+     IMPRESSUM BOTTOM SHEET
+     ================================================ */
+  .imp-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .imp-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .imp-sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 85dvh;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    z-index: 1000;
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+  }
+  .imp-sheet.open {
+    transform: translateY(0);
+  }
+  .imp-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 999px;
+    margin: 10px auto 6px;
+    flex-shrink: 0;
+  }
+  .imp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .imp-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .imp-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .imp-close:hover { background: var(--bg); border-color: var(--border-strong); }
+  .imp-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 20px 32px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    white-space: pre-line;
+  }
+  .imp-empty {
+    color: var(--text-faint);
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  body.imp-open { overflow: hidden; }
+  @media (min-width: 540px) {
+    .imp-sheet {
+      left: 50%;
+      transform: translate(-50%, 100%);
+      max-width: 480px;
+      border-radius: 20px;
+      bottom: 5dvh;
+    }
+    .imp-sheet.open {
+      transform: translate(-50%, 0);
+    }
+  }
+
   .lang-switch {
     display: inline-flex;
     align-items: center;
@@ -264,6 +383,33 @@
     body { padding: 28px 16px 40px; }
     h1 { font-size: 17px; }
     .btn { padding: 14px 18px; font-size: 14px; }
+  }
+
+  /* Desktop: Border-Container um Content (wie clean/color themes) */
+  @media (min-width: 540px) {
+    body {
+      justify-content: center;
+      padding: 48px 20px;
+    }
+    main {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 56px 32px 24px;
+      box-shadow: 0 32px 64px rgba(0, 0, 0, 0.4);
+    }
+    /* Avatar Ring Background passt sich an */
+    .avatar {
+      box-shadow: 0 0 0 6px var(--surface), 0 0 0 7px var(--border-strong);
+    }
+    /* Footer rückt näher an Content */
+    footer {
+      max-width: 420px;
+      padding-top: 20px;
+    }
+  }
+  @media (min-width: 900px) {
+    body { padding: 64px 40px; }
   }
 
   /* ================================================
@@ -593,13 +739,24 @@
 
 <footer id="footer" style="visibility: hidden;">
   <span data-i18n="powered_by">powered by</span> <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
-  <div style="margin-top: 4px;"><a href="https://viuno.de/impressum" target="_blank" rel="noopener" data-i18n="imprint">Impressum</a></div>
+  <div style="margin-top: 4px;"><button type="button" class="imprint-link" id="btn-imprint" data-i18n="imprint">Impressum</button></div>
   <div class="lang-switch" role="group" aria-label="Sprache">
     <button class="lang-btn" data-lang="de" type="button">DE</button>
     <button class="lang-btn" data-lang="en" type="button">EN</button>
     <button class="lang-btn" data-lang="it" type="button">IT</button>
   </div>
 </footer>
+
+<!-- ================ IMPRESSUM BOTTOM SHEET ================ -->
+<div class="imp-backdrop" id="imp-backdrop"></div>
+<div class="imp-sheet" id="imp-sheet" role="dialog" aria-modal="true" aria-labelledby="imp-title">
+  <div class="imp-handle"></div>
+  <div class="imp-header">
+    <span class="imp-title" id="imp-title" data-i18n="imprint">Impressum</span>
+    <button type="button" class="imp-close" id="imp-close" aria-label="Schließen">×</button>
+  </div>
+  <div class="imp-content" id="imp-content"></div>
+</div>
 
 <!-- ================ ANFRAGE OVERLAY ================ -->
 <div class="cf-overlay" id="cf-overlay" role="dialog" aria-modal="true">
@@ -757,8 +914,7 @@ const STRINGS = {
     verified: 'Verified',
     powered_by: 'powered by',
     imprint: 'Impressum',
-    of: 'von',
-    back: 'Zurück',
+    imprint_empty: 'Es wurde noch kein Impressum hinterlegt.',
     next: 'Weiter',
     close: 'Schließen',
     send: 'Anfrage senden',
@@ -791,8 +947,7 @@ const STRINGS = {
     verified: 'Verified',
     powered_by: 'powered by',
     imprint: 'Imprint',
-    of: 'of',
-    back: 'Back',
+    imprint_empty: 'No imprint has been provided yet.',
     next: 'Next',
     close: 'Close',
     send: 'Send request',
@@ -825,8 +980,7 @@ const STRINGS = {
     verified: 'Verified',
     powered_by: 'powered by',
     imprint: 'Impressum',
-    of: 'di',
-    back: 'Indietro',
+    imprint_empty: 'Non è stato ancora inserito alcun impressum.',
     next: 'Avanti',
     close: 'Chiudi',
     send: 'Invia richiesta',
@@ -1152,6 +1306,37 @@ document.getElementById('btn-inquiry').addEventListener('click', openInquiry)
 document.getElementById('cf-close').addEventListener('click', closeInquiry)
 document.getElementById('cf-done').addEventListener('click', closeInquiry)
 
+// ====================================================================
+// IMPRESSUM BOTTOM SHEET
+// ====================================================================
+const impSheet = document.getElementById('imp-sheet')
+const impBackdrop = document.getElementById('imp-backdrop')
+const impContent = document.getElementById('imp-content')
+
+function openImprint() {
+  const text = (creatorData?.impressum_text || '').trim()
+  if (text) {
+    impContent.textContent = text
+    impContent.classList.remove('imp-empty')
+  } else {
+    impContent.textContent = t('imprint_empty')
+    impContent.classList.add('imp-empty')
+  }
+  impSheet.classList.add('open')
+  impBackdrop.classList.add('open')
+  document.body.classList.add('imp-open')
+}
+
+function closeImprint() {
+  impSheet.classList.remove('open')
+  impBackdrop.classList.remove('open')
+  document.body.classList.remove('imp-open')
+}
+
+document.getElementById('btn-imprint').addEventListener('click', openImprint)
+document.getElementById('imp-close').addEventListener('click', closeImprint)
+impBackdrop.addEventListener('click', closeImprint)
+
 backBtn.addEventListener('click', () => {
   if (currentStep > 0) goToStep(currentStep - 1)
 })
@@ -1211,7 +1396,10 @@ nextBtn.addEventListener('click', async () => {
 })
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && overlay.classList.contains('open')) closeInquiry()
+  if (e.key === 'Escape') {
+    if (overlay.classList.contains('open')) closeInquiry()
+    if (impSheet.classList.contains('open')) closeImprint()
+  }
 })
 
 document.querySelectorAll('.lang-btn').forEach(btn => {
