@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>{{DISPLAY_NAME}} — viuno</title>
 <meta name="description" content="{{BIO}}" />
-<meta name="theme-color" content="#EAEAEE" />
+<meta name="theme-color" content="#1A1025" />
 
 <!-- Open Graph / Social Preview — Platzhalter für späteren Cloudflare Worker (Stufe B) -->
 <meta property="og:type" content="website" />
@@ -17,16 +17,16 @@
 
 <style>
   :root {
-    --bg: #EAEAEE;
-    --surface: #FAFAF9;
-    --border: #D4D4D8;
-    --border-strong: #A1A1AA;
-    --text: #1A1A2E;
-    --text-muted: #71717A;
-    --text-subtle: #9292A0;
-    --text-faint: #C4C4CC;
-    --primary: #1A1A2E;
-    --primary-hover: #000000;
+    --bg: #1A1025;
+    --surface: rgba(255, 255, 255, 0.13);
+    --border: rgba(255, 255, 255, 0.18);
+    --border-strong: rgba(255, 255, 255, 0.30);
+    --text: #FFFFFF;
+    --text-muted: rgba(255, 255, 255, 0.75);
+    --text-subtle: rgba(255, 255, 255, 0.55);
+    --text-faint: rgba(255, 255, 255, 0.30);
+    --primary: rgba(255, 255, 255, 0.20);
+    --primary-hover: rgba(255, 255, 255, 0.30);
     --primary-text: #FFFFFF;
     --radius-btn: 12px;
     --radius-img: 14px;
@@ -35,7 +35,8 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
-    background: var(--bg);
+    background: linear-gradient(160deg, #7C5CFC 0%, #C23D8E 50%, #F59E0B 100%);
+    background-attachment: fixed;
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -65,7 +66,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--bg);
+    background: linear-gradient(160deg, #7C5CFC 0%, #C23D8E 50%, #F59E0B 100%);
     z-index: 9999;
     transition: opacity .25s ease;
   }
@@ -91,17 +92,19 @@
     width: 96px;
     height: 96px;
     border-radius: 50%;
-    background: var(--surface);
-    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 32px;
     font-weight: 500;
-    color: var(--text-muted);
+    color: var(--text);
     margin-bottom: 16px;
     overflow: hidden;
-    box-shadow: 0 0 0 3px var(--bg), 0 0 0 4.5px color-mix(in srgb, var(--primary) 35%, transparent);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08), 0 0 0 4.5px rgba(255, 255, 255, 0.25);
   }
   .avatar img {
     width: 100%;
@@ -190,19 +193,24 @@
   .btn:active { transform: scale(.98); }
 
   .btn-primary {
-    background: var(--primary);
-    color: var(--primary-text);
-    border: 1px solid var(--primary);
+    background: #FFFFFF;
+    color: #1A1025;
+    border: 1px solid #FFFFFF;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    font-weight: 600;
   }
-  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  .btn-primary:hover { background: rgba(255, 255, 255, 0.92); border-color: rgba(255, 255, 255, 0.92); }
 
   .btn-secondary {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.10);
     color: var(--text);
     border: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
   .btn-secondary:hover {
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.18);
     border-color: var(--border-strong);
   }
 
@@ -249,7 +257,7 @@
   .imp-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(26, 26, 46, 0.35);
+    background: rgba(0, 0, 0, 0.5);
     z-index: 999;
     opacity: 0;
     pointer-events: none;
@@ -265,15 +273,15 @@
     right: 0;
     bottom: 0;
     max-height: 85dvh;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
+    background: #1A1025;
+    border-top: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 20px 20px 0 0;
     z-index: 1000;
     transform: translateY(100%);
     transition: transform .3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear .3s;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 -8px 24px rgba(26, 26, 46, 0.12);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
     visibility: hidden;
   }
   .imp-sheet.open {
@@ -395,15 +403,17 @@
       padding: 48px 20px;
     }
     main {
-      background: var(--surface);
-      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 28px;
       padding: 56px 32px 24px;
-      box-shadow: 0 4px 16px rgba(26, 26, 46, 0.06);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.20);
     }
-    /* Avatar Ring Background passt sich an */
+    /* Avatar Ring auf Container-Hintergrund */
     .avatar {
-      box-shadow: 0 0 0 4px var(--surface), 0 0 0 5.5px color-mix(in srgb, var(--primary) 35%, transparent);
+      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05), 0 0 0 5.5px rgba(255, 255, 255, 0.25);
     }
     /* Footer rückt näher an Content */
     footer {
@@ -421,7 +431,7 @@
   .cf-overlay {
     position: fixed;
     inset: 0;
-    background: var(--bg);
+    background: #1A1025;
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -626,7 +636,7 @@
   .cf-btn-next:disabled { opacity: .45; cursor: not-allowed; }
 
   .cf-error {
-    color: #DC2626;
+    color: #ff9a9a;
     font-size: 12px;
     margin-top: 8px;
     display: none;
