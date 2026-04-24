@@ -1,378 +1,1227 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>viuno</title>
-<meta name="description" content="">
-<meta property="og:title" content="viuno">
-<meta property="og:description" content="">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{{DISPLAY_NAME}} — viuno</title>
+<meta name="description" content="{{BIO}}" />
+<meta name="theme-color" content="#14171f" />
+
+<!-- Open Graph / Social Preview — Platzhalter für späteren Cloudflare Worker (Stufe B) -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{{DISPLAY_NAME}} — viuno" />
+<meta property="og:description" content="{{BIO}}" />
+<meta property="og:image" content="{{OG_IMAGE}}" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E" />
+
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-html{-webkit-font-smoothing:antialiased;}
-body{font-family:'Outfit',sans-serif;background:#070709;color:#F5F5F4;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;}
-.page{width:100%;max-width:480px;min-height:100vh;padding:64px 20px 36px;display:flex;flex-direction:column;align-items:center;background:#111113;}
-.page-loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#070709;z-index:9999;transition:opacity .25s ease;}
-.page-loader.hide{opacity:0;pointer-events:none;}
-.spinner{width:28px;height:28px;border:2px solid #2A2A2E;border-top-color:#34D076;border-radius:50%;animation:spin .8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#34D076,#B8E63C);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#111;margin-bottom:12px;box-shadow:0 0 0 3px #111113,0 0 0 5px rgba(52,208,118,0.25);}
-img.avatar{background:none;font-size:0;object-fit:cover;}
-.name{font-size:1.35rem;font-weight:700;letter-spacing:-0.03em;color:#F5F5F4;margin-bottom:8px;text-align:center;}
-.verified{display:inline-flex;align-items:center;gap:4px;font-size:0.65rem;font-weight:600;border-radius:20px;padding:3px 10px;margin-bottom:12px;}
-.bio{font-size:0.85rem;font-weight:300;color:#6B6B70;text-align:center;max-width:300px;line-height:1.55;margin-bottom:12px;}
-.tags{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;justify-content:center;}
-.tag{font-size:0.72rem;color:#8B8B8D;background:#1C1C1F;border:1px solid #2A2A2E;border-radius:20px;padding:4px 12px;}
-.links{width:100%;display:flex;flex-direction:column;gap:9px;margin-bottom:16px;}
-.link-btn{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;background:#1C1C1F;border:1px solid #2A2A2E;border-radius:14px;text-decoration:none;color:#F5F5F4;transition:all 0.2s ease;}
-.link-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.link-icon.ig{background:linear-gradient(135deg,#833AB4,#E1306C,#F77737);}
-.link-icon.tt{background:#1A1A2E;}
-.link-icon.custom{background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.25);}
-.link-icon.custom svg{stroke:#60A5FA;fill:none;}
-.link-text{flex:1;min-width:0;}
-.link-text .lt{font-size:0.88rem;font-weight:500;color:#F5F5F4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.link-text .ls{font-size:0.68rem;color:#5A5A5C;margin-top:1px;}
-.link-arrow{color:#3A3A3F;font-size:0.9rem;flex-shrink:0;}
-.collab-btn{background:rgba(52,208,118,0.07);border-color:rgba(52,208,118,0.18);cursor:pointer;font-family:inherit;width:100%;text-align:left;}
-.collab-btn .lt{color:#34D076;font-weight:600;}
-.collab-btn .link-arrow{color:#34D076;}
-.social-icons{display:flex;gap:20px;justify-content:center;}
-.sicon{display:flex;align-items:center;justify-content:center;opacity:0.35;transition:opacity 0.2s;text-decoration:none;}
-.sicon:hover{opacity:0.9;}
-.spacer{height:80px;}
-.branding{display:flex;align-items:center;gap:6px;text-decoration:none;opacity:0.35;transition:opacity 0.2s;margin-bottom:10px;}
-.branding-logo{width:15px;height:15px;border-radius:4px;background:linear-gradient(135deg,#34D076,#B8E63C);display:flex;align-items:center;justify-content:center;font-size:0.45rem;font-weight:800;color:#111;}
-.branding-text{font-size:0.72rem;color:#F5F5F4;font-weight:400;}
-.impressum{font-size:0.62rem;color:#3A3A3F;text-decoration:none;margin-top:auto;padding-top:20px;}
-@media(min-width:540px){body{background:#070709;align-items:center;padding:48px 20px;}.page{min-height:auto;border-radius:28px;border:1px solid #1C1C1F;box-shadow:0 32px 64px rgba(0,0,0,0.6);padding:64px 32px 40px;}}
-@media(min-width:900px){body{padding:64px 40px;}}
+  :root {
+    --bg: #14171f;
+    --surface: #1e2230;
+    --border: #2a2f40;
+    --border-strong: #3a4058;
+    --text: #f0f2f8;
+    --text-muted: #a8b0c4;
+    --text-subtle: #7a8096;
+    --text-faint: #4a5068;
+    --primary: #c4b5f5;
+    --primary-hover: #d4c8f8;
+    --primary-text: #14171f;
+    --radius-btn: 12px;
+    --radius-img: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 0;
+  }
+
+  main {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+
+  .page-loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    z-index: 9999;
+    transition: opacity .25s ease;
+  }
+  .page-loader.hide { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 15%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+    border-radius: 20px;
+    padding: 2px 8px;
+    letter-spacing: .02em;
+  }
+
+  .tags {
+    display: flex;
+    gap: 6px;
+    margin: 8px 0 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tags:empty { display: none; }
+  .tag {
+    font-size: 11px;
+    color: var(--text-subtle);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .bio {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 28px;
+    max-width: 320px;
+    white-space: pre-line;
+  }
+  .bio:empty { display: none; }
+
+  .links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: var(--radius-btn);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform .12s ease, background .15s ease, border-color .15s ease;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn:active { transform: scale(.98); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--surface);
+    border-color: var(--border-strong);
+  }
+
+  .btn svg { flex-shrink: 0; }
+  .btn.hidden { display: none; }
+
+  .divider {
+    width: 100%;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 16px;
+    letter-spacing: 6px;
+    padding: 36px 0 32px;
+    user-select: none;
+  }
+
+  footer {
+    width: 100%;
+    padding: 0 20px 24px;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: .02em;
+    text-align: center;
+  }
+  footer a { color: var(--text-subtle); text-decoration: none; transition: color .15s ease; }
+  footer a:hover { color: var(--text-muted); }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--text); }
+  .lang-btn.active {
+    background: var(--primary);
+    color: var(--primary-text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 380px) {
+    body { padding: 28px 16px 40px; }
+    h1 { font-size: 17px; }
+    .btn { padding: 14px 18px; font-size: 14px; }
+  }
+
+  /* ================================================
+     ANFRAGE OVERLAY — 2 Slides
+     ================================================ */
+  .cf-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .cf-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cf-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .cf-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .cf-close:hover { background: var(--surface); border-color: var(--border-strong); }
+
+  .cf-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .cf-progress-label { font-size: 11px; color: var(--text-subtle); letter-spacing: .02em; }
+  .cf-progress-bar { height: 4px; background: var(--surface); border-radius: 999px; overflow: hidden; }
+  .cf-progress-fill { height: 100%; background: var(--primary); width: 50%; transition: width .35s ease; }
+
+  .cf-viewport { flex: 1; overflow: hidden; position: relative; }
+  .cf-track {
+    display: flex;
+    height: 100%;
+    transition: transform .35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+  }
+  .cf-slide {
+    flex: 0 0 100%;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 28px 20px 40px;
+  }
+  .cf-slide-inner { max-width: 480px; margin: 0 auto; width: 100%; }
+  .cf-slide h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+  .cf-slide .cf-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 22px 0;
+    line-height: 1.55;
+  }
+
+  .cf-field { margin-bottom: 14px; }
+  .cf-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .cf-field .req { color: var(--primary); margin-left: 2px; }
+  .cf-field input,
+  .cf-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .cf-field input:focus, .cf-field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg);
+  }
+  .cf-field textarea { resize: vertical; min-height: 120px; }
+  .cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--text-faint); }
+
+  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cf-chip {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .cf-chip:hover { border-color: var(--border-strong); color: var(--text); }
+  .cf-chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-text);
+  }
+
+  .cf-cards { display: flex; flex-direction: column; gap: 10px; }
+  .cf-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all .15s ease;
+    width: 100%;
+    color: var(--text);
+  }
+  .cf-card:hover { border-color: var(--border-strong); }
+  .cf-card.selected {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  }
+  .cf-card-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+  .cf-card.selected .cf-card-icon {
+    background: color-mix(in srgb, var(--primary) 20%, var(--bg));
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .cf-card-text { flex: 1; min-width: 0; }
+  .cf-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .cf-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+
+  .cf-conditional { display: none; }
+  .cf-conditional.show { display: block; }
+
+  .cf-actions {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .cf-btn {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid transparent;
+    transition: all .15s ease;
+  }
+  .cf-btn-back {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+    flex: 0 0 auto;
+    padding: 14px 22px;
+  }
+  .cf-btn-back:hover { background: var(--surface); border-color: var(--border-strong); }
+  .cf-btn-next {
+    background: var(--primary);
+    color: var(--primary-text);
+    border-color: var(--primary);
+  }
+  .cf-btn-next:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  .cf-btn-next:disabled { opacity: .45; cursor: not-allowed; }
+
+  .cf-error {
+    color: #ff9a9a;
+    font-size: 12px;
+    margin-top: 8px;
+    display: none;
+  }
+  .cf-error.show { display: block; }
+
+  .cf-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 30px;
+    min-height: 100%;
+  }
+  .cf-success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 20%, var(--surface));
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .cf-success h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .cf-success p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 320px;
+    margin-bottom: 28px;
+  }
+
+  body.cf-open { overflow: hidden; }
+
+  @media (max-width: 380px) {
+    .cf-slide { padding: 24px 16px 32px; }
+    .cf-slide h2 { font-size: 18px; }
+    .cf-actions { padding: 12px 14px 14px; }
+  }
 </style>
 </head>
 <body>
 
 <div class="page-loader" id="page-loader"><div class="spinner"></div></div>
 
-<div id="page-lang-toggle" style="display:none;position:fixed;top:16px;right:16px;z-index:50;align-items:center;background:#1C1C1F;border:1px solid #2A2A2E;border-radius:999px;padding:3px;">
-  <button id="plg-de" onclick="_switchLang('de')" style="background:none;color:#6B6B78;border:none;border-radius:20px;padding:6px 14px;font-family:Outfit,sans-serif;font-size:0.68rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;">DE</button>
-  <button id="plg-en" onclick="_switchLang('en')" style="background:none;color:#6B6B78;border:none;border-radius:20px;padding:6px 14px;font-family:Outfit,sans-serif;font-size:0.68rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;">EN</button>
-  <button id="plg-it" onclick="_switchLang('it')" style="background:none;color:#6B6B78;border:none;border-radius:20px;padding:6px 14px;font-family:Outfit,sans-serif;font-size:0.68rem;font-weight:500;letter-spacing:0.05em;text-transform:uppercase;cursor:pointer;transition:all 0.2s;">IT</button>
+<main id="main" style="visibility: hidden;">
+
+  <section class="header">
+    <div class="avatar" id="avatar">
+      <img id="avatar-img" src="" alt="" style="display:none;" />
+    </div>
+
+    <h1>
+      <span id="display-name"></span>
+      <span class="verified" id="verified" style="display:none;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="verified">Verified</span>
+      </span>
+    </h1>
+
+    <div class="tags" id="tags"></div>
+
+    <p class="bio" id="bio"></p>
+  </section>
+
+  <nav class="links" aria-label="Links">
+
+    <a class="btn btn-secondary hidden" id="btn-instagram" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      </svg>
+      <span>Instagram</span>
+    </a>
+
+    <a class="btn btn-secondary hidden" id="btn-tiktok" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+      </svg>
+      <span>TikTok</span>
+    </a>
+
+    <a class="btn btn-secondary hidden" id="btn-custom" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+      </svg>
+      <span id="btn-custom-label"></span>
+    </a>
+
+    <button class="btn btn-primary" id="btn-inquiry" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <span data-i18n="inquiry_btn">Anfragen</span>
+    </button>
+
+  </nav>
+
+  <div class="divider" aria-hidden="true">⸻</div>
+
+</main>
+
+<footer id="footer" style="visibility: hidden;">
+  <span data-i18n="powered_by">powered by</span> <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
+  <div style="margin-top: 4px;"><a href="https://viuno.de/impressum" target="_blank" rel="noopener" data-i18n="imprint">Impressum</a></div>
+  <div class="lang-switch" role="group" aria-label="Sprache">
+    <button class="lang-btn" data-lang="de" type="button">DE</button>
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn" data-lang="it" type="button">IT</button>
+  </div>
+</footer>
+
+<!-- ================ ANFRAGE OVERLAY ================ -->
+<div class="cf-overlay" id="cf-overlay" role="dialog" aria-modal="true">
+
+  <div class="cf-topbar">
+    <button class="cf-close" id="cf-close" aria-label="Schließen">×</button>
+    <div class="cf-progress-wrap">
+      <div class="cf-progress-label">
+        <span id="cf-step-num">1</span>
+        <span data-i18n="of">von</span>
+        2 ·
+        <span id="cf-step-name"></span>
+      </div>
+      <div class="cf-progress-bar"><div class="cf-progress-fill" id="cf-progress-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="cf-viewport">
+    <div class="cf-track" id="cf-track">
+
+      <!-- SLIDE 1: Art der Anfrage -->
+      <div class="cf-slide">
+        <div class="cf-slide-inner">
+          <h2 data-i18n="step1_title">Wie kann ich helfen?</h2>
+          <p class="cf-sub" data-i18n="step1_sub">Wähle, was zu deiner Anfrage passt.</p>
+
+          <div class="cf-cards" data-field="request_type" data-single="true">
+            <button type="button" class="cf-card" data-value="brand">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_brand">Brand Deal</div>
+                <div class="cf-card-desc" data-i18n="d_brand">Kooperation mit Unternehmen</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="collab">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_collab">Collab</div>
+                <div class="cf-card-desc" data-i18n="d_collab">Gemeinsames Projekt mit anderen Creatorn</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="event">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_event">Event / Einladung</div>
+                <div class="cf-card-desc" data-i18n="d_event">Auftritt, Launch, Presse-Event</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="sonstiges">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_other">Sonstiges</div>
+                <div class="cf-card-desc" data-i18n="d_other">Etwas anderes – erzähl mir davon</div>
+              </div>
+            </button>
+          </div>
+
+          <div class="cf-error" id="cf-err-1" data-i18n="err_choose">Bitte wähle eine Option.</div>
+        </div>
+      </div>
+
+      <!-- SLIDE 2: Kontakt + Nachricht -->
+      <div class="cf-slide">
+        <div class="cf-slide-inner">
+          <h2 data-i18n="step2_title">Deine Angaben</h2>
+          <p class="cf-sub" data-i18n="step2_sub">Damit ich dich erreichen kann.</p>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_name">Name / Firma</span> <span class="req">*</span></label>
+            <input type="text" name="sender_name" data-i18n-placeholder="p_name" autocomplete="name" />
+          </div>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_email">E-Mail</span> <span class="req">*</span></label>
+            <input type="email" name="sender_email" data-i18n-placeholder="p_email" autocomplete="email" />
+          </div>
+
+          <div class="cf-conditional" id="cf-row-website">
+            <div class="cf-field">
+              <label data-i18n="l_web">Website (optional)</label>
+              <input type="text" name="sender_website" data-i18n-placeholder="p_web" autocomplete="url" />
+            </div>
+          </div>
+
+          <div class="cf-conditional" id="cf-row-budget">
+            <div class="cf-field">
+              <label data-i18n="l_budget">Budget-Rahmen (optional)</label>
+              <div class="cf-chips" data-field="budget" data-single="true">
+                <button type="button" class="cf-chip" data-value="" data-i18n="b_none">Keine Angabe</button>
+                <button type="button" class="cf-chip" data-value="250" data-i18n="b_1">unter 250 €</button>
+                <button type="button" class="cf-chip" data-value="500" data-i18n="b_2">250 – 500 €</button>
+                <button type="button" class="cf-chip" data-value="1000" data-i18n="b_3">500 – 1.000 €</button>
+                <button type="button" class="cf-chip" data-value="1001" data-i18n="b_4">1.000 €+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_msg">Nachricht</span> <span class="req">*</span></label>
+            <textarea name="message" data-i18n-placeholder="p_msg"></textarea>
+          </div>
+
+          <div class="cf-error" id="cf-err-2" data-i18n="err_required">Bitte fülle alle Pflichtfelder aus.</div>
+        </div>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="cf-slide">
+        <div class="cf-success">
+          <div class="cf-success-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 data-i18n="s_title">Anfrage gesendet!</h2>
+          <p id="cf-success-sub"></p>
+          <button class="cf-btn cf-btn-next" type="button" id="cf-done" style="flex: 0 0 auto; padding: 14px 32px;" data-i18n="close">Schließen</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="cf-actions" id="cf-actions">
+    <button class="cf-btn cf-btn-back" type="button" id="cf-back" data-i18n="back">Zurück</button>
+    <button class="cf-btn cf-btn-next" type="button" id="cf-next" data-i18n="next">Weiter</button>
+  </div>
+
 </div>
 
-<div class="page" id="page" style="display:none;">
-  <div id="avatar-slot"></div>
-  <h1 class="name" id="name"></h1>
-  <div id="verified-slot"></div>
-  <div id="bio-slot"></div>
-  <div id="tags-slot"></div>
-  <div class="links" id="links"></div>
-  <div id="social-slot"></div>
-  <div class="spacer"></div>
-  <a href="https://viuno.de" target="_blank" class="branding">
-    <div class="branding-logo">v</div>
-    <span class="branding-text">Erstellt mit viuno</span>
-  </a>
-  <a href="https://viuno.de/impressum" target="_blank" class="impressum">Impressum</a>
-</div>
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-<div id="modal-slot"></div>
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwMzg4NzMsImV4cCI6MjA4OTYxNDg3M30.JERbMHkDyCrnMQCGNi9VBVbWNaE_PJXJnibxAVQcPBM'
 
-<script>
-var _S={"de":{"collab_btn":"Kooperation anfragen","modal_title":"Anfrage an ","modal_sub":" meldet sich bei dir.","l_type":"Art der Anfrage","p_type":"Bitte wählen","o_brand":"Brand Deal","o_collab":"Collab","o_event":"Event / Einladung","o_other":"Sonstiges","l_name":"Name / Firma","p_name":"Dein Name oder Firmenname","l_email":"E-Mail","p_email":"deine@email.de","l_web":"Website (optional)","p_web":"www.ihrewebsite.de","l_budget":"Budget-Rahmen (optional)","b_none":"Keine Angabe","b_1":"unter 250 €","b_2":"250 – 500 €","b_3":"500 – 1.000 €","b_4":"1.000 €+","l_msg":"Nachricht","p_msg":"Kurze Beschreibung deiner Anfrage...","submit":"Anfrage senden","sending":"Wird gesendet...","err":"Fehler beim Senden. Bitte versuche es erneut.","s_title":"Anfrage gesendet!","s_sub":" meldet sich bald bei dir."},"en":{"collab_btn":"Request collaboration","modal_title":"Contact ","modal_sub":" will get back to you.","l_type":"Type of request","p_type":"Please select","o_brand":"Brand Deal","o_collab":"Collab","o_event":"Event / Invitation","o_other":"Other","l_name":"Name / Company","p_name":"Your name or company","l_email":"E-Mail","p_email":"your@email.com","l_web":"Website (optional)","p_web":"www.yourwebsite.com","l_budget":"Budget range (optional)","b_none":"No preference","b_1":"under 250 €","b_2":"250 – 500 €","b_3":"500 – 1.000 €","b_4":"1.000 €+","l_msg":"Message","p_msg":"Briefly describe your proposal...","submit":"Send request","sending":"Sending...","err":"Something went wrong. Please try again.","s_title":"Request sent!","s_sub":" will get back to you soon."},"it":{"collab_btn":"Collabora con me","modal_title":"Scrivi a ","modal_sub":" ti risponderà al più presto.","l_type":"Tipo di collaborazione","p_type":"Seleziona","o_brand":"Brand Deal","o_collab":"Collab","o_event":"Evento / Invito","o_other":"Altro","l_name":"Nome / Azienda","p_name":"Il tuo nome o azienda","l_email":"E-Mail","p_email":"la-tua@email.com","l_web":"Sito web (opzionale)","p_web":"www.tuosito.it","l_budget":"Budget indicativo (opzionale)","b_none":"Non specificato","b_1":"meno di 250 €","b_2":"250 – 500 €","b_3":"500 – 1.000 €","b_4":"1.000 €+","l_msg":"Messaggio","p_msg":"Descrivi brevemente la tua proposta...","submit":"Invia richiesta","sending":"Invio in corso...","err":"Errore. Riprova.","s_title":"Richiesta inviata!","s_sub":" ti risponderà presto."}};
-var _lang='de';
-var _cname='';
-var _creatorId='';
-var _u={};
-var _bls={};
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false }
+})
 
-// ─── SVG Icons ───
-var _ig='<svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>';
-var _tt='<svg viewBox="0 0 24 24" fill="white" width="20" height="20"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.98a8.18 8.18 0 004.76 1.52V7.05a4.84 4.84 0 01-1-.36z"/></svg>';
-var _linkSvg='<svg viewBox="0 0 24 24" stroke="#60A5FA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" width="20" height="20"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>';
-var _msgSvg='<svg viewBox="0 0 24 24" fill="none" width="20" height="20" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>';
-var _sigIg='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>';
-var _sigTt='<svg width="22" height="22" viewBox="0 0 24 24" fill="#F5F5F4"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.34-6.34V8.98a8.18 8.18 0 004.76 1.52V7.05a4.84 4.84 0 01-1-.36z"/></svg>';
-var _sigMail='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#F5F5F4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>';
-
-function escHtml(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
-function normUrl(u){if(!u)return '';return /^https?:\/\//.test(u)?u:'https://'+u;}
-function capFirst(s){if(!s)return '';return s.charAt(0).toUpperCase()+s.slice(1);}
-
-function getSlug(){
-  var p=window.location.pathname.replace(/^\/+|\/+$/g,'');
-  if(!p)return null;
-  return p.split('/')[0];
+// ====================================================================
+// I18N
+// ====================================================================
+const STRINGS = {
+  de: {
+    inquiry_btn: 'Anfragen',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum',
+    of: 'von',
+    back: 'Zurück',
+    next: 'Weiter',
+    close: 'Schließen',
+    send: 'Anfrage senden',
+    sending: 'Wird gesendet …',
+    step1_name: 'Art der Anfrage',
+    step2_name: 'Kontakt & Nachricht',
+    step1_title: 'Wie kann ich helfen?',
+    step1_sub: 'Wähle, was zu deiner Anfrage passt.',
+    step2_title: 'Deine Angaben',
+    step2_sub: 'Damit ich dich erreichen kann.',
+    o_brand: 'Brand Deal', d_brand: 'Kooperation mit Unternehmen',
+    o_collab: 'Collab', d_collab: 'Gemeinsames Projekt mit anderen Creatorn',
+    o_event: 'Event / Einladung', d_event: 'Auftritt, Launch, Presse-Event',
+    o_other: 'Sonstiges', d_other: 'Etwas anderes – erzähl mir davon',
+    l_name: 'Name / Firma', p_name: 'Dein Name oder Firmenname',
+    l_email: 'E-Mail', p_email: 'deine@email.de',
+    l_web: 'Website (optional)', p_web: 'www.deinewebsite.de',
+    l_budget: 'Budget-Rahmen (optional)',
+    b_none: 'Keine Angabe', b_1: 'unter 250 €', b_2: '250 – 500 €', b_3: '500 – 1.000 €', b_4: '1.000 €+',
+    l_msg: 'Nachricht', p_msg: 'Kurze Beschreibung deiner Anfrage...',
+    err_choose: 'Bitte wähle eine Option.',
+    err_required: 'Bitte fülle alle Pflichtfelder aus.',
+    err_email: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+    err_send: 'Senden fehlgeschlagen. Bitte versuche es erneut.',
+    s_title: 'Anfrage gesendet!',
+    s_sub: (name) => `${name} meldet sich bald bei dir.`
+  },
+  en: {
+    inquiry_btn: 'Request',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Imprint',
+    of: 'of',
+    back: 'Back',
+    next: 'Next',
+    close: 'Close',
+    send: 'Send request',
+    sending: 'Sending …',
+    step1_name: 'Request type',
+    step2_name: 'Contact & message',
+    step1_title: 'How can I help?',
+    step1_sub: 'Choose what fits your request.',
+    step2_title: 'Your details',
+    step2_sub: 'So I can get back to you.',
+    o_brand: 'Brand Deal', d_brand: 'Collaboration with companies',
+    o_collab: 'Collab', d_collab: 'Joint project with other creators',
+    o_event: 'Event / Invitation', d_event: 'Appearance, launch, press event',
+    o_other: 'Other', d_other: 'Something else – tell me about it',
+    l_name: 'Name / Company', p_name: 'Your name or company',
+    l_email: 'E-Mail', p_email: 'your@email.com',
+    l_web: 'Website (optional)', p_web: 'www.yourwebsite.com',
+    l_budget: 'Budget range (optional)',
+    b_none: 'No preference', b_1: 'under 250 €', b_2: '250 – 500 €', b_3: '500 – 1,000 €', b_4: '1,000 €+',
+    l_msg: 'Message', p_msg: 'Briefly describe your proposal...',
+    err_choose: 'Please select an option.',
+    err_required: 'Please fill in all required fields.',
+    err_email: 'Please enter a valid email address.',
+    err_send: 'Sending failed. Please try again.',
+    s_title: 'Request sent!',
+    s_sub: (name) => `${name} will get back to you soon.`
+  },
+  it: {
+    inquiry_btn: 'Scrivimi',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum',
+    of: 'di',
+    back: 'Indietro',
+    next: 'Avanti',
+    close: 'Chiudi',
+    send: 'Invia richiesta',
+    sending: 'Invio in corso …',
+    step1_name: 'Tipo di richiesta',
+    step2_name: 'Contatto e messaggio',
+    step1_title: 'Come posso aiutarti?',
+    step1_sub: 'Scegli cosa corrisponde alla tua richiesta.',
+    step2_title: 'I tuoi dati',
+    step2_sub: 'Così posso risponderti.',
+    o_brand: 'Brand Deal', d_brand: 'Collaborazione con aziende',
+    o_collab: 'Collab', d_collab: 'Progetto con altri creator',
+    o_event: 'Evento / Invito', d_event: 'Apparizione, lancio, evento stampa',
+    o_other: 'Altro', d_other: 'Qualcos\'altro – dimmelo tu',
+    l_name: 'Nome / Azienda', p_name: 'Il tuo nome o la tua azienda',
+    l_email: 'E-Mail', p_email: 'la-tua@email.com',
+    l_web: 'Sito web (opzionale)', p_web: 'www.tuosito.it',
+    l_budget: 'Budget indicativo (opzionale)',
+    b_none: 'Non specificato', b_1: 'meno di 250 €', b_2: '250 – 500 €', b_3: '500 – 1.000 €', b_4: '1.000 €+',
+    l_msg: 'Messaggio', p_msg: 'Descrivi brevemente la tua proposta...',
+    err_choose: 'Seleziona un\'opzione.',
+    err_required: 'Compila tutti i campi obbligatori.',
+    err_email: 'Inserisci un indirizzo email valido.',
+    err_send: 'Invio non riuscito. Riprova.',
+    s_title: 'Richiesta inviata!',
+    s_sub: (name) => `${name} ti risponderà presto.`
+  }
 }
 
-function render(u,bls){
-  _u=u;_bls=bls;_cname=u.display_name||'';_creatorId=u.user_id;
-  var dn=escHtml(u.display_name||'');
+let currentLang = 'de'
+let creatorData = null
 
-  // Title + Meta
-  document.title=dn+' — viuno';
-  var mDesc=document.querySelector('meta[name="description"]');
-  var mOgT=document.querySelector('meta[property="og:title"]');
-  var mOgD=document.querySelector('meta[property="og:description"]');
-  if(mDesc)mDesc.setAttribute('content',u.bio||'');
-  if(mOgT)mOgT.setAttribute('content',dn+' — viuno');
-  if(mOgD)mOgD.setAttribute('content',u.bio||'');
-
-  // Avatar
-  var initial=(u.display_name||'?')[0].toUpperCase();
-  document.getElementById('avatar-slot').innerHTML=
-    u.profile_image_url
-      ?'<img src="'+escHtml(u.profile_image_url)+'" alt="'+dn+'" class="avatar">'
-      :'<div class="avatar">'+initial+'</div>';
-
-  // Name
-  document.getElementById('name').textContent=u.display_name||'';
-
-  // Verified
-  if(u.is_verified){
-    document.getElementById('verified-slot').innerHTML=
-      '<span class="verified" style="color:#34D076;background:rgba(52,208,118,0.1);border:1px solid rgba(52,208,118,0.2);">'+
-      '<svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#34D076" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Verified</span>';
-  }
-
-  // Bio
-  if(u.bio){
-    document.getElementById('bio-slot').innerHTML='<p class="bio">'+escHtml(u.bio)+'</p>';
-  }
-
-  // Tags
-  var tags=[];
-  if(u.niche_category)tags.push(escHtml(capFirst(u.niche_category)));
-  if(u.city)tags.push(escHtml(u.city));
-  if(tags.length){
-    document.getElementById('tags-slot').innerHTML=
-      '<div class="tags">'+tags.map(function(t){return '<span class="tag">'+t+'</span>';}).join('')+'</div>';
-  }
-
-  // Links
-  var s=_S[_lang];
-  var links='';
-  if(u.instagram_handle){
-    var cig=u.instagram_handle.replace(/^@/,'');
-    links+='<a href="https://instagram.com/'+escHtml(cig)+'" target="_blank" class="link-btn"><div class="link-icon ig">'+_ig+'</div><div class="link-text"><div class="lt">Instagram</div><div class="ls">@'+escHtml(cig)+'</div></div><span class="link-arrow">&#8250;</span></a>';
-  }
-  if(u.tiktok_handle){
-    var ctt=u.tiktok_handle.replace(/^@/,'');
-    links+='<a href="https://tiktok.com/@'+escHtml(ctt)+'" target="_blank" class="link-btn"><div class="link-icon tt">'+_tt+'</div><div class="link-text"><div class="lt">TikTok</div><div class="ls">@'+escHtml(ctt)+'</div></div><span class="link-arrow">&#8250;</span></a>';
-  }
-  if(bls && bls.custom_link_url){
-    var href=normUrl(bls.custom_link_url);
-    var disp=bls.custom_link_url.replace(/^https?:\/\//,'').replace(/\/$/,'');
-    links+='<a href="'+escHtml(href)+'" target="_blank" class="link-btn"><div class="link-icon custom">'+_linkSvg+'</div><div class="link-text"><div class="lt">'+escHtml(bls.custom_link_title||'Meine Website')+'</div><div class="ls">'+escHtml(disp)+'</div></div><span class="link-arrow">&#8250;</span></a>';
-  }
-  links+='<button onclick="openCollab()" class="link-btn collab-btn"><div class="link-icon collab" style="background:linear-gradient(135deg,#34D076,#B8E63C);">'+_msgSvg+'</div><div class="link-text"><div class="lt">'+escHtml(s.collab_btn)+'</div></div><span class="link-arrow">&#8250;</span></button>';
-  document.getElementById('links').innerHTML=links;
-
-  // Social Icons
-  var icons='';
-  if(u.instagram_handle){var cig2=u.instagram_handle.replace(/^@/,'');icons+='<a href="https://instagram.com/'+escHtml(cig2)+'" target="_blank" class="sicon">'+_sigIg+'</a>';}
-  if(u.tiktok_handle){var ctt2=u.tiktok_handle.replace(/^@/,'');icons+='<a href="https://tiktok.com/@'+escHtml(ctt2)+'" target="_blank" class="sicon">'+_sigTt+'</a>';}
-  if(u.contact_email){icons+='<a href="mailto:'+escHtml(u.contact_email)+'" class="sicon">'+_sigMail+'</a>';}
-  if(icons){document.getElementById('social-slot').innerHTML='<div class="social-icons">'+icons+'</div>';}
-
-  // Modal
-  document.getElementById('modal-slot').innerHTML=buildModalHTML(dn);
-
-  // Set default language based on bls
-  _lang=(bls && bls.default_language && ['de','en','it'].indexOf(bls.default_language)>=0)?bls.default_language:'de';
-  document.documentElement.lang=_lang;
-  _switchLang(_lang);
-
-  // Show
-  document.getElementById('page').style.display='flex';
-  document.getElementById('page-lang-toggle').style.display='flex';
-  var loader=document.getElementById('page-loader');
-  loader.classList.add('hide');
-  setTimeout(function(){loader.remove();},250);
-
-  // Tracking
-  trackView(u.user_id);
+function t(key, ...args) {
+  const v = STRINGS[currentLang]?.[key]
+  if (typeof v === 'function') return v(...args)
+  return v ?? key
 }
 
-function buildModalHTML(dn){
-  var s=_S[_lang];
-  var iBg='#1C1C1F',iBorder='#2A2A2E',iText='#F5F5F4',iMuted='#6B6B70',iInput='#111113';
-  var iOverlay='rgba(0,0,0,0.75)';
-  var btnGrad='linear-gradient(135deg,#34D076,#B8E63C)';
-  var btnColor='#111';
-  var successColor='#34D076';
-  var iStyle='font-family:Outfit,sans-serif;width:100%;background:'+iInput+';border:1px solid '+iBorder+';border-radius:10px;padding:10px 12px;font-size:0.88rem;color:'+iText+';margin-bottom:14px;';
-  var lStyle='font-family:Outfit,sans-serif;font-size:0.7rem;color:'+iMuted+';letter-spacing:0.04em;text-transform:uppercase;display:block;margin-bottom:4px;';
-  var sStyle=iStyle+'appearance:none;';
-  return '<div id="collab-modal" style="display:none;position:fixed;inset:0;z-index:999;background:'+iOverlay+';align-items:center;justify-content:center;padding:20px;">'+
-    '<div style="background:'+iBg+';border:1px solid '+iBorder+';border-radius:20px;width:100%;max-width:420px;padding:28px 24px;position:relative;">'+
-    '<button onclick="closeCollab()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:'+iMuted+';font-size:1.3rem;cursor:pointer;line-height:1;">&times;</button>'+
-    '<h2 id="cm-title" style="font-family:Outfit,sans-serif;font-size:1.05rem;font-weight:600;color:'+iText+';margin-bottom:6px;">'+s.modal_title+dn+'</h2>'+
-    '<p id="cm-sub" style="font-family:Outfit,sans-serif;font-size:0.78rem;color:'+iMuted+';margin-bottom:20px;">'+dn+s.modal_sub+'</p>'+
-    '<form id="collab-form" onsubmit="submitCollab(event)">'+
-    '<label id="cm-ltype" style="'+lStyle+'">'+s.l_type+'</label>'+
-    '<select id="collab-type" onchange="updateFields()" required style="'+sStyle+'">'+
-    '<option value="" disabled selected>'+s.p_type+'</option>'+
-    '<option value="brand">'+s.o_brand+'</option>'+
-    '<option value="collab">'+s.o_collab+'</option>'+
-    '<option value="event">'+s.o_event+'</option>'+
-    '<option value="sonstiges">'+s.o_other+'</option>'+
-    '</select>'+
-    '<label id="cm-lname" style="'+lStyle+'">'+s.l_name+'</label>'+
-    '<input id="collab-name" type="text" required placeholder="'+s.p_name+'" style="'+iStyle+'">'+
-    '<label id="cm-lemail" style="'+lStyle+'">'+s.l_email+'</label>'+
-    '<input id="collab-email" type="email" required placeholder="'+s.p_email+'" style="'+iStyle+'">'+
-    '<div id="row-website" style="display:none;">'+
-    '<label id="cm-lweb" style="'+lStyle+'">'+s.l_web+'</label>'+
-    '<input id="collab-website" type="text" placeholder="'+s.p_web+'" style="'+iStyle+'">'+
-    '</div>'+
-    '<div id="row-budget" style="display:none;">'+
-    '<label id="cm-lbudget" style="'+lStyle+'">'+s.l_budget+'</label>'+
-    '<select id="collab-budget" style="'+sStyle+'">'+
-    '<option value="">'+s.b_none+'</option>'+
-    '<option value="250">'+s.b_1+'</option>'+
-    '<option value="500">'+s.b_2+'</option>'+
-    '<option value="1000">'+s.b_3+'</option>'+
-    '<option value="1001">'+s.b_4+'</option>'+
-    '</select>'+
-    '</div>'+
-    '<label id="cm-lmsg" style="'+lStyle+'">'+s.l_msg+'</label>'+
-    '<textarea id="collab-msg" required placeholder="'+s.p_msg+'" rows="3" style="'+iStyle+'resize:none;"></textarea>'+
-    '<button id="collab-submit" type="submit" style="font-family:Outfit,sans-serif;width:100%;background:'+btnGrad+';border:none;border-radius:12px;padding:13px;font-size:0.95rem;font-weight:700;color:'+btnColor+';cursor:pointer;">'+s.submit+'</button>'+
-    '</form>'+
-    '<div id="collab-success" style="display:none;text-align:center;padding:20px 0;">'+
-    '<div style="font-size:2rem;margin-bottom:12px;">✓</div>'+
-    '<p id="cm-stitle" style="font-family:Outfit,sans-serif;font-size:1rem;font-weight:600;color:'+successColor+';margin-bottom:6px;">'+s.s_title+'</p>'+
-    '<p id="cm-ssub" style="font-family:Outfit,sans-serif;font-size:0.82rem;color:'+iMuted+';">'+dn+s.s_sub+'</p>'+
-    '</div>'+
-    '</div></div>';
+function applyLanguage(lang) {
+  if (!STRINGS[lang]) lang = 'de'
+  currentLang = lang
+  document.documentElement.lang = lang
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n
+    const val = t(key)
+    if (typeof val === 'string') el.textContent = val
+  })
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder
+    const val = t(key)
+    if (typeof val === 'string') el.placeholder = val
+  })
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang)
+  })
+
+  if (creatorData?.display_name) {
+    const sub = document.getElementById('cf-success-sub')
+    if (sub) sub.textContent = t('s_sub', creatorData.display_name)
+  }
+
+  // Step-Name neu setzen je nach aktuellem Slide
+  const stepName = document.getElementById('cf-step-name')
+  if (stepName) {
+    stepName.textContent = t(currentStep === 0 ? 'step1_name' : 'step2_name')
+  }
+
+  // Action-Buttons
+  updateActionButtons()
 }
 
-function _switchLang(l){
-  _lang=l;
-  var s=_S[l];
-  document.documentElement.lang=l;
-  ['de','en','it'].forEach(function(x){
-    var el=document.getElementById('plg-'+x);
-    if(!el)return;
-    if(x===l){el.style.background='linear-gradient(135deg,#7C5CFC,#C23D8E)';el.style.color='#fff';el.style.fontWeight='700';}
-    else{el.style.background='none';el.style.color='#6B6B78';el.style.fontWeight='500';}
-  });
-  var cb=document.querySelector('.collab-btn .lt');
-  if(cb)cb.textContent=s.collab_btn;
-  var t=document.getElementById('cm-title');if(t)t.textContent=s.modal_title+_cname;
-  var sb=document.getElementById('cm-sub');if(sb)sb.textContent=_cname+s.modal_sub;
-  var lt=document.getElementById('cm-ltype');if(lt)lt.textContent=s.l_type;
-  var sel=document.getElementById('collab-type');
-  if(sel){sel.options[0].text=s.p_type;sel.options[1].text=s.o_brand;sel.options[2].text=s.o_collab;sel.options[3].text=s.o_event;sel.options[4].text=s.o_other;}
-  var ln=document.getElementById('cm-lname');if(ln)ln.textContent=s.l_name;
-  var n=document.getElementById('collab-name');if(n)n.placeholder=s.p_name;
-  var le=document.getElementById('cm-lemail');if(le)le.textContent=s.l_email;
-  var e=document.getElementById('collab-email');if(e)e.placeholder=s.p_email;
-  var lw=document.getElementById('cm-lweb');if(lw)lw.textContent=s.l_web;
-  var w=document.getElementById('collab-website');if(w)w.placeholder=s.p_web;
-  var lb=document.getElementById('cm-lbudget');if(lb)lb.textContent=s.l_budget;
-  var bsel=document.getElementById('collab-budget');
-  if(bsel){bsel.options[0].text=s.b_none;bsel.options[1].text=s.b_1;bsel.options[2].text=s.b_2;bsel.options[3].text=s.b_3;bsel.options[4].text=s.b_4;}
-  var lm=document.getElementById('cm-lmsg');if(lm)lm.textContent=s.l_msg;
-  var m=document.getElementById('collab-msg');if(m)m.placeholder=s.p_msg;
-  var sub=document.getElementById('collab-submit');if(sub)sub.textContent=s.submit;
-  var st=document.getElementById('cm-stitle');if(st)st.textContent=s.s_title;
-  var ss=document.getElementById('cm-ssub');if(ss)ss.textContent=_cname+s.s_sub;
+// ====================================================================
+// SLUG + DATA LOADING
+// ====================================================================
+function getSlugFromPath() {
+  const path = window.location.pathname
+  const cleaned = path.replace(/^\/+|\/+$/g, '')
+  if (!cleaned) return null
+  return cleaned.split('/')[0]
 }
 
-function openCollab(){document.getElementById('collab-modal').style.display='flex';document.body.style.overflow='hidden';}
-function closeCollab(){document.getElementById('collab-modal').style.display='none';document.body.style.overflow='';}
-document.addEventListener('keydown',function(e){if(e.key==='Escape')closeCollab();});
+async function loadBioPage() {
+  const slug = getSlugFromPath()
+  if (!slug) {
+    window.location.replace('https://viuno.de')
+    return
+  }
 
-function updateFields(){
-  var type=document.getElementById('collab-type').value;
-  var showWebsite=['brand','collab'].indexOf(type)>=0;
-  var showBudget=type==='brand';
-  document.getElementById('row-website').style.display=showWebsite?'block':'none';
-  document.getElementById('row-budget').style.display=showBudget?'block':'none';
+  const { data, error } = await supabase
+    .from('biopage_public')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (error || !data) {
+    window.location.replace('https://viuno.de')
+    return
+  }
+
+  creatorData = data
+  renderBioPage(data)
+
+  const lang = ['de', 'en', 'it'].includes(data.default_language) ? data.default_language : 'de'
+  applyLanguage(lang)
+
+  document.getElementById('main').style.visibility = 'visible'
+  document.getElementById('footer').style.visibility = 'visible'
+  const loader = document.getElementById('page-loader')
+  loader.classList.add('hide')
+  setTimeout(() => loader.remove(), 250)
 }
 
-async function submitCollab(e){
-  e.preventDefault();
-  var s=_S[_lang];
-  var btn=document.getElementById('collab-submit');
-  btn.disabled=true;btn.textContent=s.sending;
-  var type=document.getElementById('collab-type').value;
-  var name=document.getElementById('collab-name').value;
-  var email=document.getElementById('collab-email').value;
-  var rawUrl=document.getElementById('collab-website').value.trim();
-  var website=rawUrl?(/^https?:\/\//.test(rawUrl)?rawUrl:'https://'+rawUrl):null;
-  var budget=document.getElementById('collab-budget').value;
-  var msg=document.getElementById('collab-msg').value;
-  try{
-    var res=await fetch('https://bzejndghppuipnedasuv.supabase.co/rest/v1/collab_requests',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','apikey':'sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI','Prefer':'return=minimal'},
-      body:JSON.stringify({creator_id:_creatorId,request_type:type,sender_name:name,sender_email:email,sender_website:website,budget:budget?parseFloat(budget):null,message:msg})
-    });
-    if(res.ok||res.status===201){
-      document.getElementById('collab-form').style.display='none';
-      document.getElementById('collab-success').style.display='block';
-    } else {
-      btn.disabled=false;btn.textContent=s.submit;alert(s.err);
+function renderBioPage(u) {
+  document.title = `${u.display_name} — viuno`
+  updateMetaTags(u)
+
+  const avatar = document.getElementById('avatar')
+  const avatarImg = document.getElementById('avatar-img')
+  if (u.profile_image_url) {
+    avatarImg.src = u.profile_image_url
+    avatarImg.alt = u.display_name || ''
+    avatarImg.style.display = 'block'
+    avatarImg.onerror = () => {
+      avatarImg.style.display = 'none'
+      avatar.textContent = (u.display_name || '?')[0].toUpperCase()
     }
-  }catch(err){
-    btn.disabled=false;btn.textContent=s.submit;alert(s.err);
+  } else {
+    avatar.textContent = (u.display_name || '?')[0].toUpperCase()
+  }
+
+  document.getElementById('display-name').textContent = u.display_name || ''
+
+  if (u.is_verified) {
+    document.getElementById('verified').style.display = 'inline-flex'
+  }
+
+  const tagsEl = document.getElementById('tags')
+  tagsEl.innerHTML = ''
+  if (u.niche_category) {
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = capitalizeFirst(u.niche_category)
+    tagsEl.appendChild(s)
+  }
+  if (u.city) {
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = u.city
+    tagsEl.appendChild(s)
+  }
+
+  if (u.bio) document.getElementById('bio').textContent = u.bio
+
+  if (u.instagram_handle) {
+    const clean = u.instagram_handle.replace(/^@/, '')
+    const ig = document.getElementById('btn-instagram')
+    ig.href = `https://instagram.com/${encodeURIComponent(clean)}`
+    ig.classList.remove('hidden')
+  }
+
+  if (u.tiktok_handle) {
+    const clean = u.tiktok_handle.replace(/^@/, '')
+    const tt = document.getElementById('btn-tiktok')
+    tt.href = `https://tiktok.com/@${encodeURIComponent(clean)}`
+    tt.classList.remove('hidden')
+  }
+
+  if (u.custom_link_url && u.custom_link_title) {
+    const custom = document.getElementById('btn-custom')
+    custom.href = normalizeUrl(u.custom_link_url)
+    document.getElementById('btn-custom-label').textContent = u.custom_link_title
+    custom.classList.remove('hidden')
   }
 }
 
-function trackView(userId){
-  if(!userId)return;
-  try{
-    var r=document.referrer||'direct';
-    var h=new Date().getHours();
-    fetch('https://bzejndghppuipnedasuv.supabase.co/functions/v1/track-bio-view',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({user_id:userId,referrer_source:r,hour_of_day:h})
-    });
-  }catch(e){}
+function updateMetaTags(u) {
+  const desc = u.bio || `${u.display_name} — viuno`
+  document.querySelector('meta[name="description"]')?.setAttribute('content', desc)
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${u.display_name} — viuno`)
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc)
+  if (u.profile_image_url) {
+    document.querySelector('meta[property="og:image"]')?.setAttribute('content', u.profile_image_url)
+  }
 }
 
-// ─── Load data & render ───
-(async function(){
-  var slug=getSlug();
-  if(!slug){window.location.replace('https://viuno.de');return;}
-  try{
-    var res=await fetch('https://bzejndghppuipnedasuv.supabase.co/rest/v1/biopage_public?slug=eq.'+encodeURIComponent(slug)+'&select=*',{
-      headers:{'apikey':'sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI','Authorization':'Bearer sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI'}
-    });
-    if(!res.ok){window.location.replace('https://viuno.de');return;}
-    var rows=await res.json();
-    if(!rows||!rows.length){window.location.replace('https://viuno.de');return;}
-    var row=rows[0];
-    // Map view-row into u + bls structures
-    var u={
-      user_id:row.user_id,
-      display_name:row.display_name,
-      bio:row.bio,
-      profile_image_url:row.profile_image_url,
-      instagram_handle:row.instagram_handle,
-      tiktok_handle:row.tiktok_handle,
-      contact_email:row.contact_email,
-      niche_category:row.niche_category,
-      city:row.city,
-      is_verified:row.is_verified
-    };
-    var bls={
-      custom_link_url:row.custom_link_url,
-      custom_link_title:row.custom_link_title,
-      default_language:row.default_language
-    };
-    render(u,bls);
-  }catch(err){
-    console.error(err);
-    window.location.replace('https://viuno.de');
+function capitalizeFirst(s) {
+  if (!s) return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+function normalizeUrl(url) {
+  if (!url) return '#'
+  return /^https?:\/\//.test(url) ? url : 'https://' + url
+}
+
+// ====================================================================
+// ANFRAGE OVERLAY
+// ====================================================================
+const overlay = document.getElementById('cf-overlay')
+const track = document.getElementById('cf-track')
+const stepNumEl = document.getElementById('cf-step-num')
+const stepNameEl = document.getElementById('cf-step-name')
+const progressFill = document.getElementById('cf-progress-fill')
+const actions = document.getElementById('cf-actions')
+const backBtn = document.getElementById('cf-back')
+const nextBtn = document.getElementById('cf-next')
+
+const TOTAL_STEPS = 2
+let currentStep = 0
+const formData = {}
+
+function openInquiry() {
+  overlay.classList.add('open')
+  document.body.classList.add('cf-open')
+  goToStep(0)
+}
+
+function closeInquiry() {
+  overlay.classList.remove('open')
+  document.body.classList.remove('cf-open')
+  setTimeout(resetInquiry, 300)
+}
+
+function resetInquiry() {
+  currentStep = 0
+  overlay.querySelectorAll('input, textarea').forEach(el => el.value = '')
+  overlay.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
+  document.getElementById('cf-row-website').classList.remove('show')
+  document.getElementById('cf-row-budget').classList.remove('show')
+  hideError(1); hideError(2)
+  actions.style.display = 'flex'
+  nextBtn.disabled = false
+  for (const k in formData) delete formData[k]
+  track.querySelectorAll('.cf-slide').forEach(s => s.scrollTop = 0)
+  goToStep(0)
+}
+
+function goToStep(i) {
+  currentStep = i
+  track.style.transform = `translateX(-${i * 100}%)`
+
+  if (i < TOTAL_STEPS) {
+    stepNumEl.textContent = i + 1
+    stepNameEl.textContent = t(i === 0 ? 'step1_name' : 'step2_name')
+    progressFill.style.width = `${((i + 1) / TOTAL_STEPS) * 100}%`
+    actions.style.display = 'flex'
+    backBtn.style.visibility = i === 0 ? 'hidden' : 'visible'
+    updateActionButtons()
+  } else {
+    actions.style.display = 'none'
+    progressFill.style.width = '100%'
+    stepNameEl.textContent = t('s_title')
   }
-})();
+}
+
+function updateActionButtons() {
+  backBtn.textContent = t('back')
+  nextBtn.textContent = currentStep === TOTAL_STEPS - 1 ? t('send') : t('next')
+}
+
+function hideError(n) {
+  document.getElementById('cf-err-' + n).classList.remove('show')
+}
+function showError(n, msg) {
+  const el = document.getElementById('cf-err-' + n)
+  if (msg) el.textContent = msg
+  el.classList.add('show')
+}
+
+function collectSlide(slideIndex) {
+  const slide = track.children[slideIndex]
+  slide.querySelectorAll('input[name], textarea[name]').forEach(el => {
+    formData[el.name] = el.value.trim()
+  })
+  slide.querySelectorAll('[data-field][data-single="true"]').forEach(group => {
+    const selected = group.querySelector('.selected')
+    formData[group.dataset.field] = selected ? selected.dataset.value : null
+  })
+}
+
+function validateSlide(slideIndex) {
+  collectSlide(slideIndex)
+  if (slideIndex === 0) {
+    if (!formData.request_type) { showError(1, t('err_choose')); return false }
+    hideError(1); return true
+  }
+  if (slideIndex === 1) {
+    if (!formData.sender_name || !formData.sender_email || !formData.message) {
+      showError(2, t('err_required')); return false
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.sender_email)) {
+      showError(2, t('err_email')); return false
+    }
+    hideError(2); return true
+  }
+  return true
+}
+
+function updateConditionalFields() {
+  const type = formData.request_type
+  const showWebsite = type === 'brand' || type === 'collab'
+  const showBudget = type === 'brand'
+  document.getElementById('cf-row-website').classList.toggle('show', showWebsite)
+  document.getElementById('cf-row-budget').classList.toggle('show', showBudget)
+}
+
+track.addEventListener('click', (e) => {
+  const chip = e.target.closest('.cf-chip, .cf-card')
+  if (!chip) return
+  const group = chip.closest('[data-field]')
+  if (!group) return
+  group.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
+  chip.classList.add('selected')
+  if (group.dataset.field === 'request_type') {
+    formData.request_type = chip.dataset.value
+    updateConditionalFields()
+  }
+})
+
+document.getElementById('btn-inquiry').addEventListener('click', openInquiry)
+document.getElementById('cf-close').addEventListener('click', closeInquiry)
+document.getElementById('cf-done').addEventListener('click', closeInquiry)
+
+backBtn.addEventListener('click', () => {
+  if (currentStep > 0) goToStep(currentStep - 1)
+})
+
+nextBtn.addEventListener('click', async () => {
+  if (!validateSlide(currentStep)) return
+
+  if (currentStep < TOTAL_STEPS - 1) {
+    goToStep(currentStep + 1)
+    return
+  }
+
+  // Final submit
+  for (let i = 0; i < TOTAL_STEPS; i++) collectSlide(i)
+
+  const originalText = nextBtn.textContent
+  nextBtn.disabled = true
+  nextBtn.textContent = t('sending')
+
+  const payload = {
+    creator_id: creatorData.user_id,
+    request_type: formData.request_type,
+    sender_name: formData.sender_name,
+    sender_email: formData.sender_email,
+    sender_website: formData.sender_website ? normalizeUrl(formData.sender_website) : null,
+    budget: formData.budget ? parseFloat(formData.budget) : null,
+    message: formData.message
+  }
+
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/collab_requests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    if (!res.ok && res.status !== 201) {
+      const errText = await res.text()
+      throw new Error('HTTP ' + res.status + ': ' + errText)
+    }
+
+    nextBtn.disabled = false
+    nextBtn.textContent = originalText
+    document.getElementById('cf-success-sub').textContent = t('s_sub', creatorData.display_name)
+    goToStep(TOTAL_STEPS)
+  } catch (err) {
+    console.error('[Anfrage Submit]', err)
+    nextBtn.disabled = false
+    nextBtn.textContent = originalText
+    showError(2, t('err_send'))
+  }
+})
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && overlay.classList.contains('open')) closeInquiry()
+})
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang))
+})
+
+// ====================================================================
+// INIT
+// ====================================================================
+loadBioPage()
 </script>
 
 </body>
