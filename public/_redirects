@@ -1,0 +1,53 @@
+# ═══════════════════════════════════════════════════════════════════
+# viuno BioPages — Cloudflare Pages Routing
+# ═══════════════════════════════════════════════════════════════════
+#
+# Funktionsweise: Jeder Request auf /{slug} oder /{slug}/ liefert
+# /index.html aus. Das JS liest dann den Slug aus window.location.pathname
+# und lädt die passenden Daten aus der biopage_public View.
+#
+# Status 200 (nicht 301/302) = Rewrite, nicht Redirect.
+# Die URL in der Browserleiste bleibt /antonietta, der User sieht index.html.
+#
+# WICHTIG zur Reihenfolge:
+# 1. Erst alle spezifischen Pfade (die bleiben wie sie sind)
+# 2. Dann die Catch-All Rewrites für Slugs
+#
+# ═══════════════════════════════════════════════════════════════════
+
+
+# ───── Spezifische Pfade die NICHT auf index.html gemappt werden ─────
+# Diese Routen leiten auf die viuno-Hauptseite weiter.
+# Falls du später z.B. /impressum als eigene Seite hier hostest, kannst
+# du die Zeilen hier rauswerfen oder anpassen.
+
+/impressum       https://viuno.de/impressum     302
+/datenschutz     https://viuno.de/datenschutz   302
+/agb             https://viuno.de/agb           302
+
+
+# ───── Kit / Media Kit Pfade (bereits vorhanden) ─────
+# Falls du die Media-Kit Seiten unter /kit/{slug} weiter statisch deployst,
+# greift diese Regel NICHT — Cloudflare findet die echten Dateien zuerst.
+# Diese Zeile ist nur ein Safety-Net für nicht existierende Kit-Slugs.
+
+/kit/*           https://viuno.de               302
+
+
+# ───── Haupt-Rewrite: alle Slugs → index.html ─────
+# /antonietta       → index.html (JS liest "antonietta" aus pathname)
+# /antonietta/      → index.html (JS behandelt beide Varianten)
+# /stradauno        → index.html
+# etc.
+#
+# :splat fängt einfach alles, index.html entscheidet was damit passiert.
+
+/:slug           /index.html                    200
+/:slug/          /index.html                    200
+
+
+# ───── Root (viuno.de ohne Slug) ─────
+# Falls jemand viuno.de aufruft, leiten wir zur Haupt-Website weiter.
+# Falls du die Haupt-Landingpage eh hier hostest: diese Zeile raus.
+
+/                https://viuno.de               302
