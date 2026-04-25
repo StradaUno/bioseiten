@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Mediakit · viuno</title>
+<meta name="theme-color" content="#EAEAEE" />
+<meta name="robots" content="index, follow" />
+<style>
+  :root {
+    --bg: #EAEAEE;
+    --surface: #FAFAF9;
+    --border: #D4D4D8;
+    --border-strong: #A1A1AA;
+    --text: #1A1A2E;
+    --text-muted: #71717A;
+    --text-subtle: #9292A0;
+    --text-faint: #C4C4CC;
+    --primary: #1A1A2E;
+    --primary-hover: #000000;
+    --primary-text: #FFFFFF;
+    --radius-card: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px 0;
+  }
+
+  main {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* Loader */
+  .page-loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    z-index: 9999;
+    transition: opacity .25s ease;
+  }
+  .page-loader.hide { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Mediakit Card */
+  .mk {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 32px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    visibility: hidden;
+  }
+
+  /* Header */
+  .mk-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  .mk-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    box-shadow: 0 0 0 3px var(--surface), 0 0 0 4.5px var(--border);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .mk-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .mk-avatar-fallback {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 500; color: var(--text-muted);
+    background: var(--bg);
+  }
+  .mk-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .mk-handle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .mk-niche-tag {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin-top: 6px;
+  }
+
+  /* Bio */
+  .mk-bio {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin: 0 0 20px;
+    white-space: pre-line;
+  }
+
+  /* Section label */
+  .mk-section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-subtle);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  /* Stats grid */
+  .mk-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+  .mk-stat {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .mk-stat-num {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .mk-stat-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Platforms */
+  .mk-platform {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .mk-platform:last-child { margin-bottom: 0; }
+  .mk-platform-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .mk-platform-name {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mk-platform-name svg { width: 14px; height: 14px; }
+  .mk-platform-handle {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .mk-platform-handle:hover { color: var(--text); }
+  .mk-platform-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+  }
+  .mk-platform-stat {
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 8px;
+    text-align: center;
+  }
+  .mk-platform-stat-num {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mk-platform-stat-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  /* Content offers */
+  .mk-offers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .mk-offer {
+    font-size: 11px;
+    color: var(--primary-text);
+    background: var(--primary);
+    padding: 5px 11px;
+    border-radius: 6px;
+    font-weight: 500;
+  }
+
+  /* Audience boxes */
+  .mk-audience-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .mk-audience-box {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+  }
+  .mk-country-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+  }
+  .mk-country-row:not(:last-child) { border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 4px; }
+  .mk-country-name {
+    color: var(--text);
+    font-weight: 500;
+  }
+  .mk-country-pct {
+    color: var(--text);
+    font-weight: 600;
+  }
+  .mk-gender-row {
+    display: flex;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--border);
+    margin-bottom: 6px;
+  }
+  .mk-gender-f { background: var(--primary); }
+  .mk-gender-m { background: var(--text-subtle); }
+  .mk-gender-legend {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* Section spacing */
+  .mk-section {
+    margin-bottom: 20px;
+  }
+  .mk-section:last-of-type { margin-bottom: 0; }
+
+  /* Footer */
+  footer {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px 16px 24px;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.02em;
+    text-align: center;
+    visibility: hidden;
+  }
+  footer a { color: var(--text-subtle); text-decoration: none; transition: color .15s ease; }
+  footer a:hover { color: var(--text-muted); }
+
+  .imprint-link {
+    background: none;
+    border: none;
+    color: var(--text-subtle);
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color .15s ease;
+  }
+  .imprint-link:hover { color: var(--text-muted); }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--text); }
+  .lang-btn.active {
+    background: var(--primary);
+    color: var(--primary-text);
+    font-weight: 600;
+  }
+
+  /* Impressum Bottom Sheet */
+  .imp-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.35);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .imp-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .imp-sheet {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-height: 85dvh;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    z-index: 1000;
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear .3s;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -8px 24px rgba(26, 26, 46, 0.12);
+    visibility: hidden;
+  }
+  .imp-sheet.open {
+    transform: translateY(0);
+    visibility: visible;
+    transition: transform .3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0s;
+  }
+  .imp-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 999px;
+    margin: 10px auto 6px;
+    flex-shrink: 0;
+  }
+  .imp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 20px 14px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .imp-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .imp-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .imp-close:hover { background: var(--bg); border-color: var(--border-strong); }
+  .imp-content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 20px 20px 32px;
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--text-muted);
+    white-space: pre-line;
+  }
+  .imp-empty {
+    color: var(--text-faint);
+    font-style: italic;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  body.imp-open { overflow: hidden; }
+
+  /* Desktop: Sheet zentriert */
+  @media (min-width: 540px) {
+    main, footer { max-width: 480px; }
+    .imp-sheet {
+      left: 50%;
+      transform: translate(-50%, 100%);
+      max-width: 480px;
+      border-radius: 20px;
+      bottom: 5dvh;
+    }
+    .imp-sheet.open {
+      transform: translate(-50%, 0);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-loader" id="page-loader"><div class="spinner"></div></div>
+
+<main id="main">
+  <div class="mk" id="mk-card">
+    <div class="mk-header">
+      <div class="mk-avatar" id="mk-avatar"></div>
+      <div style="flex:1; min-width:0;">
+        <div class="mk-name" id="mk-name"></div>
+        <div class="mk-handle" id="mk-handle"></div>
+        <div id="mk-niche-wrap"></div>
+      </div>
+    </div>
+
+    <p class="mk-bio" id="mk-bio"></p>
+
+    <div class="mk-section" id="mk-stats-section">
+      <div class="mk-section-label" data-i18n="reach">Reichweite</div>
+      <div class="mk-stats" id="mk-stats"></div>
+    </div>
+
+    <div class="mk-section" id="mk-platforms-section">
+      <div class="mk-section-label" data-i18n="platforms">Plattformen</div>
+      <div id="mk-platforms"></div>
+    </div>
+
+    <div class="mk-section" id="mk-offers-section">
+      <div class="mk-section-label" data-i18n="offers">Content-Angebote</div>
+      <div class="mk-offers" id="mk-offers"></div>
+    </div>
+
+    <div class="mk-section" id="mk-audience-section">
+      <div class="mk-section-label" data-i18n="audience">Audience</div>
+      <div class="mk-audience-grid" id="mk-audience"></div>
+    </div>
+  </div>
+</main>
+
+<footer id="footer">
+  <span data-i18n="powered_by">powered by</span> <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
+  <div style="margin-top: 4px;"><button type="button" class="imprint-link" id="btn-imprint" data-i18n="imprint">Impressum</button></div>
+  <div class="lang-switch" role="group" aria-label="Sprache">
+    <button class="lang-btn" data-lang="de" type="button">DE</button>
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn" data-lang="it" type="button">IT</button>
+  </div>
+</footer>
+
+<div class="imp-backdrop" id="imp-backdrop"></div>
+<div class="imp-sheet" id="imp-sheet" role="dialog" aria-modal="true" aria-labelledby="imp-title">
+  <div class="imp-handle"></div>
+  <div class="imp-header">
+    <span class="imp-title" id="imp-title" data-i18n="imprint">Impressum</span>
+    <button type="button" class="imp-close" id="imp-close" aria-label="Schließen">×</button>
+  </div>
+  <div class="imp-content" id="imp-content"></div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } })
+
+// ====================================================================
+// I18N
+// ====================================================================
+const STRINGS = {
+  de: {
+    reach: 'Reichweite',
+    platforms: 'Plattformen',
+    offers: 'Content-Angebote',
+    audience: 'Audience',
+    followers: 'Follower',
+    avg_likes: 'Ø Likes',
+    avg_views: 'Ø Views',
+    er: 'Engagement',
+    er_ig: 'ER · Instagram',
+    er_tt: 'ER · TikTok',
+    total_followers: 'Follower gesamt',
+    avg_engagement: 'Ø Engagement',
+    o_ugc: 'UGC Video',
+    o_reel: 'Instagram Reel',
+    o_post: 'TikTok Post',
+    o_story: 'Story Package',
+    top_country: 'Top-Länder',
+    gender: 'Geschlecht',
+    female: 'Frauen',
+    male: 'Männer',
+    powered_by: 'powered by',
+    imprint: 'Impressum',
+    imprint_empty: 'Es wurde noch kein Impressum hinterlegt.'
+  },
+  en: {
+    reach: 'Reach',
+    platforms: 'Platforms',
+    offers: 'Content Offerings',
+    audience: 'Audience',
+    followers: 'Followers',
+    avg_likes: 'Avg likes',
+    avg_views: 'Avg views',
+    er: 'Engagement',
+    er_ig: 'ER · Instagram',
+    er_tt: 'ER · TikTok',
+    total_followers: 'Total followers',
+    avg_engagement: 'Avg engagement',
+    o_ugc: 'UGC Video',
+    o_reel: 'Instagram Reel',
+    o_post: 'TikTok Post',
+    o_story: 'Story Package',
+    top_country: 'Top countries',
+    gender: 'Gender',
+    female: 'Female',
+    male: 'Male',
+    powered_by: 'powered by',
+    imprint: 'Imprint',
+    imprint_empty: 'No imprint has been provided yet.'
+  },
+  it: {
+    reach: 'Reach',
+    platforms: 'Piattaforme',
+    offers: 'Servizi',
+    audience: 'Audience',
+    followers: 'Follower',
+    avg_likes: 'Ø Likes',
+    avg_views: 'Ø Views',
+    er: 'Engagement',
+    er_ig: 'ER · Instagram',
+    er_tt: 'ER · TikTok',
+    total_followers: 'Follower totali',
+    avg_engagement: 'Ø Engagement',
+    o_ugc: 'UGC Video',
+    o_reel: 'Instagram Reel',
+    o_post: 'TikTok Post',
+    o_story: 'Story Package',
+    top_country: 'Paesi principali',
+    gender: 'Genere',
+    female: 'Donne',
+    male: 'Uomini',
+    powered_by: 'creato con',
+    imprint: 'Note legali',
+    imprint_empty: 'Nessuna nota legale inserita.'
+  }
+}
+
+let currentLang = 'de'
+let creatorData = null
+
+function t(key) {
+  return (STRINGS[currentLang] && STRINGS[currentLang][key]) || (STRINGS.de[key] || key)
+}
+
+// ====================================================================
+// FORMATTING
+// ====================================================================
+function fmtNum(n) {
+  if (n == null || n === '') return '–'
+  const num = parseFloat(n)
+  if (isNaN(num)) return '–'
+  if (num >= 1000000) return (num / 1000000).toFixed(1).replace('.0', '') + 'M'
+  if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'K'
+  return Math.round(num).toString()
+}
+function fmtPct(n) {
+  if (n == null || n === '') return '–'
+  const num = parseFloat(n)
+  if (isNaN(num)) return '–'
+  return num.toFixed(1).replace('.0', '') + '%'
+}
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+function capitalize(s) {
+  if (!s) return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+// ====================================================================
+// LOAD DATA
+// ====================================================================
+async function loadMediakit() {
+  const path = window.location.pathname
+  const match = path.match(/\/kit\/([^\/]+)/)
+  const slug = match ? decodeURIComponent(match[1]) : null
+
+  if (!slug) {
+    window.location.replace('https://viuno.de')
+    return
+  }
+
+  const { data, error } = await supabase
+    .from('mediakit_public')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (error || !data) {
+    window.location.replace('https://viuno.de')
+    return
+  }
+
+  creatorData = data
+  renderMediakit(data)
+
+  // ─── Mediakit View Tracking ───
+  try {
+    fetch(SUPABASE_URL + '/functions/v1/track-mediakit-view', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: data.user_id })
+    }).catch(() => {})
+  } catch (_) {}
+
+  // Sprache: Creator-Default oder DE-Fallback
+  const lang = ['de', 'en', 'it'].includes(data.default_language) ? data.default_language : 'de'
+  applyLanguage(lang)
+
+  document.getElementById('main').firstElementChild.style.visibility = 'visible'
+  document.getElementById('mk-card').style.visibility = 'visible'
+  document.getElementById('footer').style.visibility = 'visible'
+  const loader = document.getElementById('page-loader')
+  loader.classList.add('hide')
+  setTimeout(() => loader.remove(), 250)
+}
+
+// ====================================================================
+// RENDER
+// ====================================================================
+function renderMediakit(u) {
+  // Title (Browser-Tab)
+  document.title = (u.display_name || 'Mediakit') + ' · viuno'
+
+  // Avatar
+  const avatarEl = document.getElementById('mk-avatar')
+  if (u.profile_image_url) {
+    const img = document.createElement('img')
+    img.src = u.profile_image_url
+    img.alt = u.display_name || ''
+    img.onerror = () => {
+      avatarEl.innerHTML = '<div class="mk-avatar-fallback">' + escapeHtml((u.display_name || 'C').charAt(0).toUpperCase()) + '</div>'
+    }
+    avatarEl.appendChild(img)
+  } else {
+    avatarEl.innerHTML = '<div class="mk-avatar-fallback">' + escapeHtml((u.display_name || 'C').charAt(0).toUpperCase()) + '</div>'
+  }
+
+  // Name
+  document.getElementById('mk-name').textContent = u.display_name || 'Creator'
+
+  // Handle (Instagram bevorzugt, sonst TikTok, sonst nichts)
+  const handleEl = document.getElementById('mk-handle')
+  const primaryHandle = u.instagram_handle || u.tiktok_handle
+  if (primaryHandle) {
+    handleEl.textContent = '@' + primaryHandle
+  } else {
+    handleEl.style.display = 'none'
+  }
+
+  // Niche tag
+  if (u.niche_category) {
+    document.getElementById('mk-niche-wrap').innerHTML =
+      '<span class="mk-niche-tag">' + escapeHtml(capitalize(u.niche_category)) + '</span>'
+  }
+
+  // Bio
+  const bioEl = document.getElementById('mk-bio')
+  if (u.bio) {
+    bioEl.textContent = u.bio
+  } else {
+    bioEl.style.display = 'none'
+  }
+
+  // Reichweite-Stats: Total Follower + Avg Engagement
+  const ig = u.instagram_analytics || {}
+  const tt = u.tiktok_analytics || {}
+  const igFollowers = parseInt(ig.followers || 0) || 0
+  const ttFollowers = parseInt(tt.followers || 0) || 0
+  const totalFollowers = igFollowers + ttFollowers
+
+  // Engagement: Override aus mediakit_settings hat Vorrang
+  const erIg = u.engagement_rate_instagram != null ? parseFloat(u.engagement_rate_instagram) : (ig.engagement_rate ? parseFloat(ig.engagement_rate) : null)
+  const erTt = u.engagement_rate_tiktok != null ? parseFloat(u.engagement_rate_tiktok) : (tt.engagement_rate ? parseFloat(tt.engagement_rate) : null)
+  const ers = [erIg, erTt].filter(x => x != null && !isNaN(x))
+  const avgEng = ers.length ? (ers.reduce((s, n) => s + n, 0) / ers.length) : null
+
+  const statsHtml = []
+  if (totalFollowers > 0) {
+    statsHtml.push('<div class="mk-stat"><div class="mk-stat-num">' + fmtNum(totalFollowers) + '</div><div class="mk-stat-label" data-i18n="total_followers">' + t('total_followers') + '</div></div>')
+  }
+  if (avgEng != null) {
+    statsHtml.push('<div class="mk-stat"><div class="mk-stat-num">' + fmtPct(avgEng) + '</div><div class="mk-stat-label" data-i18n="avg_engagement">' + t('avg_engagement') + '</div></div>')
+  }
+  if (statsHtml.length === 0) {
+    document.getElementById('mk-stats-section').style.display = 'none'
+  } else {
+    document.getElementById('mk-stats').innerHTML = statsHtml.join('')
+  }
+
+  // Plattformen
+  const platformsHtml = []
+  if (u.instagram_handle && (igFollowers > 0 || ig.avg_likes || erIg != null)) {
+    platformsHtml.push(buildPlatformCard('instagram', u.instagram_handle, igFollowers, ig.avg_likes, ig.avg_views, erIg))
+  }
+  if (u.tiktok_handle && (ttFollowers > 0 || tt.avg_views || erTt != null)) {
+    platformsHtml.push(buildPlatformCard('tiktok', u.tiktok_handle, ttFollowers, tt.avg_likes, tt.avg_views, erTt))
+  }
+  if (platformsHtml.length === 0) {
+    document.getElementById('mk-platforms-section').style.display = 'none'
+  } else {
+    document.getElementById('mk-platforms').innerHTML = platformsHtml.join('')
+  }
+
+  // Content-Angebote
+  const offersHtml = []
+  if (u.mediakit_ugc) offersHtml.push('<span class="mk-offer" data-i18n="o_ugc">' + t('o_ugc') + '</span>')
+  if (u.mediakit_reel) offersHtml.push('<span class="mk-offer" data-i18n="o_reel">' + t('o_reel') + '</span>')
+  if (u.mediakit_post) offersHtml.push('<span class="mk-offer" data-i18n="o_post">' + t('o_post') + '</span>')
+  if (u.mediakit_story) offersHtml.push('<span class="mk-offer" data-i18n="o_story">' + t('o_story') + '</span>')
+  if (offersHtml.length === 0) {
+    document.getElementById('mk-offers-section').style.display = 'none'
+  } else {
+    document.getElementById('mk-offers').innerHTML = offersHtml.join('')
+  }
+
+  // Audience: Top-Länder + Geschlecht
+  const audienceParts = []
+
+  if (u.top_country_1 || u.top_country_2) {
+    const countryRows = []
+    if (u.top_country_1) {
+      countryRows.push('<div class="mk-country-row"><span class="mk-country-name">' + escapeHtml(u.top_country_1) + '</span><span class="mk-country-pct">' + fmtPct(u.top_country_1_pct) + '</span></div>')
+    }
+    if (u.top_country_2) {
+      countryRows.push('<div class="mk-country-row"><span class="mk-country-name">' + escapeHtml(u.top_country_2) + '</span><span class="mk-country-pct">' + fmtPct(u.top_country_2_pct) + '</span></div>')
+    }
+    audienceParts.push(
+      '<div class="mk-audience-box">' +
+      '<div class="mk-section-label" style="margin-bottom:8px;" data-i18n="top_country">' + t('top_country') + '</div>' +
+      countryRows.join('') +
+      '</div>'
+    )
+  }
+
+  if (u.audience_female_pct != null || u.audience_male_pct != null) {
+    const f = parseFloat(u.audience_female_pct || 0)
+    const m = parseFloat(u.audience_male_pct || 0)
+    const total = f + m
+    const fPct = total > 0 ? (f / total) * 100 : 50
+    const mPct = total > 0 ? (m / total) * 100 : 50
+    audienceParts.push(
+      '<div class="mk-audience-box">' +
+      '<div class="mk-section-label" style="margin-bottom:8px;" data-i18n="gender">' + t('gender') + '</div>' +
+      '<div class="mk-gender-row">' +
+        '<div class="mk-gender-f" style="width:' + fPct + '%"></div>' +
+        '<div class="mk-gender-m" style="width:' + mPct + '%"></div>' +
+      '</div>' +
+      '<div class="mk-gender-legend">' +
+        '<span><span data-i18n="female">' + t('female') + '</span> ' + fmtPct(u.audience_female_pct) + '</span>' +
+        '<span><span data-i18n="male">' + t('male') + '</span> ' + fmtPct(u.audience_male_pct) + '</span>' +
+      '</div>' +
+      '</div>'
+    )
+  }
+
+  if (audienceParts.length === 0) {
+    document.getElementById('mk-audience-section').style.display = 'none'
+  } else {
+    document.getElementById('mk-audience').innerHTML = audienceParts.join('')
+  }
+}
+
+function buildPlatformCard(platform, handle, followers, avgLikes, avgViews, er) {
+  const cleanHandle = String(handle).replace(/^@/, '')
+  const profileUrl = platform === 'instagram'
+    ? 'https://instagram.com/' + encodeURIComponent(cleanHandle)
+    : 'https://tiktok.com/@' + encodeURIComponent(cleanHandle)
+
+  const platformName = platform === 'instagram' ? 'Instagram' : 'TikTok'
+  const platformIcon = platform === 'instagram'
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>'
+
+  const midKey = platform === 'tiktok' ? 'avg_views' : 'avg_likes'
+  const midVal = platform === 'tiktok' ? avgViews : avgLikes
+
+  return (
+    '<div class="mk-platform">' +
+      '<div class="mk-platform-head">' +
+        '<div class="mk-platform-name">' + platformIcon + '<span>' + platformName + '</span></div>' +
+        '<a class="mk-platform-handle" href="' + escapeHtml(profileUrl) + '" target="_blank" rel="noopener">@' + escapeHtml(cleanHandle) + '</a>' +
+      '</div>' +
+      '<div class="mk-platform-stats">' +
+        '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + fmtNum(followers) + '</div><div class="mk-platform-stat-label" data-i18n="followers">' + t('followers') + '</div></div>' +
+        '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + fmtNum(midVal) + '</div><div class="mk-platform-stat-label" data-i18n="' + midKey + '">' + t(midKey) + '</div></div>' +
+        '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + (er != null ? fmtPct(er) : '–') + '</div><div class="mk-platform-stat-label" data-i18n="er">' + t('er') + '</div></div>' +
+      '</div>' +
+    '</div>'
+  )
+}
+
+// ====================================================================
+// LANGUAGE
+// ====================================================================
+function applyLanguage(lang) {
+  currentLang = lang
+  document.documentElement.lang = lang
+
+  // Aktive Pill markieren
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang)
+  })
+
+  // Alle data-i18n Elemente aktualisieren
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n')
+    if (STRINGS[lang] && STRINGS[lang][key] != null) {
+      el.textContent = STRINGS[lang][key]
+    }
+  })
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang))
+})
+
+// ====================================================================
+// IMPRESSUM BOTTOM SHEET
+// ====================================================================
+const impSheet = document.getElementById('imp-sheet')
+const impBackdrop = document.getElementById('imp-backdrop')
+const impContent = document.getElementById('imp-content')
+
+function openImprint() {
+  const text = (creatorData?.impressum_text || '').trim()
+  if (text) {
+    impContent.textContent = text
+    impContent.classList.remove('imp-empty')
+  } else {
+    impContent.textContent = t('imprint_empty')
+    impContent.classList.add('imp-empty')
+  }
+  impSheet.classList.add('open')
+  impBackdrop.classList.add('open')
+  document.body.classList.add('imp-open')
+}
+
+function closeImprint() {
+  impSheet.classList.remove('open')
+  impBackdrop.classList.remove('open')
+  document.body.classList.remove('imp-open')
+}
+
+document.getElementById('btn-imprint').addEventListener('click', openImprint)
+document.getElementById('imp-close').addEventListener('click', closeImprint)
+impBackdrop.addEventListener('click', closeImprint)
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && impSheet.classList.contains('open')) closeImprint()
+})
+
+// ====================================================================
+// START
+// ====================================================================
+loadMediakit()
+</script>
+</body>
+</html>
