@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>{{DISPLAY_NAME}} — viuno</title>
 <meta name="description" content="{{BIO}}" />
-<meta name="theme-color" content="#1A1025" />
+<meta name="theme-color" content="#14171f" />
 
 <!-- Open Graph / Social Preview — Platzhalter für späteren Cloudflare Worker (Stufe B) -->
 <meta property="og:type" content="website" />
@@ -17,17 +17,17 @@
 
 <style>
   :root {
-    --bg: #1A1025;
-    --surface: rgba(255, 255, 255, 0.13);
-    --border: rgba(255, 255, 255, 0.18);
-    --border-strong: rgba(255, 255, 255, 0.30);
-    --text: #FFFFFF;
-    --text-muted: rgba(255, 255, 255, 0.75);
-    --text-subtle: rgba(255, 255, 255, 0.55);
-    --text-faint: rgba(255, 255, 255, 0.30);
-    --primary: rgba(255, 255, 255, 0.20);
-    --primary-hover: rgba(255, 255, 255, 0.30);
-    --primary-text: #FFFFFF;
+    --bg: #14171f;
+    --surface: #1e2230;
+    --border: #2a2f40;
+    --border-strong: #3a4058;
+    --text: #f0f2f8;
+    --text-muted: #a8b0c4;
+    --text-subtle: #7a8096;
+    --text-faint: #4a5068;
+    --primary: #c4b5f5;
+    --primary-hover: #d4c8f8;
+    --primary-text: #14171f;
     --radius-btn: 12px;
     --radius-img: 14px;
   }
@@ -35,8 +35,7 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
-    background: linear-gradient(160deg, #7C5CFC 0%, #C23D8E 50%, #F59E0B 100%);
-    background-attachment: fixed;
+    background: var(--bg);
     color: var(--text);
     font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -66,7 +65,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(160deg, #7C5CFC 0%, #C23D8E 50%, #F59E0B 100%);
+    background: var(--bg);
     z-index: 9999;
     transition: opacity .25s ease;
   }
@@ -92,19 +91,17 @@
     width: 96px;
     height: 96px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: var(--surface);
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 32px;
     font-weight: 500;
-    color: var(--text);
+    color: var(--text-muted);
     margin-bottom: 16px;
     overflow: hidden;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08), 0 0 0 4.5px rgba(255, 255, 255, 0.25);
+    box-shadow: 0 0 0 3px var(--bg), 0 0 0 4.5px color-mix(in srgb, var(--primary) 35%, transparent);
   }
   .avatar img {
     width: 100%;
@@ -193,24 +190,19 @@
   .btn:active { transform: scale(.98); }
 
   .btn-primary {
-    background: #FFFFFF;
-    color: #1A1025;
-    border: 1px solid #FFFFFF;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    font-weight: 600;
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
   }
-  .btn-primary:hover { background: rgba(255, 255, 255, 0.92); border-color: rgba(255, 255, 255, 0.92); }
+  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
 
   .btn-secondary {
-    background: rgba(255, 255, 255, 0.10);
+    background: transparent;
     color: var(--text);
     border: 1px solid var(--border);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
   }
   .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.18);
+    background: var(--surface);
     border-color: var(--border-strong);
   }
 
@@ -273,15 +265,15 @@
     right: 0;
     bottom: 0;
     max-height: 85dvh;
-    background: #1A1025;
-    border-top: 1px solid rgba(255, 255, 255, 0.18);
+    background: var(--surface);
+    border-top: 1px solid var(--border);
     border-radius: 20px 20px 0 0;
     z-index: 1000;
     transform: translateY(100%);
     transition: transform .3s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear .3s;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
     visibility: hidden;
   }
   .imp-sheet.open {
@@ -403,17 +395,15 @@
       padding: 48px 20px;
     }
     main {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: var(--surface);
+      border: 1px solid var(--border);
       border-radius: 28px;
       padding: 56px 32px 24px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.20);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
     }
-    /* Avatar Ring auf Container-Hintergrund */
+    /* Avatar Ring Background passt sich an */
     .avatar {
-      box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.05), 0 0 0 5.5px rgba(255, 255, 255, 0.25);
+      box-shadow: 0 0 0 4px var(--surface), 0 0 0 5.5px color-mix(in srgb, var(--primary) 35%, transparent);
     }
     /* Footer rückt näher an Content */
     footer {
@@ -431,7 +421,7 @@
   .cf-overlay {
     position: fixed;
     inset: 0;
-    background: #1A1025;
+    background: var(--bg);
     z-index: 1000;
     display: flex;
     flex-direction: column;
@@ -561,7 +551,7 @@
     display: flex;
     align-items: center;
     gap: 14px;
-    padding: 14px 45px 14px 14px;
+    padding: 14px;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -571,14 +561,11 @@
     transition: all .15s ease;
     width: 100%;
     color: var(--text);
-    position: relative;
   }
   .cf-card:hover { border-color: var(--border-strong); }
   .cf-card.selected {
-    border-color: #FFFFFF;
-    border-width: 2px;
-    padding: 13px 44px 13px 13px;
-    background: rgba(255, 255, 255, 0.28);
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
   }
   .cf-card-icon {
     flex-shrink: 0;
@@ -593,22 +580,9 @@
     color: var(--text-muted);
   }
   .cf-card.selected .cf-card-icon {
-    background: rgba(255, 255, 255, 0.30);
-    border-color: rgba(255, 255, 255, 0.50);
-    color: #FFFFFF;
-  }
-  .cf-card.selected .cf-card-title { color: #FFFFFF; }
-  .cf-card.selected::after {
-    content: '';
-    position: absolute;
-    right: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 22px;
-    height: 22px;
-    background: #FFFFFF url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231A1025' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'/></svg>") center/12px no-repeat;
-    border-radius: 50%;
-    flex-shrink: 0;
+    background: color-mix(in srgb, var(--primary) 20%, var(--bg));
+    border-color: var(--primary);
+    color: var(--primary);
   }
   .cf-card-text { flex: 1; min-width: 0; }
   .cf-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
