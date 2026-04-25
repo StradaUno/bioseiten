@@ -1,461 +1,864 @@
 <!DOCTYPE html>
-<html lang="de" style="color-scheme: dark;">
+<html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="color-scheme" content="dark">
-<title>viuno — Wachse smarter. Nicht härter.</title>
-<meta name="description" content="Jeden Morgen genau wissen, was du posten musst — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.">
+<title>viuno — Wachse smarter. Mit echter Hilfe.</title>
+<meta name="description" content="Kostenlose Tools für Creator. Persönliches Management, wenn du mehr willst. Für Creator und Unternehmen im DACH-Raum.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { color-scheme: dark; scroll-behavior: smooth; }
+html { scroll-behavior: smooth; }
 body {
-  font-family: 'Outfit', sans-serif;
-  background: #0C0C0F !important;
-  color: #F0F0EE !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #FAFAF8;
+  color: #18181B;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  forced-color-adjust: none;
+  line-height: 1.5;
 }
 :root {
-  --bg: #0C0C0F;
-  --surface: #141417;
-  --border: #1E1E24;
-  --text: #F0F0EE;
-  --muted: #6B6B78;
-  --subtle: #44444F;
-  --accent: #7C5CFC;
-  --grad: linear-gradient(135deg, #7C5CFC, #C23D8E);
+  --bg: #FAFAF8;
+  --surface: #FFFFFF;
+  --border: #E8E8E3;
+  --border-strong: #D4D4CE;
+  --text: #18181B;
+  --muted: #71717A;
+  --subtle: #A1A1AA;
+  --accent: #18181B;
+  --accent-hover: #27272A;
+  --soft: #F4F4EE;
+  --highlight: #FAF7F0;
+  --error: #DC2626;
+  --success: #16A34A;
+  --success-bg: #DCFCE7;
 }
 
 /* NAV */
 nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 16px 28px;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  padding: 14px 28px;
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(12,12,15,0.85);
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  background: rgba(250,250,248,0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
 }
-.nav-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
 .nav-logo-mark {
-  width: 28px; height: 28px; border-radius: 8px; background: var(--grad);
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--accent);
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.72rem; font-weight: 800; color: #fff;
+  font-size: 0.78rem; font-weight: 700; color: #fff;
+  letter-spacing: -0.02em;
 }
 .nav-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
-.nav-cta {
-  background: var(--grad); color: #fff; border: none; border-radius: 10px;
-  padding: 9px 20px; font-family: 'Outfit', sans-serif; font-size: 0.84rem; font-weight: 600;
-  cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+.nav-links { display: flex; gap: 28px; align-items: center; }
+.nav-link {
+  font-size: 0.86rem; color: var(--muted); text-decoration: none; font-weight: 500;
+  transition: color 0.15s; cursor: pointer; background: none; border: none;
+  font-family: inherit;
 }
-.nav-cta:hover { opacity: 0.85; transform: translateY(-1px); }
+.nav-link:hover { color: var(--text); }
+.nav-cta {
+  background: var(--accent); color: #fff; border: none; border-radius: 9px;
+  padding: 9px 18px; font-family: inherit; font-size: 0.84rem; font-weight: 600;
+  cursor: pointer; transition: background 0.15s, transform 0.1s;
+  text-decoration: none; display: inline-block;
+}
+.nav-cta:hover { background: var(--accent-hover); }
+@media(max-width: 700px) {
+  .nav-links { display: none; }
+}
 
 /* HERO */
 .hero {
-  min-height: 100dvh;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; padding: 120px 24px 60px; position: relative; overflow: hidden;
+  padding: 140px 24px 70px;
+  text-align: center;
+  position: relative;
 }
-.hero-glow {
-  position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
-  width: 700px; height: 700px;
-  background: radial-gradient(ellipse, rgba(124,92,252,0.18) 0%, rgba(194,61,142,0.1) 40%, transparent 70%);
-  pointer-events: none;
-}
-.hero-inner { position: relative; z-index: 1; max-width: 680px; }
+.hero-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(124,92,252,0.12); border: 1px solid rgba(124,92,252,0.25);
-  border-radius: 30px; padding: 6px 16px;
-  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
-  color: #A78BFA; margin-bottom: 26px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 30px; padding: 6px 14px;
+  font-size: 0.74rem; font-weight: 500; color: var(--muted);
+  margin-bottom: 28px;
   opacity: 0; animation: fadeUp 0.6s ease 0.1s forwards;
 }
-.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #A78BFA; animation: pulse 2s ease-in-out infinite; }
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
 .hero h1 {
-  font-size: clamp(2.4rem, 7vw, 4.5rem);
-  font-weight: 800; line-height: 1.1; letter-spacing: -0.04em; color: var(--text);
-  margin-bottom: 16px; opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards;
+  font-size: clamp(2.3rem, 6vw, 4rem);
+  font-weight: 800; line-height: 1.05; letter-spacing: -0.045em;
+  color: var(--text); margin-bottom: 22px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.2s forwards;
 }
-.grad-text {
-  background: var(--grad);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+.hero h1 em {
+  font-style: normal; color: var(--muted); font-weight: 400;
+  display: block;
 }
 .hero-sub {
-  font-size: clamp(0.95rem, 2.5vw, 1.1rem); font-weight: 300; color: var(--muted);
-  max-width: 420px; line-height: 1.65; margin: 0 auto 40px;
+  font-size: clamp(1rem, 2vw, 1.18rem); font-weight: 400; color: var(--muted);
+  max-width: 520px; line-height: 1.55; margin: 0 auto 38px;
   opacity: 0; animation: fadeUp 0.6s ease 0.35s forwards;
 }
 .hero-actions {
-  display: flex; flex-direction: column; align-items: center; gap: 11px;
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
   opacity: 0; animation: fadeUp 0.6s ease 0.5s forwards;
 }
 .btn-primary {
-  display: inline-block; background: var(--grad); color: #fff;
-  text-decoration: none; border-radius: 14px; padding: 16px 36px;
-  font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700;
-  cursor: pointer; border: none;
-  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 8px 32px rgba(124,92,252,0.3);
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff; text-decoration: none;
+  border-radius: 11px; padding: 14px 26px;
+  font-family: inherit; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--accent);
+  transition: background 0.15s, transform 0.15s;
 }
-.btn-primary:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(124,92,252,0.4); }
-.hero-note { font-size: 0.73rem; color: var(--muted); }
-@keyframes fadeUp { from{opacity:0;transform:translateY(18px);} to{opacity:1;transform:translateY(0);} }
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); color: var(--text); text-decoration: none;
+  border-radius: 11px; padding: 14px 26px;
+  font-family: inherit; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border-strong);
+  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+}
+.btn-secondary:hover { border-color: var(--text); background: var(--soft); transform: translateY(-1px); }
+.hero-meta {
+  margin-top: 22px; font-size: 0.78rem; color: var(--subtle); font-weight: 400;
+  opacity: 0; animation: fadeUp 0.6s ease 0.65s forwards;
+}
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
 
-/* MOCKUP */
-.mockup-strip {
-  padding: 0 24px 80px; display: flex; justify-content: center;
-  position: relative; z-index: 1;
-  opacity: 0; animation: fadeUp 0.8s ease 0.7s forwards;
+/* TWO PATHS */
+.paths {
+  padding: 0 24px 80px;
+  max-width: 1080px; margin: 0 auto;
 }
-.mockup-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 24px;
-  padding: 20px; max-width: 340px; width: 100%;
-  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+.paths-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+@media(max-width: 760px) { .paths-grid { grid-template-columns: 1fr; } }
+.path-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px; padding: 36px 32px;
+  display: flex; flex-direction: column;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
-.mockup-header {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 14px; padding-bottom: 13px; border-bottom: 1px solid var(--border);
+.path-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+  transform: translateY(-2px);
 }
-.mockup-avatar {
-  width: 36px; height: 36px; border-radius: 50%; background: var(--grad);
+.path-icon {
+  width: 42px; height: 42px;
+  border-radius: 11px;
+  background: var(--soft);
   display: flex; align-items: center; justify-content: center;
-  font-size: 0.78rem; font-weight: 700; color: #fff; flex-shrink: 0;
+  font-size: 1.2rem; margin-bottom: 18px;
 }
-.mockup-name { font-size: 0.86rem; font-weight: 600; color: var(--text); }
-.mockup-handle { font-size: 0.7rem; color: var(--muted); margin-top: 1px; }
-.mockup-digest {
-  background: rgba(124,92,252,0.07); border: 1px solid rgba(124,92,252,0.15);
-  border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+.path-eyebrow {
+  font-size: 0.7rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px;
 }
-.mockup-digest-label {
-  font-size: 0.58rem; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 0.08em; color: #A78BFA; margin-bottom: 6px;
+.path-card h3 {
+  font-size: 1.35rem; font-weight: 700; letter-spacing: -0.025em;
+  color: var(--text); margin-bottom: 10px;
 }
-.mockup-digest-text { font-size: 0.76rem; color: rgba(240,240,238,0.7); line-height: 1.55; font-weight: 300; }
-.mockup-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 7px; }
-.mockup-stat {
-  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-  border-radius: 10px; padding: 10px 8px; text-align: center;
+.path-card p {
+  font-size: 0.93rem; color: var(--muted); line-height: 1.6; margin-bottom: 22px;
+  flex-grow: 1;
 }
-.mockup-stat-val { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1; }
-.mockup-stat-label { font-size: 0.58rem; color: var(--muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+.path-cta {
+  display: inline-flex; align-items: center; gap: 6px; align-self: flex-start;
+  font-size: 0.88rem; font-weight: 600; color: var(--text);
+  text-decoration: none; padding: 11px 18px;
+  background: transparent; border: 1px solid var(--border-strong); border-radius: 9px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  cursor: pointer; font-family: inherit;
+}
+.path-cta:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.path-cta .arrow { transition: transform 0.2s; }
+.path-cta:hover .arrow { transform: translateX(3px); }
 
-/* DIVIDER */
-.divider { height: 1px; background: linear-gradient(90deg, transparent, var(--border), transparent); margin: 0 24px; }
-
-/* FEATURES */
-.features { padding: 80px 24px; }
-.features-inner { max-width: 900px; margin: 0 auto; }
-.feature-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
-@media(min-width:640px) {
-  .feature-grid { grid-template-columns: 1fr 1fr; }
-  .feature-card:first-child { grid-column: span 2; }
+/* SECTION HEADERS */
+.section-head { text-align: center; max-width: 640px; margin: 0 auto 50px; }
+.section-eyebrow {
+  font-size: 0.74rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px;
 }
+.section-head h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1.1; color: var(--text); margin-bottom: 14px;
+}
+.section-head p { font-size: 1rem; color: var(--muted); line-height: 1.6; }
+
+/* FREE FEATURES */
+.free-section {
+  padding: 80px 24px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.free-inner { max-width: 1080px; margin: 0 auto; }
+.feature-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+}
+@media(max-width: 880px) { .feature-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width: 560px) { .feature-grid { grid-template-columns: 1fr; } }
 .feature-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
-  padding: 28px 26px; transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px 22px;
+  transition: border-color 0.2s, transform 0.2s;
 }
-.feature-card:hover {
-  border-color: rgba(124,92,252,0.35);
-  box-shadow: 0 8px 32px rgba(124,92,252,0.1); transform: translateY(-2px);
+.feature-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.feature-card .ico {
+  font-size: 1.3rem; margin-bottom: 12px;
 }
-.feature-icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 16px; font-size: 1.3rem;
+.feature-card h4 {
+  font-size: 0.98rem; font-weight: 700; color: var(--text);
+  margin-bottom: 6px; letter-spacing: -0.01em;
 }
-.feature-icon.purple { background: rgba(124,92,252,0.12); }
-.feature-icon.pink   { background: rgba(194,61,142,0.12); }
-.feature-icon.amber  { background: rgba(245,158,11,0.12); }
-.feature-card h3 { font-size: 1.1rem; font-weight: 700; letter-spacing: -0.02em; color: var(--text); margin-bottom: 8px; }
-.feature-card p { font-size: 0.87rem; color: var(--muted); line-height: 1.65; font-weight: 300; }
-.feature-tag {
-  display: inline-block; margin-top: 14px; font-size: 0.66rem; font-weight: 600;
-  padding: 3px 10px; border-radius: 20px;
-  background: rgba(124,92,252,0.1); color: #A78BFA; border: 1px solid rgba(124,92,252,0.2);
+.feature-card p {
+  font-size: 0.85rem; color: var(--muted); line-height: 1.55;
+}
+.free-bottom {
+  text-align: center; margin-top: 40px;
+  font-size: 0.86rem; color: var(--muted);
+}
+.free-bottom a {
+  color: var(--text); font-weight: 600; text-decoration: none;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 1px;
+  transition: border-color 0.15s;
+}
+.free-bottom a:hover { border-color: var(--text); }
+
+/* MANAGED — simplified, no So-Funktionierts box */
+.managed { padding: 90px 24px; max-width: 880px; margin: 0 auto; }
+.managed-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAF7F0 100%);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 56px 56px;
+  text-align: center;
+}
+@media(max-width: 700px) {
+  .managed-card { padding: 40px 28px; }
+}
+.managed-card h2 {
+  font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 800;
+  letter-spacing: -0.035em; line-height: 1.15; color: var(--text); margin-bottom: 18px;
+}
+.managed-card > p {
+  font-size: 1rem; color: var(--muted); line-height: 1.6; margin-bottom: 28px;
+  max-width: 560px; margin-left: auto; margin-right: auto;
+}
+.managed-list { list-style: none; margin: 0 auto 32px; max-width: 520px; text-align: left; }
+.managed-list li {
+  font-size: 0.93rem; color: var(--text); padding: 9px 0;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.managed-list li::before {
+  content: "→"; color: var(--muted); font-weight: 600; flex-shrink: 0;
 }
 
-/* BOTTOM CTA */
-.bottom-cta { padding: 80px 24px 100px; text-align: center; }
-.bottom-cta-inner { max-width: 520px; margin: 0 auto; }
-.bottom-cta h2 {
-  font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800;
-  letter-spacing: -0.04em; line-height: 1.15; color: var(--text); margin-bottom: 14px;
+/* BUSINESS */
+.business {
+  padding: 90px 24px;
+  background: var(--accent);
+  color: #fff;
 }
-.bottom-cta p { font-size: 0.95rem; color: var(--muted); font-weight: 300; margin-bottom: 32px; line-height: 1.6; }
+.business-inner {
+  max-width: 720px; margin: 0 auto; text-align: center;
+}
+.business-eyebrow {
+  font-size: 0.74rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: rgba(255,255,255,0.55); margin-bottom: 14px;
+}
+.business h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 18px;
+}
+.business p {
+  font-size: 1.02rem; color: rgba(255,255,255,0.7); line-height: 1.6;
+  margin-bottom: 32px;
+}
+.business .btn-primary {
+  background: #fff; color: var(--text); border-color: #fff;
+}
+.business .btn-primary:hover { background: #f4f4ee; }
 
 /* FOOTER */
 footer {
-  border-top: 1px solid var(--border); padding: 22px 28px;
-  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;
-}
-.footer-logo { display: flex; align-items: center; gap: 7px; text-decoration: none; }
-.footer-logo-mark {
-  width: 22px; height: 22px; border-radius: 6px; background: var(--grad);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 0.6rem; font-weight: 800; color: #fff;
-}
-.footer-logo-text { font-size: 0.86rem; font-weight: 600; color: var(--muted); }
-.footer-links { display: flex; gap: 18px; }
-.footer-links a { font-size: 0.73rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
-.footer-links a:hover { color: var(--text); }
-
-/* BOTTOM SHEET */
-.sheet-backdrop {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-  z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
-}
-.sheet-backdrop.open { opacity: 1; pointer-events: all; }
-.bottom-sheet {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: #18181D; border-radius: 24px 24px 0 0; z-index: 101;
   border-top: 1px solid var(--border);
-  padding: 0 26px 44px;
-  padding-bottom: max(44px, env(safe-area-inset-bottom));
-  transform: translateY(100%);
-  transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
-  max-width: 520px; margin: 0 auto;
-  box-shadow: 0 -8px 60px rgba(0,0,0,0.4);
+  padding: 28px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px;
+  background: var(--bg);
 }
-.bottom-sheet.open { transform: translateY(0); }
-.sheet-handle { width: 38px; height: 4px; background: var(--border); border-radius: 2px; margin: 13px auto 26px; }
-.sheet-title { font-size: 1.55rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); margin-bottom: 7px; line-height: 1.2; }
-.sheet-sub { font-size: 0.88rem; color: var(--muted); font-weight: 300; line-height: 1.6; margin-bottom: 26px; }
-.sheet-field { margin-bottom: 12px; }
-.sheet-field label {
-  display: block; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+.footer-left { display: flex; align-items: center; gap: 9px; }
+.footer-mark {
+  width: 22px; height: 22px; border-radius: 6px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.62rem; font-weight: 700; color: #fff;
 }
-.sheet-field input {
-  width: 100%; padding: 13px 15px;
-  border: 1.5px solid var(--border); border-radius: 10px;
-  background: var(--bg); color: var(--text);
-  font-family: 'Outfit', sans-serif; font-size: 0.95rem; outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+.footer-text { font-size: 0.82rem; color: var(--muted); }
+.footer-links { display: flex; gap: 18px; }
+.footer-link {
+  font-size: 0.78rem; color: var(--muted); text-decoration: none;
+  transition: color 0.15s; cursor: pointer; background: none; border: none;
+  font-family: inherit; padding: 0;
 }
-.sheet-field input::placeholder { color: var(--subtle); }
-.sheet-field input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(124,92,252,0.15); }
-.sheet-field input.error { border-color: #EF4444; }
-.sheet-submit {
-  width: 100%; background: var(--grad); color: #fff; border: none;
-  border-radius: 12px; padding: 15px;
-  font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700;
-  cursor: pointer; margin-top: 6px;
-  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-  box-shadow: 0 6px 24px rgba(124,92,252,0.25);
-}
-.sheet-submit:hover { opacity: 0.88; box-shadow: 0 8px 32px rgba(124,92,252,0.4); }
-.sheet-submit:active { transform: scale(0.98); }
-.sheet-submit:disabled { opacity: 0.45; cursor: not-allowed; }
-.sheet-note { font-size: 0.7rem; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; }
-.sheet-error { font-size: 0.78rem; color: #F87171; text-align: center; margin-top: 10px; }
-
-.sheet-success { display: none; text-align: center; padding: 20px 0 10px; }
-.success-icon {
-  width: 60px; height: 60px; background: rgba(34,197,94,0.1); border-radius: 50%;
-  display: grid; place-items: center; font-size: 26px; margin: 0 auto 18px;
-}
-.success-title { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); margin-bottom: 8px; }
-.success-sub { font-size: 0.86rem; color: var(--muted); font-weight: 300; line-height: 1.65; }
+.footer-link:hover { color: var(--text); }
 
 /* REVEAL */
-.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================
+   BACKDROP (shared)
+   ============================================ */
+.backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.backdrop.open { opacity: 1; pointer-events: all; }
+
+/* ============================================
+   BOTTOM SHEET (Impressum + Kontakt mobile)
+   ============================================ */
+.sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  z-index: 101;
+  border-top: 1px solid var(--border);
+  transform: translateY(100%);
+  transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
+  max-width: 640px; margin: 0 auto;
+  box-shadow: 0 -8px 60px rgba(0,0,0,0.18);
+  display: flex; flex-direction: column;
+  max-height: 88vh;
+}
+.sheet.open { transform: translateY(0); }
+.sheet-handle-wrap {
+  flex-shrink: 0; padding: 12px 0 0;
+  display: flex; justify-content: center;
+}
+.sheet-handle {
+  width: 42px; height: 4px; background: var(--border-strong); border-radius: 2px;
+}
+.sheet-header {
+  flex-shrink: 0;
+  padding: 18px 26px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.sheet-title {
+  font-size: 1.15rem; font-weight: 700; color: var(--text);
+  letter-spacing: -0.02em;
+}
+.sheet-close {
+  background: var(--soft); border: none;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--muted);
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit; font-size: 16px;
+  flex-shrink: 0;
+}
+.sheet-close:hover { background: var(--border); color: var(--text); }
+.sheet-body {
+  flex: 1; min-height: 0;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.sheet-body iframe {
+  flex: 1; width: 100%; border: none; background: var(--surface);
+}
+
+/* ============================================
+   FULL-SCREEN MODAL (Kontakt + Datenschutz)
+   ============================================ */
+.modal {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 110;
+  opacity: 0; pointer-events: none;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.modal.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+.modal-header {
+  flex-shrink: 0;
+  padding: 16px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(250,250,248,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.modal-title {
+  font-size: 1.05rem; font-weight: 700; color: var(--text);
+  letter-spacing: -0.02em;
+}
+.modal-close {
+  background: var(--surface); border: 1px solid var(--border);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--muted);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: inherit; font-size: 16px;
+}
+.modal-close:hover { background: var(--soft); color: var(--text); border-color: var(--border-strong); }
+.modal-body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.modal-body iframe { width: 100%; height: 100%; border: none; background: var(--bg); display: block; }
+
+/* CONTACT FORM (inside modal) */
+.contact-wrap {
+  max-width: 520px; margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+.contact-wrap h2 {
+  font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 8px;
+}
+.contact-sub {
+  font-size: 0.92rem; color: var(--muted); margin-bottom: 28px; line-height: 1.6;
+}
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 0.78rem; font-weight: 600; color: var(--text);
+  margin-bottom: 7px;
+}
+.field label .opt {
+  font-weight: 400; color: var(--subtle); margin-left: 4px;
+}
+.field input, .field textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1px solid var(--border-strong); border-radius: 9px;
+  background: var(--surface); color: var(--text);
+  font-family: inherit; font-size: 0.93rem; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  resize: vertical;
+}
+.field textarea { min-height: 110px; line-height: 1.5; }
+.field input:focus, .field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(24,24,27,0.08);
+}
+.field input.error, .field textarea.error { border-color: var(--error); }
+.field-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+@media(max-width: 480px) {
+  .field-row { grid-template-columns: 1fr; }
+}
+.contact-submit {
+  width: 100%; background: var(--accent); color: #fff; border: none;
+  border-radius: 11px; padding: 14px;
+  font-family: inherit; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; margin-top: 8px;
+  transition: background 0.15s;
+}
+.contact-submit:hover { background: var(--accent-hover); }
+.contact-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.contact-error {
+  font-size: 0.82rem; color: var(--error); text-align: center;
+  margin-top: 12px; display: none;
+}
+.contact-error.visible { display: block; }
+.contact-success {
+  text-align: center; padding: 14px 0; display: none;
+}
+.contact-success.visible { display: block; }
+.success-icon {
+  width: 56px; height: 56px; background: var(--success-bg); color: var(--success);
+  border-radius: 50%; display: grid; place-items: center;
+  font-size: 26px; margin: 0 auto 16px; font-weight: 700;
+}
+.contact-success h3 {
+  font-size: 1.25rem; font-weight: 800; color: var(--text); margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.contact-success p { font-size: 0.92rem; color: var(--muted); line-height: 1.55; }
 
 /* MOBILE */
 @media(max-width:600px) {
-  nav { padding: 14px 18px; }
-  .hero { padding: 96px 20px 60px; }
-  .mockup-strip { padding: 0 20px 60px; }
-  .features { padding: 60px 20px; }
-  .bottom-cta { padding: 60px 20px 80px; }
-  footer { padding: 18px 20px; }
-  .bottom-sheet { padding: 0 20px 36px; padding-bottom: max(36px, env(safe-area-inset-bottom)); }
+  nav { padding: 12px 18px; }
+  .hero { padding: 110px 20px 50px; }
+  .paths { padding: 0 20px 60px; }
+  .free-section, .business { padding: 60px 20px; }
+  .managed { padding: 60px 20px; }
+  footer { padding: 22px 20px; }
+  .modal-header { padding: 14px 20px; }
+  .contact-wrap { padding: 32px 20px 50px; }
 }
+
+body.locked { overflow: hidden; }
 </style>
 </head>
 <body>
 
 <nav>
-  <a href="https://viuno.de" class="nav-logo">
+  <a href="#top" class="nav-logo">
     <div class="nav-logo-mark">v</div>
     <span class="nav-logo-text">viuno</span>
   </a>
-  <button class="nav-cta" onclick="openSheet()">Vormerken lassen</button>
+  <div class="nav-links">
+    <a href="#creator" class="nav-link">Für Creator</a>
+    <a href="#unternehmen" class="nav-link">Für Unternehmen</a>
+    <button class="nav-link" onclick="openContact()">Kontakt</button>
+  </div>
+  <a href="https://app.viuno.de" class="nav-cta">App öffnen</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-glow"></div>
+<section class="hero" id="top">
   <div class="hero-inner">
-    <div class="hero-badge"><div class="badge-dot"></div>Bald verfügbar · DACH</div>
-    <h1>Wachse smarter.<br><span class="grad-text">Nicht härter.</span></h1>
-    <p class="hero-sub">Jeden Morgen genau wissen, was du posten musst — basierend auf deinen echten Daten und aktuellen Trends in deiner Nische.</p>
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      DACH · für Creator und Unternehmen
+    </div>
+    <h1>
+      Wachse smarter.
+      <em>Mit echter Hilfe.</em>
+    </h1>
+    <p class="hero-sub">
+      Kostenlose Tools für Creator. Persönliches Management, wenn du mehr willst.
+    </p>
     <div class="hero-actions">
-      <button class="btn-primary" onclick="openSheet()">Jetzt vormerken lassen</button>
-      <span class="hero-note">Kostenlos · Kein Spam · Du erfährst es als Erster</span>
+      <a href="https://app.viuno.de" class="btn-primary">
+        App kostenlos starten
+      </a>
+      <button class="btn-secondary" onclick="openContact()">
+        Direkt schreiben
+      </button>
+    </div>
+    <p class="hero-meta">Kostenlos · Keine Kreditkarte · Sofort loslegen</p>
+  </div>
+</section>
+
+<section class="paths" id="creator">
+  <div class="paths-grid">
+    <div class="path-card reveal">
+      <div class="path-icon">📊</div>
+      <div class="path-eyebrow">Für Creator</div>
+      <h3>Kostenlos starten.<br>Wachsen ohne Risiko.</h3>
+      <p>
+        Analytics, BioLink, Media Kit, Trending Topics — alles in einer App, sofort nutzbar. Kein abgespecktes Demo, sondern echte Tools, die du jeden Tag brauchst.
+      </p>
+      <a href="https://app.viuno.de" class="path-cta">
+        App öffnen
+        <span class="arrow">→</span>
+      </a>
+    </div>
+    <div class="path-card reveal">
+      <div class="path-icon">💬</div>
+      <div class="path-eyebrow">Für Unternehmen</div>
+      <h3>Social Media,<br>persönlich gemanagt.</h3>
+      <p>
+        Content, Community, Reporting — und auf Wunsch direkt mit passenden Creatorn aus dem viuno-Netzwerk. Kein Konzern, keine Bürokratie, ein Ansprechpartner.
+      </p>
+      <button class="path-cta" onclick="openContact()">
+        Kontakt aufnehmen
+        <span class="arrow">→</span>
+      </button>
     </div>
   </div>
 </section>
 
-<div class="mockup-strip">
-  <div class="mockup-card">
-    <div class="mockup-header">
-      <div class="mockup-avatar">L</div>
-      <div>
-        <div class="mockup-name">Lisa Hoffmann</div>
-        <div class="mockup-handle">@lisahoffmann · 12.4K Follower</div>
-      </div>
+<section class="free-section">
+  <div class="free-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">Kostenlos in der App</div>
+      <h2>Was du sofort bekommst.</h2>
+      <p>Vollwertig, nicht abgespeckt. Du sollst sehen, dass viuno funktioniert — bevor du an irgendetwas denkst.</p>
     </div>
-    <div class="mockup-digest">
-      <div class="mockup-digest-label">☀ Dein Daily Digest — heute</div>
-      <div class="mockup-digest-text">In deiner Nische performen kurze Tutorials momentan 3× besser als Story-Formate. Dein letzter Reel hatte 2,1 % Engagement — dein Schnitt liegt bei 1,4 %. Weitermachen.</div>
-    </div>
-    <div class="mockup-stats">
-      <div class="mockup-stat"><div class="mockup-stat-val">2.1%</div><div class="mockup-stat-label">Ø Engagement</div></div>
-      <div class="mockup-stat"><div class="mockup-stat-val">4.8K</div><div class="mockup-stat-label">Ø Reach</div></div>
-      <div class="mockup-stat"><div class="mockup-stat-val">↑12%</div><div class="mockup-stat-label">Trend</div></div>
-    </div>
-  </div>
-</div>
-
-<div class="divider"></div>
-
-<section class="features">
-  <div class="features-inner">
     <div class="feature-grid">
       <div class="feature-card reveal">
-        <div class="feature-icon purple">⚡</div>
-        <h3>Daily Digest</h3>
-        <p>Jeden Morgen dein persönlicher Wachstumsplan — basierend auf deinen Analytics und den aktuellen Trends in deiner Nische.</p>
-        <span class="feature-tag">KI-powered</span>
+        <div class="ico">📈</div>
+        <h4>Analytics Dashboard</h4>
+        <p>Einmal pro Monat: Follower, Engagement, Performance — übersichtlich auf einen Blick.</p>
       </div>
       <div class="feature-card reveal">
-        <div class="feature-icon pink">📈</div>
-        <h3>Viral Trends</h3>
-        <p>Sieh, welche Themen gerade in deiner Nische explodieren — bevor sie mainstream werden.</p>
+        <div class="ico">📰</div>
+        <h4>Daily Digest</h4>
+        <p>Trending Topics & Branchen-News, jeden Morgen — relevant für deine Nische.</p>
       </div>
       <div class="feature-card reveal">
-        <div class="feature-icon amber">🔗</div>
-        <h3>BioLink &amp; Media Kit</h3>
-        <p>Professionelle BioLink-Seite und Media Kit für Brands — in Sekunden erstellt.</p>
+        <div class="ico">🔗</div>
+        <h4>BioLink</h4>
+        <p>Deine eigene Bio-Page mit allen Links — für Instagram, TikTok & Co.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">📄</div>
+        <h4>Media Kit</h4>
+        <p>Automatisch generiert mit Live-Zahlen — für die nächste Brand-Anfrage.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">🎯</div>
+        <h4>Content News</h4>
+        <p>Was performt gerade? Welche Formate, welche Hooks, welche Trends?</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">⚡</div>
+        <h4>Insights für dich</h4>
+        <p>Konkrete Vorschläge, was du als Nächstes posten solltest — basierend auf deinen Daten.</p>
       </div>
     </div>
+    <p class="free-bottom">
+      Mehr drin als bei den meisten Bezahltools. <a href="https://app.viuno.de">Jetzt kostenlos starten →</a>
+    </p>
   </div>
 </section>
 
-<section class="bottom-cta">
-  <div class="bottom-cta-inner">
-    <h2 class="reveal">Sei dabei,<br>wenn wir starten.</h2>
-    <p class="reveal">Früh-Zugang sichern — kostenlos, kein Risiko.</p>
-    <button class="btn-primary reveal" onclick="openSheet()">Vormerken lassen</button>
+<section class="managed">
+  <div class="section-head">
+    <div class="section-eyebrow">Managed Creator</div>
+    <h2>Wenn du mehr willst,<br>kümmere ich mich.</h2>
+    <p>Persönliches Management für Creator, die ernst werden wollen. Kein Standard-Vertrag, keine 20 % Provision auf alles.</p>
+  </div>
+  <div class="managed-card reveal">
+    <h2>Wachstum, Deals, Reporting —<br>direkt mit mir.</h2>
+    <p>Ich bin Mehmet. Ich übernehme aktiv: Brand-Akquise, Vertragsverhandlungen, Strategie und monatliches Reporting. Du machst Content. Ich mache den Rest.</p>
+    <ul class="managed-list">
+      <li>Aktive Akquise von passenden Brand Deals</li>
+      <li>Vertragsverhandlung & Vertrags-Check</li>
+      <li>Monatliches Reporting mit konkreten nächsten Schritten</li>
+      <li>Content-Strategie auf deine Ziele zugeschnitten</li>
+      <li>Kurze Laufzeiten, kein Lock-in, transparente Konditionen</li>
+    </ul>
+    <button class="btn-primary" onclick="openContact()">Anfragen →</button>
+  </div>
+</section>
+
+<section class="business" id="unternehmen">
+  <div class="business-inner">
+    <div class="business-eyebrow">Für Unternehmen & KMU</div>
+    <h2>Social Media,<br>direkt mit Creatorn umgesetzt.</h2>
+    <p>
+      Content, Community Management, Reporting — und auf Wunsch passende Creator aus dem viuno-Netzwerk als Markenbotschafter. Direkter Draht, faire Preise, kein Agentur-Aufschlag.
+    </p>
+    <button class="btn-primary" onclick="openContact()">Kontakt aufnehmen</button>
   </div>
 </section>
 
 <footer>
-  <a href="https://viuno.de" class="footer-logo">
-    <div class="footer-logo-mark">v</div>
-    <span class="footer-logo-text">viuno</span>
-  </a>
+  <div class="footer-left">
+    <div class="footer-mark">v</div>
+    <span class="footer-text">© 2026 viuno</span>
+  </div>
   <div class="footer-links">
-    <a href="https://viuno.de/impressum">Impressum</a>
-    <a href="https://viuno.de/datenschutz">Datenschutz</a>
+    <button class="footer-link" onclick="openImpressum()">Impressum</button>
+    <button class="footer-link" onclick="openDatenschutz()">Datenschutz</button>
   </div>
 </footer>
 
-<div class="sheet-backdrop" id="backdrop" onclick="closeSheet()"></div>
-<div class="bottom-sheet" id="sheet">
-  <div class="sheet-handle"></div>
-  <div id="sheet-form-view">
-    <div class="sheet-title">Früh-Zugang sichern.</div>
-    <p class="sheet-sub">Einmal eintragen — als Erster informiert werden, sobald viuno live geht.</p>
-    <div class="sheet-field">
-      <label>Dein Name</label>
-      <input type="text" id="input-name" placeholder="Wie heißt du?" autocomplete="given-name" />
-    </div>
-    <div class="sheet-field">
-      <label>E-Mail-Adresse</label>
-      <input type="email" id="input-email" placeholder="du@beispiel.de" autocomplete="email" />
-    </div>
-    <button class="sheet-submit" id="submit-btn" onclick="handleSubmit()">Jetzt vormerken lassen →</button>
-    <div class="sheet-error hidden" id="sheet-error"></div>
-    <p class="sheet-note">Kein Spam. Keine Weitergabe. Nur eine E-Mail, wenn es losgeht.</p>
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closeAll()"></div>
+
+<!-- IMPRESSUM SHEET (bottom) -->
+<div class="sheet" id="impressum-sheet" role="dialog" aria-label="Impressum">
+  <div class="sheet-handle-wrap"><div class="sheet-handle"></div></div>
+  <div class="sheet-header">
+    <div class="sheet-title">Impressum</div>
+    <button class="sheet-close" onclick="closeAll()" aria-label="Schließen">✕</button>
   </div>
-  <div class="sheet-success" id="sheet-success">
-    <div class="success-icon">🎉</div>
-    <div class="success-title">Du bist dabei!</div>
-    <p class="success-sub">Wir melden uns, sobald viuno startet.<br>Bis dahin — mach weiter und wachse.</p>
+  <div class="sheet-body">
+    <iframe id="impressum-iframe" title="Impressum" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- DATENSCHUTZ MODAL (full screen) -->
+<div class="modal" id="datenschutz-modal" role="dialog" aria-label="Datenschutz">
+  <div class="modal-header">
+    <div class="modal-title">Datenschutz</div>
+    <button class="modal-close" onclick="closeAll()" aria-label="Schließen">✕</button>
+  </div>
+  <div class="modal-body">
+    <iframe id="datenschutz-iframe" title="Datenschutz" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- KONTAKT MODAL (full screen) -->
+<div class="modal" id="contact-modal" role="dialog" aria-label="Kontakt">
+  <div class="modal-header">
+    <div class="modal-title">Kontakt</div>
+    <button class="modal-close" onclick="closeAll()" aria-label="Schließen">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="contact-wrap">
+      <div id="contact-form-view">
+        <h2>Schreib mir direkt.</h2>
+        <p class="contact-sub">
+          Egal ob Creator-Anfrage oder Unternehmens-Projekt — kurz worum's geht, und ich melde mich persönlich zurück.
+        </p>
+        <div class="field">
+          <label for="c-name">Name</label>
+          <input type="text" id="c-name" placeholder="Wie heißt du?" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="c-email">E-Mail</label>
+          <input type="email" id="c-email" placeholder="du@beispiel.de" autocomplete="email" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="c-instagram">Instagram <span class="opt">(optional)</span></label>
+            <input type="text" id="c-instagram" placeholder="@dein.handle" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="c-tiktok">TikTok <span class="opt">(optional)</span></label>
+            <input type="text" id="c-tiktok" placeholder="@dein.handle" autocomplete="off" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="c-website">Website <span class="opt">(optional)</span></label>
+          <input type="url" id="c-website" placeholder="https://" autocomplete="url" />
+        </div>
+        <div class="field">
+          <label for="c-message">Worum geht's?</label>
+          <textarea id="c-message" placeholder="Kurz was du suchst — Creator-Management, Social Media für dein Unternehmen, oder einfach eine Frage."></textarea>
+        </div>
+        <button class="contact-submit" id="c-submit" onclick="submitContact()">Nachricht senden →</button>
+        <div class="contact-error" id="c-error">Etwas ist schiefgelaufen. Bitte versuch's nochmal.</div>
+      </div>
+      <div class="contact-success" id="contact-success-view">
+        <div class="success-icon">✓</div>
+        <h3>Danke — angekommen.</h3>
+        <p>Ich melde mich innerhalb von 24 Stunden persönlich bei dir zurück.</p>
+      </div>
+    </div>
   </div>
 </div>
 
 <script>
-const EDGE_URL = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/waitlist-signup'
+const EDGE_URL = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/contact-submit';
+const IMPRESSUM_URL = 'https://itrk.legal/1hAc.0.ZIR-de-iframe.html';
+const DATENSCHUTZ_URL = 'https://itrk.legal/1hAc.8U.ZIR-iframe.html';
 
-function openSheet() {
-  document.getElementById('backdrop').classList.add('open')
-  document.getElementById('sheet').classList.add('open')
-  document.body.style.overflow = 'hidden'
-  setTimeout(() => document.getElementById('input-name').focus(), 380)
+// Lazy-load iframes
+let impressumLoaded = false;
+let datenschutzLoaded = false;
+
+function lockBody() { document.body.classList.add('locked'); }
+function unlockBody() { document.body.classList.remove('locked'); }
+
+function openImpressum() {
+  if (!impressumLoaded) {
+    document.getElementById('impressum-iframe').src = IMPRESSUM_URL;
+    impressumLoaded = true;
+  }
+  document.getElementById('backdrop').classList.add('open');
+  document.getElementById('impressum-sheet').classList.add('open');
+  lockBody();
 }
-function closeSheet() {
-  document.getElementById('backdrop').classList.remove('open')
-  document.getElementById('sheet').classList.remove('open')
-  document.body.style.overflow = ''
+
+function openDatenschutz() {
+  if (!datenschutzLoaded) {
+    document.getElementById('datenschutz-iframe').src = DATENSCHUTZ_URL;
+    datenschutzLoaded = true;
+  }
+  document.getElementById('datenschutz-modal').classList.add('open');
+  lockBody();
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet() })
 
-async function handleSubmit() {
-  const name = document.getElementById('input-name').value.trim()
-  const emailEl = document.getElementById('input-email')
-  const email = emailEl.value.trim()
-  const btn = document.getElementById('submit-btn')
-  const errEl = document.getElementById('sheet-error')
+function openContact() {
+  document.getElementById('contact-modal').classList.add('open');
+  lockBody();
+  setTimeout(() => {
+    const nameInput = document.getElementById('c-name');
+    if (nameInput && document.getElementById('contact-form-view').style.display !== 'none') {
+      nameInput.focus();
+    }
+  }, 350);
+}
 
-  emailEl.classList.remove('error')
-  errEl.classList.add('hidden')
-  errEl.textContent = ''
+function closeAll() {
+  document.getElementById('backdrop').classList.remove('open');
+  document.getElementById('impressum-sheet').classList.remove('open');
+  document.getElementById('datenschutz-modal').classList.remove('open');
+  document.getElementById('contact-modal').classList.remove('open');
+  unlockBody();
+}
 
-  if (!email || !email.includes('@')) {
-    emailEl.classList.add('error')
-    emailEl.focus()
-    return
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+
+async function submitContact() {
+  const nameEl = document.getElementById('c-name');
+  const emailEl = document.getElementById('c-email');
+  const msgEl = document.getElementById('c-message');
+  const igEl = document.getElementById('c-instagram');
+  const ttEl = document.getElementById('c-tiktok');
+  const webEl = document.getElementById('c-website');
+  const btn = document.getElementById('c-submit');
+  const errEl = document.getElementById('c-error');
+
+  const name = nameEl.value.trim();
+  const email = emailEl.value.trim();
+  const message = msgEl.value.trim();
+  const instagram_handle = igEl.value.trim() || null;
+  const tiktok_handle = ttEl.value.trim() || null;
+  const website_url = webEl.value.trim() || null;
+
+  [nameEl, emailEl, msgEl].forEach(el => el.classList.remove('error'));
+  errEl.classList.remove('visible');
+
+  let hasError = false;
+  let firstErrorEl = null;
+  if (!name || name.length < 2) { nameEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || nameEl; }
+  if (!email || !email.includes('@') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || emailEl;
+  }
+  if (!message || message.length < 5) { msgEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || msgEl; }
+  if (hasError) {
+    if (firstErrorEl) firstErrorEl.focus();
+    return;
   }
 
-  btn.disabled = true
-  btn.textContent = '…'
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet…';
 
   try {
     const res = await fetch(EDGE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name || null, email })
-    })
-    const data = await res.json()
-    if (!res.ok || data.success === false) throw new Error(data.error || 'Fehler')
+      body: JSON.stringify({
+        name, email, message,
+        instagram_handle, tiktok_handle, website_url,
+        source: 'landing-page'
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.success === false) throw new Error(data.error || 'Fehler');
 
-    document.getElementById('sheet-form-view').style.display = 'none'
-    document.getElementById('sheet-success').style.display = 'block'
+    document.getElementById('contact-form-view').style.display = 'none';
+    document.getElementById('contact-success-view').classList.add('visible');
+    document.querySelector('#contact-modal .modal-body').scrollTop = 0;
   } catch (err) {
-    errEl.textContent = 'Etwas ist schiefgelaufen. Bitte versuch es nochmal.'
-    errEl.classList.remove('hidden')
-    btn.disabled = false
-    btn.textContent = 'Jetzt vormerken lassen →'
+    errEl.textContent = err.message && err.message !== 'Fehler' ? err.message : 'Etwas ist schiefgelaufen. Bitte versuch\'s nochmal.';
+    errEl.classList.add('visible');
+    btn.disabled = false;
+    btn.textContent = 'Nachricht senden →';
   }
 }
 
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), 60); obs.unobserve(e.target) }
-  })
-}, { threshold: 0.1 })
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el))
+    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), 50); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 </script>
 </body>
 </html>
