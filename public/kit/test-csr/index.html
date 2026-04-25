@@ -111,10 +111,35 @@
     color: var(--text);
     line-height: 1.2;
   }
+  .mk-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .mk-verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 2px 7px;
+  }
   .mk-handle {
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 2px;
+  }
+  .mk-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
   }
   .mk-niche-tag {
     display: inline-block;
@@ -124,7 +149,18 @@
     border: 1px solid var(--border);
     padding: 3px 10px;
     border-radius: 999px;
-    margin-top: 6px;
+  }
+  .mk-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .mk-location svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
   }
 
   /* Bio */
@@ -206,7 +242,393 @@
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
+    margin-bottom: 10px;
   }
+  .mk-platform-profile-btn {
+    display: block;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .mk-platform-profile-btn:hover {
+    background: var(--bg);
+    border-color: var(--border-strong);
+  }
+
+  /* Collaborations Logo Wall */
+  .mk-collabs {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .mk-collab {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px;
+    aspect-ratio: 1.6 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-decoration: none;
+    text-align: center;
+    line-height: 1.2;
+    transition: background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  a.mk-collab:hover {
+    background: var(--bg);
+    color: var(--text);
+    border-color: var(--border-strong);
+  }
+
+  /* Contact Section */
+  .mk-contact {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+  .mk-contact-email {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text);
+    text-decoration: none;
+    margin-bottom: 8px;
+  }
+  .mk-contact-email svg {
+    width: 14px; height: 14px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+  .mk-cta-btn {
+    width: 100%;
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .mk-cta-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  .mk-cta-btn svg { width: 14px; height: 14px; }
+
+  /* ============= Inquiry Overlay (1:1 BioPage in Clean Farben) ============= */
+  .cf-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .cf-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .cf-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    flex-shrink: 0;
+  }
+  .cf-close {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    flex-shrink: 0;
+    transition: background .15s ease;
+  }
+  .cf-close:hover { background: var(--bg); border-color: var(--border-strong); }
+  .cf-progress {
+    flex: 1;
+    height: 4px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .cf-progress-fill {
+    height: 100%;
+    background: var(--primary);
+    border-radius: 999px;
+    transition: width .3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    width: 50%;
+  }
+  .cf-step-indicator {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    min-width: 36px;
+    text-align: right;
+  }
+  .cf-slides {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    transition: transform .35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .cf-slide {
+    width: 100%;
+    flex-shrink: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 24px 20px 100px;
+  }
+  .cf-slide-inner {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .cf-slide h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+  .cf-slide p.cf-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+  .cf-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cf-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all .15s ease;
+    width: 100%;
+    color: var(--text);
+  }
+  .cf-card:hover { border-color: var(--border-strong); }
+  .cf-card.selected {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  }
+  .cf-card-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+  .cf-card.selected .cf-card-icon {
+    background: color-mix(in srgb, var(--primary) 20%, var(--bg));
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .cf-card-icon svg { width: 18px; height: 18px; }
+  .cf-card-text { flex: 1; min-width: 0; }
+  .cf-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .cf-card-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .cf-field {
+    margin-bottom: 16px;
+  }
+  .cf-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+  .cf-field label .req { color: var(--primary); margin-left: 2px; }
+  .cf-field input,
+  .cf-field textarea,
+  .cf-field select {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 11px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text);
+    line-height: 1.5;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .cf-field input:focus, .cf-field textarea:focus, .cf-field select:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg);
+  }
+  .cf-field textarea { resize: vertical; min-height: 120px; }
+  .cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--text-faint); }
+
+  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cf-chip {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all .15s ease;
+  }
+  .cf-chip:hover { border-color: var(--border-strong); color: var(--text); }
+  .cf-chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-text);
+  }
+
+  .cf-bottombar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 14px 18px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .cf-btn {
+    flex: 1;
+    padding: 14px 18px;
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .cf-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  .cf-btn:disabled { opacity: .45; cursor: not-allowed; }
+  .cf-btn-back {
+    background: var(--surface);
+    color: var(--text);
+    border-color: var(--border);
+    flex: 0 0 auto;
+    padding: 14px 22px;
+  }
+  .cf-btn-back:hover { background: var(--surface); border-color: var(--border-strong); }
+
+  .cf-error {
+    color: #DC2626;
+    font-size: 12px;
+    margin-top: 8px;
+    display: none;
+  }
+  .cf-error.show { display: block; }
+
+  .cf-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    gap: 16px;
+    height: 100%;
+  }
+  .cf-success-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 15%, transparent);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cf-success-icon svg { width: 36px; height: 36px; }
+  .cf-success h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+  }
+  .cf-success p {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+    max-width: 320px;
+  }
+  .cf-success-btn {
+    margin-top: 12px;
+    padding: 12px 24px;
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  body.cf-open { overflow: hidden; }
   .mk-platform-stat {
     background: var(--surface);
     border-radius: 6px;
@@ -268,21 +690,30 @@
     color: var(--text);
     font-weight: 600;
   }
-  .mk-gender-row {
+  .mk-gender-stats {
     display: flex;
-    height: 8px;
-    border-radius: 4px;
-    overflow: hidden;
-    background: var(--border);
-    margin-bottom: 6px;
+    justify-content: space-around;
+    align-items: center;
+    gap: 12px;
   }
-  .mk-gender-f { background: var(--primary); }
-  .mk-gender-m { background: var(--text-subtle); }
-  .mk-gender-legend {
-    display: flex;
-    justify-content: space-between;
+  .mk-gender-cell {
+    text-align: center;
+    flex: 1;
+  }
+  .mk-gender-cell-num {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .mk-gender-cell-label {
     font-size: 11px;
     color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .mk-gender-divider {
+    width: 1px;
+    align-self: stretch;
+    background: var(--border);
   }
 
   /* Section spacing */
@@ -468,9 +899,15 @@
     <div class="mk-header">
       <div class="mk-avatar" id="mk-avatar"></div>
       <div style="flex:1; min-width:0;">
-        <div class="mk-name" id="mk-name"></div>
+        <div class="mk-name-row">
+          <span class="mk-name" id="mk-name"></span>
+          <span class="mk-verified" id="mk-verified" style="display:none;">
+            <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="verified">Verifiziert</span>
+          </span>
+        </div>
         <div class="mk-handle" id="mk-handle"></div>
-        <div id="mk-niche-wrap"></div>
+        <div class="mk-meta-row" id="mk-meta-row"></div>
       </div>
     </div>
 
@@ -495,6 +932,23 @@
       <div class="mk-section-label" data-i18n="audience">Audience</div>
       <div class="mk-audience-grid" id="mk-audience"></div>
     </div>
+
+    <div class="mk-section" id="mk-collabs-section" style="display:none;">
+      <div class="mk-section-label" data-i18n="collaborations">Kollaborationen</div>
+      <div class="mk-collabs" id="mk-collabs"></div>
+    </div>
+
+    <div class="mk-contact" id="mk-contact-section">
+      <div class="mk-section-label" data-i18n="contact" style="margin-bottom:10px;">Kontakt</div>
+      <a class="mk-contact-email" id="mk-contact-email" href="#" style="display:none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span id="mk-contact-email-text"></span>
+      </a>
+      <button type="button" class="mk-cta-btn" id="btn-inquiry">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span data-i18n="inquire">Anfragen</span>
+      </button>
+    </div>
   </div>
 </main>
 
@@ -518,6 +972,109 @@
   <div class="imp-content" id="imp-content"></div>
 </div>
 
+<div class="cf-overlay" id="cf-overlay" role="dialog" aria-modal="true">
+  <div class="cf-topbar">
+    <button type="button" class="cf-close" id="cf-close" aria-label="Schließen">×</button>
+    <div class="cf-progress"><div class="cf-progress-fill" id="cf-progress-fill"></div></div>
+    <div class="cf-step-indicator" id="cf-step-indicator">1/2</div>
+  </div>
+
+  <div class="cf-slides" id="cf-slides">
+    <div class="cf-slide">
+      <div class="cf-slide-inner">
+        <h2 data-i18n="step1_title">Worum geht es?</h2>
+        <p class="cf-sub" data-i18n="step1_subtitle">Wähle die Art deiner Anfrage.</p>
+
+        <div class="cf-cards" data-field="request_type" data-single="true">
+          <button type="button" class="cf-card" data-value="brand">
+            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
+            <div class="cf-card-text">
+              <div class="cf-card-title" data-i18n="o_brand">Brand Deal</div>
+              <div class="cf-card-desc" data-i18n="d_brand">Kooperation mit Unternehmen</div>
+            </div>
+          </button>
+          <button type="button" class="cf-card" data-value="collab">
+            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+            <div class="cf-card-text">
+              <div class="cf-card-title" data-i18n="o_collab">Collab</div>
+              <div class="cf-card-desc" data-i18n="d_collab">Gemeinsames Projekt mit anderen Creatorn</div>
+            </div>
+          </button>
+          <button type="button" class="cf-card" data-value="event">
+            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            <div class="cf-card-text">
+              <div class="cf-card-title" data-i18n="o_event">Event / Einladung</div>
+              <div class="cf-card-desc" data-i18n="d_event">Auftritt, Launch, Presse-Event</div>
+            </div>
+          </button>
+          <button type="button" class="cf-card" data-value="sonstiges">
+            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <div class="cf-card-text">
+              <div class="cf-card-title" data-i18n="o_other">Sonstiges</div>
+              <div class="cf-card-desc" data-i18n="d_other">Etwas anderes – erzähl uns davon</div>
+            </div>
+          </button>
+        </div>
+        <div class="cf-error" id="cf-err-1" data-i18n="err_choose">Bitte wähle eine Option.</div>
+      </div>
+    </div>
+
+    <div class="cf-slide">
+      <div class="cf-slide-inner">
+        <h2 data-i18n="step2_title">Deine Angaben</h2>
+        <p class="cf-sub" data-i18n="step2_subtitle">Wir melden uns zeitnah bei dir.</p>
+
+        <div class="cf-field">
+          <label><span data-i18n="f_name">Name oder Firma</span><span class="req">*</span></label>
+          <input type="text" id="cf-name" data-i18n-ph="p_name" placeholder="Dein Name oder Firmenname" required>
+        </div>
+
+        <div class="cf-field">
+          <label><span data-i18n="f_email">E-Mail</span><span class="req">*</span></label>
+          <input type="email" id="cf-email" data-i18n-ph="p_email" placeholder="deine@email.de" required>
+        </div>
+
+        <div class="cf-field" id="cf-website-field" style="display:none;">
+          <label data-i18n="f_website">Website</label>
+          <input type="url" id="cf-website" data-i18n-ph="p_website" placeholder="www.deinewebsite.de">
+        </div>
+
+        <div class="cf-field" id="cf-budget-field" style="display:none;">
+          <label data-i18n="f_budget">Budget</label>
+          <div class="cf-chips" data-field="budget" data-single="true">
+            <button type="button" class="cf-chip" data-value="" data-i18n="b_none">Keine Angabe</button>
+            <button type="button" class="cf-chip" data-value="under_250" data-i18n="b_1">unter 250 €</button>
+            <button type="button" class="cf-chip" data-value="250_500" data-i18n="b_2">250 – 500 €</button>
+            <button type="button" class="cf-chip" data-value="500_1000" data-i18n="b_3">500 – 1.000 €</button>
+            <button type="button" class="cf-chip" data-value="over_1000" data-i18n="b_4">über 1.000 €</button>
+          </div>
+        </div>
+
+        <div class="cf-field">
+          <label><span data-i18n="f_message">Nachricht</span><span class="req">*</span></label>
+          <textarea id="cf-message" data-i18n-ph="p_message" placeholder="Worum geht es genau?" required></textarea>
+        </div>
+
+        <div class="cf-error" id="cf-err-2" data-i18n="err_required">Bitte alle Pflichtfelder ausfüllen.</div>
+      </div>
+    </div>
+
+    <div class="cf-slide">
+      <div class="cf-success">
+        <div class="cf-success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h2 data-i18n="s_title">Vielen Dank!</h2>
+        <p id="cf-success-sub"></p>
+        <button type="button" class="cf-success-btn" id="cf-done" data-i18n="s_done">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cf-bottombar" id="cf-bottombar">
+    <button type="button" class="cf-btn cf-btn-back" id="cf-back" data-i18n="btn_back">Zurück</button>
+    <button type="button" class="cf-btn" id="cf-next" data-i18n="btn_next">Weiter</button>
+  </div>
+</div>
+
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -535,6 +1092,10 @@ const STRINGS = {
     platforms: 'Plattformen',
     offers: 'Content-Angebote',
     audience: 'Audience',
+    collaborations: 'Kollaborationen',
+    contact: 'Kontakt',
+    view_profile: 'Profil ansehen',
+    inquire: 'Anfragen',
     followers: 'Follower',
     avg_likes: 'Ø Likes',
     avg_views: 'Ø Views',
@@ -551,15 +1112,56 @@ const STRINGS = {
     gender: 'Geschlecht',
     female: 'Frauen',
     male: 'Männer',
+    verified: 'Verifiziert',
     powered_by: 'powered by',
     imprint: 'Impressum',
-    imprint_empty: 'Es wurde noch kein Impressum hinterlegt.'
+    imprint_empty: 'Es wurde noch kein Impressum hinterlegt.',
+    step1_title: 'Worum geht es?',
+    step1_subtitle: 'Wähle die Art deiner Anfrage.',
+    step2_title: 'Deine Angaben',
+    step2_subtitle: 'Wir melden uns zeitnah bei dir.',
+    o_brand: 'Brand Deal',
+    d_brand: 'Kooperation mit Unternehmen',
+    o_collab: 'Collab',
+    d_collab: 'Gemeinsames Projekt mit anderen Creatorn',
+    o_event: 'Event / Einladung',
+    d_event: 'Auftritt, Launch, Presse-Event',
+    o_other: 'Sonstiges',
+    d_other: 'Etwas anderes – erzähl uns davon',
+    f_name: 'Name oder Firma',
+    f_email: 'E-Mail',
+    f_website: 'Website',
+    f_budget: 'Budget',
+    f_message: 'Nachricht',
+    p_name: 'Dein Name oder Firmenname',
+    p_email: 'deine@email.de',
+    p_website: 'www.deinewebsite.de',
+    p_message: 'Worum geht es genau?',
+    b_none: 'Keine Angabe',
+    b_1: 'unter 250 €',
+    b_2: '250 – 500 €',
+    b_3: '500 – 1.000 €',
+    b_4: 'über 1.000 €',
+    btn_back: 'Zurück',
+    btn_next: 'Weiter',
+    btn_send: 'Absenden',
+    err_choose: 'Bitte wähle eine Option.',
+    err_required: 'Bitte alle Pflichtfelder ausfüllen.',
+    err_email: 'Bitte gültige E-Mail angeben.',
+    err_send: 'Senden fehlgeschlagen. Bitte erneut versuchen.',
+    s_title: 'Vielen Dank!',
+    s_sub: '{name} meldet sich bald bei dir.',
+    s_done: 'Schließen'
   },
   en: {
     reach: 'Reach',
     platforms: 'Platforms',
     offers: 'Content Offerings',
     audience: 'Audience',
+    collaborations: 'Past Collaborations',
+    contact: 'Contact',
+    view_profile: 'View profile',
+    inquire: 'Inquire',
     followers: 'Followers',
     avg_likes: 'Avg likes',
     avg_views: 'Avg views',
@@ -576,15 +1178,56 @@ const STRINGS = {
     gender: 'Gender',
     female: 'Female',
     male: 'Male',
+    verified: 'Verified',
     powered_by: 'powered by',
     imprint: 'Imprint',
-    imprint_empty: 'No imprint has been provided yet.'
+    imprint_empty: 'No imprint has been provided yet.',
+    step1_title: 'What is it about?',
+    step1_subtitle: 'Choose the type of inquiry.',
+    step2_title: 'Your details',
+    step2_subtitle: 'We will get back to you soon.',
+    o_brand: 'Brand Deal',
+    d_brand: 'Partnership with a company',
+    o_collab: 'Collab',
+    d_collab: 'Joint project with other creators',
+    o_event: 'Event / Invitation',
+    d_event: 'Appearance, launch, press event',
+    o_other: 'Other',
+    d_other: 'Something else – tell us about it',
+    f_name: 'Name or company',
+    f_email: 'Email',
+    f_website: 'Website',
+    f_budget: 'Budget',
+    f_message: 'Message',
+    p_name: 'Your name or company name',
+    p_email: 'your@email.com',
+    p_website: 'www.yourwebsite.com',
+    p_message: 'What is it about?',
+    b_none: 'Not specified',
+    b_1: 'under 250 €',
+    b_2: '250 – 500 €',
+    b_3: '500 – 1,000 €',
+    b_4: 'over 1,000 €',
+    btn_back: 'Back',
+    btn_next: 'Next',
+    btn_send: 'Send',
+    err_choose: 'Please choose an option.',
+    err_required: 'Please fill in all required fields.',
+    err_email: 'Please enter a valid email.',
+    err_send: 'Sending failed. Please try again.',
+    s_title: 'Thank you!',
+    s_sub: '{name} will get back to you soon.',
+    s_done: 'Close'
   },
   it: {
     reach: 'Reach',
     platforms: 'Piattaforme',
     offers: 'Servizi',
     audience: 'Audience',
+    collaborations: 'Collaborazioni',
+    contact: 'Contatto',
+    view_profile: 'Vedi profilo',
+    inquire: 'Contatta',
     followers: 'Follower',
     avg_likes: 'Ø Likes',
     avg_views: 'Ø Views',
@@ -601,9 +1244,46 @@ const STRINGS = {
     gender: 'Genere',
     female: 'Donne',
     male: 'Uomini',
+    verified: 'Verificato',
     powered_by: 'creato con',
     imprint: 'Note legali',
-    imprint_empty: 'Nessuna nota legale inserita.'
+    imprint_empty: 'Nessuna nota legale inserita.',
+    step1_title: 'Di cosa si tratta?',
+    step1_subtitle: 'Scegli il tipo di richiesta.',
+    step2_title: 'I tuoi dati',
+    step2_subtitle: 'Ti risponderemo al più presto.',
+    o_brand: 'Brand Deal',
+    d_brand: 'Collaborazione con un\\'azienda',
+    o_collab: 'Collab',
+    d_collab: 'Progetto comune con altri creator',
+    o_event: 'Evento / Invito',
+    d_event: 'Presenza, lancio, evento stampa',
+    o_other: 'Altro',
+    d_other: 'Qualcos\\'altro – raccontaci',
+    f_name: 'Nome o azienda',
+    f_email: 'Email',
+    f_website: 'Sito web',
+    f_budget: 'Budget',
+    f_message: 'Messaggio',
+    p_name: 'Il tuo nome o azienda',
+    p_email: 'tua@email.it',
+    p_website: 'www.iltuosito.it',
+    p_message: 'Di cosa si tratta?',
+    b_none: 'Non specificato',
+    b_1: 'sotto 250 €',
+    b_2: '250 – 500 €',
+    b_3: '500 – 1.000 €',
+    b_4: 'oltre 1.000 €',
+    btn_back: 'Indietro',
+    btn_next: 'Avanti',
+    btn_send: 'Invia',
+    err_choose: 'Scegli un\\'opzione.',
+    err_required: 'Compila tutti i campi obbligatori.',
+    err_email: 'Inserisci un\\'email valida.',
+    err_send: 'Invio fallito. Riprova.',
+    s_title: 'Grazie!',
+    s_sub: '{name} ti risponderà presto.',
+    s_done: 'Chiudi'
   }
 }
 
@@ -711,6 +1391,11 @@ function renderMediakit(u) {
   // Name
   document.getElementById('mk-name').textContent = u.display_name || 'Creator'
 
+  // Verified Badge
+  if (u.is_verified) {
+    document.getElementById('mk-verified').style.display = 'inline-flex'
+  }
+
   // Handle (Instagram bevorzugt, sonst TikTok, sonst nichts)
   const handleEl = document.getElementById('mk-handle')
   const primaryHandle = u.instagram_handle || u.tiktok_handle
@@ -720,10 +1405,22 @@ function renderMediakit(u) {
     handleEl.style.display = 'none'
   }
 
-  // Niche tag
+  // Meta-Row: Niche + Stadt/Land
+  const metaParts = []
   if (u.niche_category) {
-    document.getElementById('mk-niche-wrap').innerHTML =
-      '<span class="mk-niche-tag">' + escapeHtml(capitalize(u.niche_category)) + '</span>'
+    metaParts.push('<span class="mk-niche-tag">' + escapeHtml(capitalize(u.niche_category)) + '</span>')
+  }
+  const locationStr = [u.city, u.country].filter(Boolean).map(escapeHtml).join(', ')
+  if (locationStr) {
+    metaParts.push(
+      '<span class="mk-location">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
+      '<span>' + locationStr + '</span>' +
+      '</span>'
+    )
+  }
+  if (metaParts.length > 0) {
+    document.getElementById('mk-meta-row').innerHTML = metaParts.join('')
   }
 
   // Bio
@@ -806,21 +1503,19 @@ function renderMediakit(u) {
   }
 
   if (u.audience_female_pct != null || u.audience_male_pct != null) {
-    const f = parseFloat(u.audience_female_pct || 0)
-    const m = parseFloat(u.audience_male_pct || 0)
-    const total = f + m
-    const fPct = total > 0 ? (f / total) * 100 : 50
-    const mPct = total > 0 ? (m / total) * 100 : 50
     audienceParts.push(
       '<div class="mk-audience-box">' +
       '<div class="mk-section-label" style="margin-bottom:8px;" data-i18n="gender">' + t('gender') + '</div>' +
-      '<div class="mk-gender-row">' +
-        '<div class="mk-gender-f" style="width:' + fPct + '%"></div>' +
-        '<div class="mk-gender-m" style="width:' + mPct + '%"></div>' +
-      '</div>' +
-      '<div class="mk-gender-legend">' +
-        '<span><span data-i18n="female">' + t('female') + '</span> ' + fmtPct(u.audience_female_pct) + '</span>' +
-        '<span><span data-i18n="male">' + t('male') + '</span> ' + fmtPct(u.audience_male_pct) + '</span>' +
+      '<div class="mk-gender-stats">' +
+        '<div class="mk-gender-cell">' +
+          '<div class="mk-gender-cell-num">' + fmtPct(u.audience_female_pct) + '</div>' +
+          '<div class="mk-gender-cell-label" data-i18n="female">' + t('female') + '</div>' +
+        '</div>' +
+        '<div class="mk-gender-divider"></div>' +
+        '<div class="mk-gender-cell">' +
+          '<div class="mk-gender-cell-num">' + fmtPct(u.audience_male_pct) + '</div>' +
+          '<div class="mk-gender-cell-label" data-i18n="male">' + t('male') + '</div>' +
+        '</div>' +
       '</div>' +
       '</div>'
     )
@@ -830,6 +1525,30 @@ function renderMediakit(u) {
     document.getElementById('mk-audience-section').style.display = 'none'
   } else {
     document.getElementById('mk-audience').innerHTML = audienceParts.join('')
+  }
+
+  // Kollaborationen
+  const collabs = Array.isArray(u.collaborations) ? u.collaborations.filter(c => c && c.name) : []
+  if (collabs.length > 0) {
+    const collabsHtml = collabs.map(c => {
+      const name = escapeHtml(c.name)
+      if (c.url) {
+        let url = String(c.url).trim()
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url
+        return '<a class="mk-collab" href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + name + '</a>'
+      }
+      return '<div class="mk-collab">' + name + '</div>'
+    }).join('')
+    document.getElementById('mk-collabs').innerHTML = collabsHtml
+    document.getElementById('mk-collabs-section').style.display = ''
+  }
+
+  // Kontakt-E-Mail (Anfragen-Button bleibt immer sichtbar)
+  if (u.contact_email) {
+    const emailEl = document.getElementById('mk-contact-email')
+    emailEl.href = 'mailto:' + u.contact_email
+    document.getElementById('mk-contact-email-text').textContent = u.contact_email
+    emailEl.style.display = 'flex'
   }
 }
 
@@ -858,6 +1577,7 @@ function buildPlatformCard(platform, handle, followers, avgLikes, avgViews, er) 
         '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + fmtNum(midVal) + '</div><div class="mk-platform-stat-label" data-i18n="' + midKey + '">' + t(midKey) + '</div></div>' +
         '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + (er != null ? fmtPct(er) : '–') + '</div><div class="mk-platform-stat-label" data-i18n="er">' + t('er') + '</div></div>' +
       '</div>' +
+      '<a class="mk-platform-profile-btn" href="' + escapeHtml(profileUrl) + '" target="_blank" rel="noopener"><span data-i18n="view_profile">' + t('view_profile') + '</span> ↗</a>' +
     '</div>'
   )
 }
@@ -869,18 +1589,29 @@ function applyLanguage(lang) {
   currentLang = lang
   document.documentElement.lang = lang
 
-  // Aktive Pill markieren
   document.querySelectorAll('.lang-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.lang === lang)
   })
 
-  // Alle data-i18n Elemente aktualisieren
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n')
     if (STRINGS[lang] && STRINGS[lang][key] != null) {
       el.textContent = STRINGS[lang][key]
     }
   })
+
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph')
+    if (STRINGS[lang] && STRINGS[lang][k] != null) {
+      el.setAttribute('placeholder', STRINGS[lang][k])
+    }
+  })
+
+  // Inquiry-Button-Texte aktualisieren falls Modal offen
+  if (typeof currentStep !== 'undefined' && currentStep < 2) {
+    const next = document.getElementById('cf-next')
+    if (next) next.textContent = currentStep === 1 ? t('btn_send') : t('btn_next')
+  }
 }
 
 document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -919,7 +1650,194 @@ document.getElementById('imp-close').addEventListener('click', closeImprint)
 impBackdrop.addEventListener('click', closeImprint)
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && impSheet.classList.contains('open')) closeImprint()
+  if (e.key === 'Escape') {
+    if (impSheet.classList.contains('open')) closeImprint()
+    if (overlay.classList.contains('open')) closeInquiry()
+  }
+})
+
+// ====================================================================
+// INQUIRY OVERLAY (1:1 BioPage Logic)
+// ====================================================================
+const overlay = document.getElementById('cf-overlay')
+const slidesEl = document.getElementById('cf-slides')
+const backBtn = document.getElementById('cf-back')
+const nextBtn = document.getElementById('cf-next')
+const progressFill = document.getElementById('cf-progress-fill')
+const stepIndicator = document.getElementById('cf-step-indicator')
+const bottomBar = document.getElementById('cf-bottombar')
+
+const TOTAL_STEPS = 2
+let currentStep = 0
+const formData = {
+  request_type: null,
+  budget: '',
+  name: '',
+  email: '',
+  website: '',
+  message: ''
+}
+
+function applyPlaceholders() {
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const k = el.getAttribute('data-i18n-ph')
+    if (STRINGS[currentLang] && STRINGS[currentLang][k] != null) {
+      el.setAttribute('placeholder', STRINGS[currentLang][k])
+    }
+  })
+}
+
+function openInquiry() {
+  currentStep = 0
+  formData.request_type = null
+  formData.budget = ''
+  document.querySelectorAll('.cf-card').forEach(c => c.classList.remove('selected'))
+  document.querySelectorAll('.cf-chip').forEach(c => c.classList.remove('selected'))
+  document.getElementById('cf-name').value = ''
+  document.getElementById('cf-email').value = ''
+  document.getElementById('cf-website').value = ''
+  document.getElementById('cf-message').value = ''
+  document.getElementById('cf-err-1').classList.remove('show')
+  document.getElementById('cf-err-2').classList.remove('show')
+  applyPlaceholders()
+  goToStep(0)
+  overlay.classList.add('open')
+  document.body.classList.add('cf-open')
+}
+
+function closeInquiry() {
+  overlay.classList.remove('open')
+  document.body.classList.remove('cf-open')
+}
+
+function goToStep(step) {
+  currentStep = step
+  slidesEl.style.transform = 'translateX(-' + (step * 100) + '%)'
+
+  if (step >= TOTAL_STEPS) {
+    bottomBar.style.display = 'none'
+    progressFill.style.width = '100%'
+    stepIndicator.textContent = '✓'
+    return
+  }
+
+  bottomBar.style.display = 'flex'
+  progressFill.style.width = ((step + 1) / TOTAL_STEPS * 100) + '%'
+  stepIndicator.textContent = (step + 1) + '/' + TOTAL_STEPS
+  backBtn.style.visibility = step === 0 ? 'hidden' : 'visible'
+  nextBtn.textContent = step === TOTAL_STEPS - 1 ? t('btn_send') : t('btn_next')
+}
+
+function updateConditionalFields() {
+  const t = formData.request_type
+  document.getElementById('cf-website-field').style.display = (t === 'brand' || t === 'collab') ? '' : 'none'
+  document.getElementById('cf-budget-field').style.display = (t === 'brand') ? '' : 'none'
+}
+
+function validateSlide(step) {
+  if (step === 0) {
+    if (!formData.request_type) {
+      document.getElementById('cf-err-1').classList.add('show')
+      return false
+    }
+    return true
+  }
+  if (step === 1) {
+    formData.name = document.getElementById('cf-name').value.trim()
+    formData.email = document.getElementById('cf-email').value.trim()
+    formData.website = document.getElementById('cf-website').value.trim()
+    formData.message = document.getElementById('cf-message').value.trim()
+    const errEl = document.getElementById('cf-err-2')
+
+    if (!formData.name || !formData.email || !formData.message) {
+      errEl.textContent = t('err_required')
+      errEl.classList.add('show')
+      return false
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errEl.textContent = t('err_email')
+      errEl.classList.add('show')
+      return false
+    }
+    errEl.classList.remove('show')
+    return true
+  }
+  return true
+}
+
+document.querySelectorAll('.cf-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.cf-card').forEach(c => c.classList.remove('selected'))
+    card.classList.add('selected')
+    formData.request_type = card.dataset.value
+    document.getElementById('cf-err-1').classList.remove('show')
+    updateConditionalFields()
+  })
+})
+
+document.querySelectorAll('.cf-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const group = chip.closest('.cf-chips')
+    group.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
+    chip.classList.add('selected')
+    if (group.dataset.field === 'budget') {
+      formData.budget = chip.dataset.value
+    }
+  })
+})
+
+document.getElementById('btn-inquiry').addEventListener('click', openInquiry)
+document.getElementById('cf-close').addEventListener('click', closeInquiry)
+document.getElementById('cf-done').addEventListener('click', closeInquiry)
+
+backBtn.addEventListener('click', () => {
+  if (currentStep > 0) goToStep(currentStep - 1)
+})
+
+nextBtn.addEventListener('click', async () => {
+  if (!validateSlide(currentStep)) return
+
+  if (currentStep < TOTAL_STEPS - 1) {
+    goToStep(currentStep + 1)
+    return
+  }
+
+  // Submit
+  nextBtn.disabled = true
+  nextBtn.textContent = '...'
+  try {
+    const payload = {
+      creator_id: creatorData.user_id,
+      request_type: formData.request_type,
+      sender_name: formData.name,
+      sender_email: formData.email,
+      sender_website: formData.website || null,
+      budget: formData.budget || null,
+      message: formData.message,
+      source: 'mediakit'
+    }
+    const res = await fetch(SUPABASE_URL + '/rest/v1/collab_requests', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify(payload)
+    })
+    if (!res.ok) throw new Error('submit failed')
+
+    // Success-Slide aufbauen
+    const sub = document.getElementById('cf-success-sub')
+    if (sub) sub.textContent = t('s_sub').replace('{name}', creatorData.display_name || '')
+    goToStep(TOTAL_STEPS)
+  } catch (err) {
+    document.getElementById('cf-err-2').textContent = t('err_send')
+    document.getElementById('cf-err-2').classList.add('show')
+    nextBtn.disabled = false
+    nextBtn.textContent = t('btn_send')
+  }
 })
 
 // ====================================================================
