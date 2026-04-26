@@ -4,8 +4,16 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>Mediakit · viuno</title>
+<meta name="description" content="Mediakit · viuno" />
 <meta name="theme-color" content="#EAEAEE" />
-<meta name="robots" content="index, follow" />
+
+<!-- Open Graph / Social Preview -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Mediakit · viuno" />
+<meta property="og:description" content="Mediakit · viuno" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E" />
+
 <style>
   :root {
     --bg: #EAEAEE;
@@ -19,8 +27,8 @@
     --primary: #1A1A2E;
     --primary-hover: #000000;
     --primary-text: #FFFFFF;
-    --radius-card: 14px;
-    --radius-sm: 8px;
+    --radius-btn: 12px;
+    --radius-img: 14px;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,7 +46,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 32px 16px 0;
+    padding: 36px 20px 24px;
   }
 
   main {
@@ -46,10 +54,10 @@
     max-width: 480px;
     display: flex;
     flex-direction: column;
+    align-items: center;
     flex: 1;
   }
 
-  /* Loader */
   .page-loader {
     position: fixed;
     inset: 0;
@@ -66,154 +74,221 @@
     border: 2px solid var(--border);
     border-top-color: var(--primary);
     border-radius: 50%;
-    animation: spin .7s linear infinite;
+    animation: spin .8s linear infinite;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Mediakit Card */
-  .mk {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    padding: 32px 24px 24px;
+  .header {
     display: flex;
     flex-direction: column;
-    visibility: hidden;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 28px;
   }
 
-  /* Header */
-  .mk-header {
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 18px;
-  }
-  .mk-avatar {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    box-shadow: 0 0 0 3px var(--surface), 0 0 0 4.5px var(--border);
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 16px;
     overflow: hidden;
-    flex-shrink: 0;
+    box-shadow: 0 0 0 3px var(--bg), 0 0 0 4.5px color-mix(in srgb, var(--primary) 35%, transparent);
   }
-  .mk-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .mk-avatar-fallback {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; font-weight: 500; color: var(--text-muted);
-    background: var(--bg);
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
   }
-  .mk-name {
+
+  h1 {
     font-size: 18px;
     font-weight: 600;
     color: var(--text);
-    line-height: 1.2;
-  }
-  .mk-name-row {
-    display: flex;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+    justify-content: center;
   }
-  .mk-verified {
+  .verified {
     display: inline-flex;
     align-items: center;
     gap: 3px;
     font-size: 10px;
     font-weight: 600;
-    color: var(--text);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 2px 7px;
-  }
-  .mk-handle {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-  .mk-meta-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 6px;
-    margin-top: 6px;
-  }
-  .mk-niche-tag {
-    display: inline-block;
-    font-size: 11px;
-    color: var(--text-muted);
-    background: var(--bg);
-    border: 1px solid var(--border);
-    padding: 3px 10px;
-    border-radius: 999px;
-  }
-  .mk-location {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    color: var(--text-muted);
-  }
-  .mk-location svg {
-    width: 11px;
-    height: 11px;
-    flex-shrink: 0;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 15%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+    border-radius: 20px;
+    padding: 2px 8px;
+    letter-spacing: .02em;
   }
 
-  /* Bio */
-  .mk-bio {
-    font-size: 13px;
+  .tags {
+    display: flex;
+    gap: 6px;
+    margin: 8px 0 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tags:empty { display: none; }
+  .tag {
+    font-size: 11px;
+    color: var(--text-subtle);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .bio {
+    font-size: 14px;
     color: var(--text-muted);
     line-height: 1.55;
-    margin: 0 0 20px;
+    margin-bottom: 28px;
+    max-width: 320px;
     white-space: pre-line;
   }
+  .bio:empty { display: none; }
 
-  /* Section label */
+  .links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: var(--radius-btn);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform .12s ease, background .15s ease, border-color .15s ease;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn:active { transform: scale(.98); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--surface);
+    border-color: var(--border-strong);
+  }
+
+  .btn svg { flex-shrink: 0; }
+  .btn.hidden { display: none; }
+
+  .divider {
+    width: 100%;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 16px;
+    letter-spacing: 6px;
+    padding: 36px 0 32px;
+    user-select: none;
+  }
+
+  footer {
+    width: 100%;
+    padding: 0 20px 24px;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: .02em;
+    text-align: center;
+  }
+  footer a { color: var(--text-subtle); text-decoration: none; transition: color .15s ease; }
+  footer a:hover { color: var(--text-muted); }
+
+  .imprint-link {
+    background: none;
+    border: none;
+    color: var(--text-subtle);
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: .02em;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color .15s ease;
+  }
+  .imprint-link:hover { color: var(--text-muted); }
+
+  /* ================================================
+     MEDIAKIT SECTIONS
+     ================================================ */
+  .mk-section {
+    width: 100%;
+    margin-bottom: 22px;
+  }
+  .mk-section:last-child { margin-bottom: 0; }
   .mk-section-label {
     font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--text-subtle);
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
   }
 
-  /* Stats grid */
   .mk-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-    gap: 6px;
-    margin-bottom: 20px;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
   }
   .mk-stat {
     background: var(--bg);
-    border-radius: var(--radius-sm);
-    padding: 10px 8px;
+    border-radius: var(--radius-img);
+    padding: 14px 12px;
     text-align: center;
   }
   .mk-stat-num {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 600;
     color: var(--text);
     line-height: 1.2;
   }
   .mk-stat-label {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--text-muted);
-    margin-top: 3px;
+    margin-top: 4px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
-  /* Platforms */
   .mk-platform {
     background: var(--bg);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
+    border-radius: var(--radius-img);
+    padding: 14px;
     margin-bottom: 8px;
   }
   .mk-platform:last-child { margin-bottom: 0; }
@@ -221,12 +296,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
   .mk-platform-name {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 7px;
     font-size: 13px;
     font-weight: 600;
     color: var(--text);
@@ -237,402 +312,16 @@
     color: var(--text-muted);
     text-decoration: none;
   }
-  .mk-platform-handle:hover { color: var(--text); }
-  .mk-platform-stats {
+  .mk-platform-stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
     gap: 6px;
     margin-bottom: 10px;
   }
-  .mk-platform-profile-btn {
-    display: block;
-    text-align: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 8px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background .15s ease, border-color .15s ease;
-  }
-  .mk-platform-profile-btn:hover {
-    background: var(--bg);
-    border-color: var(--border-strong);
-  }
-
-  /* Collaborations Logo Wall */
-  .mk-collabs {
-    background: var(--bg);
-    border-radius: var(--radius-sm);
-    padding: 14px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  .mk-collab {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 10px;
-    aspect-ratio: 1.6 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-decoration: none;
-    text-align: center;
-    line-height: 1.2;
-    transition: background .15s ease, color .15s ease, border-color .15s ease;
-  }
-  a.mk-collab:hover {
-    background: var(--bg);
-    color: var(--text);
-    border-color: var(--border-strong);
-  }
-
-  /* Contact Section */
-  .mk-contact {
-    border-top: 1px solid var(--border);
-    padding-top: 20px;
-  }
-  .mk-contact-email {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 12px;
-    background: var(--bg);
-    border-radius: var(--radius-sm);
-    font-size: 13px;
-    color: var(--text);
-    text-decoration: none;
-    margin-bottom: 8px;
-  }
-  .mk-contact-email svg {
-    width: 14px; height: 14px;
-    flex-shrink: 0;
-    color: var(--text-muted);
-  }
-  .mk-cta-btn {
-    width: 100%;
-    background: var(--primary);
-    color: var(--primary-text);
-    border: 1px solid var(--primary);
-    padding: 12px 16px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-family: inherit;
-    transition: background .15s ease, border-color .15s ease;
-  }
-  .mk-cta-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
-  .mk-cta-btn svg { width: 14px; height: 14px; }
-
-  /* ============= Inquiry Overlay (1:1 BioPage in Clean Farben) ============= */
-  .cf-overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
-  }
-  .cf-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .cf-topbar {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 18px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    flex-shrink: 0;
-  }
-  .cf-close {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    padding: 0;
-    font-family: inherit;
-    flex-shrink: 0;
-    transition: background .15s ease;
-  }
-  .cf-close:hover { background: var(--bg); border-color: var(--border-strong); }
-  .cf-progress {
-    flex: 1;
-    height: 4px;
-    background: var(--border);
-    border-radius: 999px;
-    overflow: hidden;
-  }
-  .cf-progress-fill {
-    height: 100%;
-    background: var(--primary);
-    border-radius: 999px;
-    transition: width .3s cubic-bezier(0.2, 0.8, 0.2, 1);
-    width: 50%;
-  }
-  .cf-step-indicator {
-    font-size: 12px;
-    color: var(--text-muted);
-    flex-shrink: 0;
-    min-width: 36px;
-    text-align: right;
-  }
-  .cf-slides {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    transition: transform .35s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .cf-slide {
-    width: 100%;
-    flex-shrink: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding: 24px 20px 100px;
-  }
-  .cf-slide-inner {
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  .cf-slide h2 {
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 6px;
-    letter-spacing: -0.02em;
-  }
-  .cf-slide p.cf-sub {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-    line-height: 1.5;
-  }
-  .cf-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .cf-card {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    cursor: pointer;
-    font-family: inherit;
-    text-align: left;
-    transition: all .15s ease;
-    width: 100%;
-    color: var(--text);
-  }
-  .cf-card:hover { border-color: var(--border-strong); }
-  .cf-card.selected {
-    border-color: var(--primary);
-    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
-  }
-  .cf-card-icon {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-  }
-  .cf-card.selected .cf-card-icon {
-    background: color-mix(in srgb, var(--primary) 20%, var(--bg));
-    border-color: var(--primary);
-    color: var(--primary);
-  }
-  .cf-card-icon svg { width: 18px; height: 18px; }
-  .cf-card-text { flex: 1; min-width: 0; }
-  .cf-card-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-  .cf-card-desc {
-    font-size: 12px;
-    color: var(--text-muted);
-    line-height: 1.4;
-  }
-  .cf-field {
-    margin-bottom: 16px;
-  }
-  .cf-field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-    letter-spacing: 0.02em;
-  }
-  .cf-field label .req { color: var(--primary); margin-left: 2px; }
-  .cf-field input,
-  .cf-field textarea,
-  .cf-field select {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 11px 14px;
-    font-family: inherit;
-    font-size: 14px;
-    color: var(--text);
-    line-height: 1.5;
-    transition: border-color .15s ease, background .15s ease;
-  }
-  .cf-field input:focus, .cf-field textarea:focus, .cf-field select:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: var(--bg);
-  }
-  .cf-field textarea { resize: vertical; min-height: 120px; }
-  .cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--text-faint); }
-
-  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .cf-chip {
-    padding: 10px 16px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    font-family: inherit;
-    font-size: 13px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all .15s ease;
-  }
-  .cf-chip:hover { border-color: var(--border-strong); color: var(--text); }
-  .cf-chip.selected {
-    background: var(--primary);
-    border-color: var(--primary);
-    color: var(--primary-text);
-  }
-
-  .cf-bottombar {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 14px 18px;
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  .cf-btn {
-    flex: 1;
-    padding: 14px 18px;
-    background: var(--primary);
-    color: var(--primary-text);
-    border: 1px solid var(--primary);
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background .15s ease, border-color .15s ease;
-  }
-  .cf-btn:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
-  .cf-btn:disabled { opacity: .45; cursor: not-allowed; }
-  .cf-btn-back {
-    background: var(--surface);
-    color: var(--text);
-    border-color: var(--border);
-    flex: 0 0 auto;
-    padding: 14px 22px;
-  }
-  .cf-btn-back:hover { background: var(--surface); border-color: var(--border-strong); }
-
-  .cf-error {
-    color: #DC2626;
-    font-size: 12px;
-    margin-top: 8px;
-    display: none;
-  }
-  .cf-error.show { display: block; }
-
-  .cf-success {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 40px 20px;
-    gap: 16px;
-    height: 100%;
-  }
-  .cf-success-icon {
-    width: 72px;
-    height: 72px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--primary) 15%, transparent);
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .cf-success-icon svg { width: 36px; height: 36px; }
-  .cf-success h2 {
-    font-size: 22px;
-    font-weight: 600;
-    color: var(--text);
-    margin: 0;
-  }
-  .cf-success p {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin: 0;
-    max-width: 320px;
-  }
-  .cf-success-btn {
-    margin-top: 12px;
-    padding: 12px 24px;
-    background: var(--primary);
-    color: var(--primary-text);
-    border: 1px solid var(--primary);
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  body.cf-open { overflow: hidden; }
   .mk-platform-stat {
     background: var(--surface);
-    border-radius: 6px;
-    padding: 8px;
+    border-radius: 8px;
+    padding: 9px;
     text-align: center;
   }
   .mk-platform-stat-num {
@@ -647,8 +336,21 @@
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
+  .mk-profile-btn {
+    display: block;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .mk-profile-btn:hover { background: var(--bg); border-color: var(--border-strong); }
 
-  /* Content offers */
   .mk-offers {
     display: flex;
     flex-wrap: wrap;
@@ -658,50 +360,49 @@
     font-size: 11px;
     color: var(--primary-text);
     background: var(--primary);
-    padding: 5px 11px;
+    padding: 6px 12px;
     border-radius: 6px;
     font-weight: 500;
   }
 
-  /* Audience boxes */
-  .mk-audience-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
   .mk-audience-box {
     background: var(--bg);
-    border-radius: var(--radius-sm);
-    padding: 12px 14px;
+    border-radius: var(--radius-img);
+    padding: 14px;
+    margin-bottom: 8px;
+  }
+  .mk-audience-box:last-child { margin-bottom: 0; }
+  .mk-audience-sublabel {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-subtle);
+    font-weight: 600;
+    margin-bottom: 10px;
   }
   .mk-country-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0;
+    padding: 5px 0;
     font-size: 13px;
   }
-  .mk-country-row:not(:last-child) { border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 4px; }
-  .mk-country-name {
-    color: var(--text);
-    font-weight: 500;
+  .mk-country-row:not(:last-child) {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
   }
-  .mk-country-pct {
-    color: var(--text);
-    font-weight: 600;
-  }
+  .mk-country-name { color: var(--text); font-weight: 500; }
+  .mk-country-pct { color: var(--text); font-weight: 600; }
   .mk-gender-stats {
     display: flex;
     justify-content: space-around;
     align-items: center;
     gap: 12px;
   }
-  .mk-gender-cell {
-    text-align: center;
-    flex: 1;
-  }
+  .mk-gender-cell { text-align: center; flex: 1; }
   .mk-gender-cell-num {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
     color: var(--text);
   }
@@ -716,71 +417,62 @@
     background: var(--border);
   }
 
-  /* Section spacing */
-  .mk-section {
-    margin-bottom: 20px;
+  .mk-collabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
-  .mk-section:last-of-type { margin-bottom: 0; }
-
-  /* Footer */
-  footer {
-    width: 100%;
-    max-width: 480px;
-    padding: 20px 16px 24px;
-    font-size: 11px;
-    color: var(--text-faint);
-    letter-spacing: 0.02em;
-    text-align: center;
-    visibility: hidden;
-  }
-  footer a { color: var(--text-subtle); text-decoration: none; transition: color .15s ease; }
-  footer a:hover { color: var(--text-muted); }
-
-  .imprint-link {
-    background: none;
-    border: none;
-    color: var(--text-subtle);
-    font-family: inherit;
-    font-size: 11px;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    padding: 4px 8px;
-    transition: color .15s ease;
-  }
-  .imprint-link:hover { color: var(--text-muted); }
-
-  .lang-switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    margin-top: 14px;
-    background: var(--surface);
+  .mk-collab {
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 3px;
-  }
-  .lang-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-subtle);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 5px 12px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-family: inherit;
-    transition: all .15s ease;
-  }
-  .lang-btn:hover { color: var(--text); }
-  .lang-btn.active {
-    background: var(--primary);
-    color: var(--primary-text);
+    border-radius: 8px;
+    padding: 12px 8px;
+    aspect-ratio: 1.6 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
     font-weight: 600;
+    color: var(--text);
+    text-decoration: none;
+    text-align: center;
+    line-height: 1.2;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  a.mk-collab:hover { background: var(--surface); border-color: var(--border-strong); }
+
+  .mk-contact {
+    border-top: 1px solid var(--border);
+    padding-top: 22px;
+    margin-top: 6px;
+  }
+  .mk-contact-email {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: var(--radius-img);
+    font-size: 13px;
+    color: var(--text);
+    text-decoration: none;
+    margin-bottom: 10px;
+  }
+  .mk-contact-email svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-muted);
+    flex-shrink: 0;
   }
 
-  /* Impressum Bottom Sheet */
+  /* Bei Mediakit: btn-primary nimmt volle Breite */
+  .mk-contact .btn-primary {
+    width: 100%;
+  }
+
+  /* ================================================
+     IMPRESSUM BOTTOM SHEET
+     ================================================ */
   .imp-backdrop {
     position: fixed;
     inset: 0;
@@ -873,10 +565,7 @@
     padding: 40px 20px;
   }
   body.imp-open { overflow: hidden; }
-
-  /* Desktop: Sheet zentriert */
   @media (min-width: 540px) {
-    main, footer { max-width: 480px; }
     .imp-sheet {
       left: 50%;
       transform: translate(-50%, 100%);
@@ -888,71 +577,405 @@
       transform: translate(-50%, 0);
     }
   }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--text); }
+  .lang-btn.active {
+    background: var(--primary);
+    color: var(--primary-text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 380px) {
+    body { padding: 28px 16px 40px; }
+    h1 { font-size: 17px; }
+    .btn { padding: 14px 18px; font-size: 14px; }
+  }
+
+  /* Desktop: Border-Container um Content (wie clean/color themes) */
+  @media (min-width: 540px) {
+    body {
+      justify-content: center;
+      padding: 48px 20px;
+    }
+    main {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 56px 32px 24px;
+      box-shadow: 0 4px 16px rgba(26, 26, 46, 0.06);
+    }
+    /* Avatar Ring Background passt sich an */
+    .avatar {
+      box-shadow: 0 0 0 4px var(--surface), 0 0 0 5.5px color-mix(in srgb, var(--primary) 35%, transparent);
+    }
+    /* Footer rückt näher an Content */
+    footer {
+      max-width: 480px;
+      padding-top: 20px;
+    }
+  }
+  @media (min-width: 900px) {
+    body { padding: 64px 40px; }
+  }
+
+  /* ================================================
+     ANFRAGE OVERLAY — 2 Slides
+     ================================================ */
+  .cf-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .cf-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cf-topbar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .cf-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .cf-close:hover { background: var(--surface); border-color: var(--border-strong); }
+
+  .cf-progress-wrap { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .cf-progress-label { font-size: 11px; color: var(--text-subtle); letter-spacing: .02em; }
+  .cf-progress-bar { height: 4px; background: var(--surface); border-radius: 999px; overflow: hidden; }
+  .cf-progress-fill { height: 100%; background: var(--primary); width: 50%; transition: width .35s ease; }
+
+  .cf-viewport { flex: 1; overflow: hidden; position: relative; }
+  .cf-track {
+    display: flex;
+    height: 100%;
+    transition: transform .35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: transform;
+  }
+  .cf-slide {
+    flex: 0 0 100%;
+    height: 100%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 28px 20px 40px;
+  }
+  .cf-slide-inner { max-width: 480px; margin: 0 auto; width: 100%; }
+  .cf-slide h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+  .cf-slide .cf-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin: 0 0 22px 0;
+    line-height: 1.55;
+  }
+
+  .cf-field { margin-bottom: 14px; }
+  .cf-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .cf-field .req { color: var(--primary); margin-left: 2px; }
+  .cf-field input,
+  .cf-field textarea {
+    width: 100%;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.5;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .cf-field input:focus, .cf-field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background: var(--bg);
+  }
+  .cf-field textarea { resize: vertical; min-height: 120px; }
+  .cf-field input::placeholder, .cf-field textarea::placeholder { color: var(--text-faint); }
+
+  .cf-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .cf-chip {
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .cf-chip:hover { border-color: var(--border-strong); color: var(--text); }
+  .cf-chip.selected {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-text);
+  }
+
+  .cf-cards { display: flex; flex-direction: column; gap: 10px; }
+  .cf-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all .15s ease;
+    width: 100%;
+    color: var(--text);
+  }
+  .cf-card:hover { border-color: var(--border-strong); }
+  .cf-card.selected {
+    border-color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 10%, var(--surface));
+  }
+  .cf-card-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+  }
+  .cf-card.selected .cf-card-icon {
+    background: color-mix(in srgb, var(--primary) 20%, var(--bg));
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+  .cf-card-text { flex: 1; min-width: 0; }
+  .cf-card-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .cf-card-desc { font-size: 12px; color: var(--text-muted); line-height: 1.45; }
+
+  .cf-conditional { display: none; }
+  .cf-conditional.show { display: block; }
+
+  .cf-actions {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px 18px;
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .cf-btn {
+    flex: 1;
+    padding: 14px 18px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    border: 1px solid transparent;
+    transition: all .15s ease;
+  }
+  .cf-btn-back {
+    background: transparent;
+    color: var(--text);
+    border-color: var(--border);
+    flex: 0 0 auto;
+    padding: 14px 22px;
+  }
+  .cf-btn-back:hover { background: var(--surface); border-color: var(--border-strong); }
+  .cf-btn-next {
+    background: var(--primary);
+    color: var(--primary-text);
+    border-color: var(--primary);
+  }
+  .cf-btn-next:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+  .cf-btn-next:disabled { opacity: .45; cursor: not-allowed; }
+
+  .cf-error {
+    color: #DC2626;
+    font-size: 12px;
+    margin-top: 8px;
+    display: none;
+  }
+  .cf-error.show { display: block; }
+
+  .cf-success {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 40px 30px;
+    min-height: 100%;
+  }
+  .cf-success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--primary) 20%, var(--surface));
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .cf-success h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+  .cf-success p {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 320px;
+    margin-bottom: 28px;
+  }
+
+  body.cf-open { overflow: hidden; }
+
+  @media (max-width: 380px) {
+    .cf-slide { padding: 24px 16px 32px; }
+    .cf-slide h2 { font-size: 18px; }
+    .cf-actions { padding: 12px 14px 14px; }
+  }
 </style>
 </head>
 <body>
 
 <div class="page-loader" id="page-loader"><div class="spinner"></div></div>
 
-<main id="main">
-  <div class="mk" id="mk-card">
-    <div class="mk-header">
-      <div class="mk-avatar" id="mk-avatar"></div>
-      <div style="flex:1; min-width:0;">
-        <div class="mk-name-row">
-          <span class="mk-name" id="mk-name"></span>
-          <span class="mk-verified" id="mk-verified" style="display:none;">
-            <svg width="9" height="9" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span data-i18n="verified">Verifiziert</span>
-          </span>
-        </div>
-        <div class="mk-handle" id="mk-handle"></div>
-        <div class="mk-meta-row" id="mk-meta-row"></div>
-      </div>
+<main id="main" style="visibility: hidden;">
+
+  <section class="header">
+    <div class="avatar" id="avatar">
+      <img id="avatar-img" src="" alt="" style="display:none;" />
     </div>
 
-    <p class="mk-bio" id="mk-bio"></p>
+    <h1>
+      <span id="display-name"></span>
+      <span class="verified" id="verified" style="display:none;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="verified">Verified</span>
+      </span>
+    </h1>
 
-    <div class="mk-section" id="mk-stats-section">
-      <div class="mk-section-label" data-i18n="reach">Reichweite</div>
-      <div class="mk-stats" id="mk-stats"></div>
-    </div>
+    <div class="tags" id="tags"></div>
 
-    <div class="mk-section" id="mk-platforms-section">
-      <div class="mk-section-label" data-i18n="platforms">Plattformen</div>
-      <div id="mk-platforms"></div>
-    </div>
+    <p class="bio" id="bio"></p>
+  </section>
 
-    <div class="mk-section" id="mk-offers-section">
-      <div class="mk-section-label" data-i18n="offers">Content-Angebote</div>
-      <div class="mk-offers" id="mk-offers"></div>
-    </div>
+  <!-- Reichweite -->
+  <section class="mk-section" id="mk-stats-section" style="display:none;">
+    <div class="mk-section-label" data-i18n="reach">Reichweite</div>
+    <div class="mk-stats" id="mk-stats"></div>
+  </section>
 
-    <div class="mk-section" id="mk-audience-section">
-      <div class="mk-section-label" data-i18n="audience">Audience</div>
-      <div class="mk-audience-grid" id="mk-audience"></div>
-    </div>
+  <!-- Plattformen -->
+  <section class="mk-section" id="mk-platforms-section" style="display:none;">
+    <div class="mk-section-label" data-i18n="platforms">Plattformen</div>
+    <div id="mk-platforms"></div>
+  </section>
 
-    <div class="mk-section" id="mk-collabs-section" style="display:none;">
-      <div class="mk-section-label" data-i18n="collaborations">Kollaborationen</div>
-      <div class="mk-collabs" id="mk-collabs"></div>
-    </div>
+  <!-- Content-Angebote -->
+  <section class="mk-section" id="mk-offers-section" style="display:none;">
+    <div class="mk-section-label" data-i18n="offers">Content-Angebote</div>
+    <div class="mk-offers" id="mk-offers"></div>
+  </section>
 
-    <div class="mk-contact" id="mk-contact-section">
-      <div class="mk-section-label" data-i18n="contact" style="margin-bottom:10px;">Kontakt</div>
-      <a class="mk-contact-email" id="mk-contact-email" href="#" style="display:none;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <span id="mk-contact-email-text"></span>
-      </a>
-      <button type="button" class="mk-cta-btn" id="btn-inquiry">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        <span data-i18n="inquire">Anfragen</span>
-      </button>
-    </div>
-  </div>
+  <!-- Audience -->
+  <section class="mk-section" id="mk-audience-section" style="display:none;">
+    <div class="mk-section-label" data-i18n="audience">Audience</div>
+    <div id="mk-audience"></div>
+  </section>
+
+  <!-- Kollaborationen -->
+  <section class="mk-section" id="mk-collabs-section" style="display:none;">
+    <div class="mk-section-label" data-i18n="collaborations">Kollaborationen</div>
+    <div class="mk-collabs" id="mk-collabs"></div>
+  </section>
+
+  <!-- Kontakt -->
+  <section class="mk-section mk-contact" id="mk-contact-section">
+    <div class="mk-section-label" data-i18n="contact">Kontakt</div>
+    <a class="mk-contact-email" id="mk-contact-email" href="#" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span id="mk-contact-email-text"></span>
+    </a>
+    <button class="btn btn-primary" id="btn-inquiry" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <span data-i18n="inquiry_btn">Anfragen</span>
+    </button>
+  </section>
+
 </main>
 
-<footer id="footer">
+<footer id="footer" style="visibility: hidden;">
   <span data-i18n="powered_by">powered by</span> <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
   <div style="margin-top: 4px;"><button type="button" class="imprint-link" id="btn-imprint" data-i18n="imprint">Impressum</button></div>
   <div class="lang-switch" role="group" aria-label="Sprache">
@@ -962,6 +985,7 @@
   </div>
 </footer>
 
+<!-- ================ IMPRESSUM BOTTOM SHEET ================ -->
 <div class="imp-backdrop" id="imp-backdrop"></div>
 <div class="imp-sheet" id="imp-sheet" role="dialog" aria-modal="true" aria-labelledby="imp-title">
   <div class="imp-handle"></div>
@@ -972,107 +996,141 @@
   <div class="imp-content" id="imp-content"></div>
 </div>
 
+<!-- ================ ANFRAGE OVERLAY ================ -->
 <div class="cf-overlay" id="cf-overlay" role="dialog" aria-modal="true">
+
   <div class="cf-topbar">
-    <button type="button" class="cf-close" id="cf-close" aria-label="Schließen">×</button>
-    <div class="cf-progress"><div class="cf-progress-fill" id="cf-progress-fill"></div></div>
-    <div class="cf-step-indicator" id="cf-step-indicator">1/2</div>
+    <button class="cf-close" id="cf-close" aria-label="Schließen">×</button>
+    <div class="cf-progress-wrap">
+      <div class="cf-progress-label">
+        <span id="cf-step-num">1</span>
+        <span data-i18n="of">von</span>
+        2 ·
+        <span id="cf-step-name"></span>
+      </div>
+      <div class="cf-progress-bar"><div class="cf-progress-fill" id="cf-progress-fill"></div></div>
+    </div>
   </div>
 
-  <div class="cf-slides" id="cf-slides">
-    <div class="cf-slide">
-      <div class="cf-slide-inner">
-        <h2 data-i18n="step1_title">Worum geht es?</h2>
-        <p class="cf-sub" data-i18n="step1_subtitle">Wähle die Art deiner Anfrage.</p>
+  <div class="cf-viewport">
+    <div class="cf-track" id="cf-track">
 
-        <div class="cf-cards" data-field="request_type" data-single="true">
-          <button type="button" class="cf-card" data-value="brand">
-            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg></div>
-            <div class="cf-card-text">
-              <div class="cf-card-title" data-i18n="o_brand">Brand Deal</div>
-              <div class="cf-card-desc" data-i18n="d_brand">Kooperation mit Unternehmen</div>
-            </div>
-          </button>
-          <button type="button" class="cf-card" data-value="collab">
-            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
-            <div class="cf-card-text">
-              <div class="cf-card-title" data-i18n="o_collab">Collab</div>
-              <div class="cf-card-desc" data-i18n="d_collab">Gemeinsames Projekt mit anderen Creatorn</div>
-            </div>
-          </button>
-          <button type="button" class="cf-card" data-value="event">
-            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-            <div class="cf-card-text">
-              <div class="cf-card-title" data-i18n="o_event">Event / Einladung</div>
-              <div class="cf-card-desc" data-i18n="d_event">Auftritt, Launch, Presse-Event</div>
-            </div>
-          </button>
-          <button type="button" class="cf-card" data-value="sonstiges">
-            <div class="cf-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-            <div class="cf-card-text">
-              <div class="cf-card-title" data-i18n="o_other">Sonstiges</div>
-              <div class="cf-card-desc" data-i18n="d_other">Etwas anderes – erzähl uns davon</div>
-            </div>
-          </button>
-        </div>
-        <div class="cf-error" id="cf-err-1" data-i18n="err_choose">Bitte wähle eine Option.</div>
-      </div>
-    </div>
+      <!-- SLIDE 1: Art der Anfrage -->
+      <div class="cf-slide">
+        <div class="cf-slide-inner">
+          <h2 data-i18n="step1_title">Wie kann ich helfen?</h2>
+          <p class="cf-sub" data-i18n="step1_sub">Wähle, was zu deiner Anfrage passt.</p>
 
-    <div class="cf-slide">
-      <div class="cf-slide-inner">
-        <h2 data-i18n="step2_title">Deine Angaben</h2>
-        <p class="cf-sub" data-i18n="step2_subtitle">Wir melden uns zeitnah bei dir.</p>
-
-        <div class="cf-field">
-          <label><span data-i18n="f_name">Name oder Firma</span><span class="req">*</span></label>
-          <input type="text" id="cf-name" data-i18n-ph="p_name" placeholder="Dein Name oder Firmenname" required>
-        </div>
-
-        <div class="cf-field">
-          <label><span data-i18n="f_email">E-Mail</span><span class="req">*</span></label>
-          <input type="email" id="cf-email" data-i18n-ph="p_email" placeholder="deine@email.de" required>
-        </div>
-
-        <div class="cf-field" id="cf-website-field" style="display:none;">
-          <label data-i18n="f_website">Website</label>
-          <input type="url" id="cf-website" data-i18n-ph="p_website" placeholder="www.deinewebsite.de">
-        </div>
-
-        <div class="cf-field" id="cf-budget-field" style="display:none;">
-          <label data-i18n="f_budget">Budget</label>
-          <div class="cf-chips" data-field="budget" data-single="true">
-            <button type="button" class="cf-chip" data-value="" data-i18n="b_none">Keine Angabe</button>
-            <button type="button" class="cf-chip" data-value="under_250" data-i18n="b_1">unter 250 €</button>
-            <button type="button" class="cf-chip" data-value="250_500" data-i18n="b_2">250 – 500 €</button>
-            <button type="button" class="cf-chip" data-value="500_1000" data-i18n="b_3">500 – 1.000 €</button>
-            <button type="button" class="cf-chip" data-value="over_1000" data-i18n="b_4">über 1.000 €</button>
+          <div class="cf-cards" data-field="request_type" data-single="true">
+            <button type="button" class="cf-card" data-value="brand">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_brand">Brand Deal</div>
+                <div class="cf-card-desc" data-i18n="d_brand">Kooperation mit Unternehmen</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="collab">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_collab">Collab</div>
+                <div class="cf-card-desc" data-i18n="d_collab">Gemeinsames Projekt mit anderen Creatorn</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="event">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_event">Event / Einladung</div>
+                <div class="cf-card-desc" data-i18n="d_event">Auftritt, Launch, Presse-Event</div>
+              </div>
+            </button>
+            <button type="button" class="cf-card" data-value="sonstiges">
+              <div class="cf-card-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </div>
+              <div class="cf-card-text">
+                <div class="cf-card-title" data-i18n="o_other">Sonstiges</div>
+                <div class="cf-card-desc" data-i18n="d_other">Etwas anderes – erzähl mir davon</div>
+              </div>
+            </button>
           </div>
+
+          <div class="cf-error" id="cf-err-1" data-i18n="err_choose">Bitte wähle eine Option.</div>
         </div>
+      </div>
 
-        <div class="cf-field">
-          <label><span data-i18n="f_message">Nachricht</span><span class="req">*</span></label>
-          <textarea id="cf-message" data-i18n-ph="p_message" placeholder="Worum geht es genau?" required></textarea>
+      <!-- SLIDE 2: Kontakt + Nachricht -->
+      <div class="cf-slide">
+        <div class="cf-slide-inner">
+          <h2 data-i18n="step2_title">Deine Angaben</h2>
+          <p class="cf-sub" data-i18n="step2_sub">Damit ich dich erreichen kann.</p>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_name">Name / Firma</span> <span class="req">*</span></label>
+            <input type="text" name="sender_name" data-i18n-placeholder="p_name" autocomplete="name" />
+          </div>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_email">E-Mail</span> <span class="req">*</span></label>
+            <input type="email" name="sender_email" data-i18n-placeholder="p_email" autocomplete="email" />
+          </div>
+
+          <div class="cf-conditional" id="cf-row-website">
+            <div class="cf-field">
+              <label data-i18n="l_web">Website (optional)</label>
+              <input type="text" name="sender_website" data-i18n-placeholder="p_web" autocomplete="url" />
+            </div>
+          </div>
+
+          <div class="cf-conditional" id="cf-row-budget">
+            <div class="cf-field">
+              <label data-i18n="l_budget">Budget-Rahmen (optional)</label>
+              <div class="cf-chips" data-field="budget" data-single="true">
+                <button type="button" class="cf-chip" data-value="" data-i18n="b_none">Keine Angabe</button>
+                <button type="button" class="cf-chip" data-value="250" data-i18n="b_1">unter 250 €</button>
+                <button type="button" class="cf-chip" data-value="500" data-i18n="b_2">250 – 500 €</button>
+                <button type="button" class="cf-chip" data-value="1000" data-i18n="b_3">500 – 1.000 €</button>
+                <button type="button" class="cf-chip" data-value="1001" data-i18n="b_4">1.000 €+</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="cf-field">
+            <label><span data-i18n="l_msg">Nachricht</span> <span class="req">*</span></label>
+            <textarea name="message" data-i18n-placeholder="p_msg"></textarea>
+          </div>
+
+          <div class="cf-error" id="cf-err-2" data-i18n="err_required">Bitte fülle alle Pflichtfelder aus.</div>
         </div>
-
-        <div class="cf-error" id="cf-err-2" data-i18n="err_required">Bitte alle Pflichtfelder ausfüllen.</div>
       </div>
-    </div>
 
-    <div class="cf-slide">
-      <div class="cf-success">
-        <div class="cf-success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
-        <h2 data-i18n="s_title">Vielen Dank!</h2>
-        <p id="cf-success-sub"></p>
-        <button type="button" class="cf-success-btn" id="cf-done" data-i18n="s_done">Schließen</button>
+      <!-- SUCCESS -->
+      <div class="cf-slide">
+        <div class="cf-success">
+          <div class="cf-success-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          <h2 data-i18n="s_title">Anfrage gesendet!</h2>
+          <p id="cf-success-sub"></p>
+          <button class="cf-btn cf-btn-next" type="button" id="cf-done" style="flex: 0 0 auto; padding: 14px 32px;" data-i18n="close">Schließen</button>
+        </div>
       </div>
+
     </div>
   </div>
 
-  <div class="cf-bottombar" id="cf-bottombar">
-    <button type="button" class="cf-btn cf-btn-back" id="cf-back" data-i18n="btn_back">Zurück</button>
-    <button type="button" class="cf-btn" id="cf-next" data-i18n="btn_next">Weiter</button>
+  <div class="cf-actions" id="cf-actions">
+    <button class="cf-btn cf-btn-back" type="button" id="cf-back" data-i18n="back">Zurück</button>
+    <button class="cf-btn cf-btn-next" type="button" id="cf-next" data-i18n="next">Weiter</button>
   </div>
+
 </div>
 
 <script type="module">
@@ -1081,13 +1139,46 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } })
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false }
+})
 
 // ====================================================================
 // I18N
 // ====================================================================
 const STRINGS = {
   de: {
+    inquiry_btn: 'Anfragen',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum',
+    imprint_empty: 'Es wurde noch kein Impressum hinterlegt.',
+    next: 'Weiter',
+    close: 'Schließen',
+    send: 'Anfrage senden',
+    sending: 'Wird gesendet …',
+    step1_name: 'Art der Anfrage',
+    step2_name: 'Kontakt & Nachricht',
+    step1_title: 'Wie kann ich helfen?',
+    step1_sub: 'Wähle, was zu deiner Anfrage passt.',
+    step2_title: 'Deine Angaben',
+    step2_sub: 'Damit ich dich erreichen kann.',
+    o_brand: 'Brand Deal', d_brand: 'Kooperation mit Unternehmen',
+    o_collab: 'Collab', d_collab: 'Gemeinsames Projekt mit anderen Creatorn',
+    o_event: 'Event / Einladung', d_event: 'Auftritt, Launch, Presse-Event',
+    o_other: 'Sonstiges', d_other: 'Etwas anderes – erzähl mir davon',
+    l_name: 'Name / Firma', p_name: 'Dein Name oder Firmenname',
+    l_email: 'E-Mail', p_email: 'deine@email.de',
+    l_web: 'Website (optional)', p_web: 'www.deinewebsite.de',
+    l_budget: 'Budget-Rahmen (optional)',
+    b_none: 'Keine Angabe', b_1: 'unter 250 €', b_2: '250 – 500 €', b_3: '500 – 1.000 €', b_4: '1.000 €+',
+    l_msg: 'Nachricht', p_msg: 'Kurze Beschreibung deiner Anfrage...',
+    err_choose: 'Bitte wähle eine Option.',
+    err_required: 'Bitte fülle alle Pflichtfelder aus.',
+    err_email: 'Bitte gib eine gültige E-Mail-Adresse ein.',
+    err_send: 'Senden fehlgeschlagen. Bitte versuche es erneut.',
+    s_title: 'Anfrage gesendet!',
+    s_sub: (name) => `${name} meldet sich bald bei dir.`,
     reach: 'Reichweite',
     platforms: 'Plattformen',
     offers: 'Content-Angebote',
@@ -1095,13 +1186,10 @@ const STRINGS = {
     collaborations: 'Kollaborationen',
     contact: 'Kontakt',
     view_profile: 'Profil ansehen',
-    inquire: 'Anfragen',
     followers: 'Follower',
     avg_likes: 'Ø Likes',
     avg_views: 'Ø Views',
     er: 'Engagement',
-    er_ig: 'ER · Instagram',
-    er_tt: 'ER · TikTok',
     total_followers: 'Follower gesamt',
     avg_engagement: 'Ø Engagement',
     o_ugc: 'UGC Video',
@@ -1111,49 +1199,40 @@ const STRINGS = {
     top_country: 'Top-Länder',
     gender: 'Geschlecht',
     female: 'Frauen',
-    male: 'Männer',
-    verified: 'Verifiziert',
-    powered_by: 'powered by',
-    imprint: 'Impressum',
-    imprint_empty: 'Es wurde noch kein Impressum hinterlegt.',
-    step1_title: 'Worum geht es?',
-    step1_subtitle: 'Wähle die Art deiner Anfrage.',
-    step2_title: 'Deine Angaben',
-    step2_subtitle: 'Wir melden uns zeitnah bei dir.',
-    o_brand: 'Brand Deal',
-    d_brand: 'Kooperation mit Unternehmen',
-    o_collab: 'Collab',
-    d_collab: 'Gemeinsames Projekt mit anderen Creatorn',
-    o_event: 'Event / Einladung',
-    d_event: 'Auftritt, Launch, Presse-Event',
-    o_other: 'Sonstiges',
-    d_other: 'Etwas anderes – erzähl uns davon',
-    f_name: 'Name oder Firma',
-    f_email: 'E-Mail',
-    f_website: 'Website',
-    f_budget: 'Budget',
-    f_message: 'Nachricht',
-    p_name: 'Dein Name oder Firmenname',
-    p_email: 'deine@email.de',
-    p_website: 'www.deinewebsite.de',
-    p_message: 'Worum geht es genau?',
-    b_none: 'Keine Angabe',
-    b_1: 'unter 250 €',
-    b_2: '250 – 500 €',
-    b_3: '500 – 1.000 €',
-    b_4: 'über 1.000 €',
-    btn_back: 'Zurück',
-    btn_next: 'Weiter',
-    btn_send: 'Absenden',
-    err_choose: 'Bitte wähle eine Option.',
-    err_required: 'Bitte alle Pflichtfelder ausfüllen.',
-    err_email: 'Bitte gültige E-Mail angeben.',
-    err_send: 'Senden fehlgeschlagen. Bitte erneut versuchen.',
-    s_title: 'Vielen Dank!',
-    s_sub: '{name} meldet sich bald bei dir.',
-    s_done: 'Schließen'
+    male: 'Männer'
   },
   en: {
+    inquiry_btn: 'Request',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Imprint',
+    imprint_empty: 'No imprint has been provided yet.',
+    next: 'Next',
+    close: 'Close',
+    send: 'Send request',
+    sending: 'Sending …',
+    step1_name: 'Request type',
+    step2_name: 'Contact & message',
+    step1_title: 'How can I help?',
+    step1_sub: 'Choose what fits your request.',
+    step2_title: 'Your details',
+    step2_sub: 'So I can get back to you.',
+    o_brand: 'Brand Deal', d_brand: 'Collaboration with companies',
+    o_collab: 'Collab', d_collab: 'Joint project with other creators',
+    o_event: 'Event / Invitation', d_event: 'Appearance, launch, press event',
+    o_other: 'Other', d_other: 'Something else – tell me about it',
+    l_name: 'Name / Company', p_name: 'Your name or company',
+    l_email: 'E-Mail', p_email: 'your@email.com',
+    l_web: 'Website (optional)', p_web: 'www.yourwebsite.com',
+    l_budget: 'Budget range (optional)',
+    b_none: 'No preference', b_1: 'under 250 €', b_2: '250 – 500 €', b_3: '500 – 1,000 €', b_4: '1,000 €+',
+    l_msg: 'Message', p_msg: 'Briefly describe your proposal...',
+    err_choose: 'Please select an option.',
+    err_required: 'Please fill in all required fields.',
+    err_email: 'Please enter a valid email address.',
+    err_send: 'Sending failed. Please try again.',
+    s_title: 'Request sent!',
+    s_sub: (name) => `${name} will get back to you soon.`,
     reach: 'Reach',
     platforms: 'Platforms',
     offers: 'Content Offerings',
@@ -1161,13 +1240,10 @@ const STRINGS = {
     collaborations: 'Past Collaborations',
     contact: 'Contact',
     view_profile: 'View profile',
-    inquire: 'Inquire',
     followers: 'Followers',
     avg_likes: 'Avg likes',
     avg_views: 'Avg views',
     er: 'Engagement',
-    er_ig: 'ER · Instagram',
-    er_tt: 'ER · TikTok',
     total_followers: 'Total followers',
     avg_engagement: 'Avg engagement',
     o_ugc: 'UGC Video',
@@ -1177,49 +1253,40 @@ const STRINGS = {
     top_country: 'Top countries',
     gender: 'Gender',
     female: 'Female',
-    male: 'Male',
-    verified: 'Verified',
-    powered_by: 'powered by',
-    imprint: 'Imprint',
-    imprint_empty: 'No imprint has been provided yet.',
-    step1_title: 'What is it about?',
-    step1_subtitle: 'Choose the type of inquiry.',
-    step2_title: 'Your details',
-    step2_subtitle: 'We will get back to you soon.',
-    o_brand: 'Brand Deal',
-    d_brand: 'Partnership with a company',
-    o_collab: 'Collab',
-    d_collab: 'Joint project with other creators',
-    o_event: 'Event / Invitation',
-    d_event: 'Appearance, launch, press event',
-    o_other: 'Other',
-    d_other: 'Something else – tell us about it',
-    f_name: 'Name or company',
-    f_email: 'Email',
-    f_website: 'Website',
-    f_budget: 'Budget',
-    f_message: 'Message',
-    p_name: 'Your name or company name',
-    p_email: 'your@email.com',
-    p_website: 'www.yourwebsite.com',
-    p_message: 'What is it about?',
-    b_none: 'Not specified',
-    b_1: 'under 250 €',
-    b_2: '250 – 500 €',
-    b_3: '500 – 1,000 €',
-    b_4: 'over 1,000 €',
-    btn_back: 'Back',
-    btn_next: 'Next',
-    btn_send: 'Send',
-    err_choose: 'Please choose an option.',
-    err_required: 'Please fill in all required fields.',
-    err_email: 'Please enter a valid email.',
-    err_send: 'Sending failed. Please try again.',
-    s_title: 'Thank you!',
-    s_sub: '{name} will get back to you soon.',
-    s_done: 'Close'
+    male: 'Male'
   },
   it: {
+    inquiry_btn: 'Scrivimi',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum',
+    imprint_empty: 'Non è stato ancora inserito alcun impressum.',
+    next: 'Avanti',
+    close: 'Chiudi',
+    send: 'Invia richiesta',
+    sending: 'Invio in corso …',
+    step1_name: 'Tipo di richiesta',
+    step2_name: 'Contatto e messaggio',
+    step1_title: 'Come posso aiutarti?',
+    step1_sub: 'Scegli cosa corrisponde alla tua richiesta.',
+    step2_title: 'I tuoi dati',
+    step2_sub: 'Così posso risponderti.',
+    o_brand: 'Brand Deal', d_brand: 'Collaborazione con aziende',
+    o_collab: 'Collab', d_collab: 'Progetto con altri creator',
+    o_event: 'Evento / Invito', d_event: 'Apparizione, lancio, evento stampa',
+    o_other: 'Altro', d_other: 'Qualcos\'altro – dimmelo tu',
+    l_name: 'Nome / Azienda', p_name: 'Il tuo nome o la tua azienda',
+    l_email: 'E-Mail', p_email: 'la-tua@email.com',
+    l_web: 'Sito web (opzionale)', p_web: 'www.tuosito.it',
+    l_budget: 'Budget indicativo (opzionale)',
+    b_none: 'Non specificato', b_1: 'meno di 250 €', b_2: '250 – 500 €', b_3: '500 – 1.000 €', b_4: '1.000 €+',
+    l_msg: 'Messaggio', p_msg: 'Descrivi brevemente la tua proposta...',
+    err_choose: 'Seleziona un\'opzione.',
+    err_required: 'Compila tutti i campi obbligatori.',
+    err_email: 'Inserisci un indirizzo email valido.',
+    err_send: 'Invio non riuscito. Riprova.',
+    s_title: 'Richiesta inviata!',
+    s_sub: (name) => `${name} ti risponderà presto.`,
     reach: 'Reach',
     platforms: 'Piattaforme',
     offers: 'Servizi',
@@ -1227,13 +1294,10 @@ const STRINGS = {
     collaborations: 'Collaborazioni',
     contact: 'Contatto',
     view_profile: 'Vedi profilo',
-    inquire: 'Contatta',
     followers: 'Follower',
     avg_likes: 'Ø Likes',
     avg_views: 'Ø Views',
     er: 'Engagement',
-    er_ig: 'ER · Instagram',
-    er_tt: 'ER · TikTok',
     total_followers: 'Follower totali',
     avg_engagement: 'Ø Engagement',
     o_ugc: 'UGC Video',
@@ -1243,90 +1307,66 @@ const STRINGS = {
     top_country: 'Paesi principali',
     gender: 'Genere',
     female: 'Donne',
-    male: 'Uomini',
-    verified: 'Verificato',
-    powered_by: 'creato con',
-    imprint: 'Note legali',
-    imprint_empty: 'Nessuna nota legale inserita.',
-    step1_title: 'Di cosa si tratta?',
-    step1_subtitle: 'Scegli il tipo di richiesta.',
-    step2_title: 'I tuoi dati',
-    step2_subtitle: 'Ti risponderemo al più presto.',
-    o_brand: 'Brand Deal',
-    d_brand: 'Collaborazione con un\\'azienda',
-    o_collab: 'Collab',
-    d_collab: 'Progetto comune con altri creator',
-    o_event: 'Evento / Invito',
-    d_event: 'Presenza, lancio, evento stampa',
-    o_other: 'Altro',
-    d_other: 'Qualcos\\'altro – raccontaci',
-    f_name: 'Nome o azienda',
-    f_email: 'Email',
-    f_website: 'Sito web',
-    f_budget: 'Budget',
-    f_message: 'Messaggio',
-    p_name: 'Il tuo nome o azienda',
-    p_email: 'tua@email.it',
-    p_website: 'www.iltuosito.it',
-    p_message: 'Di cosa si tratta?',
-    b_none: 'Non specificato',
-    b_1: 'sotto 250 €',
-    b_2: '250 – 500 €',
-    b_3: '500 – 1.000 €',
-    b_4: 'oltre 1.000 €',
-    btn_back: 'Indietro',
-    btn_next: 'Avanti',
-    btn_send: 'Invia',
-    err_choose: 'Scegli un\\'opzione.',
-    err_required: 'Compila tutti i campi obbligatori.',
-    err_email: 'Inserisci un\\'email valida.',
-    err_send: 'Invio fallito. Riprova.',
-    s_title: 'Grazie!',
-    s_sub: '{name} ti risponderà presto.',
-    s_done: 'Chiudi'
+    male: 'Uomini'
   }
 }
 
 let currentLang = 'de'
 let creatorData = null
 
-function t(key) {
-  return (STRINGS[currentLang] && STRINGS[currentLang][key]) || (STRINGS.de[key] || key)
+function t(key, ...args) {
+  const v = STRINGS[currentLang]?.[key]
+  if (typeof v === 'function') return v(...args)
+  return v ?? key
+}
+
+function applyLanguage(lang) {
+  if (!STRINGS[lang]) lang = 'de'
+  currentLang = lang
+  document.documentElement.lang = lang
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n
+    const val = t(key)
+    if (typeof val === 'string') el.textContent = val
+  })
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder
+    const val = t(key)
+    if (typeof val === 'string') el.placeholder = val
+  })
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang)
+  })
+
+  if (creatorData?.display_name) {
+    const sub = document.getElementById('cf-success-sub')
+    if (sub) sub.textContent = t('s_sub', creatorData.display_name)
+  }
+
+  // Step-Name neu setzen je nach aktuellem Slide
+  const stepName = document.getElementById('cf-step-name')
+  if (stepName) {
+    stepName.textContent = t(currentStep === 0 ? 'step1_name' : 'step2_name')
+  }
+
+  // Action-Buttons
+  updateActionButtons()
 }
 
 // ====================================================================
-// FORMATTING
+// SLUG + DATA LOADING
 // ====================================================================
-function fmtNum(n) {
-  if (n == null || n === '') return '–'
-  const num = parseFloat(n)
-  if (isNaN(num)) return '–'
-  if (num >= 1000000) return (num / 1000000).toFixed(1).replace('.0', '') + 'M'
-  if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'K'
-  return Math.round(num).toString()
-}
-function fmtPct(n) {
-  if (n == null || n === '') return '–'
-  const num = parseFloat(n)
-  if (isNaN(num)) return '–'
-  return num.toFixed(1).replace('.0', '') + '%'
-}
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
-}
-function capitalize(s) {
-  if (!s) return ''
-  return s.charAt(0).toUpperCase() + s.slice(1)
-}
-
-// ====================================================================
-// LOAD DATA
-// ====================================================================
-async function loadMediakit() {
+function getSlugFromPath() {
   const path = window.location.pathname
-  const match = path.match(/\/kit\/([^\/]+)/)
-  const slug = match ? decodeURIComponent(match[1]) : null
+  const m = path.match(/\/kit\/([^\/]+)/)
+  if (!m) return null
+  return decodeURIComponent(m[1])
+}
 
+async function loadMediakit() {
+  const slug = getSlugFromPath()
   if (!slug) {
     window.location.replace('https://viuno.de')
     return
@@ -1355,90 +1395,66 @@ async function loadMediakit() {
     }).catch(() => {})
   } catch (_) {}
 
-  // Sprache: Creator-Default oder DE-Fallback
   const lang = ['de', 'en', 'it'].includes(data.default_language) ? data.default_language : 'de'
   applyLanguage(lang)
 
-  document.getElementById('main').firstElementChild.style.visibility = 'visible'
-  document.getElementById('mk-card').style.visibility = 'visible'
+  document.getElementById('main').style.visibility = 'visible'
   document.getElementById('footer').style.visibility = 'visible'
   const loader = document.getElementById('page-loader')
   loader.classList.add('hide')
   setTimeout(() => loader.remove(), 250)
 }
 
-// ====================================================================
-// RENDER
-// ====================================================================
 function renderMediakit(u) {
-  // Title (Browser-Tab)
   document.title = (u.display_name || 'Mediakit') + ' · viuno'
+  updateMetaTags(u)
 
-  // Avatar
-  const avatarEl = document.getElementById('mk-avatar')
+  const avatar = document.getElementById('avatar')
+  const avatarImg = document.getElementById('avatar-img')
   if (u.profile_image_url) {
-    const img = document.createElement('img')
-    img.src = u.profile_image_url
-    img.alt = u.display_name || ''
-    img.onerror = () => {
-      avatarEl.innerHTML = '<div class="mk-avatar-fallback">' + escapeHtml((u.display_name || 'C').charAt(0).toUpperCase()) + '</div>'
+    avatarImg.src = u.profile_image_url
+    avatarImg.alt = u.display_name || ''
+    avatarImg.style.display = 'block'
+    avatarImg.onerror = () => {
+      avatarImg.style.display = 'none'
+      avatar.textContent = (u.display_name || '?')[0].toUpperCase()
     }
-    avatarEl.appendChild(img)
   } else {
-    avatarEl.innerHTML = '<div class="mk-avatar-fallback">' + escapeHtml((u.display_name || 'C').charAt(0).toUpperCase()) + '</div>'
+    avatar.textContent = (u.display_name || '?')[0].toUpperCase()
   }
 
-  // Name
-  document.getElementById('mk-name').textContent = u.display_name || 'Creator'
+  document.getElementById('display-name').textContent = u.display_name || ''
 
-  // Verified Badge
   if (u.is_verified) {
-    document.getElementById('mk-verified').style.display = 'inline-flex'
+    document.getElementById('verified').style.display = 'inline-flex'
   }
 
-  // Handle (Instagram bevorzugt, sonst TikTok, sonst nichts)
-  const handleEl = document.getElementById('mk-handle')
-  const primaryHandle = u.instagram_handle || u.tiktok_handle
-  if (primaryHandle) {
-    handleEl.textContent = '@' + primaryHandle
-  } else {
-    handleEl.style.display = 'none'
-  }
-
-  // Meta-Row: Niche + Stadt/Land
-  const metaParts = []
+  // Tags: Niche + Stadt+Land
+  const tagsEl = document.getElementById('tags')
+  tagsEl.innerHTML = ''
   if (u.niche_category) {
-    metaParts.push('<span class="mk-niche-tag">' + escapeHtml(capitalize(u.niche_category)) + '</span>')
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = capitalizeFirst(u.niche_category)
+    tagsEl.appendChild(s)
   }
-  const locationStr = [u.city, u.country].filter(Boolean).map(escapeHtml).join(', ')
+  const locationStr = [u.city, u.country].filter(Boolean).join(', ')
   if (locationStr) {
-    metaParts.push(
-      '<span class="mk-location">' +
-      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>' +
-      '<span>' + locationStr + '</span>' +
-      '</span>'
-    )
-  }
-  if (metaParts.length > 0) {
-    document.getElementById('mk-meta-row').innerHTML = metaParts.join('')
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = '📍 ' + locationStr
+    tagsEl.appendChild(s)
   }
 
-  // Bio
-  const bioEl = document.getElementById('mk-bio')
-  if (u.bio) {
-    bioEl.textContent = u.bio
-  } else {
-    bioEl.style.display = 'none'
-  }
+  if (u.bio) document.getElementById('bio').textContent = u.bio
 
-  // Reichweite-Stats: Total Follower + Avg Engagement
+  // ===== Reichweite =====
   const ig = u.instagram_analytics || {}
   const tt = u.tiktok_analytics || {}
   const igFollowers = parseInt(ig.followers || 0) || 0
   const ttFollowers = parseInt(tt.followers || 0) || 0
   const totalFollowers = igFollowers + ttFollowers
 
-  // Engagement: Override aus mediakit_settings hat Vorrang
   const erIg = u.engagement_rate_instagram != null ? parseFloat(u.engagement_rate_instagram) : (ig.engagement_rate ? parseFloat(ig.engagement_rate) : null)
   const erTt = u.engagement_rate_tiktok != null ? parseFloat(u.engagement_rate_tiktok) : (tt.engagement_rate ? parseFloat(tt.engagement_rate) : null)
   const ers = [erIg, erTt].filter(x => x != null && !isNaN(x))
@@ -1451,13 +1467,12 @@ function renderMediakit(u) {
   if (avgEng != null) {
     statsHtml.push('<div class="mk-stat"><div class="mk-stat-num">' + fmtPct(avgEng) + '</div><div class="mk-stat-label" data-i18n="avg_engagement">' + t('avg_engagement') + '</div></div>')
   }
-  if (statsHtml.length === 0) {
-    document.getElementById('mk-stats-section').style.display = 'none'
-  } else {
+  if (statsHtml.length > 0) {
     document.getElementById('mk-stats').innerHTML = statsHtml.join('')
+    document.getElementById('mk-stats-section').style.display = ''
   }
 
-  // Plattformen
+  // ===== Plattformen =====
   const platformsHtml = []
   if (u.instagram_handle && (igFollowers > 0 || ig.avg_likes || erIg != null)) {
     platformsHtml.push(buildPlatformCard('instagram', u.instagram_handle, igFollowers, ig.avg_likes, ig.avg_views, erIg))
@@ -1465,85 +1480,68 @@ function renderMediakit(u) {
   if (u.tiktok_handle && (ttFollowers > 0 || tt.avg_views || erTt != null)) {
     platformsHtml.push(buildPlatformCard('tiktok', u.tiktok_handle, ttFollowers, tt.avg_likes, tt.avg_views, erTt))
   }
-  if (platformsHtml.length === 0) {
-    document.getElementById('mk-platforms-section').style.display = 'none'
-  } else {
+  if (platformsHtml.length > 0) {
     document.getElementById('mk-platforms').innerHTML = platformsHtml.join('')
+    document.getElementById('mk-platforms-section').style.display = ''
   }
 
-  // Content-Angebote
+  // ===== Content-Angebote =====
   const offersHtml = []
   if (u.mediakit_ugc) offersHtml.push('<span class="mk-offer" data-i18n="o_ugc">' + t('o_ugc') + '</span>')
   if (u.mediakit_reel) offersHtml.push('<span class="mk-offer" data-i18n="o_reel">' + t('o_reel') + '</span>')
   if (u.mediakit_post) offersHtml.push('<span class="mk-offer" data-i18n="o_post">' + t('o_post') + '</span>')
   if (u.mediakit_story) offersHtml.push('<span class="mk-offer" data-i18n="o_story">' + t('o_story') + '</span>')
-  if (offersHtml.length === 0) {
-    document.getElementById('mk-offers-section').style.display = 'none'
-  } else {
+  if (offersHtml.length > 0) {
     document.getElementById('mk-offers').innerHTML = offersHtml.join('')
+    document.getElementById('mk-offers-section').style.display = ''
   }
 
-  // Audience: Top-Länder + Geschlecht
+  // ===== Audience =====
   const audienceParts = []
-
   if (u.top_country_1 || u.top_country_2) {
-    const countryRows = []
-    if (u.top_country_1) {
-      countryRows.push('<div class="mk-country-row"><span class="mk-country-name">' + escapeHtml(u.top_country_1) + '</span><span class="mk-country-pct">' + fmtPct(u.top_country_1_pct) + '</span></div>')
-    }
-    if (u.top_country_2) {
-      countryRows.push('<div class="mk-country-row"><span class="mk-country-name">' + escapeHtml(u.top_country_2) + '</span><span class="mk-country-pct">' + fmtPct(u.top_country_2_pct) + '</span></div>')
-    }
+    const rows = []
+    if (u.top_country_1) rows.push('<div class="mk-country-row"><span class="mk-country-name">' + escapeHtml(u.top_country_1) + '</span><span class="mk-country-pct">' + fmtPct(u.top_country_1_pct) + '</span></div>')
+    if (u.top_country_2) rows.push('<div class="mk-country-row"><span class="mk-country-name">' + escapeHtml(u.top_country_2) + '</span><span class="mk-country-pct">' + fmtPct(u.top_country_2_pct) + '</span></div>')
     audienceParts.push(
       '<div class="mk-audience-box">' +
-      '<div class="mk-section-label" style="margin-bottom:8px;" data-i18n="top_country">' + t('top_country') + '</div>' +
-      countryRows.join('') +
+      '<div class="mk-audience-sublabel" data-i18n="top_country">' + t('top_country') + '</div>' +
+      rows.join('') +
       '</div>'
     )
   }
-
   if (u.audience_female_pct != null || u.audience_male_pct != null) {
     audienceParts.push(
       '<div class="mk-audience-box">' +
-      '<div class="mk-section-label" style="margin-bottom:8px;" data-i18n="gender">' + t('gender') + '</div>' +
+      '<div class="mk-audience-sublabel" data-i18n="gender">' + t('gender') + '</div>' +
       '<div class="mk-gender-stats">' +
-        '<div class="mk-gender-cell">' +
-          '<div class="mk-gender-cell-num">' + fmtPct(u.audience_female_pct) + '</div>' +
-          '<div class="mk-gender-cell-label" data-i18n="female">' + t('female') + '</div>' +
-        '</div>' +
+        '<div class="mk-gender-cell"><div class="mk-gender-cell-num">' + fmtPct(u.audience_female_pct) + '</div><div class="mk-gender-cell-label" data-i18n="female">' + t('female') + '</div></div>' +
         '<div class="mk-gender-divider"></div>' +
-        '<div class="mk-gender-cell">' +
-          '<div class="mk-gender-cell-num">' + fmtPct(u.audience_male_pct) + '</div>' +
-          '<div class="mk-gender-cell-label" data-i18n="male">' + t('male') + '</div>' +
-        '</div>' +
+        '<div class="mk-gender-cell"><div class="mk-gender-cell-num">' + fmtPct(u.audience_male_pct) + '</div><div class="mk-gender-cell-label" data-i18n="male">' + t('male') + '</div></div>' +
       '</div>' +
       '</div>'
     )
   }
-
-  if (audienceParts.length === 0) {
-    document.getElementById('mk-audience-section').style.display = 'none'
-  } else {
+  if (audienceParts.length > 0) {
     document.getElementById('mk-audience').innerHTML = audienceParts.join('')
+    document.getElementById('mk-audience-section').style.display = ''
   }
 
-  // Kollaborationen
+  // ===== Kollaborationen =====
   const collabs = Array.isArray(u.collaborations) ? u.collaborations.filter(c => c && c.name) : []
   if (collabs.length > 0) {
-    const collabsHtml = collabs.map(c => {
+    const html = collabs.map(c => {
       const name = escapeHtml(c.name)
       if (c.url) {
-        let url = String(c.url).trim()
-        if (!/^https?:\/\//i.test(url)) url = 'https://' + url
+        const url = normalizeUrl(c.url)
         return '<a class="mk-collab" href="' + escapeHtml(url) + '" target="_blank" rel="noopener">' + name + '</a>'
       }
       return '<div class="mk-collab">' + name + '</div>'
     }).join('')
-    document.getElementById('mk-collabs').innerHTML = collabsHtml
+    document.getElementById('mk-collabs').innerHTML = html
     document.getElementById('mk-collabs-section').style.display = ''
   }
 
-  // Kontakt-E-Mail (Anfragen-Button bleibt immer sichtbar)
+  // ===== Kontakt =====
   if (u.contact_email) {
     const emailEl = document.getElementById('mk-contact-email')
     emailEl.href = 'mailto:' + u.contact_email
@@ -1552,71 +1550,199 @@ function renderMediakit(u) {
   }
 }
 
+// Helpers für Mediakit
+function fmtNum(n) {
+  if (n == null || n === '') return '–'
+  const num = parseFloat(n)
+  if (isNaN(num)) return '–'
+  if (num >= 1000000) return (num / 1000000).toFixed(1).replace('.0', '') + 'M'
+  if (num >= 1000) return (num / 1000).toFixed(1).replace('.0', '') + 'K'
+  return Math.round(num).toString()
+}
+function fmtPct(n) {
+  if (n == null || n === '') return '–'
+  const num = parseFloat(n)
+  if (isNaN(num)) return '–'
+  return num.toFixed(1).replace(/\.0$/, '') + '%'
+}
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+
 function buildPlatformCard(platform, handle, followers, avgLikes, avgViews, er) {
   const cleanHandle = String(handle).replace(/^@/, '')
   const profileUrl = platform === 'instagram'
     ? 'https://instagram.com/' + encodeURIComponent(cleanHandle)
     : 'https://tiktok.com/@' + encodeURIComponent(cleanHandle)
-
   const platformName = platform === 'instagram' ? 'Instagram' : 'TikTok'
   const platformIcon = platform === 'instagram'
     ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>'
     : '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>'
-
   const midKey = platform === 'tiktok' ? 'avg_views' : 'avg_likes'
   const midVal = platform === 'tiktok' ? avgViews : avgLikes
-
   return (
     '<div class="mk-platform">' +
       '<div class="mk-platform-head">' +
         '<div class="mk-platform-name">' + platformIcon + '<span>' + platformName + '</span></div>' +
         '<a class="mk-platform-handle" href="' + escapeHtml(profileUrl) + '" target="_blank" rel="noopener">@' + escapeHtml(cleanHandle) + '</a>' +
       '</div>' +
-      '<div class="mk-platform-stats">' +
+      '<div class="mk-platform-stats-grid">' +
         '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + fmtNum(followers) + '</div><div class="mk-platform-stat-label" data-i18n="followers">' + t('followers') + '</div></div>' +
         '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + fmtNum(midVal) + '</div><div class="mk-platform-stat-label" data-i18n="' + midKey + '">' + t(midKey) + '</div></div>' +
         '<div class="mk-platform-stat"><div class="mk-platform-stat-num">' + (er != null ? fmtPct(er) : '–') + '</div><div class="mk-platform-stat-label" data-i18n="er">' + t('er') + '</div></div>' +
       '</div>' +
-      '<a class="mk-platform-profile-btn" href="' + escapeHtml(profileUrl) + '" target="_blank" rel="noopener"><span data-i18n="view_profile">' + t('view_profile') + '</span> ↗</a>' +
+      '<a class="mk-profile-btn" href="' + escapeHtml(profileUrl) + '" target="_blank" rel="noopener"><span data-i18n="view_profile">' + t('view_profile') + '</span> ↗</a>' +
     '</div>'
   )
 }
 
-// ====================================================================
-// LANGUAGE
-// ====================================================================
-function applyLanguage(lang) {
-  currentLang = lang
-  document.documentElement.lang = lang
-
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === lang)
-  })
-
-  document.querySelectorAll('[data-i18n]').forEach(el => {
-    const key = el.getAttribute('data-i18n')
-    if (STRINGS[lang] && STRINGS[lang][key] != null) {
-      el.textContent = STRINGS[lang][key]
-    }
-  })
-
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    const k = el.getAttribute('data-i18n-ph')
-    if (STRINGS[lang] && STRINGS[lang][k] != null) {
-      el.setAttribute('placeholder', STRINGS[lang][k])
-    }
-  })
-
-  // Inquiry-Button-Texte aktualisieren falls Modal offen
-  if (typeof currentStep !== 'undefined' && currentStep < 2) {
-    const next = document.getElementById('cf-next')
-    if (next) next.textContent = currentStep === 1 ? t('btn_send') : t('btn_next')
+function updateMetaTags(u) {
+  const desc = u.bio || `${u.display_name} — viuno`
+  document.querySelector('meta[name="description"]')?.setAttribute('content', desc)
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${u.display_name} — viuno`)
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc)
+  if (u.profile_image_url) {
+    document.querySelector('meta[property="og:image"]')?.setAttribute('content', u.profile_image_url)
   }
 }
 
-document.querySelectorAll('.lang-btn').forEach(btn => {
-  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang))
+function capitalizeFirst(s) {
+  if (!s) return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+function normalizeUrl(url) {
+  if (!url) return '#'
+  return /^https?:\/\//.test(url) ? url : 'https://' + url
+}
+
+// ====================================================================
+// ANFRAGE OVERLAY
+// ====================================================================
+const overlay = document.getElementById('cf-overlay')
+const track = document.getElementById('cf-track')
+const stepNumEl = document.getElementById('cf-step-num')
+const stepNameEl = document.getElementById('cf-step-name')
+const progressFill = document.getElementById('cf-progress-fill')
+const actions = document.getElementById('cf-actions')
+const backBtn = document.getElementById('cf-back')
+const nextBtn = document.getElementById('cf-next')
+
+const TOTAL_STEPS = 2
+let currentStep = 0
+const formData = {}
+
+function openInquiry() {
+  overlay.classList.add('open')
+  document.body.classList.add('cf-open')
+  goToStep(0)
+}
+
+function closeInquiry() {
+  overlay.classList.remove('open')
+  document.body.classList.remove('cf-open')
+  setTimeout(resetInquiry, 300)
+}
+
+function resetInquiry() {
+  currentStep = 0
+  overlay.querySelectorAll('input, textarea').forEach(el => el.value = '')
+  overlay.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
+  document.getElementById('cf-row-website').classList.remove('show')
+  document.getElementById('cf-row-budget').classList.remove('show')
+  hideError(1); hideError(2)
+  actions.style.display = 'flex'
+  nextBtn.disabled = false
+  for (const k in formData) delete formData[k]
+  track.querySelectorAll('.cf-slide').forEach(s => s.scrollTop = 0)
+  goToStep(0)
+}
+
+function goToStep(i) {
+  currentStep = i
+  track.style.transform = `translateX(-${i * 100}%)`
+
+  if (i < TOTAL_STEPS) {
+    stepNumEl.textContent = i + 1
+    stepNameEl.textContent = t(i === 0 ? 'step1_name' : 'step2_name')
+    progressFill.style.width = `${((i + 1) / TOTAL_STEPS) * 100}%`
+    actions.style.display = 'flex'
+    backBtn.style.visibility = i === 0 ? 'hidden' : 'visible'
+    updateActionButtons()
+  } else {
+    actions.style.display = 'none'
+    progressFill.style.width = '100%'
+    stepNameEl.textContent = t('s_title')
+  }
+}
+
+function updateActionButtons() {
+  backBtn.textContent = t('back')
+  nextBtn.textContent = currentStep === TOTAL_STEPS - 1 ? t('send') : t('next')
+}
+
+function hideError(n) {
+  document.getElementById('cf-err-' + n).classList.remove('show')
+}
+function showError(n, msg) {
+  const el = document.getElementById('cf-err-' + n)
+  if (msg) el.textContent = msg
+  el.classList.add('show')
+}
+
+function collectSlide(slideIndex) {
+  const slide = track.children[slideIndex]
+  slide.querySelectorAll('input[name], textarea[name]').forEach(el => {
+    formData[el.name] = el.value.trim()
+  })
+  slide.querySelectorAll('[data-field][data-single="true"]').forEach(group => {
+    const selected = group.querySelector('.selected')
+    formData[group.dataset.field] = selected ? selected.dataset.value : null
+  })
+}
+
+function validateSlide(slideIndex) {
+  collectSlide(slideIndex)
+  if (slideIndex === 0) {
+    if (!formData.request_type) { showError(1, t('err_choose')); return false }
+    hideError(1); return true
+  }
+  if (slideIndex === 1) {
+    if (!formData.sender_name || !formData.sender_email || !formData.message) {
+      showError(2, t('err_required')); return false
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.sender_email)) {
+      showError(2, t('err_email')); return false
+    }
+    hideError(2); return true
+  }
+  return true
+}
+
+function updateConditionalFields() {
+  const type = formData.request_type
+  const showWebsite = type === 'brand' || type === 'collab'
+  const showBudget = type === 'brand'
+  document.getElementById('cf-row-website').classList.toggle('show', showWebsite)
+  document.getElementById('cf-row-budget').classList.toggle('show', showBudget)
+}
+
+track.addEventListener('click', (e) => {
+  const chip = e.target.closest('.cf-chip, .cf-card')
+  if (!chip) return
+  const group = chip.closest('[data-field]')
+  if (!group) return
+  group.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
+  chip.classList.add('selected')
+  if (group.dataset.field === 'request_type') {
+    formData.request_type = chip.dataset.value
+    updateConditionalFields()
+  }
 })
+
+document.getElementById('btn-inquiry').addEventListener('click', openInquiry)
+document.getElementById('cf-close').addEventListener('click', closeInquiry)
+document.getElementById('cf-done').addEventListener('click', closeInquiry)
 
 // ====================================================================
 // IMPRESSUM BOTTOM SHEET
@@ -1649,147 +1775,6 @@ document.getElementById('btn-imprint').addEventListener('click', openImprint)
 document.getElementById('imp-close').addEventListener('click', closeImprint)
 impBackdrop.addEventListener('click', closeImprint)
 
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') {
-    if (impSheet.classList.contains('open')) closeImprint()
-    if (overlay.classList.contains('open')) closeInquiry()
-  }
-})
-
-// ====================================================================
-// INQUIRY OVERLAY (1:1 BioPage Logic)
-// ====================================================================
-const overlay = document.getElementById('cf-overlay')
-const slidesEl = document.getElementById('cf-slides')
-const backBtn = document.getElementById('cf-back')
-const nextBtn = document.getElementById('cf-next')
-const progressFill = document.getElementById('cf-progress-fill')
-const stepIndicator = document.getElementById('cf-step-indicator')
-const bottomBar = document.getElementById('cf-bottombar')
-
-const TOTAL_STEPS = 2
-let currentStep = 0
-const formData = {
-  request_type: null,
-  budget: '',
-  name: '',
-  email: '',
-  website: '',
-  message: ''
-}
-
-function applyPlaceholders() {
-  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
-    const k = el.getAttribute('data-i18n-ph')
-    if (STRINGS[currentLang] && STRINGS[currentLang][k] != null) {
-      el.setAttribute('placeholder', STRINGS[currentLang][k])
-    }
-  })
-}
-
-function openInquiry() {
-  currentStep = 0
-  formData.request_type = null
-  formData.budget = ''
-  document.querySelectorAll('.cf-card').forEach(c => c.classList.remove('selected'))
-  document.querySelectorAll('.cf-chip').forEach(c => c.classList.remove('selected'))
-  document.getElementById('cf-name').value = ''
-  document.getElementById('cf-email').value = ''
-  document.getElementById('cf-website').value = ''
-  document.getElementById('cf-message').value = ''
-  document.getElementById('cf-err-1').classList.remove('show')
-  document.getElementById('cf-err-2').classList.remove('show')
-  applyPlaceholders()
-  goToStep(0)
-  overlay.classList.add('open')
-  document.body.classList.add('cf-open')
-}
-
-function closeInquiry() {
-  overlay.classList.remove('open')
-  document.body.classList.remove('cf-open')
-}
-
-function goToStep(step) {
-  currentStep = step
-  slidesEl.style.transform = 'translateX(-' + (step * 100) + '%)'
-
-  if (step >= TOTAL_STEPS) {
-    bottomBar.style.display = 'none'
-    progressFill.style.width = '100%'
-    stepIndicator.textContent = '✓'
-    return
-  }
-
-  bottomBar.style.display = 'flex'
-  progressFill.style.width = ((step + 1) / TOTAL_STEPS * 100) + '%'
-  stepIndicator.textContent = (step + 1) + '/' + TOTAL_STEPS
-  backBtn.style.visibility = step === 0 ? 'hidden' : 'visible'
-  nextBtn.textContent = step === TOTAL_STEPS - 1 ? t('btn_send') : t('btn_next')
-}
-
-function updateConditionalFields() {
-  const t = formData.request_type
-  document.getElementById('cf-website-field').style.display = (t === 'brand' || t === 'collab') ? '' : 'none'
-  document.getElementById('cf-budget-field').style.display = (t === 'brand') ? '' : 'none'
-}
-
-function validateSlide(step) {
-  if (step === 0) {
-    if (!formData.request_type) {
-      document.getElementById('cf-err-1').classList.add('show')
-      return false
-    }
-    return true
-  }
-  if (step === 1) {
-    formData.name = document.getElementById('cf-name').value.trim()
-    formData.email = document.getElementById('cf-email').value.trim()
-    formData.website = document.getElementById('cf-website').value.trim()
-    formData.message = document.getElementById('cf-message').value.trim()
-    const errEl = document.getElementById('cf-err-2')
-
-    if (!formData.name || !formData.email || !formData.message) {
-      errEl.textContent = t('err_required')
-      errEl.classList.add('show')
-      return false
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      errEl.textContent = t('err_email')
-      errEl.classList.add('show')
-      return false
-    }
-    errEl.classList.remove('show')
-    return true
-  }
-  return true
-}
-
-document.querySelectorAll('.cf-card').forEach(card => {
-  card.addEventListener('click', () => {
-    document.querySelectorAll('.cf-card').forEach(c => c.classList.remove('selected'))
-    card.classList.add('selected')
-    formData.request_type = card.dataset.value
-    document.getElementById('cf-err-1').classList.remove('show')
-    updateConditionalFields()
-  })
-})
-
-document.querySelectorAll('.cf-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    const group = chip.closest('.cf-chips')
-    group.querySelectorAll('.selected').forEach(el => el.classList.remove('selected'))
-    chip.classList.add('selected')
-    if (group.dataset.field === 'budget') {
-      formData.budget = chip.dataset.value
-    }
-  })
-})
-
-document.getElementById('btn-inquiry').addEventListener('click', openInquiry)
-document.getElementById('cf-close').addEventListener('click', closeInquiry)
-document.getElementById('cf-done').addEventListener('click', closeInquiry)
-
 backBtn.addEventListener('click', () => {
   if (currentStep > 0) goToStep(currentStep - 1)
 })
@@ -1802,48 +1787,68 @@ nextBtn.addEventListener('click', async () => {
     return
   }
 
-  // Submit
+  // Final submit
+  for (let i = 0; i < TOTAL_STEPS; i++) collectSlide(i)
+
+  const originalText = nextBtn.textContent
   nextBtn.disabled = true
-  nextBtn.textContent = '...'
+  nextBtn.textContent = t('sending')
+
+  const payload = {
+    creator_id: creatorData.user_id,
+    request_type: formData.request_type,
+    sender_name: formData.sender_name,
+    sender_email: formData.sender_email,
+    sender_website: formData.sender_website ? normalizeUrl(formData.sender_website) : null,
+    budget: formData.budget ? parseFloat(formData.budget) : null,
+    message: formData.message
+  }
+
   try {
-    const payload = {
-      creator_id: creatorData.user_id,
-      request_type: formData.request_type,
-      sender_name: formData.name,
-      sender_email: formData.email,
-      sender_website: formData.website || null,
-      budget: formData.budget || null,
-      message: formData.message,
-      source: 'mediakit'
-    }
     const res = await fetch(SUPABASE_URL + '/rest/v1/collab_requests', {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'apikey': SUPABASE_ANON_KEY,
         'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
-        'Content-Type': 'application/json',
         'Prefer': 'return=minimal'
       },
       body: JSON.stringify(payload)
     })
-    if (!res.ok) throw new Error('submit failed')
 
-    // Success-Slide aufbauen
-    const sub = document.getElementById('cf-success-sub')
-    if (sub) sub.textContent = t('s_sub').replace('{name}', creatorData.display_name || '')
+    if (!res.ok && res.status !== 201) {
+      const errText = await res.text()
+      throw new Error('HTTP ' + res.status + ': ' + errText)
+    }
+
+    nextBtn.disabled = false
+    nextBtn.textContent = originalText
+    document.getElementById('cf-success-sub').textContent = t('s_sub', creatorData.display_name)
     goToStep(TOTAL_STEPS)
   } catch (err) {
-    document.getElementById('cf-err-2').textContent = t('err_send')
-    document.getElementById('cf-err-2').classList.add('show')
+    console.error('[Anfrage Submit]', err)
     nextBtn.disabled = false
-    nextBtn.textContent = t('btn_send')
+    nextBtn.textContent = originalText
+    showError(2, t('err_send'))
   }
 })
 
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    if (overlay.classList.contains('open')) closeInquiry()
+    if (impSheet.classList.contains('open')) closeImprint()
+  }
+})
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang))
+})
+
 // ====================================================================
-// START
+// INIT
 // ====================================================================
 loadMediakit()
 </script>
+
 </body>
 </html>
