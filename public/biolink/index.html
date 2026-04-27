@@ -832,18 +832,27 @@ window.saveProfileSheet=async function(){
 window.openLinksSheet=function(){initSheets();openSheet('links-sheet')}
 let customLinks=[]
 function renderCustomLinksList(links){
-  customLinks=[...links]
+  customLinks=links.map(l=>({...l})) // deep copy
   const el=document.getElementById('custom-links-list')
   const addBtn=document.getElementById('link-add-btn')
+  if(!el)return
   el.innerHTML=customLinks.map((l,i)=>`<div class="custom-link-row">
-    <input type="text" placeholder="Titel" value="${escHtml(l.title||'')}" oninput="customLinks[${i}].title=this.value" style="width:36%"/>
-    <input type="url" placeholder="https://…" value="${escHtml(l.url||'')}" oninput="customLinks[${i}].url=this.value"/>
-    <button class="link-remove-btn" onclick="removeCustomLink(${i})">×</button>
+    <input type="text" placeholder="Titel" value="${escHtml(l.title||'')}" data-idx="${i}" data-field="title" style="width:36%"/>
+    <input type="url" placeholder="https://…" value="${escHtml(l.url||'')}" data-idx="${i}" data-field="url"/>
+    <button class="link-remove-btn" data-remove="${i}">×</button>
   </div>`).join('')
+  // Event delegation — one listener on the container
+  el.oninput=e=>{
+    const idx=+e.target.dataset.idx,field=e.target.dataset.field
+    if(!isNaN(idx)&&field&&customLinks[idx])customLinks[idx][field]=e.target.value
+  }
+  el.onclick=e=>{
+    const btn=e.target.closest('[data-remove]')
+    if(btn){customLinks.splice(+btn.dataset.remove,1);renderCustomLinksList(customLinks)}
+  }
   if(addBtn)addBtn.style.display=customLinks.length>=5?'none':'block'
 }
 window.addCustomLink=function(){if(customLinks.length>=5)return;customLinks.push({title:'',url:''});renderCustomLinksList(customLinks)}
-window.removeCustomLink=function(i){customLinks.splice(i,1);renderCustomLinksList(customLinks)}
 window.saveLinksSheet=async function(){
   const ig=document.getElementById('s-ig').value.trim().replace(/^@/,'')
   const tt=document.getElementById('s-tt').value.trim().replace(/^@/,'')
