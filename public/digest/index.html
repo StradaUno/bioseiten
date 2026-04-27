@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>veuno · Daily Digest</title>
+<title>viuno · Daily Digest</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -145,9 +145,9 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 <body>
 <div id="login-screen">
   <div class="login-card">
-    <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">veuno</div></div>
+    <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
     <div class="login-title">Willkommen zurück.</div>
-    <div class="login-sub">Melde dich mit deinem veuno-Account an.</div>
+    <div class="login-sub">Melde dich mit deinem viuno-Account an.</div>
     <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
     <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
     <button class="btn-login" id="btn-login">Einloggen</button>
@@ -158,7 +158,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
   <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">veuno</div></div>
+      <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
       <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     <nav class="sidebar-nav">
@@ -290,19 +290,19 @@ function renderCards(cards){
   if(!cards.length){el.innerHTML=`<div class="empty-state" style="margin:0 0 10px"><div class="empty-icon">🔍</div><div class="empty-title">Keine Karten</div><div class="empty-sub">Für diesen Filter gibt es nichts.</div></div>`;return}
   el.innerHTML=cards.map(c=>cardHtml(c)).join('')
   el.querySelectorAll('.digest-card').forEach(card=>card.addEventListener('click',()=>card.classList.toggle('expanded')))
-  el.querySelectorAll('.card-share').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();shareCard(btn.dataset.headline,btn.dataset.summary,btn.dataset.url)}))
+  el.querySelectorAll('.card-share').forEach(btn=>btn.addEventListener('click',e=>{e.stopPropagation();shareCard(btn.dataset.headline,btn.dataset.summary)}))
 }
 function platformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p}
 function platformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta',allgemein:'pb-allgemein'}[p]||'pb-allgemein'}
 function platformEmoji(p){return{tiktok:'🎵',instagram:'📸',youtube:'📺',meta:'🔵',allgemein:'🌐'}[p]||'📰'}
-async function shareCard(headline,summary,url){
-  const text=`📰 ${headline}\n\n${summary?summary.slice(0,120)+'…':''}\n\nMehr Creator-News auf veuno.de`
-  if(navigator.share){try{await navigator.share({title:headline,text,url:url||'https://veuno.de'});return}catch(_){}}
-  try{await navigator.clipboard.writeText(text+'\n\n'+(url||'https://veuno.de'));showToast('In Zwischenablage kopiert ✓')}catch(_){showToast('Teilen nicht verfügbar')}
+async function shareCard(headline,summary){
+  const text=`📰 ${headline}\n\n${summary?summary.slice(0,120)+'…':''}\n\nMehr Creator-News auf viuno.de`
+  if(navigator.share){try{await navigator.share({title:headline,text,url:'https://viuno.de'});return}catch(_){}}
+  try{await navigator.clipboard.writeText(text);showToast('In Zwischenablage kopiert ✓')}catch(_){showToast('Teilen nicht verfügbar')}
 }
 function cardHtml(c){
   const hasImg=c.image_url?.trim(),hasFull=c.full_content?.trim()
-  const shareBtn=`<button class="card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}" data-url="${escHtml(c.source_url||'')}">↗ Teilen</button>`
+  const shareBtn=`<button class="card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">↗ Teilen</button>`
   return`<div class="digest-card"><${hasImg?`img class="card-image" src="${escHtml(c.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot;>${platformEmoji(c.platform)}</div>'"`:`div class="card-image-fallback"`}>${hasImg?'</img>':platformEmoji(c.platform)+'</div>'}
     <div class="card-inner"><div class="card-meta"><span class="platform-badge ${platformClass(c.platform)}">${platformLabel(c.platform)}</span><span class="card-source">${escHtml(c.source||'')}</span>${(hasFull||c.impact)?'<span class="card-chevron">▼</span>':''}</div>
       <div class="card-headline">${escHtml(c.headline||'')}</div><div class="card-summary">${escHtml(c.summary||'')}</div>
