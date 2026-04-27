@@ -158,6 +158,33 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .quick-link-label{font-size:13px;font-weight:600;color:var(--text)}
 .quick-link-sub{font-size:11px;color:var(--muted)}
 
+/* CLICKABLE KPI */
+.kpi-card{cursor:pointer;text-decoration:none;transition:border-color .15s,transform .1s}
+.kpi-card:hover{border-color:var(--border-strong)}
+.kpi-card:active{transform:scale(.97)}
+
+/* DIGEST SUMMARY */
+.digest-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;text-decoration:none;display:block;transition:border-color .15s}
+.digest-summary-card:hover{border-color:var(--border-strong)}
+.digest-summary-date{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.digest-summary-text{font-size:13px;color:var(--text);line-height:1.65;white-space:pre-line}
+.digest-summary-footer{font-size:11px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+
+/* EXTRAS BANNER */
+.extras-banner{background:var(--text);border-radius:var(--radius);padding:20px;margin-top:0;display:flex;align-items:center;gap:16px;text-decoration:none;transition:opacity .15s}
+.extras-banner:hover{opacity:.9}
+.extras-banner-icon{font-size:28px;flex-shrink:0}
+.extras-banner-body{flex:1;min-width:0}
+.extras-banner-title{font-size:15px;font-weight:700;color:white;margin-bottom:3px}
+.extras-banner-sub{font-size:12px;color:rgba(255,255,255,.55);line-height:1.4}
+.extras-banner-arrow{font-size:18px;color:rgba(255,255,255,.4);flex-shrink:0}
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.extras-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-decoration:none;display:flex;flex-direction:column;gap:6px;transition:border-color .15s}
+.extras-card:hover{border-color:var(--border-strong)}
+.extras-card-icon{font-size:18px}
+.extras-card-title{font-size:12px;font-weight:600;color:var(--text)}
+.extras-card-sub{font-size:11px;color:var(--muted)}
+
 /* iOS zoom fix */
 input,textarea,select{font-size:16px!important}
 </style>
@@ -265,14 +292,12 @@ async function enterApp(session){
 
 // ── DATA ──
 async function loadDashboard(uid){
-  const [profileRes,analyticsRes,digestRes,requestsRes,hashtagsRes,bioStatsRes,dealsRes,goalsRes] = await Promise.all([
+  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes] = await Promise.all([
     sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
-    sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
+    sb.from('daily_digest').select('date,teaser').order('date',{ascending:false}).limit(1).single(),
     sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).is('deleted_at',null).neq('status','deleted').order('created_at',{ascending:false}).limit(3),
-    sb.from('live_hashtags').select('rank,name,view_count').order('rank',{ascending:true}).limit(5),
     sb.from('bio_stats').select('views_today,views_last_7_days,views_total').eq('user_id',uid).single(),
-    sb.from('deals').select('id,title,brand_name,deal_value,final_value,status,deadline,platform').eq('user_id',uid).is('deleted_at',null).in('status',['open','negotiating','draft']).order('created_at',{ascending:false}).limit(4),
     sb.from('user_goals').select('goal_type,target_value,current_value,deadline,platform,is_active,achieved').eq('user_id',uid).eq('is_active',true).eq('achieved',false).limit(3),
   ])
 
@@ -281,9 +306,7 @@ async function loadDashboard(uid){
   const an     = anRows[0] || null
   const d      = digestRes.data
   const reqs   = requestsRes.data || []
-  const trends = hashtagsRes.data || []
   const bs     = bioStatsRes.data
-  const deals  = dealsRes.data || []
   const goals  = goalsRes.data || []
 
   const name    = p?.display_name||p?.full_name||'Creator'
@@ -291,9 +314,7 @@ async function loadDashboard(uid){
   const greet   = hour<12?'Guten Morgen':hour<18?'Guten Tag':'Guten Abend'
   const newReqs = reqs.filter(r=>r.status==='new').length
   const follDelta = an?.followers_change
-  const topCard   = d?.cards?.[0]
   const lineSvg   = buildLineSvg(anRows)
-  const activeDealsVal = deals.filter(d=>['open','negotiating'].includes(d.status)).reduce((s,d)=>s+(+d.deal_value||0),0)
 
   document.getElementById('skeleton-area').classList.add('hidden')
   document.getElementById('dashboard-content').classList.remove('hidden')
@@ -304,35 +325,30 @@ async function loadDashboard(uid){
       <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
     </div>
 
-    <!-- KPI Scroll -->
+    <!-- KPI Scroll — alle klickbar -->
     <div class="kpi-scroll">
-      <div class="kpi-card dark">
+      <a class="kpi-card dark" href="/analytics">
         <div class="kpi-label">Follower</div>
         <div class="kpi-value">${fmt(p?.total_followers)}</div>
         ${follDelta!=null
           ?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDelta>=0?'↑':'↓'} ${Math.abs(follDelta).toLocaleString('de-DE')}</div>`
           :'<div class="kpi-delta neu">Gesamt</div>'}
-      </div>
-      <div class="kpi-card">
+      </a>
+      <a class="kpi-card" href="/analytics">
+        <div class="kpi-label">Engagement</div>
+        <div class="kpi-value">${an?Number(an.engagement_rate).toFixed(1)+'%':'–'}</div>
+        <div class="kpi-delta ${Number(an?.engagement_rate||0)>6?'up':Number(an?.engagement_rate||0)>3?'neu':'down'}">${Number(an?.engagement_rate||0)>6?'Sehr gut':Number(an?.engagement_rate||0)>3?'Gut':'Niedrig'}</div>
+      </a>
+      <a class="kpi-card" href="/biolink">
         <div class="kpi-label">Bio 7 Tage</div>
         <div class="kpi-value">${fmt(bs?.views_last_7_days||p?.bio_views_last_7_days)}</div>
         <div class="kpi-delta neu">Aufrufe</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Engagement</div>
-        <div class="kpi-value">${an?Number(an.engagement_rate).toFixed(1)+'%':'–'}</div>
-        <div class="kpi-delta ${Number(an?.engagement_rate||0)>6?'up':Number(an?.engagement_rate||0)>3?'neu':'down'}">${Number(an?.engagement_rate||0)>6?'Sehr gut ↑':Number(an?.engagement_rate||0)>3?'Gut':'–'}</div>
-      </div>
-      <div class="kpi-card">
+      </a>
+      <a class="kpi-card" href="/requests">
         <div class="kpi-label">Anfragen</div>
         <div class="kpi-value">${newReqs}</div>
         <div class="kpi-delta neu">Neu</div>
-      </div>
-      ${activeDealsVal>0?`<div class="kpi-card">
-        <div class="kpi-label">Deal-Pipeline</div>
-        <div class="kpi-value">${fmtEuro(activeDealsVal)}</div>
-        <div class="kpi-delta neu">Offen</div>
-      </div>`:''}
+      </a>
     </div>
 
     <!-- Analytics (Linie) -->
@@ -357,16 +373,13 @@ async function loadDashboard(uid){
       </a>
     </div>`:''}
 
-    <!-- Daily Digest -->
-    ${d&&topCard?`<div class="section">
+    <!-- Daily Digest — tägliche Zusammenfassung -->
+    ${d?`<div class="section">
       <div class="section-header"><div class="section-title">Daily Digest</div><a class="section-link" href="/digest">Alle →</a></div>
-      <a class="digest-preview" href="/digest">
-        ${topCard.image_url?`<img class="digest-img" src="${escHtml(topCard.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;digest-img-fallback&quot;>📰</div>'">`:'<div class="digest-img-fallback">📰</div>'}
-        <div class="digest-inner">
-          <div class="digest-pill">${escHtml(topCard.platform||'News')}</div>
-          <div class="digest-headline">${escHtml(topCard.headline||d.teaser||'')}</div>
-          <div class="digest-more">Mehr lesen →</div>
-        </div>
+      <a class="digest-summary-card" href="/digest">
+        <div class="digest-summary-date">${new Date(d.date).toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}</div>
+        <div class="digest-summary-text">${escHtml(d.teaser||'')}</div>
+        <div class="digest-summary-footer">Vollständigen Digest lesen →</div>
       </a>
     </div>`:''}
 
@@ -381,21 +394,6 @@ async function loadDashboard(uid){
             <div class="req-sub">${escHtml(r.message||'–')}</div>
           </div>
           ${r.status==='new'?'<div class="req-dot"></div>':''}
-        </div>`).join('')}
-      </a>
-    </div>`:''}
-
-    <!-- Deals -->
-    ${deals.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Offene Deals</div><a class="section-link" href="/deals">Alle →</a></div>
-      <a class="list-card" href="/deals">
-        ${deals.map(deal=>`<div class="list-row">
-          <div class="deal-dot ${deal.status||'draft'}"></div>
-          <div class="deal-info">
-            <div class="deal-title-text">${escHtml(deal.title||'Deal')}</div>
-            <div class="deal-brand">${escHtml(deal.brand_name||'–')}${deal.deadline?' · '+fmtDate(deal.deadline):''}</div>
-          </div>
-          <div class="deal-value">${deal.deal_value?fmtEuro(deal.deal_value):'–'}</div>
         </div>`).join('')}
       </a>
     </div>`:''}
@@ -415,19 +413,6 @@ async function loadDashboard(uid){
       }).join('')}
     </div>`:''}
 
-    <!-- Top Trends -->
-    ${trends.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Top Hashtags</div><a class="section-link" href="/trends">Alle →</a></div>
-      <a class="list-card" href="/trends">
-        ${trends.map(h=>`<div class="trend-row">
-          <span class="trend-rank">${h.rank}</span>
-          <div class="trend-thumb-fb">#</div>
-          <span class="trend-name">#${escHtml(h.name)}</span>
-          <span class="trend-views">${fmt(h.view_count)} Views</span>
-        </div>`).join('')}
-      </a>
-    </div>`:''}
-
     <!-- Schnellzugriff -->
     <div class="section" style="padding-bottom:8px">
       <div class="section-title" style="margin-bottom:10px">Schnellzugriff</div>
@@ -436,6 +421,31 @@ async function loadDashboard(uid){
         <a class="quick-link" href="/digest"><div class="quick-link-icon">📰</div><div class="quick-link-label">Daily Digest</div><div class="quick-link-sub">Creator News</div></a>
         <a class="quick-link" href="/trends"><div class="quick-link-icon">🔥</div><div class="quick-link-label">Trends</div><div class="quick-link-sub">Hashtags & Sounds</div></a>
         <a class="quick-link" href="/requests"><div class="quick-link-icon">✉️</div><div class="quick-link-label">Anfragen</div><div class="quick-link-sub">Kooperationen</div></a>
+      </div>
+    </div>
+
+    <!-- Extras -->
+    <div class="section" style="padding-bottom:calc(16px + var(--safe-bottom))">
+      <div class="section-title" style="margin-bottom:10px">Extras</div>
+      <a class="extras-banner" href="/extras">
+        <div class="extras-banner-icon">✦</div>
+        <div class="extras-banner-body">
+          <div class="extras-banner-title">viuno Extras entdecken</div>
+          <div class="extras-banner-sub">Exklusive Features für managed Creator · viuno Pro</div>
+        </div>
+        <div class="extras-banner-arrow">→</div>
+      </a>
+      <div class="extras-grid">
+        <a class="extras-card" href="/biolink">
+          <div class="extras-card-icon">🔗</div>
+          <div class="extras-card-title">BioLink</div>
+          <div class="extras-card-sub">Deine persönliche Seite</div>
+        </a>
+        <a class="extras-card" href="/mediakit">
+          <div class="extras-card-icon">📋</div>
+          <div class="extras-card-title">Media Kit</div>
+          <div class="extras-card-sub">Für Brand-Anfragen</div>
+        </a>
       </div>
     </div>
   `
