@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>veuno · Trends</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f5f4f2;
+  --surface: #ffffff;
+  --surface2: #f0efed;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.13);
+  --text: #111110;
+  --muted: #7a7975;
+  --subtle: #b0afa9;
+  --green: #1a7f4b;
+  --green-bg: #edf7f1;
+  --red: #c0392b;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ─── LOGIN ─── */
+#login-screen {
+  min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.login-card {
+  width: 100%; max-width: 360px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px 28px;
+}
+.login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.login-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--text); color: white; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+.login-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
+.login-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border-color .15s; }
+.field input:focus { border-color: var(--text); }
+.btn-login { width: 100%; padding: 12px; margin-top: 8px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-login:disabled { opacity: .5; cursor: not-allowed; }
+.login-error { font-size: 12px; color: var(--red); margin-top: 10px; text-align: center; min-height: 18px; }
+
+/* ─── APP ─── */
+#app { display: none; min-height: 100dvh; flex-direction: column; }
+#app.visible { display: flex; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245,244,242,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-logo { display: flex; align-items: center; gap: 8px; }
+.topbar-mark { width: 26px; height: 26px; border-radius: 6px; background: var(--text); color: white; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+.topbar-name { font-size: 15px; font-weight: 700; letter-spacing: -.03em; }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text); color: white; display: grid; place-items: center; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+/* page */
+.page { flex: 1; padding-bottom: calc(80px + var(--safe-bottom)); overflow-y: auto; }
+
+/* header */
+.page-header { padding: 20px 20px 0; }
+.page-title { font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* tab bar */
+.tab-bar {
+  display: flex; gap: 0; padding: 14px 20px 0;
+}
+.tab-btn {
+  flex: 1; padding: 10px 6px; text-align: center;
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--border);
+  cursor: pointer; font-family: inherit; transition: all .15s;
+}
+.tab-btn:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.tab-btn:last-child  { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; border-left: none; }
+.tab-btn:not(:first-child):not(:last-child) { border-left: none; }
+.tab-btn.active { background: var(--text); color: white; border-color: var(--text); z-index: 1; }
+
+/* week badge */
+.week-strip {
+  margin: 12px 20px 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.week-label { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.week-date { font-size: 12px; font-weight: 600; color: var(--text); }
+.week-count { font-size: 11px; color: var(--subtle); }
+
+/* content area */
+.content-area { padding: 12px 20px 0; }
+
+/* ── HASHTAG CARDS ── */
+.hashtag-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
+  display: flex; align-items: center; gap: 0;
+  cursor: pointer; transition: border-color .15s; text-decoration: none;
+}
+.hashtag-card:active { background: var(--surface2); }
+
+.hashtag-img {
+  width: 72px; height: 72px; object-fit: cover; flex-shrink: 0;
+  background: var(--surface2);
+}
+.hashtag-img-fallback {
+  width: 72px; height: 72px; flex-shrink: 0;
+  background: var(--surface2); display: grid; place-items: center;
+  font-size: 24px; color: var(--subtle);
+}
+
+.hashtag-body { flex: 1; padding: 12px 14px; min-width: 0; }
+.hashtag-rank-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.rank-num { font-size: 11px; font-weight: 700; color: var(--subtle); min-width: 18px; }
+.hashtag-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+.hashtag-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 5px; }
+.meta-pill { font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: 3px; }
+.industry-tag { font-size: 10px; font-weight: 600; color: var(--muted); background: var(--surface2); padding: 2px 8px; border-radius: 99px; }
+
+.hashtag-arrow { font-size: 14px; color: var(--subtle); padding: 0 14px 0 0; flex-shrink: 0; }
+
+/* ── SOUND CARDS ── */
+.sound-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
+  display: flex; align-items: center; gap: 0;
+  cursor: pointer; transition: border-color .15s; text-decoration: none;
+}
+.sound-card:active { background: var(--surface2); }
+
+.sound-thumb {
+  width: 64px; height: 64px; object-fit: cover; flex-shrink: 0;
+  background: var(--surface2); border-radius: 0;
+  margin: 8px; border-radius: 10px;
+}
+.sound-thumb-fallback {
+  width: 64px; height: 64px; flex-shrink: 0;
+  background: var(--surface2); display: grid; place-items: center;
+  font-size: 22px; color: var(--subtle);
+  margin: 8px; border-radius: 10px;
+}
+
+.sound-body { flex: 1; padding: 12px 10px 12px 0; min-width: 0; }
+.sound-rank { font-size: 11px; font-weight: 700; color: var(--subtle); margin-bottom: 3px; }
+.sound-title { font-size: 14px; font-weight: 600; color: var(--text); letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sound-artist { font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sound-count { font-size: 11px; color: var(--subtle); margin-top: 5px; }
+
+.sound-play {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--text); color: white;
+  display: grid; place-items: center; flex-shrink: 0;
+  margin-right: 14px; font-size: 14px;
+}
+
+/* ── CREATOR CARDS ── */
+.creator-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
+  display: flex; align-items: center; gap: 0;
+  cursor: pointer; text-decoration: none; transition: border-color .15s;
+}
+.creator-card:active { background: var(--surface2); }
+
+.creator-avatar {
+  width: 52px; height: 52px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  background: var(--surface2); margin: 10px 12px 10px 14px;
+  border: 2px solid var(--border);
+}
+.creator-avatar-fallback {
+  width: 52px; height: 52px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface2); display: grid; place-items: center;
+  font-size: 20px; font-weight: 700; color: var(--text);
+  margin: 10px 12px 10px 14px; border: 2px solid var(--border);
+}
+
+.creator-body { flex: 1; padding: 12px 0; min-width: 0; }
+.creator-rank-row { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+.creator-rank { font-size: 11px; font-weight: 700; color: var(--subtle); }
+.creator-name { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -.01em; }
+.creator-handle { font-size: 12px; color: var(--muted); margin-top: 1px; }
+.creator-stats { display: flex; gap: 12px; margin-top: 6px; }
+.creator-stat { font-size: 11px; color: var(--muted); }
+.creator-stat strong { color: var(--text); font-weight: 600; }
+
+.creator-arrow { font-size: 14px; color: var(--subtle); padding: 0 16px 0 10px; flex-shrink: 0; }
+
+/* skeleton */
+.skeleton { background: linear-gradient(90deg, var(--surface2) 25%, #e8e6e2 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius); }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* empty */
+.empty-state { text-align: center; padding: 48px 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.empty-icon { font-size: 32px; margin-bottom: 10px; }
+.empty-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.empty-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* bottom nav */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(245,244,242,0.95); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around;
+  padding: 10px 0 calc(14px + var(--safe-bottom));
+}
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 14px; border-radius: 12px; transition: background .12s; min-width: 60px; text-decoration: none; }
+.nav-item:active { background: var(--surface2); }
+.nav-icon { width: 24px; height: 24px; display: grid; place-items: center; }
+.nav-label { font-size: 10px; font-weight: 500; color: var(--subtle); }
+.nav-item.active .nav-label { color: var(--text); font-weight: 600; }
+
+/* toast */
+.toast-wrap { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
+.toast { background: var(--text); color: white; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 99px; animation: toastIn .25s ease-out; white-space: nowrap; }
+@keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">v</div>
+      <div class="login-logo-text">veuno</div>
+    </div>
+    <div class="login-title">Willkommen zurück.</div>
+    <div class="login-sub">Melde dich mit deinem veuno-Account an.</div>
+    <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
+    <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-mark">v</div>
+      <div class="topbar-name">veuno</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-avatar" id="user-avatar" onclick="logout()">?</div>
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="page-header">
+      <div class="page-title">Trends</div>
+      <div class="page-sub">Diese Woche in Deutschland auf TikTok</div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-hashtags" onclick="switchTab('hashtags')"># Hashtags</button>
+      <button class="tab-btn" id="tab-sounds" onclick="switchTab('sounds')">♪ Sounds</button>
+      <button class="tab-btn" id="tab-creators" onclick="switchTab('creators')">👤 Creator</button>
+    </div>
+
+    <!-- Week info -->
+    <div class="week-strip">
+      <span class="week-label">Aktuelle Woche</span>
+      <span class="week-date" id="week-date">–</span>
+      <span class="week-count" id="week-count">–</span>
+    </div>
+
+    <!-- Skeleton -->
+    <div id="skeleton-area" class="content-area" style="display:flex;flex-direction:column;gap:10px">
+      <div class="skeleton" style="height:72px"></div>
+      <div class="skeleton" style="height:72px"></div>
+      <div class="skeleton" style="height:72px"></div>
+      <div class="skeleton" style="height:72px"></div>
+      <div class="skeleton" style="height:72px"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="content-area hidden" id="content-area"></div>
+
+    <!-- Empty -->
+    <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">Keine Trends</div>
+      <div class="empty-sub">Trends werden jeden Mittwoch aktualisiert.</div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <a class="nav-item" href="dashboard.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="nav-label">Home</span>
+    </a>
+    <a class="nav-item" href="digest.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <span class="nav-label">Digest</span>
+    </a>
+    <div class="nav-item active">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <span class="nav-label">Trends</span>
+    </div>
+    <a class="nav-item" href="requests.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <span class="nav-label">Anfragen</span>
+    </a>
+    <a class="nav-item" href="profile.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="nav-label">Profil</span>
+    </a>
+  </div>
+</div>
+
+<div class="toast-wrap hidden" id="toast-wrap">
+  <div class="toast" id="toast-msg"></div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, autoRefreshToken: true } })
+
+const state = {
+  tab: 'hashtags',
+  hashtags: [], sounds: [], creators: [],
+  loaded: false
+}
+
+// utils
+function escHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+function fmt(n) {
+  if (n == null || isNaN(Number(n))) return '–'
+  n = Number(n)
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M'
+  if (n >= 1_000)     return (n/1_000).toFixed(1).replace(/\.0$/,'') + 'k'
+  return n.toLocaleString('de-DE')
+}
+function fmtDate(d) {
+  if (!d) return '–'
+  return new Date(d+'T12:00:00').toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+window.showToast = function(msg, dur = 2500) {
+  const w = document.getElementById('toast-wrap')
+  document.getElementById('toast-msg').textContent = msg
+  w.classList.remove('hidden')
+  clearTimeout(w._t)
+  w._t = setTimeout(() => w.classList.add('hidden'), dur)
+}
+
+// auth
+async function init() {
+  const { data: { session } } = await sb.auth.getSession()
+  if (session) { await enterApp(session); return }
+  setupLogin()
+}
+
+function setupLogin() {
+  document.getElementById('login-screen').style.display = 'flex'
+  document.getElementById('btn-login').addEventListener('click', doLogin)
+  document.getElementById('inp-pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
+}
+
+async function doLogin() {
+  const email = document.getElementById('inp-email').value.trim()
+  const pw    = document.getElementById('inp-pw').value
+  const errEl = document.getElementById('login-error')
+  const btn   = document.getElementById('btn-login')
+  errEl.textContent = ''
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
+  btn.disabled = false; btn.textContent = 'Einloggen'
+  if (error) { errEl.textContent = 'Falsche E-Mail oder Passwort.'; return }
+  await enterApp(data.session)
+}
+
+async function enterApp(session) {
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').classList.add('visible')
+  const { data: profile } = await sb.from('users').select('display_name, full_name').eq('id', session.user.id).single()
+  const name = profile?.display_name || profile?.full_name || session.user.email || '?'
+  const av = document.getElementById('user-avatar')
+  av.textContent = name[0].toUpperCase()
+  av.title = `${name} · Logout`
+  await loadAll()
+}
+
+window.logout = async function() { await sb.auth.signOut(); location.reload() }
+
+// load data
+async function loadAll() {
+  const [hRes, sRes, cRes] = await Promise.all([
+    sb.from('live_hashtags').select('*').order('rank', { ascending: true }),
+    sb.from('live_sounds').select('*').order('rank', { ascending: true }),
+    sb.from('live_creators').select('*').order('rank', { ascending: true })
+  ])
+
+  state.hashtags = hRes.data || []
+  state.sounds   = sRes.data || []
+  state.creators = cRes.data || []
+  state.loaded   = true
+
+  document.getElementById('skeleton-area').classList.add('hidden')
+  document.getElementById('content-area').classList.remove('hidden')
+
+  // week info
+  const weekDate = state.hashtags[0]?.source_week_date || state.sounds[0]?.source_week_date || null
+  if (weekDate) {
+    document.getElementById('week-date').textContent = 'KW ab ' + fmtDate(weekDate)
+  }
+
+  renderTab()
+}
+
+// tab switching
+window.switchTab = function(tab) {
+  state.tab = tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  document.getElementById('tab-' + tab).classList.add('active')
+  renderTab()
+}
+
+function renderTab() {
+  const area = document.getElementById('content-area')
+  const empty = document.getElementById('empty-state')
+
+  let items = []
+  let html = ''
+
+  if (state.tab === 'hashtags') {
+    items = state.hashtags
+    document.getElementById('week-count').textContent = `${items.length} Hashtags`
+    if (!items.length) { area.innerHTML = ''; empty.classList.remove('hidden'); return }
+    empty.classList.add('hidden')
+    html = items.map(h => hashtagCard(h)).join('')
+
+  } else if (state.tab === 'sounds') {
+    items = state.sounds
+    document.getElementById('week-count').textContent = `${items.length} Sounds`
+    if (!items.length) { area.innerHTML = ''; empty.classList.remove('hidden'); return }
+    empty.classList.add('hidden')
+    html = items.map(s => soundCard(s)).join('')
+
+  } else {
+    items = state.creators
+    document.getElementById('week-count').textContent = `${items.length} Creator`
+    if (!items.length) { area.innerHTML = ''; empty.classList.remove('hidden'); return }
+    empty.classList.add('hidden')
+    html = items.map(c => creatorCard(c)).join('')
+  }
+
+  area.innerHTML = html
+}
+
+// ── Hashtag card ──
+function hashtagCard(h) {
+  const hasImg = h.image_url && h.image_url.trim()
+  return `
+    <a class="hashtag-card" href="${escHtml(h.hashtag_url || '#')}" target="_blank" rel="noopener">
+      ${hasImg
+        ? `<img class="hashtag-img" src="${escHtml(h.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;hashtag-img-fallback&quot;>#</div>'">`
+        : `<div class="hashtag-img-fallback">#</div>`}
+      <div class="hashtag-body">
+        <div class="hashtag-rank-row">
+          <span class="rank-num">${h.rank}</span>
+          <span class="hashtag-name">#${escHtml(h.name)}</span>
+        </div>
+        <div class="hashtag-meta">
+          ${h.view_count ? `<span class="meta-pill">👁 ${fmt(h.view_count)} Views</span>` : ''}
+          ${h.video_count ? `<span class="meta-pill">🎬 ${fmt(h.video_count)} Videos</span>` : ''}
+          ${h.industry_name ? `<span class="industry-tag">${escHtml(h.industry_name)}</span>` : ''}
+        </div>
+      </div>
+      <div class="hashtag-arrow">↗</div>
+    </a>`
+}
+
+// ── Sound card ──
+function soundCard(s) {
+  const hasThumb = s.thumbnail_url && s.thumbnail_url.trim()
+  return `
+    <a class="sound-card" href="${escHtml(s.source_url || '#')}" target="_blank" rel="noopener">
+      ${hasThumb
+        ? `<img class="sound-thumb" src="${escHtml(s.thumbnail_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;sound-thumb-fallback&quot;>🎵</div>'">`
+        : `<div class="sound-thumb-fallback">🎵</div>`}
+      <div class="sound-body">
+        <div class="sound-rank"># ${s.rank}</div>
+        <div class="sound-title">${escHtml(s.title || 'Ohne Titel')}</div>
+        ${s.artist ? `<div class="sound-artist">${escHtml(s.artist)}</div>` : ''}
+        ${s.user_count ? `<div class="sound-count">${fmt(s.user_count)} Videos</div>` : ''}
+      </div>
+      <div class="sound-play">▶</div>
+    </a>`
+}
+
+// ── Creator card ──
+function creatorCard(c) {
+  const hasAvatar = c.avatar_url && c.avatar_url.trim()
+  const initial = (c.display_name || c.username || '?')[0].toUpperCase()
+  return `
+    <a class="creator-card" href="${escHtml(c.profile_url || '#')}" target="_blank" rel="noopener">
+      ${hasAvatar
+        ? `<img class="creator-avatar" src="${escHtml(c.avatar_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;creator-avatar-fallback&quot;>${initial}</div>'">`
+        : `<div class="creator-avatar-fallback">${initial}</div>`}
+      <div class="creator-body">
+        <div class="creator-rank-row">
+          <span class="creator-rank"># ${c.rank}</span>
+        </div>
+        <div class="creator-name">${escHtml(c.display_name || c.username)}</div>
+        <div class="creator-handle">@${escHtml(c.username)}</div>
+        <div class="creator-stats">
+          ${c.followers  ? `<span class="creator-stat"><strong>${fmt(c.followers)}</strong> Follower</span>` : ''}
+          ${c.avg_views  ? `<span class="creator-stat"><strong>${fmt(c.avg_views)}</strong> Ø Views</span>` : ''}
+          ${c.avg_likes  ? `<span class="creator-stat"><strong>${fmt(c.avg_likes)}</strong> Ø Likes</span>` : ''}
+        </div>
+      </div>
+      <div class="creator-arrow">↗</div>
+    </a>`
+}
+
+init()
+</script>
+</body>
+</html>
