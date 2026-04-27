@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>viuno · Extras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);--text:#111110;--muted:#7a7975;--subtle:#b0afa9;--green:#1a7f4b;--green-bg:#edf7f1;--radius:16px;--radius-sm:10px;--nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+input,textarea,select{font-size:16px!important}
+#app{display:none;min-height:100dvh;flex-direction:column}
+#app.visible{display:flex}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;padding:0}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-.03em}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
+.topbar-avatar img{width:100%;height:100%;object-fit:cover}
+.page{flex:1;padding:0 0 calc(40px + var(--safe-bottom));overflow-y:auto}
+.page-header{padding:24px 20px 0}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-.04em}
+.page-sub{font-size:13px;color:var(--muted);margin-top:3px;line-height:1.5}
+
+/* HERO BANNER */
+.hero-banner{margin:20px 20px 0;background:var(--text);border-radius:var(--radius);padding:28px 24px;text-align:center}
+.hero-icon{font-size:40px;margin-bottom:12px}
+.hero-title{font-size:20px;font-weight:700;color:white;letter-spacing:-.03em;margin-bottom:6px}
+.hero-sub{font-size:13px;color:rgba(255,255,255,.55);line-height:1.6;max-width:280px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:99px;padding:5px 14px;font-size:11px;font-weight:700;color:rgba(255,255,255,.8);text-transform:uppercase;letter-spacing:.06em;margin-top:14px}
+
+/* SECTION */
+.section{padding:20px 20px 0}
+.section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+
+/* EXTRA CARDS */
+.extras-list{display:flex;flex-direction:column;gap:10px}
+.extra-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:flex-start;gap:14px;position:relative;overflow:hidden}
+.extra-card-icon{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:20px;flex-shrink:0}
+.icon-bg-1{background:#f0f0ff}
+.icon-bg-2{background:#fff0f0}
+.icon-bg-3{background:#f0fff4}
+.icon-bg-4{background:#fffbf0}
+.icon-bg-5{background:#f0f8ff}
+.extra-card-body{flex:1;min-width:0}
+.extra-card-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.extra-card-desc{font-size:12px;color:var(--muted);line-height:1.5}
+.extra-card-tag{display:inline-flex;align-items:center;margin-top:8px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em;border:1px solid}
+.tag-soon{background:rgba(184,92,0,.08);color:#b85c00;border-color:rgba(184,92,0,.15)}
+.tag-pro{background:var(--text);color:white;border-color:var(--text)}
+.extra-card-arrow{font-size:16px;color:var(--subtle);flex-shrink:0;margin-top:2px}
+
+/* NOTIFY CARD */
+.notify-card{margin:20px 20px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.notify-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.notify-sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+.notify-input-wrap{display:flex;gap:8px}
+.notify-input{flex:1;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.notify-input:focus{border-color:var(--text)}
+.notify-btn{padding:11px 16px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.notify-btn:disabled{opacity:.5;cursor:not-allowed}
+.notify-success{font-size:12px;color:var(--green);margin-top:8px;display:none}
+
+.hidden{display:none!important}
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+<script src="/sidebar.js"></script>
+</head>
+<body>
+
+<div id="sidebar-root"></div>
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
+      <span class="topbar-title">Extras</span>
+    </div>
+    <div class="topbar-avatar" id="user-avatar">?</div>
+  </div>
+
+  <div class="page">
+    <div class="page-header">
+      <div class="page-title">Extras</div>
+      <div class="page-sub">Exklusive Features und Leistungen für viuno Creator.</div>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero-banner">
+      <div class="hero-icon">✦</div>
+      <div class="hero-title">viuno Pro</div>
+      <div class="hero-sub">Exklusive Features für managed Creator. Mehr Reichweite, mehr Möglichkeiten.</div>
+      <div class="hero-badge">✦ viuno Pro · Bald verfügbar</div>
+    </div>
+
+    <!-- Extras list -->
+    <div class="section">
+      <div class="section-label">Was kommt</div>
+      <div class="extras-list">
+
+        <div class="extra-card">
+          <div class="extra-card-icon icon-bg-1">📊</div>
+          <div class="extra-card-body">
+            <div class="extra-card-title">Analytics Deep-Dive Report</div>
+            <div class="extra-card-desc">Detaillierter Monatsreport deiner Instagram & TikTok Performance. PDF zum Teilen mit Brands.</div>
+            <div class="extra-card-tag tag-soon">Bald verfügbar</div>
+          </div>
+          <div class="extra-card-arrow">→</div>
+        </div>
+
+        <div class="extra-card">
+          <div class="extra-card-icon icon-bg-2">🎨</div>
+          <div class="extra-card-body">
+            <div class="extra-card-title">Premium BioLink Designs</div>
+            <div class="extra-card-desc">Exklusive Themes für deine BioLink-Seite — weit über Clean, Color und Dark hinaus.</div>
+            <div class="extra-card-tag tag-soon">Bald verfügbar</div>
+          </div>
+          <div class="extra-card-arrow">→</div>
+        </div>
+
+        <div class="extra-card">
+          <div class="extra-card-icon icon-bg-3">📋</div>
+          <div class="extra-card-body">
+            <div class="extra-card-title">Media Kit PDF Export</div>
+            <div class="extra-card-desc">Dein Media Kit als professionelles PDF — perfekt zum Versenden an Brands per E-Mail.</div>
+            <div class="extra-card-tag tag-soon">Bald verfügbar</div>
+          </div>
+          <div class="extra-card-arrow">→</div>
+        </div>
+
+        <div class="extra-card">
+          <div class="extra-card-icon icon-bg-4">🤝</div>
+          <div class="extra-card-body">
+            <div class="extra-card-title">Managed Creator</div>
+            <div class="extra-card-desc">Vollständige Betreuung durch das viuno-Team. Wir verwalten deine Anfragen, Deals und Auftritte.</div>
+            <div class="extra-card-tag tag-pro">viuno Pro</div>
+          </div>
+          <div class="extra-card-arrow">→</div>
+        </div>
+
+        <div class="extra-card">
+          <div class="extra-card-icon icon-bg-5">🔔</div>
+          <div class="extra-card-body">
+            <div class="extra-card-title">Priority Alerts</div>
+            <div class="extra-card-desc">Sofort-Benachrichtigungen bei neuen Anfragen, viralen Trends und wichtigen Analytics-Schwellen.</div>
+            <div class="extra-card-tag tag-soon">Bald verfügbar</div>
+          </div>
+          <div class="extra-card-arrow">→</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Notify me -->
+    <div class="notify-card">
+      <div class="notify-title">Benachrichtige mich</div>
+      <div class="notify-sub">Wir informieren dich, sobald Extras verfügbar sind.</div>
+      <div class="notify-input-wrap">
+        <input type="email" class="notify-input" id="notify-email" placeholder="deine@email.de" autocomplete="email"/>
+        <button class="notify-btn" id="notify-btn" onclick="submitNotify()">Eintragen</button>
+      </div>
+      <div class="notify-success" id="notify-success">✓ Du wirst benachrichtigt sobald Extras live gehen.</div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+const sb=createClient('https://bzejndghppuipnedasuv.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo',{auth:{persistSession:true,autoRefreshToken:true}})
+
+window.sb=sb
+
+async function init(){
+  const{data:{session}}=await sb.auth.getSession()
+  if(!session){location.replace('/login');return}
+  window.sidebarSession=session
+  document.getElementById('app').classList.add('visible')
+  // Avatar
+  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url').eq('id',session.user.id).single()
+  const name=p?.display_name||p?.full_name||session.user.email||'?'
+  const av=document.getElementById('user-avatar')
+  if(p?.profile_image_url){av.innerHTML=`<img src="${p.profile_image_url}" alt="">`}
+  else{av.textContent=name[0].toUpperCase()}
+  // Pre-fill notify email
+  document.getElementById('notify-email').value=session.user.email||''
+}
+
+window.submitNotify=async function(){
+  const email=document.getElementById('notify-email').value.trim()
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){return}
+  const btn=document.getElementById('notify-btn')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  // Store in contact_submissions as "extras_notify" type
+  await sb.from('contact_submissions').insert({email,type:'extras_notify',created_at:new Date().toISOString()}).catch(()=>{})
+  btn.style.display='none'
+  document.getElementById('notify-success').style.display='block'
+}
+
+init()
+</script>
+</body>
+</html>
