@@ -203,33 +203,33 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
     </div>
     <nav class="sidebar-nav">
       <div class="sidebar-section">Übersicht</div>
-      <a class="sidebar-item active" href="/dashboard.html">
+      <a class="sidebar-item active" href="/dashboard">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         Dashboard
       </a>
-      <a class="sidebar-item" href="/digest.html">
+      <a class="sidebar-item" href="/digest">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
         Daily Digest
       </a>
       <div class="sidebar-section">Creator</div>
-      <a class="sidebar-item" href="/analytics.html">
+      <a class="sidebar-item" href="/analytics">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Analytics
       </a>
-      <a class="sidebar-item" href="/trends.html">
+      <a class="sidebar-item" href="/trends">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
         Trends
       </a>
       <div class="sidebar-section">Business</div>
-      <a class="sidebar-item" href="/requests.html">
+      <a class="sidebar-item" href="/requests">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         Anfragen
       </a>
-      <a class="sidebar-item" href="/deals.html">
+      <a class="sidebar-item" href="/deals">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
         Deals
       </a>
-      <a class="sidebar-item" href="/profile.html">
+      <a class="sidebar-item" href="/profile">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         Profil
       </a>
@@ -309,7 +309,7 @@ async function doLogin(){
 
 async function enterApp(session){
   const{data:u}=await sb.from('users').select('onboarding_completed').eq('id',session.user.id).single()
-  if(u&&u.onboarding_completed===false){window.location='/onboarding.html';return}
+  if(u&&u.onboarding_completed===false){window.location='/onboarding';return}
   document.getElementById('login-screen').style.display='none'
   document.getElementById('app').classList.add('visible')
   // Avatar
@@ -396,8 +396,8 @@ async function loadDashboard(uid){
 
     <!-- Analytics (Linie) -->
     ${an?`<div class="section">
-      <div class="section-header"><div class="section-title">Analytics</div><a class="section-link" href="/analytics.html">Alle →</a></div>
-      <a class="mini-chart-card" href="/analytics.html">
+      <div class="section-header"><div class="section-title">Analytics</div><a class="section-link" href="/analytics">Alle →</a></div>
+      <a class="mini-chart-card" href="/analytics">
         <div class="mini-top">
           <div>
             <div class="a-label">Instagram · Follower</div>
@@ -418,8 +418,8 @@ async function loadDashboard(uid){
 
     <!-- Daily Digest -->
     ${d&&topCard?`<div class="section">
-      <div class="section-header"><div class="section-title">Daily Digest</div><a class="section-link" href="/digest.html">Alle →</a></div>
-      <a class="digest-preview" href="/digest.html">
+      <div class="section-header"><div class="section-title">Daily Digest</div><a class="section-link" href="/digest">Alle →</a></div>
+      <a class="digest-preview" href="/digest">
         ${topCard.image_url?`<img class="digest-img" src="${escHtml(topCard.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;digest-img-fallback&quot;>📰</div>'">`:'<div class="digest-img-fallback">📰</div>'}
         <div class="digest-inner">
           <div class="digest-pill">${escHtml(topCard.platform||'News')}</div>
@@ -431,8 +431,8 @@ async function loadDashboard(uid){
 
     <!-- Anfragen -->
     ${reqs.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Anfragen</div><a class="section-link" href="/requests.html">Alle →</a></div>
-      <a class="list-card" href="/requests.html">
+      <div class="section-header"><div class="section-title">Anfragen</div><a class="section-link" href="/requests">Alle →</a></div>
+      <a class="list-card" href="/requests">
         ${reqs.map(r=>`<div class="list-row">
           <div class="req-initial">${escHtml(r.sender_initial||r.sender_name?.[0]||'?')}</div>
           <div style="flex:1;min-width:0">
@@ -446,8 +446,8 @@ async function loadDashboard(uid){
 
     <!-- Deals -->
     ${deals.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Offene Deals</div><a class="section-link" href="/deals.html">Alle →</a></div>
-      <a class="list-card" href="/deals.html">
+      <div class="section-header"><div class="section-title">Offene Deals</div><a class="section-link" href="/deals">Alle →</a></div>
+      <a class="list-card" href="/deals">
         ${deals.map(deal=>`<div class="list-row">
           <div class="deal-dot ${deal.status||'draft'}"></div>
           <div class="deal-info">
@@ -476,8 +476,8 @@ async function loadDashboard(uid){
 
     <!-- Top Trends -->
     ${trends.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Top Hashtags</div><a class="section-link" href="/trends.html">Alle →</a></div>
-      <a class="list-card" href="/trends.html">
+      <div class="section-header"><div class="section-title">Top Hashtags</div><a class="section-link" href="/trends">Alle →</a></div>
+      <a class="list-card" href="/trends">
         ${trends.map(h=>`<div class="trend-row">
           <span class="trend-rank">${h.rank}</span>
           <div class="trend-thumb-fb">#</div>
@@ -491,10 +491,10 @@ async function loadDashboard(uid){
     <div class="section" style="padding-bottom:8px">
       <div class="section-title" style="margin-bottom:10px">Schnellzugriff</div>
       <div class="quick-links">
-        <a class="quick-link" href="/analytics.html"><div class="quick-link-icon">📊</div><div class="quick-link-label">Analytics</div><div class="quick-link-sub">Instagram & TikTok</div></a>
-        <a class="quick-link" href="/digest.html"><div class="quick-link-icon">📰</div><div class="quick-link-label">Daily Digest</div><div class="quick-link-sub">Creator News</div></a>
-        <a class="quick-link" href="/trends.html"><div class="quick-link-icon">🔥</div><div class="quick-link-label">Trends</div><div class="quick-link-sub">Hashtags & Sounds</div></a>
-        <a class="quick-link" href="/requests.html"><div class="quick-link-icon">✉️</div><div class="quick-link-label">Anfragen</div><div class="quick-link-sub">Kooperationen</div></a>
+        <a class="quick-link" href="/analytics"><div class="quick-link-icon">📊</div><div class="quick-link-label">Analytics</div><div class="quick-link-sub">Instagram & TikTok</div></a>
+        <a class="quick-link" href="/digest"><div class="quick-link-icon">📰</div><div class="quick-link-label">Daily Digest</div><div class="quick-link-sub">Creator News</div></a>
+        <a class="quick-link" href="/trends"><div class="quick-link-icon">🔥</div><div class="quick-link-label">Trends</div><div class="quick-link-sub">Hashtags & Sounds</div></a>
+        <a class="quick-link" href="/requests"><div class="quick-link-icon">✉️</div><div class="quick-link-label">Anfragen</div><div class="quick-link-sub">Kooperationen</div></a>
       </div>
     </div>
   `
