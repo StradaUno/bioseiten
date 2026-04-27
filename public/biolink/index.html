@@ -535,6 +535,15 @@ async function loadAll(){
   ])
   state.profile=profileRes.data
   state.biolink=biolinkRes.data
+  // Fallback: migrate old single custom_link_url to new custom_links array if needed
+  if(state.biolink){
+    const links=state.biolink.custom_links
+    const hasOldLink=state.biolink.custom_link_url?.trim()
+    const isEmpty=!links||!Array.isArray(links)||links.length===0
+    if(hasOldLink&&isEmpty){
+      state.biolink.custom_links=[{title:state.biolink.custom_link_title||state.biolink.custom_link_url,url:state.biolink.custom_link_url}]
+    }
+  }
   state.views=viewsRes.data||[]
   state.selectedTheme=state.biolink?.theme||'clean'
   document.getElementById('skeleton-area').classList.add('hidden')
