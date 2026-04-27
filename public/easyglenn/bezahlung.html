@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>EasyGlenn · Coaching buchen</title>
+<meta name="description" content="EasyGlenn Coaching · Let's Unlock Your Prime · 1:1 Coaching mit Trainings- und Ernährungsanpassung." />
+<meta name="theme-color" content="#14171f" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="EasyGlenn · Coaching" />
+<meta property="og:description" content="Let's Unlock Your Prime · 4 Wochen 1:1 Coaching · 149 €" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3EG%3C/text%3E%3C/svg%3E" />
+
+<style>
+  :root {
+    --bg: #14171f;
+    --surface: #1e2230;
+    --surface-elevated: #242a3a;
+    --border: #2a2f40;
+    --border-strong: #3a4058;
+    --text: #f0f2f8;
+    --text-muted: #a8b0c4;
+    --text-subtle: #7a8096;
+    --text-faint: #4a5068;
+    --primary: #c4b5f5;
+    --primary-hover: #d4c8f8;
+    --primary-text: #14171f;
+    --success: #86efac;
+    --radius-card: 16px;
+    --radius-btn: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 32px 20px 100px;
+  }
+
+  main {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    flex: 1;
+  }
+
+  /* ---------- HEADER ---------- */
+  .brand {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .brand-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* ---------- HERO ---------- */
+  .hero {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--primary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    background: color-mix(in srgb, var(--primary) 12%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--border));
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  .hero h1 {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+  .hero p {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  /* ---------- PRODUCT CARD ---------- */
+  .product-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 24px;
+    margin-bottom: 22px;
+  }
+  .product-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .product-duration {
+    font-size: 13px;
+    color: var(--text-subtle);
+    margin-bottom: 18px;
+  }
+  .product-bullets {
+    list-style: none;
+    margin-bottom: 22px;
+  }
+  .product-bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .product-bullets li:first-child { border-top: none; padding-top: 0; }
+  .product-bullets li:last-child { padding-bottom: 0; }
+  .product-bullets svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: var(--primary);
+  }
+
+  .price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+  }
+  .price-label {
+    font-size: 13px;
+    color: var(--text-subtle);
+  }
+  .price-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .price-currency {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-left: 2px;
+  }
+
+  /* ---------- CONSENT ---------- */
+  .consent-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 18px 20px;
+    margin-bottom: 22px;
+  }
+  .consent-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    cursor: pointer;
+  }
+  .consent-item + .consent-item { border-top: 1px solid var(--border); }
+  .consent-item input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    border: 1.5px solid var(--border-strong);
+    background: var(--bg);
+    cursor: pointer;
+    margin-top: 1px;
+    position: relative;
+    transition: all .15s ease;
+  }
+  .consent-item input[type="checkbox"]:checked {
+    background: var(--primary);
+    border-color: var(--primary);
+  }
+  .consent-item input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 6px;
+    height: 11px;
+    border: solid var(--primary-text);
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+  }
+  .consent-text {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    user-select: none;
+  }
+  .consent-text strong { color: var(--text); font-weight: 500; }
+  .consent-text .legal-link {
+    color: var(--primary);
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    font-size: inherit;
+  }
+  .consent-text .legal-link:hover { text-decoration: underline; }
+
+  /* ---------- PAYPAL CONTAINER ---------- */
+  .paypal-wrapper {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    position: relative;
+    margin-bottom: 14px;
+  }
+  .paypal-wrapper.disabled {
+    pointer-events: none;
+    user-select: none;
+  }
+  .paypal-wrapper.disabled #paypal-container-LEC9XTRRNYK2S {
+    opacity: 0.35;
+    filter: grayscale(0.4);
+    transition: opacity .15s ease;
+  }
+  .paypal-wrapper.disabled::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(20, 23, 31, 0.55);
+    border-radius: var(--radius-card);
+    z-index: 5;
+    pointer-events: auto;
+    cursor: not-allowed;
+  }
+  .paypal-wrapper.disabled::after {
+    content: 'Bitte AGB & Widerruf bestätigen';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 600;
+    z-index: 6;
+    pointer-events: none;
+    text-align: center;
+    padding: 0 16px;
+  }
+
+  .secure-note {
+    font-size: 11px;
+    color: var(--text-subtle);
+    text-align: center;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 14px 18px;
+    margin-bottom: 12px;
+  }
+  .footer-links button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-subtle);
+    font: inherit;
+    font-size: 12px;
+    cursor: pointer;
+    transition: color .15s ease;
+  }
+  .footer-links button:hover { color: var(--text-muted); }
+  .footer-meta {
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: 0.02em;
+  }
+  .footer-meta a { color: var(--text-subtle); text-decoration: none; }
+  .footer-meta a:hover { color: var(--text-muted); }
+
+  /* ============ BOTTOM SHEET (Legal docs + Impressum) ============ */
+  .ls-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .ls-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .ls-sheet {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    z-index: 1101;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    border-radius: 20px 20px 0 0;
+    height: 90dvh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.4);
+  }
+  .ls-sheet.open { transform: translateY(0); }
+
+  .ls-handle {
+    flex-shrink: 0;
+    width: 40px;
+    height: 4px;
+    background: var(--border-strong);
+    border-radius: 999px;
+    margin: 12px auto 4px;
+  }
+
+  .ls-topbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ls-topbar h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+  }
+  .ls-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    font-family: inherit;
+    transition: background .15s ease, border-color .15s ease;
+  }
+  .ls-close:hover { background: var(--surface); border-color: var(--border-strong); }
+
+  .ls-body {
+    flex: 1;
+    overflow: hidden;
+    background: #ffffff; /* iframe-Inhalte erwarten oft hellen Hintergrund */
+    position: relative;
+  }
+  .ls-body.text-mode {
+    background: var(--bg);
+    overflow-y: auto;
+    padding: 22px 22px 32px;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+  .ls-body.text-mode p { margin: 0 0 16px 0; }
+  .ls-body.text-mode p:last-child { margin-bottom: 0; }
+  .ls-body.text-mode strong {
+    color: var(--text);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .ls-body.text-mode a { color: var(--primary); text-decoration: none; }
+  .ls-body.text-mode a:hover { text-decoration: underline; }
+
+  .ls-body iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+  .ls-body .iframe-loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 13px;
+    background: #fff;
+    z-index: 1;
+  }
+  .ls-body .iframe-loader.hidden { display: none; }
+
+  body.ls-open { overflow: hidden; }
+
+  @media (max-width: 380px) {
+    body { padding: 24px 16px 80px; }
+    .hero h1 { font-size: 22px; }
+    .product-card { padding: 20px; }
+    .price-value { font-size: 24px; }
+  }
+</style>
+
+<!-- PayPal SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=BAAhiMszU5XLupoMEXS1FMkX3wCPfU-5rO9KN3dpCu36qITcw3GSaX6x6iY1bM6X33vSGFQKhXpYPt89to&components=hosted-buttons&disable-funding=venmo&currency=EUR"></script>
+</head>
+<body>
+
+<main>
+
+  <div class="brand">
+    <div class="brand-name">EasyGlenn</div>
+  </div>
+
+  <div class="hero">
+    <span class="hero-tag">Let's Unlock Your Prime</span>
+    <h1>Coaching buchen</h1>
+    <p>Persönliches 1:1 Coaching mit individueller Trainings- und Ernährungsanpassung sowie regelmäßigen Mindset Talks.</p>
+  </div>
+
+  <!-- ============ PRODUCT CARD ============ -->
+  <div class="product-card">
+    <div class="product-title">EasyGlenn · Coaching</div>
+    <div class="product-duration">4 Wochen · 1:1 Coaching</div>
+
+    <ul class="product-bullets">
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Persönliches 1:1 Coaching</span>
+      </li>
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Individuelle Trainingsanpassung</span>
+      </li>
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Individuelle Ernährungsanpassung</span>
+      </li>
+      <li>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        <span>Mindset Talks</span>
+      </li>
+    </ul>
+
+    <div class="price-row">
+      <span class="price-label">Einmalzahlung</span>
+      <div>
+        <span class="price-value">149,00</span><span class="price-currency">€</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ CONSENT ============ -->
+  <div class="consent-block">
+    <label class="consent-item">
+      <input type="checkbox" id="consent-agb" />
+      <span class="consent-text">
+        Ich habe die <button type="button" class="legal-link" data-sheet="agb">AGB</button>, die <button type="button" class="legal-link" data-sheet="datenschutz">Datenschutzerklärung</button> und die <button type="button" class="legal-link" data-sheet="widerruf">Widerrufsbelehrung</button> gelesen und akzeptiere sie.
+      </span>
+    </label>
+
+    <label class="consent-item">
+      <input type="checkbox" id="consent-widerruf" />
+      <span class="consent-text">
+        Ich verlange ausdrücklich, dass mit der Erbringung der Coaching-Leistung vor Ablauf der Widerrufsfrist begonnen wird. Mir ist bekannt, dass mein Widerrufsrecht mit vollständiger Vertragserfüllung erlischt.
+      </span>
+    </label>
+  </div>
+
+  <!-- ============ PAYPAL ============ -->
+  <div class="paypal-wrapper disabled" id="paypal-wrapper">
+    <div id="paypal-container-LEC9XTRRNYK2S"></div>
+  </div>
+
+  <div class="secure-note">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+    <span>Sichere Zahlung über PayPal · Glenn meldet sich innerhalb 48 h</span>
+  </div>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="footer-links">
+      <button type="button" data-sheet="datenschutz">Datenschutz</button>
+      <button type="button" data-sheet="agb">AGB</button>
+      <button type="button" data-sheet="widerruf">Widerruf</button>
+      <button type="button" data-sheet="impressum">Impressum</button>
+    </div>
+    <div class="footer-meta">
+      EasyGlenn · Glenn Reichardt · Stuttgart
+    </div>
+  </footer>
+
+</main>
+
+<!-- ================ BOTTOM SHEET ================ -->
+<div class="ls-backdrop" id="ls-backdrop"></div>
+<div class="ls-sheet" id="ls-sheet" role="dialog" aria-modal="true" aria-labelledby="ls-title">
+  <div class="ls-handle" aria-hidden="true"></div>
+  <div class="ls-topbar">
+    <h2 id="ls-title">—</h2>
+    <button type="button" class="ls-close" id="ls-close" aria-label="Schließen">×</button>
+  </div>
+  <div class="ls-body" id="ls-body"></div>
+</div>
+
+<script>
+(function () {
+  // ---------- Consent gating ----------
+  const wrapper = document.getElementById('paypal-wrapper');
+  const cAgb = document.getElementById('consent-agb');
+  const cWiderruf = document.getElementById('consent-widerruf');
+
+  function updatePayPalState() {
+    if (cAgb.checked && cWiderruf.checked) {
+      wrapper.classList.remove('disabled');
+    } else {
+      wrapper.classList.add('disabled');
+    }
+  }
+  cAgb.addEventListener('change', updatePayPalState);
+  cWiderruf.addEventListener('change', updatePayPalState);
+
+  // ---------- PayPal init (after SDK loaded) ----------
+  function initPayPal() {
+    if (typeof paypal === 'undefined' || !paypal.HostedButtons) {
+      // SDK not yet ready – retry
+      setTimeout(initPayPal, 200);
+      return;
+    }
+    paypal.HostedButtons({
+      hostedButtonId: "LEC9XTRRNYK2S"
+    }).render("#paypal-container-LEC9XTRRNYK2S");
+  }
+  initPayPal();
+
+  // ---------- Bottom Sheet ----------
+  const SHEETS = {
+    datenschutz: {
+      title: 'Datenschutzerklärung',
+      type: 'iframe',
+      src: 'https://itrk.legal/1ya4.8U.17jG-informal-iframe.html'
+    },
+    agb: {
+      title: 'AGB',
+      type: 'iframe',
+      src: 'https://itrk.legal/1ya4.2Y.17jG-informal-iframe.html'
+    },
+    widerruf: {
+      title: 'Widerrufsbelehrung',
+      type: 'iframe',
+      src: 'https://itrk.legal/1ya4.2J.17jG-iframe.html'
+    },
+    impressum: {
+      title: 'Impressum',
+      type: 'html',
+      content: `
+        <p>
+          <strong>Glenn Reichardt</strong>
+          Lorbeerstr. 42<br/>
+          70619 Stuttgart<br/>
+          Deutschland
+        </p>
+        <p>
+          Tel.: 017632112881<br/>
+          E-Mail: <a href="mailto:einfachglenn@outlook.com">einfachglenn@outlook.com</a>
+        </p>
+        <p>
+          <strong>Umsatzsteuer-Identifikationsnummer</strong>
+          DE341330646
+        </p>
+        <p>
+          <strong>Zuständige Aufsichtsbehörde</strong>
+          Für das Angebot audiovisueller Mediendienste:<br/>
+          Landesanstalt für Kommunikation Baden-Württemberg (LFK)<br/>
+          Reinsburgstraße 27, 70178 Stuttgart, Deutschland
+        </p>
+        <p>
+          Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle weder verpflichtet noch bereit.
+        </p>
+      `
+    }
+  };
+
+  const backdrop = document.getElementById('ls-backdrop');
+  const sheet = document.getElementById('ls-sheet');
+  const sheetTitle = document.getElementById('ls-title');
+  const sheetBody = document.getElementById('ls-body');
+  const sheetClose = document.getElementById('ls-close');
+
+  function openSheet(key) {
+    const conf = SHEETS[key];
+    if (!conf) return;
+    sheetTitle.textContent = conf.title;
+
+    if (conf.type === 'iframe') {
+      sheetBody.classList.remove('text-mode');
+      sheetBody.innerHTML = `
+        <div class="iframe-loader">Lade…</div>
+        <iframe src="${conf.src}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      `;
+      const loader = sheetBody.querySelector('.iframe-loader');
+      const iframe = sheetBody.querySelector('iframe');
+      iframe.addEventListener('load', () => loader.classList.add('hidden'), { once: true });
+    } else {
+      sheetBody.classList.add('text-mode');
+      sheetBody.innerHTML = conf.content;
+    }
+
+    backdrop.classList.add('open');
+    sheet.classList.add('open');
+    document.body.classList.add('ls-open');
+  }
+
+  function closeSheet() {
+    backdrop.classList.remove('open');
+    sheet.classList.remove('open');
+    document.body.classList.remove('ls-open');
+    // iframe nach Schließen entladen (spart Ressourcen, verhindert dass Audio/Video weiterläuft)
+    setTimeout(() => {
+      if (!sheet.classList.contains('open')) sheetBody.innerHTML = '';
+    }, 350);
+  }
+
+  // Trigger: alle Buttons mit data-sheet
+  document.querySelectorAll('[data-sheet]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      openSheet(btn.dataset.sheet);
+    });
+  });
+
+  sheetClose.addEventListener('click', closeSheet);
+  backdrop.addEventListener('click', closeSheet);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && sheet.classList.contains('open')) closeSheet();
+  });
+})();
+</script>
+</body>
+</html>
