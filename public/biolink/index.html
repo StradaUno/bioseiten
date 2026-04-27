@@ -615,11 +615,6 @@ function renderPage(){
       <button class="action-btn action-btn-secondary" onclick="openLinksSheet()">🔗 Social & Links bearbeiten</button>
     </div>
 
-    <!-- Delete always at bottom -->
-    <div style="padding:24px 20px 8px">
-      <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 BioLink-Seite löschen</button>
-    </div>
-
     ` : `
     <!-- Not yet generated: Preview + generate -->
     <div class="section" style="margin-top:4px">
@@ -687,12 +682,21 @@ function renderPage(){
         <div class="generate-checklist">
           ${checks.map(c=>`<div class="check-item"><div class="check-icon ${c.ok?'check-ok':'check-missing'}">${c.ok?'✓':'✕'}</div><span>${c.label}</span></div>`).join('')}
         </div>
+        <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer">
+          <input type="checkbox" id="terms-check" style="width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--text);cursor:pointer"/>
+          <span style="font-size:12px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal/nutzungsbedingungen" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> von viuno.</span>
+        </label>
         <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()" ${allOk?'':'disabled'}>
           ${allOk?'✨ BioLink-Seite erstellen':'Bitte alle Punkte erfüllen'}
         </button>
       </div>
     </div>
     `}
+
+    <!-- Delete always at absolute bottom (only shown when generated) -->
+    ${isGenerated?`<div style="padding:8px 20px 8px">
+      <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 BioLink-Seite löschen</button>
+    </div>`:''}
   `
 
   // init sheets with current data
@@ -876,6 +880,9 @@ window.copyLink=async function(url){
 
 // ── GENERATE ──
 window.generatePage=async function(){
+  // Check terms only on first generation (when terms checkbox exists)
+  const termsCheck=document.getElementById('terms-check')
+  if(termsCheck&&!termsCheck.checked){showToast('Bitte Nutzungsbedingungen akzeptieren.');return}
   const btn=document.getElementById('btn-generate')
   if(!btn)return
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'
