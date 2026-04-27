@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>viuno · Registrieren</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);--text:#111110;--muted:#7a7975;--subtle:#b0afa9;--green:#1a7f4b;--green-bg:#edf7f1;--red:#c0392b;--red-bg:#fdf0ef;--radius:16px;--radius-sm:10px;--safe-bottom:env(safe-area-inset-bottom,0px)}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px;min-height:100dvh}
+.wrap{width:100%;max-width:380px;padding:20px 0 40px}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:var(--text);color:white;display:grid;place-items:center;font-size:16px;font-weight:700}
+.logo-text{font-size:20px;font-weight:700;letter-spacing:-.04em}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 24px}
+.card-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field input{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.field input:focus{border-color:var(--text)}
+.field input.invalid{border-color:var(--red)}
+.field-hint{font-size:11px;color:var(--subtle);margin-top:5px}
+.field-hint.error{color:var(--red)}
+.niche-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.niche-btn{padding:10px 6px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface2);font-family:inherit;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s}
+.niche-btn.active{background:var(--text);color:white;border-color:var(--text)}
+.legal-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:14px}
+.legal-check{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.legal-check input[type="checkbox"]{width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--text);cursor:pointer}
+.legal-check span{font-size:12px;color:var(--muted);line-height:1.55}
+.legal-check a{color:var(--text);font-weight:600;text-decoration:none}
+.legal-check a:hover{text-decoration:underline}
+.btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.error-msg{font-size:12px;color:var(--red);background:var(--red-bg);border:1px solid rgba(192,57,43,.15);border-radius:var(--radius-sm);padding:10px 12px;margin-top:12px;display:none}
+.error-msg.show{display:block}
+.success-state{display:none;flex-direction:column;align-items:center;text-align:center;padding:40px 24px}
+.success-state.show{display:flex}
+.success-icon{width:64px;height:64px;border-radius:50%;background:var(--green-bg);color:var(--green);display:grid;place-items:center;font-size:28px;margin-bottom:20px}
+.success-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:8px}
+.success-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:280px}
+.success-email{font-weight:600;color:var(--text)}
+.section-divider{height:1px;background:var(--border);margin:20px 0}
+.link-row{text-align:center;font-size:13px;color:var(--muted);margin-top:20px}
+.link-row a{color:var(--text);font-weight:600;text-decoration:none}
+.link-row a:hover{text-decoration:underline}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-mark">v</div>
+    <div class="logo-text">viuno</div>
+  </div>
+
+  <!-- FORM -->
+  <div class="card" id="form-card">
+    <div class="card-title">Account erstellen.</div>
+    <div class="card-sub">Starte kostenlos — kein Abo nötig.</div>
+
+    <div class="field">
+      <label>Vorname</label>
+      <input type="text" id="inp-name" placeholder="Dein Vorname" autocomplete="given-name"/>
+    </div>
+
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="inp-username" placeholder="z.B. maria_lifestyle" autocomplete="username" oninput="validateUsername()"/>
+      <div class="field-hint" id="username-hint">Nur Buchstaben, Zahlen und Unterstriche. Erscheint auf deinem BioLink.</div>
+    </div>
+
+    <div class="field">
+      <label>E-Mail</label>
+      <input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/>
+    </div>
+
+    <div class="field">
+      <label>Passwort</label>
+      <input type="password" id="inp-pw" placeholder="Mindestens 8 Zeichen" autocomplete="new-password" oninput="checkPwStrength()"/>
+      <div class="field-hint" id="pw-hint"></div>
+    </div>
+
+    <div class="field">
+      <label>Passwort bestätigen</label>
+      <input type="password" id="inp-pw2" placeholder="••••••••" autocomplete="new-password"/>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="field">
+      <label>Nische</label>
+      <div class="niche-grid" id="niche-grid">
+        <button class="niche-btn" data-niche="lifestyle" onclick="selectNiche('lifestyle')">Lifestyle</button>
+        <button class="niche-btn" data-niche="fashion" onclick="selectNiche('fashion')">Fashion</button>
+        <button class="niche-btn" data-niche="beauty" onclick="selectNiche('beauty')">Beauty</button>
+        <button class="niche-btn" data-niche="food" onclick="selectNiche('food')">Food</button>
+        <button class="niche-btn" data-niche="fitness" onclick="selectNiche('fitness')">Fitness</button>
+        <button class="niche-btn" data-niche="travel" onclick="selectNiche('travel')">Travel</button>
+        <button class="niche-btn" data-niche="gaming" onclick="selectNiche('gaming')">Gaming</button>
+        <button class="niche-btn" data-niche="music" onclick="selectNiche('music')">Music</button>
+        <button class="niche-btn" data-niche="comedy" onclick="selectNiche('comedy')">Comedy</button>
+        <button class="niche-btn" data-niche="education" onclick="selectNiche('education')">Bildung & Wissen</button>
+        <button class="niche-btn" data-niche="business" onclick="selectNiche('business')">Business</button>
+        <button class="niche-btn" data-niche="tech" onclick="selectNiche('tech')">Tech</button>
+        <button class="niche-btn" data-niche="art" onclick="selectNiche('art')">Art</button>
+        <button class="niche-btn" data-niche="family" onclick="selectNiche('family')">Family</button>
+        <button class="niche-btn" data-niche="mental_health" onclick="selectNiche('mental_health')">Mental Health</button>
+        <button class="niche-btn" data-niche="general" onclick="selectNiche('general')">Allgemein</button>
+      </div>
+      <div class="field-hint" id="niche-hint" style="margin-top:8px">Bitte wähle deine Nische.</div>
+    </div>
+
+    <div class="section-divider"></div>
+
+    <div class="legal-box">
+      <label class="legal-check">
+        <input type="checkbox" id="chk-legal"/>
+        <span>Ich habe die <a href="/legal/agb" target="_blank">AGB</a>, <a href="/legal/nutzungsbedingungen" target="_blank">Nutzungsbedingungen</a> und <a href="/legal/datenschutz" target="_blank">Datenschutzerklärung</a> gelesen und akzeptiere sie.</span>
+      </label>
+    </div>
+
+    <button class="btn-primary" id="btn-register">Account erstellen</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+
+  <div class="link-row" id="login-link">
+    Bereits registriert? <a href="/login">Einloggen</a>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="card success-state" id="success-card">
+    <div class="success-icon">✉️</div>
+    <div class="success-title">Fast geschafft!</div>
+    <div class="success-sub">
+      Wir haben eine Bestätigungsmail an<br>
+      <span class="success-email" id="success-email"></span><br><br>
+      gesendet. Klicke auf den Link in der Mail um deinen Account zu aktivieren und direkt loszulegen.
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+const sb=createClient('https://bzejndghppuipnedasuv.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo',{auth:{persistSession:true,autoRefreshToken:true}})
+
+// Already logged in → dashboard
+const{data:{session}}=await sb.auth.getSession()
+if(session)location.replace('/dashboard')
+
+let selectedNiche=null
+
+window.selectNiche=function(n){
+  selectedNiche=n
+  document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===n))
+  document.getElementById('niche-hint').style.display='none'
+}
+
+window.validateUsername=function(){
+  const val=document.getElementById('inp-username').value.trim()
+  const hint=document.getElementById('username-hint')
+  const input=document.getElementById('inp-username')
+  if(!val){hint.textContent='Nur Buchstaben, Zahlen und Unterstriche.';hint.className='field-hint';input.classList.remove('invalid');return true}
+  const valid=/^[a-zA-Z0-9_]{3,30}$/.test(val)
+  if(!valid){
+    hint.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _ erlaubt.'
+    hint.className='field-hint error';input.classList.add('invalid');return false
+  }
+  hint.textContent='✓ Gültiger Username'
+  hint.className='field-hint';hint.style.color='var(--green)';input.classList.remove('invalid')
+  return true
+}
+
+window.checkPwStrength=function(){
+  const pw=document.getElementById('inp-pw').value
+  const hint=document.getElementById('pw-hint')
+  if(!pw){hint.textContent='';return}
+  if(pw.length<8){hint.textContent='Zu kurz — mindestens 8 Zeichen.';hint.className='field-hint error';return}
+  hint.textContent='✓ Passwort sieht gut aus'
+  hint.className='field-hint';hint.style.color='var(--green)'
+}
+
+function showError(msg){
+  const el=document.getElementById('error-msg')
+  el.textContent=msg;el.classList.add('show')
+  el.scrollIntoView({behavior:'smooth',block:'nearest'})
+}
+function hideError(){document.getElementById('error-msg').classList.remove('show')}
+
+document.getElementById('btn-register').addEventListener('click',async()=>{
+  hideError()
+  const name=document.getElementById('inp-name').value.trim()
+  const username=document.getElementById('inp-username').value.trim()
+  const email=document.getElementById('inp-email').value.trim()
+  const pw=document.getElementById('inp-pw').value
+  const pw2=document.getElementById('inp-pw2').value
+  const legal=document.getElementById('chk-legal').checked
+
+  // Validation
+  if(!name){showError('Bitte gib deinen Vornamen ein.');return}
+  if(!validateUsername()){showError('Bitte gib einen gültigen Username ein.');return}
+  if(!email){showError('Bitte gib deine E-Mail-Adresse ein.');return}
+  if(pw.length<8){showError('Das Passwort muss mindestens 8 Zeichen lang sein.');return}
+  if(pw!==pw2){showError('Die Passwörter stimmen nicht überein.');return}
+  if(!selectedNiche){
+    document.getElementById('niche-hint').style.display='block'
+    document.getElementById('niche-hint').textContent='Bitte wähle eine Nische.'
+    document.getElementById('niche-hint').className='field-hint error'
+    showError('Bitte wähle deine Nische aus.');return
+  }
+  if(!legal){showError('Bitte akzeptiere AGB, Nutzungsbedingungen und Datenschutzerklärung.');return}
+
+  // Check username availability
+  const btn=document.getElementById('btn-register')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird geprüft…'
+
+  const{data:existing}=await sb.from('users').select('id').ilike('display_name',username).maybeSingle()
+  if(existing){
+    btn.disabled=false;btn.textContent='Account erstellen'
+    showError('Dieser Username ist bereits vergeben. Bitte wähle einen anderen.');return
+  }
+
+  btn.innerHTML='<span class="spinner"></span> Account wird erstellt…'
+
+  // Sign up
+  const{data,error}=await sb.auth.signUp({
+    email,
+    password:pw,
+    options:{
+      data:{full_name:name,display_name:username,niche_category:selectedNiche},
+      emailRedirectTo:'https://viuno.de/onboarding'
+    }
+  })
+
+  if(error){
+    btn.disabled=false;btn.textContent='Account erstellen'
+    if(error.message.includes('already registered')||error.message.includes('already been registered')){
+      showError('Diese E-Mail-Adresse ist bereits registriert. Bitte logge dich ein.')
+    } else {
+      showError(error.message)
+    }
+    return
+  }
+
+  // Update users table with extra fields (trigger creates the row)
+  if(data.user){
+    await sb.from('users').update({
+      full_name:name,
+      display_name:username,
+      niche_category:selectedNiche,
+      updated_at:new Date().toISOString()
+    }).eq('id',data.user.id)
+  }
+
+  // Show success
+  btn.disabled=false;btn.textContent='Account erstellen'
+  document.getElementById('form-card').style.display='none'
+  document.getElementById('login-link').style.display='none'
+  document.getElementById('success-email').textContent=email
+  document.getElementById('success-card').classList.add('show')
+})
+
+document.getElementById('inp-pw2').addEventListener('keydown',e=>{
+  if(e.key==='Enter')document.getElementById('btn-register').click()
+})
+</script>
+</body>
+</html>
