@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>viuno · BioLink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;
+  --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);
+  --text:#111110;--muted:#7a7975;--subtle:#b0afa9;
+  --green:#1a7f4b;--green-bg:#edf7f1;
+  --red:#c0392b;--red-bg:#fdf0ef;
+  --orange:#b85c00;
+  --radius:16px;--radius-sm:10px;
+  --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+
+/* LOGIN */
+#login-screen{min-height:100dvh;display:none;align-items:center;justify-content:center;padding:24px}
+.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-logo-mark{width:32px;height:32px;border-radius:8px;background:var(--text);color:white;display:grid;place-items:center;font-size:14px;font-weight:700}
+.login-logo-text{font-size:17px;font-weight:700;letter-spacing:-.03em}
+.login-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.field input:focus,.field textarea:focus{border-color:var(--text)}
+.field textarea{resize:none;line-height:1.5}
+.btn-login{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn-login:disabled{opacity:.5}
+.login-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
+
+/* APP */
+#app{display:none;min-height:100dvh;flex-direction:column}
+#app.visible{display:flex}
+
+/* SIDEBAR */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:80;pointer-events:none;transition:background .25s}
+.sidebar-overlay.open{background:rgba(0,0,0,.35);pointer-events:auto}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:272px;background:var(--surface);z-index:90;transform:translateX(-100%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.08)}
+.sidebar.open{transform:translateX(0)}
+.sidebar-header{padding:20px 20px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.sidebar-logo{display:flex;align-items:center;gap:8px}
+.sidebar-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
+.sidebar-logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em}
+.sidebar-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--muted);line-height:1}
+.sidebar-nav{flex:1;padding:10px;overflow-y:auto}
+.sidebar-section{font-size:10px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;padding:12px 10px 4px}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--text);color:white}
+.sidebar-item svg{flex-shrink:0}
+.sidebar-footer{padding:16px;border-top:1px solid var(--border)}
+.sidebar-user{font-size:12px;color:var(--muted);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-sidebar-logout{width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border-strong);font-family:inherit;font-size:13px;font-weight:500;color:var(--text);cursor:pointer}
+.btn-sidebar-logout:hover{background:var(--border)}
+
+/* TOPBAR */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;transition:background .15s;padding:0}
+.hamburger:hover{background:var(--surface2)}
+.hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-.03em}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;cursor:pointer;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
+.topbar-avatar img{width:100%;height:100%;object-fit:cover}
+
+/* PAGE */
+.page{flex:1;padding:0 0 calc(40px + var(--safe-bottom));overflow-y:auto}
+.section{padding:16px 20px 0}
+.section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+
+/* UTILS */
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,#e8e6e2 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
+.toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+
+/* PAGE HEADER */
+.page-header{padding:20px 20px 0}
+.page-title{font-size:22px;font-weight:700;letter-spacing:-.04em}
+.page-sub{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* STATUS BANNER */
+.status-banner{margin:16px 20px 0;padding:14px 16px;border-radius:var(--radius);border:1px solid;display:flex;align-items:center;gap:12px}
+.status-banner.active{background:var(--green-bg);border-color:rgba(26,127,75,.2)}
+.status-banner.inactive{background:var(--surface);border-color:var(--border)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.status-dot.active{background:var(--green)}
+.status-dot.inactive{background:var(--subtle)}
+.status-text{flex:1;font-size:13px;font-weight:500}
+.status-text span{font-size:11px;color:var(--muted);display:block;margin-top:1px;font-weight:400}
+
+/* LINK BAR */
+.link-bar{margin:12px 20px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.link-url{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
+.link-url:hover{text-decoration:underline}
+.link-action-btn{padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface2);font-family:inherit;font-size:11px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center}
+.stat-box-value{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.03em}
+.stat-box-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+
+/* CHART */
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.chart-svg{width:100%;height:80px;display:block;overflow:visible}
+.chart-dates{display:flex;justify-content:space-between;margin-top:6px}
+.chart-date{font-size:10px;color:var(--subtle)}
+
+/* PREVIEW (not yet generated) */
+.preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.preview-header{padding:16px;border-bottom:1px solid var(--border)}
+.preview-header-title{font-size:14px;font-weight:600}
+.preview-header-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.preview-phones{display:flex;gap:8px;padding:16px;overflow-x:auto;scrollbar-width:none}
+.preview-phones::-webkit-scrollbar{display:none}
+.preview-phone{flex-shrink:0;width:110px}
+.preview-phone-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:8px}
+.phone-mock{width:110px;height:190px;border-radius:14px;border:2px solid var(--border-strong);overflow:hidden;position:relative}
+.phone-clean{background:#ffffff}
+.phone-color{background:linear-gradient(135deg,#6c5ce7,#a29bfe)}
+.phone-dark{background:#0d0d0d}
+.phone-inner{padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.mock-avatar{width:32px;height:32px;border-radius:50%}
+.mock-name{height:6px;border-radius:3px;width:60px}
+.mock-bio{height:4px;border-radius:2px;width:80px;opacity:.6}
+.mock-btn{height:20px;border-radius:6px;width:90px}
+/* clean theme mocks */
+.phone-clean .mock-avatar{background:#e0e0e0}
+.phone-clean .mock-name{background:#111}
+.phone-clean .mock-bio{background:#999}
+.phone-clean .mock-btn{background:#111}
+/* color theme mocks */
+.phone-color .mock-avatar{background:rgba(255,255,255,.4)}
+.phone-color .mock-name{background:white}
+.phone-color .mock-bio{background:rgba(255,255,255,.6)}
+.phone-color .mock-btn{background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4)}
+/* dark theme mocks */
+.phone-dark .mock-avatar{background:#333}
+.phone-dark .mock-name{background:#f0f0f0}
+.phone-dark .mock-bio{background:#666}
+.phone-dark .mock-btn{background:#2a2a2a;border:1px solid #333}
+
+/* THEME PICKER (in sheet) */
+.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.theme-opt{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s}
+.theme-opt.selected{border-color:var(--text)}
+.theme-opt-label{font-size:11px;font-weight:600;text-align:center;padding:6px 4px;color:var(--muted)}
+.theme-opt.selected .theme-opt-label{color:var(--text)}
+
+/* ACTION BUTTONS */
+.action-btn{width:100%;padding:14px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.action-btn:disabled{opacity:.5;cursor:not-allowed}
+.action-btn-primary{background:var(--text);color:white}
+.action-btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border-strong)}
+.action-btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.2)}
+.action-stack{display:flex;flex-direction:column;gap:8px;padding:16px 20px 0}
+
+/* BOTTOM SHEET */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;transition:opacity .25s}
+.sheet-backdrop.hidden{display:none}
+.sheet{background:var(--surface);border-radius:22px 22px 0 0;width:100%;max-height:92dvh;overflow-y:auto;padding:0 0 calc(24px + var(--safe-bottom))}
+.sheet-handle{width:36px;height:4px;background:var(--border-strong);border-radius:2px;margin:12px auto 0}
+.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 0}
+.sheet-sub{font-size:13px;color:var(--muted);padding:4px 20px 0;line-height:1.5}
+.sheet-body{padding:16px 20px 0}
+.sheet-actions{padding:16px 20px 0;display:flex;flex-direction:column;gap:8px}
+.sheet-divider{height:1px;background:var(--border);margin:16px 20px 0}
+
+/* HANDLE INPUT */
+.handle-input-wrap{display:flex;align-items:center}
+.handle-prefix{padding:11px 10px 11px 14px;border:1px solid var(--border-strong);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);font-size:14px;color:var(--muted);background:var(--surface2)}
+.handle-input-wrap input{border-radius:0 var(--radius-sm) var(--radius-sm) 0!important}
+
+/* CUSTOM LINKS */
+.custom-link-row{display:flex;gap:6px;margin-bottom:8px;align-items:center}
+.custom-link-row input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;color:var(--text);background:var(--bg);outline:none}
+.custom-link-row input:focus{border-color:var(--text)}
+.link-remove-btn{width:30px;height:30px;border-radius:var(--radius-sm);background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;display:grid;place-items:center}
+.link-add-btn{width:100%;padding:10px;border-radius:var(--radius-sm);background:none;border:1px dashed var(--border-strong);font-family:inherit;font-size:13px;color:var(--muted);cursor:pointer;margin-top:4px}
+
+/* REQUIRED BADGE */
+.req-badge{display:inline-block;font-size:10px;font-weight:700;color:var(--red);margin-left:4px}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;padding:24px}
+.modal-backdrop.hidden{display:none}
+.modal-card{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:380px;margin:0 auto}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-actions{display:flex;gap:8px}
+.modal-btn{flex:1;padding:12px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border-strong)}
+.modal-btn-cancel{background:var(--surface2);color:var(--text)}
+.modal-btn-danger{background:var(--red);color:white;border-color:var(--red)}
+
+/* GENERATE SECTION */
+.generate-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.generate-title{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.generate-sub{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:16px}
+.generate-checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.check-item{display:flex;align-items:center;gap:8px;font-size:13px}
+.check-icon{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;flex-shrink:0}
+.check-ok{background:var(--green-bg);color:var(--green)}
+.check-missing{background:var(--red-bg);color:var(--red)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
+    <div class="login-title">Willkommen zurück.</div>
+    <div class="login-sub">Melde dich mit deinem viuno-Account an.</div>
+    <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
+    <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">Übersicht</div>
+      <a class="sidebar-item" href="/dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-item" href="/digest">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Daily Digest
+      </a>
+      <div class="sidebar-section">Creator</div>
+      <a class="sidebar-item" href="/analytics">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </a>
+      <a class="sidebar-item" href="/trends">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        Trends
+      </a>
+      <div class="sidebar-section">Business</div>
+      <a class="sidebar-item" href="/requests">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Anfragen
+      </a>
+      <a class="sidebar-item active" href="/biolink">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        BioLink
+      </a>
+      <a class="sidebar-item" href="/profile">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profil
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebar-user-email"></div>
+      <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
+    </div>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
+      <span class="topbar-title">BioLink</span>
+    </div>
+    <div class="topbar-avatar" id="user-avatar">?</div>
+  </div>
+
+  <!-- Page -->
+  <div class="page" id="page">
+    <div id="skeleton-area" style="padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div class="skeleton" style="height:60px;border-radius:12px"></div>
+      <div class="skeleton" style="height:100px;border-radius:12px"></div>
+      <div class="skeleton" style="height:200px;border-radius:16px"></div>
+    </div>
+    <div id="page-content" class="hidden"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
+
+<!-- THEME SHEET -->
+<div class="sheet-backdrop hidden" id="theme-sheet" onclick="closeSheet('theme-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Design wählen</div>
+    <div class="sheet-sub">Wähle das Aussehen deiner BioLink-Seite.</div>
+    <div class="sheet-body">
+      <div class="theme-grid" id="theme-grid">
+        <div class="theme-opt" data-theme="clean" onclick="selectTheme('clean')">
+          <div class="phone-mock phone-clean" style="width:100%;height:140px;border-radius:10px 10px 0 0">
+            <div class="phone-inner">
+              <div class="mock-avatar"></div>
+              <div class="mock-name"></div>
+              <div class="mock-bio"></div>
+              <div class="mock-btn"></div>
+              <div class="mock-btn" style="opacity:.5"></div>
+            </div>
+          </div>
+          <div class="theme-opt-label">Clean</div>
+        </div>
+        <div class="theme-opt" data-theme="color" onclick="selectTheme('color')">
+          <div class="phone-mock phone-color" style="width:100%;height:140px;border-radius:10px 10px 0 0">
+            <div class="phone-inner">
+              <div class="mock-avatar"></div>
+              <div class="mock-name"></div>
+              <div class="mock-bio"></div>
+              <div class="mock-btn"></div>
+              <div class="mock-btn" style="opacity:.5"></div>
+            </div>
+          </div>
+          <div class="theme-opt-label">Color</div>
+        </div>
+        <div class="theme-opt" data-theme="dark" onclick="selectTheme('dark')">
+          <div class="phone-mock phone-dark" style="width:100%;height:140px;border-radius:10px 10px 0 0">
+            <div class="phone-inner">
+              <div class="mock-avatar"></div>
+              <div class="mock-name"></div>
+              <div class="mock-bio"></div>
+              <div class="mock-btn"></div>
+              <div class="mock-btn" style="opacity:.5"></div>
+            </div>
+          </div>
+          <div class="theme-opt-label">Dark</div>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-actions">
+      <button class="action-btn action-btn-primary" onclick="saveTheme()">Design speichern</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('theme-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE SHEET -->
+<div class="sheet-backdrop hidden" id="profile-sheet" onclick="closeSheet('profile-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Profil-Infos</div>
+    <div class="sheet-sub">Diese Infos erscheinen auf deiner BioLink-Seite.</div>
+    <div class="sheet-body">
+      <div class="field"><label>Profilbild URL</label><input type="url" id="s-photo" placeholder="https://…"/></div>
+      <div class="field"><label>Bio</label><textarea id="s-bio" rows="3" placeholder="Kurze Beschreibung über dich…"></textarea></div>
+      <div class="field"><label>Nische</label>
+        <select id="s-niche">
+          <option value="lifestyle">Lifestyle</option>
+          <option value="fashion">Fashion</option>
+          <option value="beauty">Beauty</option>
+          <option value="food">Food</option>
+          <option value="fitness">Fitness</option>
+          <option value="travel">Travel</option>
+          <option value="gaming">Gaming</option>
+          <option value="music">Music</option>
+          <option value="comedy">Comedy</option>
+          <option value="education">Bildung & Wissen</option>
+          <option value="business">Business</option>
+          <option value="tech">Tech</option>
+          <option value="art">Art</option>
+          <option value="family">Family</option>
+          <option value="mental_health">Mental Health</option>
+          <option value="general">Allgemein</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Impressum <span class="req-badge">Pflicht</span></label>
+        <textarea id="s-impressum" rows="4" placeholder="Angaben gemäß §5 TMG: Vorname Nachname, Straße Nr., PLZ Ort…"></textarea>
+      </div>
+    </div>
+    <div class="sheet-actions">
+      <button class="action-btn action-btn-primary" onclick="saveProfileSheet()">Speichern</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('profile-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- LINKS SHEET -->
+<div class="sheet-backdrop hidden" id="links-sheet" onclick="closeSheet('links-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Social & Links</div>
+    <div class="sheet-sub">Deine Kanäle und eigene Links auf der BioLink-Seite.</div>
+    <div class="sheet-body">
+      <div class="section-label">Social Media</div>
+      <div class="field" style="margin-top:8px"><label>Instagram</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-ig" placeholder="deinname"/></div></div>
+      <div class="field"><label>TikTok</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-tt" placeholder="deinname"/></div></div>
+      <div class="field"><label>Threads</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-threads" placeholder="deinname"/></div></div>
+      <div class="field"><label>YouTube</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-yt" placeholder="deinkanal"/></div></div>
+      <div class="sheet-divider" style="margin:4px 0 16px"></div>
+      <div class="section-label">Eigene Links <span style="color:var(--subtle);font-weight:400;text-transform:none;letter-spacing:0">(max. 5)</span></div>
+      <div id="custom-links-list" style="margin-top:8px"></div>
+      <button class="link-add-btn" id="link-add-btn" onclick="addCustomLink()">+ Link hinzufügen</button>
+    </div>
+    <div class="sheet-actions">
+      <button class="action-btn action-btn-primary" onclick="saveLinksSheet()">Speichern</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('links-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL step 1 -->
+<div class="modal-backdrop hidden" id="delete-modal-1">
+  <div class="modal-card">
+    <div class="modal-title">BioLink-Seite löschen?</div>
+    <div class="modal-sub">Deine BioLink-Seite wird gelöscht. Alle Links dorthin funktionieren danach nicht mehr.</div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal(1)">Abbrechen</button>
+      <button class="modal-btn modal-btn-danger" onclick="showDeleteModal2()">Weiter</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL step 2 -->
+<div class="modal-backdrop hidden" id="delete-modal-2">
+  <div class="modal-card">
+    <div class="modal-title">Wirklich unwiderruflich löschen?</div>
+    <div class="modal-sub">Diese Aktion kann nicht rückgängig gemacht werden. Deine Seite ist sofort offline.</div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal(2)">Abbrechen</button>
+      <button class="modal-btn modal-btn-danger" id="btn-confirm-delete" onclick="confirmDelete()">Ja, jetzt löschen</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, {auth:{persistSession:true,autoRefreshToken:true}})
+
+// ── utils ──
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){if(n==null||isNaN(+n))return'–';n=+n;if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'k';return n.toFixed(0)}
+function fmtShort(d){if(!d)return'';return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})}
+
+window.showToast=function(msg,dur=2800){
+  const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg')
+  t.textContent=msg;w.classList.remove('hidden')
+  clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)
+}
+window.openSidebar=()=>{document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
+window.closeSidebar=()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
+window.logout=async()=>{await sb.auth.signOut();location.reload()}
+
+window.openSheet=function(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden'}
+window.closeSheet=function(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow=''}
+window.closeModal=function(n){document.getElementById(`delete-modal-${n}`).classList.add('hidden')}
+
+// ── auth ──
+async function baseInit(onSession){
+  const{data:{session}}=await sb.auth.getSession()
+  if(session){await onSession(session);return}
+  document.getElementById('login-screen').style.display='flex'
+  document.getElementById('btn-login').addEventListener('click',doLogin)
+  document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
+}
+async function doLogin(){
+  const email=document.getElementById('inp-email').value.trim(),pw=document.getElementById('inp-pw').value
+  const errEl=document.getElementById('login-error'),btn=document.getElementById('btn-login')
+  errEl.textContent='';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{data,error}=await sb.auth.signInWithPassword({email,password:pw})
+  btn.disabled=false;btn.textContent='Einloggen'
+  if(error){errEl.textContent='Falsche E-Mail oder Passwort.';return}
+  await enterApp(data.session)
+}
+
+// ── state ──
+const state={user:null,profile:null,biolink:null,views:null,selectedTheme:'clean'}
+
+async function enterApp(session){
+  state.user=session.user
+  document.getElementById('login-screen').style.display='none'
+  document.getElementById('app').classList.add('visible')
+  // avatar
+  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url').eq('id',state.user.id).single()
+  const name=p?.display_name||p?.full_name||session.user.email||'?'
+  const av=document.getElementById('user-avatar')
+  if(p?.profile_image_url){av.innerHTML=`<img src="${escHtml(p.profile_image_url)}" alt="">`}else{av.textContent=name[0].toUpperCase()}
+  document.getElementById('sidebar-user-email').textContent=session.user.email
+  await loadAll()
+}
+
+async function loadAll(){
+  const uid=state.user.id
+  const[profileRes,biolinkRes,viewsRes]=await Promise.all([
+    sb.from('users').select('display_name,full_name,bio,profile_image_url,instagram_handle,tiktok_handle,niche_category').eq('id',uid).single(),
+    sb.from('biolink_settings').select('*').eq('user_id',uid).single(),
+    sb.from('bio_page_views').select('viewed_date,view_count').eq('user_id',uid).order('viewed_date',{ascending:false}).limit(30)
+  ])
+  state.profile=profileRes.data
+  state.biolink=biolinkRes.data
+  state.views=viewsRes.data||[]
+  state.selectedTheme=state.biolink?.theme||'clean'
+  document.getElementById('skeleton-area').classList.add('hidden')
+  document.getElementById('page-content').classList.remove('hidden')
+  renderPage()
+}
+
+function renderPage(){
+  const b=state.biolink
+  const isGenerated=b?.slug&&b?.is_active!==undefined
+  const isActive=b?.is_active===true
+  const bioUrl=b?.slug?`viuno.de/${b.slug}`:null
+  const bioFullUrl=b?.slug?`https://viuno.de/${b.slug}`:null
+  const hasImpressum=!!(b?.impressum_text?.trim())
+
+  // views stats
+  const views=state.views||[]
+  const today=new Date().toISOString().slice(0,10)
+  const viewsToday=views.filter(v=>v.viewed_date===today).reduce((s,v)=>s+(v.view_count||0),0)
+  const views7=views.filter(v=>{const d=new Date(v.viewed_date);const diff=(Date.now()-d.getTime())/86400000;return diff<=7}).reduce((s,v)=>s+(v.view_count||0),0)
+  const viewsTotal=views.reduce((s,v)=>s+(v.view_count||0),0)
+
+  // checklist
+  const checks=[
+    {label:'Profilbild',ok:!!(state.profile?.profile_image_url||b?.profile_image_url_override)},
+    {label:'Bio',ok:!!(state.profile?.bio)},
+    {label:'Impressum',ok:hasImpressum},
+    {label:'Mindestens 1 Social-Kanal',ok:!!(state.profile?.instagram_handle||state.profile?.tiktok_handle||b?.threads_handle||b?.youtube_handle)},
+  ]
+  const allOk=checks.every(c=>c.ok)
+
+  document.getElementById('page-content').innerHTML=`
+    <div class="page-header">
+      <div class="page-title">BioLink</div>
+      <div class="page-sub">${isGenerated?'Verwalte deine öffentliche Seite':'Erstelle deine persönliche BioLink-Seite'}</div>
+    </div>
+
+    ${isGenerated ? `
+    <!-- Status -->
+    <div class="status-banner ${isActive?'active':'inactive'}">
+      <div class="status-dot ${isActive?'active':'inactive'}"></div>
+      <div class="status-text">${isActive?'Seite ist live':'Seite ist inaktiv'}
+        <span>${isActive?'Deine Seite ist öffentlich erreichbar':'Seite wurde deaktiviert'}</span>
+      </div>
+    </div>
+
+    <!-- Link Bar -->
+    <div class="link-bar">
+      <a class="link-url" href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>
+      <button class="link-action-btn" onclick="copyLink('${bioFullUrl}')">Kopieren</button>
+    </div>
+
+    ${isActive?`
+    <!-- Stats -->
+    <div class="section"><div class="section-label">Aufrufe</div>
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-box-value">${fmt(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
+        <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
+        <div class="stat-box"><div class="stat-box-value">${fmt(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
+      </div>
+    </div>
+    ${buildViewsChart(views)}
+    `:''}
+
+    <!-- Actions -->
+    <div class="action-stack">
+      <button class="action-btn action-btn-secondary" onclick="openThemeSheet()">🎨 Design ändern · ${capitalizeTheme(state.selectedTheme)}</button>
+      <button class="action-btn action-btn-secondary" onclick="openProfileSheet()">👤 Profil-Infos bearbeiten</button>
+      <button class="action-btn action-btn-secondary" onclick="openLinksSheet()">🔗 Social & Links bearbeiten</button>
+      <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        Seite aktualisieren
+      </button>
+    </div>
+
+    <!-- Delete -->
+    <div style="padding:16px 20px 0">
+      <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 BioLink-Seite löschen</button>
+    </div>
+
+    ` : `
+    <!-- Not yet generated: Preview + generate -->
+    <div class="section" style="margin-top:4px">
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-header-title">Vorschau · So sieht deine Seite aus</div>
+          <div class="preview-header-sub">Wähle ein Design und generiere deine persönliche Seite</div>
+        </div>
+        <div class="preview-phones">
+          <div class="preview-phone">
+            <div class="preview-phone-label">Clean</div>
+            <div class="phone-mock phone-clean">
+              <div class="phone-inner">
+                <div class="mock-avatar"></div>
+                <div class="mock-name"></div>
+                <div class="mock-bio"></div>
+                <div class="mock-btn"></div>
+                <div class="mock-btn" style="opacity:.6"></div>
+                <div class="mock-btn" style="opacity:.35"></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-phone">
+            <div class="preview-phone-label">Color</div>
+            <div class="phone-mock phone-color">
+              <div class="phone-inner">
+                <div class="mock-avatar"></div>
+                <div class="mock-name"></div>
+                <div class="mock-bio"></div>
+                <div class="mock-btn"></div>
+                <div class="mock-btn" style="opacity:.6"></div>
+                <div class="mock-btn" style="opacity:.35"></div>
+              </div>
+            </div>
+          </div>
+          <div class="preview-phone">
+            <div class="preview-phone-label">Dark</div>
+            <div class="phone-mock phone-dark">
+              <div class="phone-inner">
+                <div class="mock-avatar"></div>
+                <div class="mock-name"></div>
+                <div class="mock-bio"></div>
+                <div class="mock-btn"></div>
+                <div class="mock-btn" style="opacity:.6"></div>
+                <div class="mock-btn" style="opacity:.35"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Setup buttons -->
+    <div class="action-stack">
+      <button class="action-btn action-btn-secondary" onclick="openThemeSheet()">🎨 Design wählen · ${capitalizeTheme(state.selectedTheme)}</button>
+      <button class="action-btn action-btn-secondary" onclick="openProfileSheet()">👤 Profil-Infos eingeben</button>
+      <button class="action-btn action-btn-secondary" onclick="openLinksSheet()">🔗 Social & Links hinzufügen</button>
+    </div>
+
+    <!-- Checklist + Generate -->
+    <div class="section" style="padding-bottom:8px">
+      <div class="generate-card">
+        <div class="generate-title">Seite erstellen</div>
+        <div class="generate-sub">Prüfe ob alles vollständig ist. Das Impressum ist gesetzlich vorgeschrieben.</div>
+        <div class="generate-checklist">
+          ${checks.map(c=>`<div class="check-item"><div class="check-icon ${c.ok?'check-ok':'check-missing'}">${c.ok?'✓':'✕'}</div><span>${c.label}</span></div>`).join('')}
+        </div>
+        <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()" ${allOk?'':'disabled'}>
+          ${allOk?'✨ BioLink-Seite generieren':'Bitte alle Punkte erfüllen'}
+        </button>
+      </div>
+    </div>
+    `}
+  `
+
+  // init sheets with current data
+  initSheets()
+}
+
+function buildViewsChart(views){
+  if(!views||views.length<2)return''
+  // last 14 days
+  const days=[]
+  for(let i=13;i>=0;i--){
+    const d=new Date();d.setDate(d.getDate()-i)
+    const key=d.toISOString().slice(0,10)
+    const count=views.filter(v=>v.viewed_date===key).reduce((s,v)=>s+(v.view_count||0),0)
+    days.push({date:key,count})
+  }
+  const max=Math.max(...days.map(d=>d.count),1)
+  const W=300,H=80,PAD=6
+  const pts=days.map((d,i)=>{
+    const x=PAD+(i/(days.length-1))*(W-PAD*2)
+    const y=PAD+(1-d.count/max)*(H-PAD*2)
+    return[x.toFixed(1),y.toFixed(1)]
+  })
+  const lineD='M'+pts.map(p=>p.join(',')).join(' L')
+  const areaD=`${lineD} L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`
+  const last=pts[pts.length-1]
+  const svg=`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#111110" stop-opacity=".1"/>
+      <stop offset="100%" stop-color="#111110" stop-opacity="0"/>
+    </linearGradient></defs>
+    <path d="${areaD}" fill="url(#vg)"/>
+    <path d="${lineD}" fill="none" stroke="#111110" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#111110" stroke="white" stroke-width="2"/>
+  </svg>`
+  const firstDay=fmtShort(days[0].date)
+  const midDay=fmtShort(days[6].date)
+  const lastDay=fmtShort(days[13].date)
+  return`<div class="section"><div class="chart-card">${svg}<div class="chart-dates"><span class="chart-date">${firstDay}</span><span class="chart-date">${midDay}</span><span class="chart-date">${lastDay}</span></div></div></div>`
+}
+
+function capitalizeTheme(t){return{clean:'Clean',color:'Color',dark:'Dark'}[t]||t}
+
+function initSheets(){
+  const p=state.profile,b=state.biolink
+  // profile sheet
+  document.getElementById('s-photo').value=p?.profile_image_url||''
+  document.getElementById('s-bio').value=p?.bio||''
+  document.getElementById('s-niche').value=p?.niche_category||'general'
+  document.getElementById('s-impressum').value=b?.impressum_text||''
+  // links sheet
+  document.getElementById('s-ig').value=(p?.instagram_handle||'').replace(/^@/,'')
+  document.getElementById('s-tt').value=(p?.tiktok_handle||'').replace(/^@/,'')
+  document.getElementById('s-threads').value=b?.threads_handle||''
+  document.getElementById('s-yt').value=b?.youtube_handle||''
+  // custom links
+  renderCustomLinksList(b?.custom_links||[])
+  // theme
+  updateThemeGrid(state.selectedTheme)
+}
+
+// ── THEME ──
+window.openThemeSheet=function(){openSheet('theme-sheet');updateThemeGrid(state.selectedTheme)}
+window.selectTheme=function(t){state.selectedTheme=t;updateThemeGrid(t)}
+function updateThemeGrid(t){document.querySelectorAll('.theme-opt').forEach(o=>o.classList.toggle('selected',o.dataset.theme===t))}
+window.saveTheme=async function(){
+  await sb.from('biolink_settings').update({theme:state.selectedTheme,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
+  if(state.biolink)state.biolink.theme=state.selectedTheme
+  closeSheet('theme-sheet');showToast('Design gespeichert ✓')
+  renderPage()
+}
+
+// ── PROFILE SHEET ──
+window.openProfileSheet=function(){initSheets();openSheet('profile-sheet')}
+window.saveProfileSheet=async function(){
+  const impressum=document.getElementById('s-impressum').value.trim()
+  if(!impressum){showToast('Impressum ist Pflicht.');return}
+  const photo=document.getElementById('s-photo').value.trim()
+  const bio=document.getElementById('s-bio').value.trim()
+  const niche=document.getElementById('s-niche').value
+  await Promise.all([
+    sb.from('users').update({bio:bio||null,niche_category:niche,profile_image_url:photo||undefined,updated_at:new Date().toISOString()}).eq('id',state.user.id),
+    sb.from('biolink_settings').update({impressum_text:impressum,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
+  ])
+  if(state.profile){state.profile.bio=bio;state.profile.niche_category=niche}
+  if(state.biolink)state.biolink.impressum_text=impressum
+  closeSheet('profile-sheet');showToast('Gespeichert ✓');renderPage()
+}
+
+// ── LINKS SHEET ──
+window.openLinksSheet=function(){initSheets();openSheet('links-sheet')}
+let customLinks=[]
+function renderCustomLinksList(links){
+  customLinks=[...links]
+  const el=document.getElementById('custom-links-list')
+  const addBtn=document.getElementById('link-add-btn')
+  el.innerHTML=customLinks.map((l,i)=>`<div class="custom-link-row">
+    <input type="text" placeholder="Titel" value="${escHtml(l.title||'')}" oninput="customLinks[${i}].title=this.value" style="width:36%"/>
+    <input type="url" placeholder="https://…" value="${escHtml(l.url||'')}" oninput="customLinks[${i}].url=this.value"/>
+    <button class="link-remove-btn" onclick="removeCustomLink(${i})">×</button>
+  </div>`).join('')
+  if(addBtn)addBtn.style.display=customLinks.length>=5?'none':'block'
+}
+window.addCustomLink=function(){if(customLinks.length>=5)return;customLinks.push({title:'',url:''});renderCustomLinksList(customLinks)}
+window.removeCustomLink=function(i){customLinks.splice(i,1);renderCustomLinksList(customLinks)}
+window.saveLinksSheet=async function(){
+  const ig=document.getElementById('s-ig').value.trim().replace(/^@/,'')
+  const tt=document.getElementById('s-tt').value.trim().replace(/^@/,'')
+  const threads=document.getElementById('s-threads').value.trim().replace(/^@/,'')
+  const yt=document.getElementById('s-yt').value.trim().replace(/^@/,'')
+  const validLinks=customLinks.filter(l=>l.url?.trim()).slice(0,5)
+  await Promise.all([
+    sb.from('users').update({instagram_handle:ig||null,tiktok_handle:tt||null,updated_at:new Date().toISOString()}).eq('id',state.user.id),
+    sb.from('biolink_settings').update({threads_handle:threads||null,youtube_handle:yt||null,custom_links:validLinks,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
+  ])
+  if(state.profile){state.profile.instagram_handle=ig;state.profile.tiktok_handle=tt}
+  if(state.biolink){state.biolink.threads_handle=threads;state.biolink.youtube_handle=yt;state.biolink.custom_links=validLinks}
+  closeSheet('links-sheet');showToast('Links gespeichert ✓');renderPage()
+}
+
+// ── COPY LINK ──
+window.copyLink=async function(url){
+  try{await navigator.clipboard.writeText(url);showToast('Link kopiert ✓')}
+  catch(_){showToast('Konnte nicht kopieren')}
+}
+
+// ── GENERATE ──
+window.generatePage=async function(){
+  const btn=document.getElementById('btn-generate')
+  if(!btn)return
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session){showToast('Session abgelaufen');location.reload();return}
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-bio-page`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({theme:state.selectedTheme})
+    })
+    const body=await res.json().catch(()=>({}))
+    if(!res.ok&&body.success!==true){showToast('Fehler: '+(body.error||'Unbekannt'),4000);btn.disabled=false;btn.textContent='Erneut versuchen';return}
+    showToast('BioLink-Seite generiert ✓',4000)
+    await loadAll()
+  }catch(err){showToast('Fehler: '+err.message,4000);if(btn){btn.disabled=false;btn.textContent='Erneut versuchen'}}
+}
+
+// ── DELETE ──
+window.showDeleteModal1=function(){document.getElementById('delete-modal-1').classList.remove('hidden')}
+window.showDeleteModal2=function(){document.getElementById('delete-modal-1').classList.add('hidden');document.getElementById('delete-modal-2').classList.remove('hidden')}
+window.confirmDelete=async function(){
+  const btn=document.getElementById('btn-confirm-delete')
+  btn.disabled=true;btn.textContent='Wird gelöscht…'
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/cleanup-user-pages`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({action:'delete'})
+    })
+    document.getElementById('delete-modal-2').classList.add('hidden')
+    showToast('BioLink-Seite gelöscht')
+    await loadAll()
+  }catch(err){showToast('Fehler: '+err.message,4000);btn.disabled=false;btn.textContent='Ja, jetzt löschen'}
+}
+
+baseInit(enterApp)
+</script>
+</body>
+</html>
