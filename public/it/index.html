@@ -712,7 +712,7 @@
       <a href="/">DE</a>
       <a href="/it/" class="active" aria-current="page">IT</a>
     </div>
-    <button class="nav-cta" onclick="openContact()">Contatto</button>
+    <a class="nav-cta" href="mailto:kontakt@viuno.de?subject=Richiesta%20brand%20%E2%80%94%20mercato%20DACH&body=Ciao%20Mehmet%2C%0A%0ABrand%2FAzienda%3A%20%0ASito%20web%3A%20%0A%0ACosa%20cerchiamo%3A%0A%0ABudget%20indicativo%3A%20%0ATempistiche%3A%20%0A%0AGrazie">Contatto</a>
   </div>
 </nav>
 
@@ -726,7 +726,7 @@
     </h1>
     <p class="hero-sub">viuno collega brand internazionali con creator selezionati nel mercato DACH. Network, gestione, risultati misurabili.</p>
     <div class="hero-actions">
-      <button class="btn btn-primary" onclick="openContact()">Parliamone</button>
+      <a class="btn btn-primary" href="mailto:kontakt@viuno.de?subject=Richiesta%20brand%20%E2%80%94%20mercato%20DACH&body=Ciao%20Mehmet%2C%0A%0ABrand%2FAzienda%3A%20%0ASito%20web%3A%20%0A%0ACosa%20cerchiamo%3A%0A%0ABudget%20indicativo%3A%20%0ATempistiche%3A%20%0A%0AGrazie">Parliamone</a>
     </div>
   </div>
 </section>
@@ -763,7 +763,7 @@
           <span><strong>Punto di contatto unico</strong> in italiano, gestione completa in tedesco</span>
         </li>
       </ul>
-      <button class="btn btn-primary" onclick="openContact()">Parliamone</button>
+      <a class="btn btn-primary" href="mailto:kontakt@viuno.de?subject=Richiesta%20brand%20%E2%80%94%20mercato%20DACH&body=Ciao%20Mehmet%2C%0A%0ABrand%2FAzienda%3A%20%0ASito%20web%3A%20%0A%0ACosa%20cerchiamo%3A%0A%0ABudget%20indicativo%3A%20%0ATempistiche%3A%20%0A%0AGrazie">Parliamone</a>
     </div>
   </div>
 </section>
@@ -839,7 +839,7 @@
       </p>
       <p>
         Tel.: 015222388776<br/>
-        E-Mail: <a href="mailto:kontakt@stradauno.de">kontakt@stradauno.de</a>
+        E-Mail: <a href="mailto:kontakt@viuno.de">kontakt@viuno.de</a>
       </p>
       <p>
         <strong>IVA</strong>
@@ -869,62 +869,7 @@
   </div>
 </div>
 
-<!-- ============ CONTATTO MODAL ============ -->
-<div class="cf-overlay" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-title">
-  <div class="cf-topbar">
-    <div class="cf-topbar-title" id="contact-title">Contatto</div>
-    <button class="cf-close" onclick="closeAll()" aria-label="Chiudi">×</button>
-  </div>
-  <div class="cf-body">
-    <div class="contact-wrap">
-
-      <div id="contact-form-view">
-        <h2>Scrivici direttamente.</h2>
-        <p class="contact-sub">Brand, progetto aziendale o semplice domanda. In breve di cosa si tratta, ti rispondiamo personalmente in italiano.</p>
-
-        <div class="field">
-          <label for="c-name">Nome</label>
-          <input type="text" id="c-name" placeholder="Come ti chiami?" autocomplete="name" />
-        </div>
-
-        <div class="field">
-          <label for="c-email">E mail</label>
-          <input type="email" id="c-email" placeholder="tu@esempio.it" autocomplete="email" />
-        </div>
-
-        <div class="field">
-          <label for="c-company">Azienda <span class="opt">(opzionale)</span></label>
-          <input type="text" id="c-company" placeholder="Il nome del tuo brand" autocomplete="organization" />
-        </div>
-
-        <div class="field">
-          <label for="c-website">Sito web <span class="opt">(opzionale)</span></label>
-          <input type="url" id="c-website" placeholder="https://" autocomplete="url" />
-        </div>
-
-        <div class="field">
-          <label for="c-message">Di cosa si tratta?</label>
-          <textarea id="c-message" placeholder="In breve cosa cerchi. Campagna brand nel mercato DACH, partnership con creator o solo una domanda."></textarea>
-        </div>
-
-        <button class="contact-submit" id="c-submit" onclick="submitContact()">Invia messaggio</button>
-        <div class="contact-error" id="c-error">Qualcosa è andato storto. Riprova per favore.</div>
-      </div>
-
-      <div class="contact-success" id="contact-success-view">
-        <div class="success-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <h3>Grazie. Ricevuto.</h3>
-        <p>Ti rispondiamo personalmente entro 24 ore.</p>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 <script>
-const EDGE_URL = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/contact-submit';
 const DATENSCHUTZ_URL = 'https://itrk.legal/1hAc.8U.ZIR-iframe.html';
 
 let datenschutzLoaded = false;
@@ -946,86 +891,15 @@ function openDatenschutz() {
   lockBody();
 }
 
-function openContact() {
-  document.getElementById('contact-modal').classList.add('open');
-  lockBody();
-  setTimeout(() => {
-    const nameInput = document.getElementById('c-name');
-    const formView = document.getElementById('contact-form-view');
-    if (nameInput && formView.style.display !== 'none') {
-      nameInput.focus();
-    }
-  }, 350);
-}
-
 function closeAll() {
   document.getElementById('impressum-modal').classList.remove('open');
   document.getElementById('datenschutz-modal').classList.remove('open');
-  document.getElementById('contact-modal').classList.remove('open');
   unlockBody();
 }
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeAll();
 });
-
-async function submitContact() {
-  const nameEl = document.getElementById('c-name');
-  const emailEl = document.getElementById('c-email');
-  const msgEl = document.getElementById('c-message');
-  const companyEl = document.getElementById('c-company');
-  const webEl = document.getElementById('c-website');
-  const btn = document.getElementById('c-submit');
-  const errEl = document.getElementById('c-error');
-
-  const name = nameEl.value.trim();
-  const email = emailEl.value.trim();
-  const message = msgEl.value.trim();
-  const company = companyEl.value.trim() || null;
-  const website_url = webEl.value.trim() || null;
-
-  [nameEl, emailEl, msgEl].forEach(el => el.classList.remove('error'));
-  errEl.classList.remove('visible');
-
-  let hasError = false;
-  let firstErrorEl = null;
-  if (!name || name.length < 2) { nameEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || nameEl; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    emailEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || emailEl;
-  }
-  if (!message || message.length < 5) { msgEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || msgEl; }
-  if (hasError) {
-    if (firstErrorEl) firstErrorEl.focus();
-    return;
-  }
-
-  btn.disabled = true;
-  btn.textContent = 'Invio in corso…';
-
-  try {
-    const res = await fetch(EDGE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name, email, message,
-        company,
-        website_url,
-        source: 'landing-page-it'
-      })
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || data.success === false) throw new Error(data.error || 'Errore');
-
-    document.getElementById('contact-form-view').style.display = 'none';
-    document.getElementById('contact-success-view').classList.add('visible');
-    document.querySelector('#contact-modal .cf-body').scrollTop = 0;
-  } catch (err) {
-    errEl.textContent = err.message && err.message !== 'Errore' ? err.message : 'Qualcosa è andato storto. Riprova per favore.';
-    errEl.classList.add('visible');
-    btn.disabled = false;
-    btn.textContent = 'Invia messaggio';
-  }
-}
 
 const obs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
