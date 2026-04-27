@@ -50,6 +50,9 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:flex-
 .link-row a:hover{text-decoration:underline}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* iOS zoom fix */
+input,textarea,select{font-size:16px!important}
 </style>
 </head>
 <body>
@@ -121,7 +124,7 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:flex-
     <div class="legal-box">
       <label class="legal-check">
         <input type="checkbox" id="chk-legal"/>
-        <span>Ich habe die <a href="/legal/agb" target="_blank">AGB</a>, <a href="/legal/nutzungsbedingungen" target="_blank">Nutzungsbedingungen</a> und <a href="/legal/datenschutz" target="_blank">Datenschutzerklärung</a> gelesen und akzeptiere sie.</span>
+        <span>Ich habe die <a href="/legal#agb" target="_blank">AGB</a> und <a href="/legal#datenschutz" target="_blank">Datenschutzerklärung</a> gelesen und akzeptiere sie.</span>
       </label>
     </div>
 
