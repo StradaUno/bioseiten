@@ -294,9 +294,6 @@ function renderProfile(){
         <div class="profile-plan ${p.subscription_type==='pro'?'plan-pro':'plan-free'}">${p.subscription_type==='pro'?'⭐ Pro':'Free Plan'}</div>
       </div>
     </div>
-    <div class="stats-row">
-      <div class="stat-box"><div class="stat-box-value">${fmt(p.total_followers)}</div><div class="stat-box-label">Follower</div></div>
-    </div>
     <div class="section"><div class="section-label">Profil bearbeiten</div>
       <div class="edit-card">
         <div class="field"><label>Username</label>
@@ -308,7 +305,6 @@ function renderProfile(){
         </div>
         <div class="field"><label>Name</label><input type="text" id="edit-fullname" value="${escHtml(p.full_name||'')}"/></div>
         <div class="field"><label>Bio</label><textarea id="edit-bio" rows="3">${escHtml(p.bio||'')}</textarea></div>
-        <div class="field"><label>E-Mail für Anfragen</label><input type="email" id="edit-contact-email" value="${escHtml(p.contact_email||'')}" placeholder="anfragen@beispiel.de"/></div>
         <div class="field"><label>Instagram</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="edit-ig" value="${escHtml((p.instagram_handle||'').replace(/^@/,''))}"/></div></div>
         <div class="field"><label>TikTok</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="edit-tt" value="${escHtml((p.tiktok_handle||'').replace(/^@/,''))}"/></div></div>
         <div class="field"><label>Stadt</label><input type="text" id="edit-city" value="${escHtml(p.city||'')}"/></div>
@@ -384,7 +380,7 @@ window.saveProfile=async function(){
   const btn=document.getElementById('btn-save'),successEl=document.getElementById('save-success')
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Speichern…';successEl.classList.add('hidden')
   const ig=document.getElementById('edit-ig').value.trim().replace(/^@/,''),tt=document.getElementById('edit-tt').value.trim().replace(/^@/,'')
-  const patch={full_name:document.getElementById('edit-fullname').value.trim()||null,bio:document.getElementById('edit-bio').value.trim()||null,contact_email:document.getElementById('edit-contact-email').value.trim()||null,instagram_handle:ig||null,tiktok_handle:tt||null,city:document.getElementById('edit-city').value.trim()||null,niche_category:state.niche,updated_at:new Date().toISOString()}
+  const patch={full_name:document.getElementById('edit-fullname').value.trim()||null,bio:document.getElementById('edit-bio').value.trim()||null,instagram_handle:ig||null,tiktok_handle:tt||null,city:document.getElementById('edit-city').value.trim()||null,niche_category:state.niche,updated_at:new Date().toISOString()}
   const{error}=await sb.from('users').update(patch).eq('id',state.user.id)
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
