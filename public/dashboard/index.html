@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>veuno · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f5f4f2;
+  --surface: #ffffff;
+  --surface2: #f0efed;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.13);
+  --text: #111110;
+  --muted: #7a7975;
+  --subtle: #b0afa9;
+  --green: #1a7f4b;
+  --green-bg: #edf7f1;
+  --red: #c0392b;
+  --orange: #b85c00;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ─── LOGIN ─── */
+#login-screen { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-card { width: 100%; max-width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; }
+.login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.login-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--text); color: white; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+.login-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
+.login-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border-color .15s; }
+.field input:focus { border-color: var(--text); }
+.btn-login { width: 100%; padding: 12px; margin-top: 8px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-login:disabled { opacity: .5; }
+.login-error { font-size: 12px; color: var(--red); margin-top: 10px; text-align: center; min-height: 18px; }
+
+/* ─── APP ─── */
+#app { display: none; min-height: 100dvh; flex-direction: column; }
+#app.visible { display: flex; }
+
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245,244,242,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-logo { display: flex; align-items: center; gap: 8px; }
+.topbar-mark { width: 26px; height: 26px; border-radius: 6px; background: var(--text); color: white; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+.topbar-name { font-size: 15px; font-weight: 700; letter-spacing: -.03em; }
+.topbar-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; background: var(--text); color: white; display: grid; place-items: center; font-size: 13px; font-weight: 600; cursor: pointer; border: 2px solid var(--border); overflow: hidden; flex-shrink: 0; }
+.topbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.page { flex: 1; padding-bottom: calc(80px + var(--safe-bottom)); overflow-y: auto; }
+
+/* ── GREETING ── */
+.greeting-section { padding: 22px 20px 0; }
+.greeting-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.greeting-text { flex: 1; }
+.greeting-hi { font-size: 22px; font-weight: 700; letter-spacing: -.04em; color: var(--text); }
+.greeting-date { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* ── KPI SCROLL ── */
+.kpi-scroll { display: flex; gap: 10px; padding: 16px 20px 0; overflow-x: auto; scrollbar-width: none; }
+.kpi-scroll::-webkit-scrollbar { display: none; }
+
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; min-width: 130px; flex-shrink: 0; }
+.kpi-card.dark { background: var(--text); border-color: var(--text); }
+.kpi-card.dark .kpi-label { color: rgba(255,255,255,.45); }
+.kpi-card.dark .kpi-value { color: white; }
+.kpi-card.dark .kpi-delta { color: rgba(255,255,255,.55); }
+.kpi-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.kpi-value { font-size: 24px; font-weight: 700; color: var(--text); letter-spacing: -.04em; line-height: 1; }
+.kpi-delta { font-size: 11px; font-weight: 500; margin-top: 5px; }
+.kpi-delta.up   { color: var(--green); }
+.kpi-delta.down { color: var(--red); }
+.kpi-delta.neu  { color: var(--muted); }
+.kpi-card.dark .kpi-delta.up { color: rgba(255,255,255,.7); }
+
+/* ── SECTION HEADER ── */
+.section { padding: 22px 20px 0; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.02em; }
+.section-link { font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; text-decoration: none; }
+.section-link:hover { color: var(--text); }
+
+/* ── DIGEST PREVIEW ── */
+.digest-preview {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  cursor: pointer; text-decoration: none; display: block;
+  transition: border-color .15s;
+}
+.digest-preview:active { background: var(--surface2); }
+.digest-img { width: 100%; height: 120px; object-fit: cover; background: var(--surface2); display: block; }
+.digest-img-fallback { width: 100%; height: 120px; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 36px; }
+.digest-inner { padding: 14px 16px; }
+.digest-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--surface2); border-radius: 99px; font-size: 10px; font-weight: 600; color: var(--muted); padding: 3px 10px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .04em; }
+.digest-headline { font-size: 15px; font-weight: 600; color: var(--text); line-height: 1.4; letter-spacing: -.01em; }
+.digest-summary { font-size: 13px; color: var(--muted); line-height: 1.5; margin-top: 5px; }
+.digest-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.digest-source { font-size: 11px; color: var(--subtle); }
+.digest-more { font-size: 12px; font-weight: 600; color: var(--text); }
+
+/* ── TEASER LINES ── */
+.teaser-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-top: 8px; }
+.teaser-label { font-size: 10px; font-weight: 600; color: var(--subtle); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
+.teaser-line { font-size: 13px; color: var(--muted); padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.4; }
+.teaser-line:last-child { border-bottom: none; padding-bottom: 0; }
+.teaser-line:first-child { padding-top: 0; }
+
+/* ── REQUESTS PREVIEW ── */
+.req-preview-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  cursor: pointer; text-decoration: none; display: block;
+  transition: border-color .15s;
+}
+.req-preview-card:active { background: var(--surface2); }
+.req-row { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.req-row:last-child { border-bottom: none; }
+.req-initial { width: 38px; height: 38px; border-radius: 11px; flex-shrink: 0; background: var(--surface2); border: 1px solid var(--border); display: grid; place-items: center; font-size: 14px; font-weight: 700; color: var(--text); }
+.req-info { flex: 1; min-width: 0; }
+.req-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.req-sub { font-size: 11px; color: var(--muted); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.req-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text); flex-shrink: 0; }
+
+/* ── TRENDS PREVIEW ── */
+.trends-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: pointer; text-decoration: none; display: block; }
+.trends-card:active { background: var(--surface2); }
+.trend-row { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+.trend-row:last-child { border-bottom: none; }
+.trend-rank { font-size: 12px; font-weight: 700; color: var(--subtle); width: 20px; flex-shrink: 0; }
+.trend-thumb { width: 38px; height: 38px; border-radius: var(--radius-sm); object-fit: cover; background: var(--surface2); flex-shrink: 0; }
+.trend-thumb-fallback { width: 38px; height: 38px; border-radius: var(--radius-sm); background: var(--surface2); display: grid; place-items: center; font-size: 16px; flex-shrink: 0; }
+.trend-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.trend-views { font-size: 11px; color: var(--subtle); flex-shrink: 0; }
+
+/* ── ANALYTICS MINI ── */
+.analytics-mini { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; cursor: pointer; text-decoration: none; display: block; }
+.analytics-mini:active { background: var(--surface2); }
+.analytics-mini-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+.analytics-mini-left .a-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+.analytics-mini-left .a-value { font-size: 28px; font-weight: 700; color: var(--text); letter-spacing: -.04em; margin-top: 3px; }
+.analytics-mini-left .a-delta { font-size: 11px; font-weight: 500; color: var(--green); margin-top: 2px; }
+.analytics-mini-right { font-size: 12px; font-weight: 500; color: var(--muted); }
+.mini-bars { height: 48px; display: flex; align-items: flex-end; gap: 3px; }
+.mini-bar { flex: 1; border-radius: 3px 3px 0 0; background: var(--surface2); min-height: 4px; }
+.mini-bar.hi  { background: var(--text); }
+.mini-bar.mid { background: #c8c5c0; }
+.analytics-mini-footer { display: flex; gap: 14px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+.a-stat { font-size: 12px; color: var(--muted); }
+.a-stat strong { color: var(--text); font-weight: 600; }
+
+/* ── QUICK LINKS ── */
+.quick-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.quick-link {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+  cursor: pointer; text-decoration: none; display: flex;
+  flex-direction: column; gap: 8px; transition: border-color .15s;
+}
+.quick-link:active { background: var(--surface2); }
+.quick-link-icon { font-size: 22px; }
+.quick-link-label { font-size: 13px; font-weight: 600; color: var(--text); }
+.quick-link-sub { font-size: 11px; color: var(--muted); }
+
+/* skeleton */
+.skeleton { background: linear-gradient(90deg, var(--surface2) 25%, #e8e6e2 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius); }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* bottom nav */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(245,244,242,0.95); backdrop-filter: blur(16px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 calc(14px + var(--safe-bottom)); }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 14px; border-radius: 12px; transition: background .12s; min-width: 60px; text-decoration: none; }
+.nav-item:active { background: var(--surface2); }
+.nav-icon { width: 24px; height: 24px; display: grid; place-items: center; position: relative; }
+.nav-label { font-size: 10px; font-weight: 500; color: var(--subtle); }
+.nav-item.active .nav-label { color: var(--text); font-weight: 600; }
+.nav-badge { position: absolute; top: -3px; right: -6px; background: var(--text); color: white; font-size: 9px; font-weight: 700; padding: 1px 4px; border-radius: 99px; line-height: 1.4; }
+
+/* toast */
+.toast-wrap { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
+.toast { background: var(--text); color: white; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 99px; animation: toastIn .25s ease-out; white-space: nowrap; }
+@keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">v</div>
+      <div class="login-logo-text">veuno</div>
+    </div>
+    <div class="login-title">Willkommen zurück.</div>
+    <div class="login-sub">Melde dich mit deinem veuno-Account an.</div>
+    <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
+    <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-mark">v</div>
+      <div class="topbar-name">veuno</div>
+    </div>
+    <div class="topbar-avatar" id="user-avatar" onclick="window.location='profile.html'">?</div>
+  </div>
+
+  <div class="page" id="page">
+
+    <!-- Skeleton -->
+    <div id="skeleton-area" style="padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:10px">
+        <div class="skeleton" style="height:80px;min-width:130px;flex:1"></div>
+        <div class="skeleton" style="height:80px;min-width:130px;flex:1"></div>
+        <div class="skeleton" style="height:80px;min-width:130px;flex:1"></div>
+      </div>
+      <div class="skeleton" style="height:160px"></div>
+      <div class="skeleton" style="height:120px"></div>
+      <div class="skeleton" style="height:100px"></div>
+    </div>
+
+    <div id="dashboard-content" class="hidden"></div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="nav-label">Home</span>
+    </div>
+    <a class="nav-item" href="digest.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <span class="nav-label">Digest</span>
+    </a>
+    <a class="nav-item" href="trends.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <span class="nav-label">Trends</span>
+    </a>
+    <a class="nav-item" href="requests.html">
+      <div class="nav-icon" style="position:relative">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span class="nav-badge hidden" id="nav-badge">0</span>
+      </div>
+      <span class="nav-label">Anfragen</span>
+    </a>
+    <a class="nav-item" href="profile.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="nav-label">Profil</span>
+    </a>
+  </div>
+</div>
+
+<div class="toast-wrap hidden" id="toast-wrap">
+  <div class="toast" id="toast-msg"></div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, autoRefreshToken: true } })
+
+const state = {
+  user: null, profile: null, analytics: null,
+  digest: null, requests: [], trends: [], bioStats: null
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+function fmt(n, digits=1) {
+  if (n == null || isNaN(Number(n))) return '0'
+  n = Number(n)
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(digits).replace(/\.0$/,'') + 'M'
+  if (n >= 1_000)     return (n/1_000).toFixed(digits).replace(/\.0$/,'') + 'k'
+  return n.toLocaleString('de-DE')
+}
+function greeting() {
+  const h = new Date().getHours()
+  if (h < 12) return 'Guten Morgen'
+  if (h < 18) return 'Guten Tag'
+  return 'Guten Abend'
+}
+function todayLabel() {
+  return new Date().toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' })
+}
+
+window.showToast = function(msg, dur = 2500) {
+  const w = document.getElementById('toast-wrap')
+  document.getElementById('toast-msg').textContent = msg
+  w.classList.remove('hidden')
+  clearTimeout(w._t)
+  w._t = setTimeout(() => w.classList.add('hidden'), dur)
+}
+
+// ─── auth ───
+async function init() {
+  const { data: { session } } = await sb.auth.getSession()
+  if (session) { await enterApp(session); return }
+  setupLogin()
+}
+
+function setupLogin() {
+  document.getElementById('login-screen').style.display = 'flex'
+  document.getElementById('btn-login').addEventListener('click', doLogin)
+  document.getElementById('inp-pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
+}
+
+async function doLogin() {
+  const email = document.getElementById('inp-email').value.trim()
+  const pw    = document.getElementById('inp-pw').value
+  const errEl = document.getElementById('login-error')
+  const btn   = document.getElementById('btn-login')
+  errEl.textContent = ''
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
+  btn.disabled = false; btn.textContent = 'Einloggen'
+  if (error) { errEl.textContent = 'Falsche E-Mail oder Passwort.'; return }
+  await enterApp(data.session)
+}
+
+async function enterApp(session) {
+  state.user = session.user
+
+  // Onboarding-Check: neue User zum Setup weiterleiten
+  const { data: u } = await sb.from('users')
+    .select('onboarding_completed')
+    .eq('id', session.user.id)
+    .single()
+  if (u && u.onboarding_completed === false) {
+    window.location = 'onboarding.html'
+    return
+  }
+
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').classList.add('visible')
+  await loadAll()
+}
+
+// ─── load all in parallel ───
+async function loadAll() {
+  const uid = state.user.id
+
+  const [profileRes, analyticsRes, digestRes, requestsRes, hashtagsRes, bioStatsRes] = await Promise.all([
+    sb.from('users').select('full_name, display_name, profile_image_url, total_followers, bio_views_today, bio_views_total, new_requests_count, subscription_type').eq('id', uid).single(),
+    sb.from('creator_analytics').select('platform, followers, followers_prev, followers_change, avg_likes, avg_views, engagement_rate, avg_likes_prev').eq('user_id', uid).order('fetched_at', { ascending: false }).limit(2),
+    sb.from('daily_digest').select('date, teaser, cards').order('date', { ascending: false }).limit(1).single(),
+    sb.from('collab_requests').select('id, sender_name, sender_initial, sender_email, message, status, request_type, created_at').eq('creator_id', uid).is('deleted_at', null).neq('status', 'deleted').order('created_at', { ascending: false }).limit(3),
+    sb.from('live_hashtags').select('rank, name, view_count, image_url, hashtag_url').order('rank', { ascending: true }).limit(5),
+    sb.from('bio_stats').select('views_total, views_today, views_last_7_days').eq('user_id', uid).single(),
+  ])
+
+  state.profile   = profileRes.data
+  state.analytics = analyticsRes.data?.[0] || null
+  state.digest    = digestRes.data
+  state.requests  = requestsRes.data || []
+  state.trends    = hashtagsRes.data || []
+  state.bioStats  = bioStatsRes.data
+
+  // avatar
+  const name = state.profile?.display_name || state.profile?.full_name || '?'
+  const av = document.getElementById('user-avatar')
+  if (state.profile?.profile_image_url) {
+    av.innerHTML = `<img src="${escHtml(state.profile.profile_image_url)}" alt="" onerror="this.outerHTML='${name[0].toUpperCase()}'">`
+  } else {
+    av.textContent = name[0].toUpperCase()
+  }
+
+  // badge
+  const newCount = state.requests.filter(r => r.status === 'new').length
+  if (newCount > 0) {
+    const badge = document.getElementById('nav-badge')
+    badge.textContent = newCount
+    badge.classList.remove('hidden')
+  }
+
+  document.getElementById('skeleton-area').classList.add('hidden')
+  document.getElementById('dashboard-content').classList.remove('hidden')
+  render()
+}
+
+// ─── render ───
+function render() {
+  const p  = state.profile
+  const an = state.analytics
+  const d  = state.digest
+  const name = p?.display_name || p?.full_name || 'Creator'
+
+  // analytics bars
+  const bars = buildBars(an)
+  const erNum = Number(an?.engagement_rate || 0)
+  const erClass = erNum > 6 ? 'up' : erNum > 3 ? 'neu' : 'down'
+  const follDelta = an?.followers_change
+    ? `${an.followers_change > 0 ? '↑' : '↓'} ${Math.abs(an.followers_change)} diese Woche`
+    : null
+
+  // digest top card
+  const topCard = d?.cards?.[0]
+  const teaserLines = d?.teaser ? d.teaser.split('\n').filter(Boolean) : []
+
+  document.getElementById('dashboard-content').innerHTML = `
+
+    <!-- greeting -->
+    <div class="greeting-section">
+      <div class="greeting-row">
+        <div class="greeting-text">
+          <div class="greeting-hi">${greeting()}, ${escHtml(name.split(' ')[0])}.</div>
+          <div class="greeting-date">${todayLabel()}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI scroll -->
+    <div class="kpi-scroll">
+      <div class="kpi-card dark">
+        <div class="kpi-label">Follower</div>
+        <div class="kpi-value">${fmt(p?.total_followers)}</div>
+        ${follDelta ? `<div class="kpi-delta up">${follDelta}</div>` : '<div class="kpi-delta neu">Gesamt</div>'}
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Bio-Aufrufe</div>
+        <div class="kpi-value">${fmt(state.bioStats?.views_today || p?.bio_views_today)}</div>
+        <div class="kpi-delta neu">Heute</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Engagement</div>
+        <div class="kpi-value">${an ? Number(an.engagement_rate).toFixed(1) + '%' : '–'}</div>
+        <div class="kpi-delta ${erClass}">${erNum > 6 ? 'Sehr gut ↑' : erNum > 3 ? 'Gut' : '–'}</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Anfragen</div>
+        <div class="kpi-value">${state.requests.filter(r=>r.status==='new').length}</div>
+        <div class="kpi-delta neu">Neu</div>
+      </div>
+    </div>
+
+    <!-- Analytics mini -->
+    ${an ? `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Analytics</div>
+        <a class="section-link" href="analytics.html">Alle →</a>
+      </div>
+      <a class="analytics-mini" href="analytics.html">
+        <div class="analytics-mini-top">
+          <div class="analytics-mini-left">
+            <div class="a-label">Instagram · Follower</div>
+            <div class="a-value">${fmt(an.followers)}</div>
+            ${follDelta ? `<div class="a-delta">${follDelta}</div>` : ''}
+          </div>
+          <div class="analytics-mini-right">28 Tage ↗</div>
+        </div>
+        <div class="mini-bars">
+          ${bars.map(b => `<div class="mini-bar ${b.cls}" style="height:${b.h}%"></div>`).join('')}
+        </div>
+        <div class="analytics-mini-footer">
+          <span class="a-stat"><strong>${fmt(an.avg_likes)}</strong> Ø Likes</span>
+          <span class="a-stat"><strong>${fmt(an.avg_views)}</strong> Ø Views</span>
+          <span class="a-stat"><strong>${Number(an.engagement_rate).toFixed(1)}%</strong> ER</span>
+        </div>
+      </a>
+    </div>` : ''}
+
+    <!-- Daily Digest -->
+    ${d ? `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Daily Digest</div>
+        <a class="section-link" href="digest.html">Alle →</a>
+      </div>
+      ${topCard ? `
+      <a class="digest-preview" href="digest.html">
+        ${topCard.image_url
+          ? `<img class="digest-img" src="${escHtml(topCard.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;digest-img-fallback&quot;>📰</div>'">`
+          : `<div class="digest-img-fallback">📰</div>`}
+        <div class="digest-inner">
+          <div class="digest-pill">${platformEmoji(topCard.platform)} ${topCard.platform || 'Allgemein'}</div>
+          <div class="digest-headline">${escHtml(topCard.headline || '')}</div>
+          <div class="digest-summary">${escHtml(topCard.summary || '')}</div>
+          <div class="digest-footer">
+            <span class="digest-source">${escHtml(topCard.source || '')}</span>
+            <span class="digest-more">Mehr lesen →</span>
+          </div>
+        </div>
+      </a>` : ''}
+      ${teaserLines.length > 1 ? `
+      <div class="teaser-card">
+        <div class="teaser-label">Weitere Meldungen</div>
+        ${teaserLines.slice(1).map(l => `<div class="teaser-line">${escHtml(l)}</div>`).join('')}
+      </div>` : ''}
+    </div>` : ''}
+
+    <!-- Anfragen -->
+    ${state.requests.length > 0 ? `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Anfragen</div>
+        <a class="section-link" href="requests.html">Alle →</a>
+      </div>
+      <a class="req-preview-card" href="requests.html">
+        ${state.requests.map(r => `
+          <div class="req-row">
+            <div class="req-initial">${escHtml(r.sender_initial || r.sender_name?.[0] || '?')}</div>
+            <div class="req-info">
+              <div class="req-name">${escHtml(r.sender_name)}</div>
+              <div class="req-sub">${escHtml(r.message || '–')}</div>
+            </div>
+            ${r.status === 'new' ? '<div class="req-dot"></div>' : ''}
+          </div>`).join('')}
+      </a>
+    </div>` : ''}
+
+    <!-- Trends -->
+    ${state.trends.length > 0 ? `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-title">Top Trends</div>
+        <a class="section-link" href="trends.html">Alle →</a>
+      </div>
+      <a class="trends-card" href="trends.html">
+        ${state.trends.map(h => `
+          <div class="trend-row">
+            <span class="trend-rank">${h.rank}</span>
+            ${h.image_url
+              ? `<img class="trend-thumb" src="${escHtml(h.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;trend-thumb-fallback&quot;>#</div>'">`
+              : `<div class="trend-thumb-fallback">#</div>`}
+            <span class="trend-name">#${escHtml(h.name)}</span>
+            <span class="trend-views">${fmt(h.view_count)} Views</span>
+          </div>`).join('')}
+      </a>
+    </div>` : ''}
+
+    <!-- Quick links -->
+    <div class="section" style="padding-bottom:8px">
+      <div class="section-header">
+        <div class="section-title">Schnellzugriff</div>
+      </div>
+      <div class="quick-links">
+        <a class="quick-link" href="analytics.html">
+          <div class="quick-link-icon">📊</div>
+          <div class="quick-link-label">Analytics</div>
+          <div class="quick-link-sub">Instagram & TikTok</div>
+        </a>
+        <a class="quick-link" href="digest.html">
+          <div class="quick-link-icon">📰</div>
+          <div class="quick-link-label">Daily Digest</div>
+          <div class="quick-link-sub">Creator News</div>
+        </a>
+        <a class="quick-link" href="trends.html">
+          <div class="quick-link-icon">🔥</div>
+          <div class="quick-link-label">Trends</div>
+          <div class="quick-link-sub">Hashtags & Sounds</div>
+        </a>
+        <a class="quick-link" href="requests.html">
+          <div class="quick-link-icon">✉️</div>
+          <div class="quick-link-label">Anfragen</div>
+          <div class="quick-link-sub">Brand Kooperationen</div>
+        </a>
+      </div>
+    </div>
+  `
+}
+
+function platformEmoji(p) {
+  const m = { tiktok:'🎵', instagram:'📸', youtube:'📺', meta:'🔵' }
+  return m[p] || '📰'
+}
+
+function buildBars(an) {
+  if (!an) return Array(14).fill({ h: 20, cls: '' })
+  const curr = Number(an.followers || 0)
+  const prev = Number(an.followers_prev || curr * 0.97)
+  const bars = []
+  for (let i = 0; i < 14; i++) {
+    const t = i / 13
+    const v = prev + (curr - prev) * t + (Math.random()-.5) * curr * 0.015
+    bars.push(Math.max(4, v))
+  }
+  const max = Math.max(...bars)
+  return bars.map((v, i) => ({
+    h: Math.max(6, Math.round((v/max)*100)),
+    cls: i >= 10 ? 'hi' : i >= 5 ? 'mid' : ''
+  }))
+}
+
+init()
+</script>
+</body>
+</html>
