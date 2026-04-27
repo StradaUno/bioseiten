@@ -42,25 +42,6 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 #app.visible{display:flex}
 
 /* SIDEBAR */
-.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:80;pointer-events:none;transition:background .25s}
-.sidebar-overlay.open{background:rgba(0,0,0,.35);pointer-events:auto}
-.sidebar{position:fixed;top:0;left:0;bottom:0;width:272px;background:var(--surface);z-index:90;transform:translateX(-100%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.08)}
-.sidebar.open{transform:translateX(0)}
-.sidebar-header{padding:20px 20px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-.sidebar-logo{display:flex;align-items:center;gap:8px}
-.sidebar-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
-.sidebar-logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em}
-.sidebar-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--muted);line-height:1}
-.sidebar-nav{flex:1;padding:10px;overflow-y:auto}
-.sidebar-section{font-size:10px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;padding:12px 10px 4px}
-.sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px}
-.sidebar-item:hover{background:var(--surface2);color:var(--text)}
-.sidebar-item.active{background:var(--text);color:white}
-.sidebar-item svg{flex-shrink:0}
-.sidebar-footer{padding:16px;border-top:1px solid var(--border)}
-.sidebar-user{font-size:12px;color:var(--muted);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.btn-sidebar-logout{width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border-strong);font-family:inherit;font-size:13px;font-weight:500;color:var(--text);cursor:pointer}
-.btn-sidebar-logout:hover{background:var(--border)}
 
 /* TOPBAR */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between}
@@ -215,7 +196,11 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .check-icon{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;flex-shrink:0}
 .check-ok{background:var(--green-bg);color:var(--green)}
 .check-missing{background:var(--red-bg);color:var(--red)}
+
+/* iOS zoom fix */
+input,textarea,select{font-size:16px!important}
 </style>
+<script src="/sidebar.js"></script>
 </head>
 <body>
 
@@ -233,63 +218,8 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 </div>
 
 <!-- APP -->
+<div id="sidebar-root"></div>
 <div id="app">
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-  <div class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
-      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
-    </div>
-    <nav class="sidebar-nav">
-      <div class="sidebar-section">Übersicht</div>
-      <a class="sidebar-item" href="/dashboard">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Dashboard
-      </a>
-      <a class="sidebar-item" href="/digest">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        Daily Digest
-      </a>
-      <div class="sidebar-section">Creator</div>
-      <a class="sidebar-item" href="/analytics">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Analytics
-      </a>
-      <a class="sidebar-item" href="/trends">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-        Trends
-      </a>
-      <div class="sidebar-section">Business</div>
-      <a class="sidebar-item" href="/requests">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Anfragen
-      </a>
-      <a class="sidebar-item active" href="/biolink">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        BioLink
-      </a>
-      <a class="sidebar-item" href="/mediakit">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Media Kit
-      </a>
-      <a class="sidebar-item" href="/profile">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Profil
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user" id="sidebar-user-email"></div>
-      <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
-      <div style="margin-top:12px;display:flex;gap:10px;justify-content:center">
-        <a href="/legal/impressum" style="font-size:11px;color:var(--subtle);text-decoration:none">Impressum</a>
-        <span style="font-size:11px;color:var(--subtle)">·</span>
-        <a href="/legal/datenschutz" style="font-size:11px;color:var(--subtle);text-decoration:none">Datenschutz</a>
-        <span style="font-size:11px;color:var(--subtle)">·</span>
-        <a href="/legal/agb" style="font-size:11px;color:var(--subtle);text-decoration:none">AGB</a>
-      </div>
-    </div>
-  </div>
-
   <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-left">
@@ -486,7 +416,7 @@ window.showToast=function(msg,dur=2800){
 }
 window.openSidebar=()=>{document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
 window.closeSidebar=()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
-window.logout=async()=>{await sb.auth.signOut();location.reload()}
+window.logout=window.sidebarLogout||(async()=>{try{const c=window.sb||window.supabase;if(c)await c.auth.signOut();}catch(_){}location.replace('https://viuno.de')})
 
 window.openSheet=function(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden'}
 window.closeSheet=function(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow=''}
@@ -496,7 +426,7 @@ window.closeModal=function(n){document.getElementById(`delete-modal-${n}`).class
 async function baseInit(onSession){
   const{data:{session}}=await sb.auth.getSession()
   if(session){await onSession(session);return}
-  document.getElementById('login-screen').style.display='flex'
+  location.replace('/login')
   document.getElementById('btn-login').addEventListener('click',doLogin)
   document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
 }
@@ -684,7 +614,7 @@ function renderPage(){
         </div>
         <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer">
           <input type="checkbox" id="terms-check" style="width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--text);cursor:pointer"/>
-          <span style="font-size:12px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal/nutzungsbedingungen" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> von viuno.</span>
+          <span style="font-size:12px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#biopage_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> von viuno.</span>
         </label>
         <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()" ${allOk?'':'disabled'}>
           ${allOk?'✨ BioLink-Seite erstellen':'Bitte alle Punkte erfüllen'}
