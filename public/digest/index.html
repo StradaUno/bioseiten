@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>veuno · Daily Digest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f5f4f2;
+  --surface: #ffffff;
+  --surface2: #f0efed;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.13);
+  --text: #111110;
+  --muted: #7a7975;
+  --subtle: #b0afa9;
+  --green: #1a7f4b;
+  --green-bg: #edf7f1;
+  --orange: #b85c00;
+  --orange-bg: #fdf3e7;
+  --red: #c0392b;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ─── LOGIN ─── */
+#login-screen {
+  min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.login-card {
+  width: 100%; max-width: 360px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px 28px;
+}
+.login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.login-logo-mark {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--text); color: white;
+  display: grid; place-items: center; font-size: 14px; font-weight: 700;
+}
+.login-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
+.login-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.field input {
+  width: 100%; padding: 11px 14px;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 14px; color: var(--text);
+  background: var(--bg); outline: none; transition: border-color .15s;
+}
+.field input:focus { border-color: var(--text); }
+.btn-login {
+  width: 100%; padding: 12px; margin-top: 8px;
+  background: var(--text); color: white; border: none;
+  border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: opacity .15s;
+}
+.btn-login:disabled { opacity: .5; cursor: not-allowed; }
+.login-error { font-size: 12px; color: var(--red); margin-top: 10px; text-align: center; min-height: 18px; }
+
+/* ─── APP ─── */
+#app { display: none; min-height: 100dvh; flex-direction: column; }
+#app.visible { display: flex; }
+
+/* topbar */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245,244,242,0.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-logo { display: flex; align-items: center; gap: 8px; }
+.topbar-mark {
+  width: 26px; height: 26px; border-radius: 6px;
+  background: var(--text); color: white;
+  display: grid; place-items: center; font-size: 11px; font-weight: 700;
+}
+.topbar-name { font-size: 15px; font-weight: 700; letter-spacing: -.03em; }
+.topbar-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--text); color: white;
+  display: grid; place-items: center; font-size: 12px; font-weight: 600;
+  cursor: pointer;
+}
+
+/* page */
+.page { flex: 1; padding-bottom: calc(80px + var(--safe-bottom)); overflow-y: auto; }
+
+/* page header */
+.page-header { padding: 20px 20px 0; }
+.page-title { font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+
+/* date selector */
+.date-scroll {
+  display: flex; gap: 8px; padding: 16px 20px 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.date-scroll::-webkit-scrollbar { display: none; }
+.date-pill {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 14px; border-radius: 12px; cursor: pointer; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--surface);
+  transition: all .15s;
+}
+.date-pill.active { background: var(--text); border-color: var(--text); }
+.date-pill-day { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.date-pill.active .date-pill-day { color: rgba(255,255,255,.6); }
+.date-pill-num { font-size: 17px; font-weight: 700; color: var(--text); letter-spacing: -.02em; margin-top: 1px; }
+.date-pill.active .date-pill-num { color: white; }
+.date-pill-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); margin-top: 4px; }
+.date-pill.active .date-pill-dot { background: rgba(255,255,255,.5); }
+
+/* teaser strip */
+.teaser-strip {
+  margin: 14px 20px 0;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 16px;
+}
+.teaser-label { font-size: 10px; font-weight: 600; color: var(--subtle); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
+.teaser-lines { display: flex; flex-direction: column; gap: 5px; }
+.teaser-line { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+/* filter pills */
+.filter-row {
+  display: flex; gap: 6px; padding: 14px 20px 0;
+  overflow-x: auto; scrollbar-width: none;
+}
+.filter-row::-webkit-scrollbar { display: none; }
+.f-pill {
+  padding: 6px 14px; border-radius: 99px; white-space: nowrap;
+  font-size: 12px; font-weight: 500; font-family: inherit; flex-shrink: 0;
+  border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  cursor: pointer; transition: all .15s;
+}
+.f-pill.active { background: var(--text); color: white; border-color: var(--text); }
+
+/* cards list */
+.cards-list { padding: 12px 20px 0; }
+
+/* digest card */
+.digest-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 10px; overflow: hidden;
+  cursor: pointer; transition: border-color .15s;
+}
+.digest-card:active { background: var(--surface2); }
+.digest-card.expanded .card-body-full { display: block; }
+.digest-card.expanded .card-chevron { transform: rotate(180deg); }
+
+.card-image {
+  width: 100%; height: 140px; object-fit: cover;
+  background: var(--surface2); display: block;
+}
+.card-image-fallback {
+  width: 100%; height: 140px; background: var(--surface2);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+}
+
+.card-inner { padding: 14px 16px; }
+.card-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.platform-badge {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+.pb-tiktok   { background: #f0f0f0; color: #111; }
+.pb-instagram { background: #fce4ec; color: #880e4f; }
+.pb-youtube  { background: #ffebee; color: #b71c1c; }
+.pb-meta     { background: #e3f2fd; color: #0d47a1; }
+.pb-allgemein { background: var(--surface2); color: var(--muted); }
+
+.level-dot {
+  width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+}
+.level-hoch   { background: var(--red); }
+.level-mittel { background: var(--orange); }
+.level-info   { background: var(--subtle); }
+
+.card-source { font-size: 11px; color: var(--subtle); margin-left: auto; }
+.card-chevron { font-size: 12px; color: var(--subtle); transition: transform .2s; margin-left: 4px; }
+
+.card-headline { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.02em; line-height: 1.35; margin-bottom: 6px; }
+.card-summary { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+.card-body-full {
+  display: none;
+  border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;
+}
+.card-full-text { font-size: 13px; color: var(--muted); line-height: 1.7; white-space: pre-line; }
+
+.card-impact {
+  background: var(--surface2); border-radius: var(--radius-sm);
+  padding: 10px 12px; margin-top: 12px;
+}
+.card-impact-label { font-size: 10px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.card-impact-text { font-size: 12px; color: var(--text); line-height: 1.5; font-weight: 500; }
+
+.card-link {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 12px;
+  font-size: 12px; font-weight: 600; color: var(--text);
+  text-decoration: none; padding: 7px 14px; border-radius: 99px;
+  border: 1px solid var(--border-strong); background: var(--surface);
+  transition: background .15s;
+}
+.card-link:active { background: var(--surface2); }
+
+/* level legend */
+.legend { display: flex; gap: 14px; padding: 0 20px; margin-top: 14px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+
+/* empty / loading */
+.empty-state {
+  text-align: center; padding: 48px 24px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin: 14px 20px 0;
+}
+.empty-icon { font-size: 32px; margin-bottom: 10px; }
+.empty-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.empty-sub { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+.skeleton {
+  background: linear-gradient(90deg, var(--surface2) 25%, #e8e6e2 50%, var(--surface2) 75%);
+  background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px;
+}
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* bottom nav */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(245,244,242,0.95); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-around;
+  padding: 10px 0 calc(14px + var(--safe-bottom));
+}
+.nav-item {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  cursor: pointer; padding: 4px 14px; border-radius: 12px;
+  transition: background .12s; min-width: 60px; text-decoration: none;
+}
+.nav-item:active { background: var(--surface2); }
+.nav-icon { width: 24px; height: 24px; display: grid; place-items: center; position: relative; }
+.nav-label { font-size: 10px; font-weight: 500; color: var(--subtle); }
+.nav-item.active .nav-label { color: var(--text); font-weight: 600; }
+
+/* toast */
+.toast-wrap { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 200; pointer-events: none; }
+.toast { background: var(--text); color: white; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 99px; animation: toastIn .25s ease-out; white-space: nowrap; }
+@keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- ════ LOGIN ════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">v</div>
+      <div class="login-logo-text">veuno</div>
+    </div>
+    <div class="login-title">Willkommen zurück.</div>
+    <div class="login-sub">Melde dich mit deinem veuno-Account an.</div>
+    <div class="field">
+      <label>E-Mail</label>
+      <input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Passwort</label>
+      <input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ════ APP ════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-mark">v</div>
+      <div class="topbar-name">veuno</div>
+    </div>
+    <div class="topbar-avatar" id="user-avatar" onclick="logout()">?</div>
+  </div>
+
+  <div class="page">
+
+    <div class="page-header">
+      <div class="page-title">Daily Digest</div>
+      <div class="page-sub" id="digest-sub">Was heute in der Creator-Welt passiert.</div>
+    </div>
+
+    <!-- Date Picker -->
+    <div class="date-scroll" id="date-scroll"></div>
+
+    <!-- Teaser -->
+    <div class="teaser-strip hidden" id="teaser-strip">
+      <div class="teaser-label">Auf einen Blick</div>
+      <div class="teaser-lines" id="teaser-lines"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot level-hoch"></div> Wichtig</div>
+      <div class="legend-item"><div class="legend-dot level-mittel"></div> Mittel</div>
+      <div class="legend-item"><div class="legend-dot level-info"></div> Info</div>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-row" id="filter-row">
+      <button class="f-pill active" data-filter="alle">Alle</button>
+    </div>
+
+    <!-- Skeleton -->
+    <div id="skeleton-area" style="padding:12px 20px 0">
+      <div class="skeleton" style="height:180px;margin-bottom:10px;border-radius:16px"></div>
+      <div class="skeleton" style="height:140px;margin-bottom:10px;border-radius:16px"></div>
+      <div class="skeleton" style="height:140px;border-radius:16px"></div>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards-list hidden" id="cards-list"></div>
+
+    <!-- Empty -->
+    <div class="empty-state hidden" id="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">Kein Digest für diesen Tag</div>
+      <div class="empty-sub">Der tägliche Digest wird jeden Morgen um 7:00 Uhr generiert.</div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <a class="nav-item" href="dashboard.html">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <span class="nav-label">Home</span>
+    </a>
+    <div class="nav-item active">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <span class="nav-label">Digest</span>
+    </div>
+    <a class="nav-item" href="analytics.html">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <span class="nav-label">Analytics</span>
+    </a>
+    <a class="nav-item" href="trends.html">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <span class="nav-label">Trends</span>
+    </a>
+    <a class="nav-item" href="requests.html">
+      <div class="nav-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <span class="nav-label">Anfragen</span>
+    </a>
+  </div>
+</div>
+
+<div class="toast-wrap hidden" id="toast-wrap">
+  <div class="toast" id="toast-msg"></div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, {
+  auth: { persistSession: true, autoRefreshToken: true }
+})
+
+// ─── state ───
+const state = {
+  digests: [],        // [{date, teaser, cards}]
+  activeDate: null,
+  activeFilter: 'alle'
+}
+
+// ─── utils ───
+function escHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+function fmtDate(d) {
+  if (!d) return ''
+  return new Date(d+'T12:00:00').toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' })
+}
+function fmtDayNum(d) {
+  return new Date(d+'T12:00:00').toLocaleDateString('de-DE', { day: '2-digit' })
+}
+function fmtDayName(d) {
+  const names = ['So','Mo','Di','Mi','Do','Fr','Sa']
+  return names[new Date(d+'T12:00:00').getDay()]
+}
+
+window.showToast = function(msg, dur = 2800) {
+  const w = document.getElementById('toast-wrap')
+  document.getElementById('toast-msg').textContent = msg
+  w.classList.remove('hidden')
+  clearTimeout(w._t)
+  w._t = setTimeout(() => w.classList.add('hidden'), dur)
+}
+
+// ─── auth ───
+async function init() {
+  const { data: { session } } = await sb.auth.getSession()
+  if (session) { await enterApp(session); return }
+  setupLogin()
+}
+
+function setupLogin() {
+  document.getElementById('login-screen').style.display = 'flex'
+  const btn = document.getElementById('btn-login')
+  btn.addEventListener('click', doLogin)
+  document.getElementById('inp-pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
+}
+
+async function doLogin() {
+  const email = document.getElementById('inp-email').value.trim()
+  const pw    = document.getElementById('inp-pw').value
+  const errEl = document.getElementById('login-error')
+  const btn   = document.getElementById('btn-login')
+  errEl.textContent = ''
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
+  btn.disabled = false; btn.textContent = 'Einloggen'
+  if (error) { errEl.textContent = 'Falsche E-Mail oder Passwort.'; return }
+  await enterApp(data.session)
+}
+
+async function enterApp(session) {
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').classList.add('visible')
+  const { data: profile } = await sb.from('users').select('display_name, full_name').eq('id', session.user.id).single()
+  const name = profile?.display_name || profile?.full_name || session.user.email || '?'
+  const av = document.getElementById('user-avatar')
+  av.textContent = name[0].toUpperCase()
+  av.title = `${name} · Logout`
+  await loadDigests()
+}
+
+window.logout = async function() {
+  await sb.auth.signOut(); location.reload()
+}
+
+// ─── data ───
+async function loadDigests() {
+  const { data, error } = await sb
+    .from('daily_digest')
+    .select('date, teaser, cards, generated_at')
+    .order('date', { ascending: false })
+    .limit(14)
+
+  document.getElementById('skeleton-area').classList.add('hidden')
+
+  if (error || !data?.length) {
+    document.getElementById('empty-state').classList.remove('hidden')
+    return
+  }
+
+  state.digests = data
+  state.activeDate = data[0].date
+
+  renderDatePicker()
+  renderDigest()
+}
+
+// ─── date picker ───
+function renderDatePicker() {
+  const el = document.getElementById('date-scroll')
+  el.innerHTML = state.digests.map(d => `
+    <div class="date-pill ${d.date === state.activeDate ? 'active' : ''}" data-date="${d.date}" onclick="selectDate('${d.date}')">
+      <div class="date-pill-day">${fmtDayName(d.date)}</div>
+      <div class="date-pill-num">${fmtDayNum(d.date)}</div>
+      <div class="date-pill-dot"></div>
+    </div>`).join('')
+}
+
+window.selectDate = function(date) {
+  state.activeDate = date
+  state.activeFilter = 'alle'
+  renderDatePicker()
+  renderDigest()
+  // scroll active pill into view
+  setTimeout(() => {
+    const active = document.querySelector('.date-pill.active')
+    if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+  }, 50)
+}
+
+// ─── filter ───
+function buildFilters(cards) {
+  const platforms = [...new Set(cards.map(c => c.platform).filter(Boolean))]
+  const el = document.getElementById('filter-row')
+  el.innerHTML = `<button class="f-pill ${state.activeFilter === 'alle' ? 'active' : ''}" data-filter="alle" onclick="setFilter('alle')">Alle</button>`
+  platforms.forEach(p => {
+    el.innerHTML += `<button class="f-pill ${state.activeFilter === p ? 'active' : ''}" data-filter="${p}" onclick="setFilter('${p}')">${platformLabel(p)}</button>`
+  })
+  el.innerHTML += `<button class="f-pill ${state.activeFilter === 'hoch' ? 'active' : ''}" data-filter="hoch" onclick="setFilter('hoch')">🔴 Wichtig</button>`
+}
+
+window.setFilter = function(f) {
+  state.activeFilter = f
+  document.querySelectorAll('.f-pill').forEach(p => p.classList.toggle('active', p.dataset.filter === f))
+  renderCards(currentCards())
+}
+
+function currentCards() {
+  const digest = state.digests.find(d => d.date === state.activeDate)
+  if (!digest) return []
+  let cards = digest.cards || []
+  if (state.activeFilter === 'hoch') cards = cards.filter(c => c.level === 'hoch')
+  else if (state.activeFilter !== 'alle') cards = cards.filter(c => c.platform === state.activeFilter)
+  return cards
+}
+
+// ─── render digest ───
+function renderDigest() {
+  const digest = state.digests.find(d => d.date === state.activeDate)
+  if (!digest) {
+    document.getElementById('cards-list').classList.add('hidden')
+    document.getElementById('empty-state').classList.remove('hidden')
+    document.getElementById('teaser-strip').classList.add('hidden')
+    return
+  }
+
+  // update sub label
+  document.getElementById('digest-sub').textContent = fmtDate(digest.date)
+
+  // teaser
+  if (digest.teaser) {
+    const lines = digest.teaser.split('\n').filter(Boolean)
+    document.getElementById('teaser-lines').innerHTML = lines.map(l =>
+      `<div class="teaser-line">${escHtml(l)}</div>`).join('')
+    document.getElementById('teaser-strip').classList.remove('hidden')
+  } else {
+    document.getElementById('teaser-strip').classList.add('hidden')
+  }
+
+  // filters
+  buildFilters(digest.cards || [])
+
+  // cards
+  document.getElementById('empty-state').classList.add('hidden')
+  document.getElementById('cards-list').classList.remove('hidden')
+  renderCards(currentCards())
+}
+
+function renderCards(cards) {
+  const el = document.getElementById('cards-list')
+  if (!cards.length) {
+    el.innerHTML = `<div class="empty-state" style="margin:0 0 10px">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">Keine Karten</div>
+      <div class="empty-sub">Für diesen Filter gibt es heute nichts.</div>
+    </div>`
+    return
+  }
+
+  el.innerHTML = cards.map((c, i) => cardHtml(c, i)).join('')
+
+  // bind expand
+  el.querySelectorAll('.digest-card').forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('expanded')
+    })
+  })
+}
+
+function platformLabel(p) {
+  const map = { tiktok: 'TikTok', instagram: 'Instagram', youtube: 'YouTube', meta: 'Meta', allgemein: 'Allgemein' }
+  return map[p] || p
+}
+function platformClass(p) {
+  const map = { tiktok: 'pb-tiktok', instagram: 'pb-instagram', youtube: 'pb-youtube', meta: 'pb-meta', allgemein: 'pb-allgemein' }
+  return map[p] || 'pb-allgemein'
+}
+function platformEmoji(p) {
+  const map = { tiktok: '🎵', instagram: '📸', youtube: '📺', meta: '🔵', allgemein: '🌐' }
+  return map[p] || '📰'
+}
+
+function cardHtml(c) {
+  const hasImage = c.image_url && c.image_url.trim()
+  const hasFullContent = c.full_content && c.full_content.trim()
+
+  return `
+    <div class="digest-card">
+      ${hasImage
+        ? `<img class="card-image" src="${escHtml(c.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot;>${platformEmoji(c.platform)}</div>'">`
+        : `<div class="card-image-fallback">${platformEmoji(c.platform)}</div>`}
+      <div class="card-inner">
+        <div class="card-meta">
+          <span class="platform-badge ${platformClass(c.platform)}">${platformLabel(c.platform)}</span>
+          <div class="level-dot level-${c.level || 'info'}"></div>
+          <span class="card-source">${escHtml(c.source || '')}</span>
+          ${(hasFullContent || c.impact) ? '<span class="card-chevron">▼</span>' : ''}
+        </div>
+        <div class="card-headline">${escHtml(c.headline || '')}</div>
+        <div class="card-summary">${escHtml(c.summary || '')}</div>
+
+        ${(hasFullContent || c.impact) ? `
+        <div class="card-body-full">
+          ${hasFullContent ? `<div class="card-full-text">${escHtml(c.full_content)}</div>` : ''}
+          ${c.impact ? `
+          <div class="card-impact">
+            <div class="card-impact-label">⚡ Was das für dich bedeutet</div>
+            <div class="card-impact-text">${escHtml(c.impact)}</div>
+          </div>` : ''}
+          ${c.source_url ? `<a class="card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ↗</a>` : ''}
+        </div>` : ''}
+      </div>
+    </div>`
+}
+
+init()
+</script>
+</body>
+</html>
