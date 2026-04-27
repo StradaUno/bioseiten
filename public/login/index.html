@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>viuno · Einloggen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);--text:#111110;--muted:#7a7975;--subtle:#b0afa9;--red:#c0392b;--red-bg:#fdf0ef;--radius:16px;--radius-sm:10px;--safe-bottom:env(safe-area-inset-bottom,0px)}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;min-height:100dvh}
+.wrap{width:100%;max-width:380px;display:flex;flex-direction:column;gap:0}
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:32px}
+.logo-mark{width:36px;height:36px;border-radius:10px;background:var(--text);color:white;display:grid;place-items:center;font-size:16px;font-weight:700}
+.logo-text{font-size:20px;font-weight:700;letter-spacing:-.04em}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 24px}
+.card-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.card-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field input{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.field input:focus{border-color:var(--text)}
+.btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.error-msg{font-size:12px;color:var(--red);background:var(--red-bg);border:1px solid rgba(192,57,43,.15);border-radius:var(--radius-sm);padding:10px 12px;margin-top:12px;display:none}
+.error-msg.show{display:block}
+.divider{text-align:center;font-size:12px;color:var(--subtle);margin:20px 0}
+.link-row{text-align:center;font-size:13px;color:var(--muted);margin-top:20px}
+.link-row a{color:var(--text);font-weight:600;text-decoration:none}
+.link-row a:hover{text-decoration:underline}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">
+    <div class="logo-mark">v</div>
+    <div class="logo-text">viuno</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Willkommen zurück.</div>
+    <div class="card-sub">Melde dich mit deinem viuno-Account an.</div>
+    <div class="field">
+      <label>E-Mail</label>
+      <input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Passwort</label>
+      <input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-primary" id="btn-login">Einloggen</button>
+    <div class="error-msg" id="error-msg"></div>
+  </div>
+  <div class="link-row">
+    Noch kein Account? <a href="/register">Jetzt registrieren</a>
+  </div>
+</div>
+
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+const sb=createClient('https://bzejndghppuipnedasuv.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo',{auth:{persistSession:true,autoRefreshToken:true}})
+
+// If already logged in → dashboard
+const{data:{session}}=await sb.auth.getSession()
+if(session)location.replace('/dashboard')
+
+const emailEl=document.getElementById('inp-email')
+const pwEl=document.getElementById('inp-pw')
+const btn=document.getElementById('btn-login')
+const errEl=document.getElementById('error-msg')
+
+function showError(msg){errEl.textContent=msg;errEl.classList.add('show')}
+function hideError(){errEl.classList.remove('show')}
+
+async function doLogin(){
+  hideError()
+  const email=emailEl.value.trim()
+  const pw=pwEl.value
+  if(!email||!pw){showError('Bitte E-Mail und Passwort eingeben.');return}
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{error}=await sb.auth.signInWithPassword({email,password:pw})
+  btn.disabled=false;btn.textContent='Einloggen'
+  if(error){
+    if(error.message.includes('Invalid login')||error.message.includes('invalid_credentials')){
+      showError('E-Mail oder Passwort falsch.')
+    } else if(error.message.includes('Email not confirmed')){
+      showError('Bitte bestätige zuerst deine E-Mail-Adresse.')
+    } else {
+      showError(error.message)
+    }
+    return
+  }
+  location.replace('/dashboard')
+}
+
+btn.addEventListener('click',doLogin)
+pwEl.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
+emailEl.addEventListener('keydown',e=>{if(e.key==='Enter')pwEl.focus()})
+</script>
+</body>
+</html>
