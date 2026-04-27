@@ -259,14 +259,19 @@ function renderProfile(){
         <div class="save-success hidden" id="save-success">✓ Gespeichert</div>
       </div>
     </div>
-    <div class="section" style="padding-bottom:8px"><div class="section-label">Account</div>
+    <div class="section" style="padding-bottom:calc(8px + var(--safe-bottom))"><div class="section-label">Account</div>
       <div class="danger-card">
-        <div class="danger-row" style="margin-bottom:12px">
-          <div><div class="danger-title">Login-E-Mail</div><div class="danger-sub">${escHtml(state.user.email||'–')}</div></div>
+        <div class="danger-row" style="margin-bottom:0">
+          <div style="flex:1;min-width:0">
+            <div class="danger-title">Login-E-Mail</div>
+            <div class="danger-sub" id="current-email-display">${escHtml(state.user.email||'–')}</div>
+          </div>
+          <button class="btn-danger" onclick="openEmailModal()" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong)">Ändern</button>
         </div>
+        <div style="height:1px;background:var(--border);margin:14px 0"></div>
         <div class="danger-row">
           <div><div class="danger-title">Account löschen</div><div class="danger-sub">Alle Daten werden unwiderruflich gelöscht.</div></div>
-          <button class="btn-danger" onclick="showToast('Bitte wende dich an support@viuno.de')">Löschen</button>
+          <button class="btn-danger" onclick="openDeleteModal()">Löschen</button>
         </div>
       </div>
     </div>`
@@ -321,6 +326,69 @@ function showModal(title,body,confirmLabel,onConfirm,warnText){
   document.body.style.overflow='hidden'
 }
 window.closeModal=function(){const el=document.getElementById('profile-modal');if(el)el.remove();document.body.style.overflow=''}
+
+// ── E-Mail ändern ──
+window.openEmailModal=function(){
+  showModal(
+    'E-Mail-Adresse ändern',
+    `<div style="margin-bottom:12px">Aktuelle E-Mail: <strong>${escHtml(state.user.email)}</strong></div>
+     <div class="field" style="margin:0"><label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Neue E-Mail</label>
+     <input type="email" id="modal-new-email" placeholder="neue@email.de" style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none"/></div>`,
+    'Bestätigungsmail senden',
+    commitEmailChange,
+    null
+  )
+}
+async function commitEmailChange(){
+  const input=document.getElementById('modal-new-email')
+  const newEmail=input?.value?.trim()
+  if(!newEmail||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)){showToast('Bitte gültige E-Mail eingeben.');return}
+  if(newEmail===state.user.email){showToast('Das ist bereits deine E-Mail.');return}
+  const btn=document.getElementById('modal-confirm-btn')
+  if(btn){btn.disabled=true;btn.textContent='Wird gesendet…'}
+  const{error}=await sb.auth.updateUser({email:newEmail})
+  closeModal()
+  if(error){showToast('Fehler: '+error.message,5000);return}
+  showToast('Bestätigungsmail gesendet! Bitte prüfe dein Postfach.',5000)
+}
+
+// ── Account löschen ──
+window.openDeleteModal=function(){
+  showModal(
+    'Account löschen?',
+    'Alle deine Daten, BioLink-Seite und Media Kit werden dauerhaft gelöscht.',
+    'Weiter',
+    showDeleteConfirm,
+    null
+  )
+}
+function showDeleteConfirm(){
+  showModal(
+    'Wirklich unwiderruflich löschen?',
+    null,
+    'Ja, Account jetzt löschen',
+    commitDeleteAccount,
+    'Diese Aktion kann nicht rückgängig gemacht werden. Dein Account wird sofort gelöscht.'
+  )
+}
+async function commitDeleteAccount(){
+  const btn=document.getElementById('modal-confirm-btn')
+  if(btn){btn.disabled=true;btn.textContent='Wird gelöscht…'}
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session){showToast('Session abgelaufen');location.replace('/login');return}
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/delete-account`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json().catch(()=>({}))
+    if(!res.ok&&body.success!==true){closeModal();showToast('Fehler: '+(body.error||'Unbekannt'),5000);return}
+    await sb.auth.signOut()
+    location.replace('https://viuno.de')
+  }catch(err){
+    closeModal();showToast('Fehler: '+err.message,5000)
+  }
+}
 
 window.saveProfile=async function(){
   const btn=document.getElementById('btn-save'),successEl=document.getElementById('save-success')
