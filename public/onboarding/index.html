@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>veuno · Setup</title>
+<title>viuno · Setup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -71,13 +71,17 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hidden{display:none!important}
+
+/* iOS zoom fix */
+input,textarea,select{font-size:16px!important}
 </style>
+<script src="/sidebar.js"></script>
 </head>
 <body>
 
 <div id="login-section">
   <div class="login-card">
-    <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">veuno</div></div>
+    <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
     <div class="login-title">Account erstellen.</div>
     <div class="login-sub">Melde dich an um dein Profil einzurichten.</div>
     <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
@@ -90,7 +94,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 <div id="onboarding-section" class="hidden">
   <div class="ob-wrap" id="ob-wrap">
     <div class="ob-topbar">
-      <div class="ob-logo"><div class="ob-logo-mark">v</div><div class="ob-logo-text">veuno</div></div>
+      <div class="ob-logo"><div class="ob-logo-mark">v</div><div class="ob-logo-text">viuno</div></div>
       <div class="ob-step-label" id="step-label">Schritt 1 von 5</div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
@@ -102,9 +106,9 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
   </div>
   <div class="success-wrap hidden" id="success-wrap">
     <div class="confetti-area" id="confetti-area">🎉</div>
-    <div class="success-title">Willkommen bei veuno!</div>
+    <div class="success-title">Willkommen bei viuno!</div>
     <div class="success-sub">Dein Profil ist fertig eingerichtet.<br>Jetzt geht's los.</div>
-    <button class="btn-go-dashboard" onclick="window.location='/dashboard.html'">Zum Dashboard →</button>
+    <button class="btn-go-dashboard" onclick="window.location='/dashboard'">Zum Dashboard →</button>
   </div>
 </div>
 
@@ -153,12 +157,23 @@ document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Ent
 // check existing session
 ;(async()=>{
   const{data:{session}}=await sb.auth.getSession()
-  if(session){
-    state.user=session.user
-    document.getElementById('login-section').classList.add('hidden')
-    document.getElementById('onboarding-section').classList.remove('hidden')
-    renderStep()
+  if(!session)return // stay on login screen
+  state.user=session.user
+  // If onboarding already completed → go to dashboard
+  const{data:profile}=await sb.from('users').select('full_name,bio,instagram_handle,tiktok_handle,niche_category,profile_image_url,onboarding_completed').eq('id',session.user.id).single()
+  if(profile?.onboarding_completed===true){location.replace('/dashboard');return}
+  // Pre-fill from existing data (e.g. from register.html)
+  if(profile){
+    if(profile.full_name)state.data.fullName=profile.full_name
+    if(profile.bio)state.data.bio=profile.bio
+    if(profile.instagram_handle)state.data.ig=profile.instagram_handle.replace(/^@/,'')
+    if(profile.tiktok_handle)state.data.tt=profile.tiktok_handle.replace(/^@/,'')
+    if(profile.niche_category)state.data.niche=profile.niche_category
+    if(profile.profile_image_url)state.data.photoUrl=profile.profile_image_url
   }
+  document.getElementById('login-section').classList.add('hidden')
+  document.getElementById('onboarding-section').classList.remove('hidden')
+  renderStep()
 })()
 
 // ─── steps ───
@@ -176,7 +191,9 @@ function renderStep(){
   document.getElementById('progress-fill').style.width=`${(state.step/state.total)*100}%`
   document.getElementById('btn-back').classList.toggle('hidden',state.step===1)
   document.getElementById('btn-next').textContent=state.step===state.total?'Abschließen ✓':'Weiter →'
+  document.getElementById('btn-next').disabled=false
   const content=document.getElementById('ob-content')
+  // Clear first, then set header, then let render() append
   content.innerHTML=`<div class="step-num">Schritt ${state.step} / ${state.total}</div><div class="step-title">${s.title}</div><div class="step-sub">${s.sub}</div>`
   s.render(content)
 }
@@ -206,6 +223,10 @@ function renderStep3(el){
   el.innerHTML+=`<div class="niche-grid">${NICHES.map(n=>`<button class="niche-btn ${state.data.niche===n.key?'active':''}" data-key="${n.key}" onclick="selectNiche('${n.key}')"><div class="niche-emoji">${n.emoji}</div><div class="niche-label">${n.label}</div></button>`).join('')}</div>`
 }
 window.selectNiche=function(key){state.data.niche=key;document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.key===key))}
+function collectStep3(){
+  if(!state.data.niche){showToast('Bitte wähle eine Nische.');return false}
+  return true
+}
 
 function renderStep4(el){
   const thumb=state.data.photoUrl?`<img src="${escHtml(state.data.photoUrl)}" alt=""/>`:`<div class="photo-icon">📷</div><div class="photo-hint">Tippen zum Hochladen</div>`
@@ -231,13 +252,15 @@ document.getElementById('photo-input').addEventListener('change',async(e)=>{
 
 function renderStep5(el){
   const d=state.data
+  const nicheFound=NICHES.find(n=>n.key===d.niche)
+  const nicheLabel=nicheFound?(nicheFound.emoji+' '+nicheFound.label):(d.niche||'–')
   el.innerHTML+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
     ${d.photoUrl?`<div style="text-align:center;padding:20px 0"><img src="${escHtml(d.photoUrl)}" alt="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong)"/></div>`:''}
     <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">Name</span><span style="font-size:13px;font-weight:500">${escHtml(d.fullName)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">Name</span><span style="font-size:13px;font-weight:500">${escHtml(d.fullName||'–')}</span></div>
       ${d.ig?`<div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">Instagram</span><span style="font-size:13px;font-weight:500">@${escHtml(d.ig)}</span></div>`:''}
       ${d.tt?`<div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">TikTok</span><span style="font-size:13px;font-weight:500">@${escHtml(d.tt)}</span></div>`:''}
-      <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">Nische</span><span style="font-size:13px;font-weight:500">${escHtml(NICHES.find(n=>n.key===d.niche)?.emoji+' '+NICHES.find(n=>n.key===d.niche)?.label||d.niche)}</span></div>
+      <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">Nische</span><span style="font-size:13px;font-weight:500">${escHtml(nicheLabel)}</span></div>
     </div>
   </div>`
 }
