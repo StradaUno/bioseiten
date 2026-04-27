@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>veuno · Setup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{--bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);--text:#111110;--muted:#7a7975;--subtle:#b0afa9;--green:#1a7f4b;--green-bg:#edf7f1;--red:#c0392b;--radius:16px;--radius-sm:10px;--safe-bottom:env(safe-area-inset-bottom,0px)}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+.ob-wrap{min-height:100dvh;display:flex;flex-direction:column;padding:0 0 calc(40px + var(--safe-bottom))}
+.ob-topbar{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.ob-logo{display:flex;align-items:center;gap:8px}
+.ob-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
+.ob-logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em}
+.ob-step-label{font-size:12px;font-weight:500;color:var(--muted)}
+.progress-bar{margin:20px 20px 0;height:4px;border-radius:2px;background:var(--surface2)}
+.progress-fill{height:100%;border-radius:2px;background:var(--text);transition:width .4s cubic-bezier(.32,.72,0,1)}
+.ob-content{flex:1;padding:28px 20px 0}
+.step-num{font-size:11px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.step-title{font-size:26px;font-weight:700;letter-spacing:-.04em;color:var(--text);margin-bottom:6px}
+.step-sub{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:13px 16px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:15px;color:var(--text);background:var(--surface);outline:none;transition:border-color .15s}
+.field input:focus,.field textarea:focus{border-color:var(--text)}
+.field textarea{resize:none;line-height:1.5}
+.handle-prefix-wrap{display:flex}
+.handle-prefix{padding:13px 12px 13px 16px;border:1px solid var(--border-strong);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);font-size:15px;color:var(--subtle);background:var(--surface2)}
+.handle-prefix-wrap input{border-radius:0 var(--radius-sm) var(--radius-sm) 0!important}
+.niche-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.niche-btn{padding:14px 8px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.niche-btn:active{background:var(--surface2)}
+.niche-btn.active{border-color:var(--text);background:var(--text);color:white}
+.niche-emoji{font-size:22px}
+.niche-label{font-size:11px;font-weight:500;color:var(--muted)}
+.niche-btn.active .niche-label{color:rgba(255,255,255,.7)}
+.photo-area{display:flex;flex-direction:column;align-items:center;gap:16px}
+.photo-circle{width:100px;height:100px;border-radius:50%;background:var(--surface2);border:2px dashed var(--border-strong);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;cursor:pointer;overflow:hidden;transition:border-color .15s;flex-shrink:0}
+.photo-circle:hover{border-color:var(--text)}
+.photo-circle img{width:100%;height:100%;object-fit:cover}
+.photo-icon{font-size:28px}
+.photo-hint{font-size:11px;color:var(--muted);text-align:center}
+.photo-upload-status{font-size:12px;color:var(--muted);text-align:center}
+.ob-footer{padding:20px 20px 0;display:flex;gap:10px}
+.btn-back{flex:0 0 48px;padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface);font-size:20px;cursor:pointer;display:grid;place-items:center}
+.btn-next{flex:1;padding:14px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.btn-next:disabled{opacity:.4;cursor:not-allowed}
+/* Success */
+.success-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;padding:40px 24px;text-align:center}
+.confetti-area{font-size:48px;margin-bottom:20px}
+.success-title{font-size:28px;font-weight:700;letter-spacing:-.04em;color:var(--text);margin-bottom:10px}
+.success-sub{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:32px}
+.btn-go-dashboard{padding:15px 32px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+/* Login */
+#login-section{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-logo-mark{width:32px;height:32px;border-radius:8px;background:var(--text);color:white;display:grid;place-items:center;font-size:14px;font-weight:700}
+.login-logo-text{font-size:17px;font-weight:700;letter-spacing:-.03em}
+.login-title{font-size:20px;font-weight:700;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.btn-login{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn-login:disabled{opacity:.5}
+.login-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
+.toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="login-section">
+  <div class="login-card">
+    <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">veuno</div></div>
+    <div class="login-title">Account erstellen.</div>
+    <div class="login-sub">Melde dich an um dein Profil einzurichten.</div>
+    <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
+    <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<div id="onboarding-section" class="hidden">
+  <div class="ob-wrap" id="ob-wrap">
+    <div class="ob-topbar">
+      <div class="ob-logo"><div class="ob-logo-mark">v</div><div class="ob-logo-text">veuno</div></div>
+      <div class="ob-step-label" id="step-label">Schritt 1 von 5</div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+    <div class="ob-content" id="ob-content"></div>
+    <div class="ob-footer">
+      <button class="btn-back hidden" id="btn-back" onclick="prevStep()">←</button>
+      <button class="btn-next" id="btn-next" onclick="nextStep()">Weiter →</button>
+    </div>
+  </div>
+  <div class="success-wrap hidden" id="success-wrap">
+    <div class="confetti-area" id="confetti-area">🎉</div>
+    <div class="success-title">Willkommen bei veuno!</div>
+    <div class="success-sub">Dein Profil ist fertig eingerichtet.<br>Jetzt geht's los.</div>
+    <button class="btn-go-dashboard" onclick="window.location='/dashboard.html'">Zum Dashboard →</button>
+  </div>
+</div>
+
+<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
+<input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
+
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL='https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const sb=createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
+
+const NICHES=[
+  {key:'lifestyle',emoji:'🌿',label:'Lifestyle'},{key:'fashion',emoji:'👗',label:'Fashion'},{key:'beauty',emoji:'💄',label:'Beauty'},
+  {key:'food',emoji:'🍕',label:'Food'},{key:'fitness',emoji:'💪',label:'Fitness'},{key:'travel',emoji:'✈️',label:'Travel'},
+  {key:'gaming',emoji:'🎮',label:'Gaming'},{key:'music',emoji:'🎵',label:'Music'},{key:'comedy',emoji:'😂',label:'Comedy'},
+  {key:'education',emoji:'📚',label:'Bildung'},{key:'business',emoji:'💼',label:'Business'},{key:'tech',emoji:'💻',label:'Tech'},
+  {key:'art',emoji:'🎨',label:'Art'},{key:'family',emoji:'👨‍👩‍👧',label:'Family'},{key:'mental_health',emoji:'🧠',label:'Mental'},{key:'general',emoji:'🌐',label:'Allgemein'}
+]
+
+const state={step:1,total:5,user:null,data:{fullName:'',bio:'',ig:'',tt:'',niche:'general',photoUrl:null}}
+
+function showToast(msg,dur=2800){
+  const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg')
+  t.textContent=msg;w.classList.remove('hidden');clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)
+}
+
+function escHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+// ─── auth ───
+document.getElementById('btn-login').addEventListener('click',async()=>{
+  const email=document.getElementById('inp-email').value.trim(),pw=document.getElementById('inp-pw').value
+  const errEl=document.getElementById('login-error'),btn=document.getElementById('btn-login')
+  errEl.textContent='';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{data,error}=await sb.auth.signInWithPassword({email,password:pw})
+  btn.disabled=false;btn.textContent='Einloggen'
+  if(error){errEl.textContent='Falsche E-Mail oder Passwort.';return}
+  state.user=data.session.user
+  document.getElementById('login-section').classList.add('hidden')
+  document.getElementById('onboarding-section').classList.remove('hidden')
+  renderStep()
+})
+document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('btn-login').click()})
+
+// check existing session
+;(async()=>{
+  const{data:{session}}=await sb.auth.getSession()
+  if(session){
+    state.user=session.user
+    document.getElementById('login-section').classList.add('hidden')
+    document.getElementById('onboarding-section').classList.remove('hidden')
+    renderStep()
+  }
+})()
+
+// ─── steps ───
+const STEPS=[
+  {title:'Wie heißt du?',sub:'Dein Name erscheint auf deiner BioLink-Seite.',render:renderStep1,collect:collectStep1},
+  {title:'Dein Account.',sub:'Verbinde deine Social-Media-Kanäle.',render:renderStep2,collect:collectStep2},
+  {title:'Deine Nische.',sub:'Was machst du am liebsten? Das hilft uns, dich besser zu unterstützen.',render:renderStep3,collect:collectStep3},
+  {title:'Profilbild.',sub:'Lade ein Foto hoch — das erscheint auf deiner BioLink-Seite.',render:renderStep4,collect:()=>true},
+  {title:'Fast fertig.',sub:'Überprüfe deine Daten und klick auf Abschließen.',render:renderStep5,collect:()=>true},
+]
+
+function renderStep(){
+  const s=STEPS[state.step-1]
+  document.getElementById('step-label').textContent=`Schritt ${state.step} von ${state.total}`
+  document.getElementById('progress-fill').style.width=`${(state.step/state.total)*100}%`
+  document.getElementById('btn-back').classList.toggle('hidden',state.step===1)
+  document.getElementById('btn-next').textContent=state.step===state.total?'Abschließen ✓':'Weiter →'
+  const content=document.getElementById('ob-content')
+  content.innerHTML=`<div class="step-num">Schritt ${state.step} / ${state.total}</div><div class="step-title">${s.title}</div><div class="step-sub">${s.sub}</div>`
+  s.render(content)
+}
+
+function renderStep1(el){
+  el.innerHTML+=`<div class="field"><label>Vollständiger Name</label><input type="text" id="s-fullname" value="${escHtml(state.data.fullName)}" placeholder="Anna Mustermann"/></div>
+    <div class="field"><label>Kurz-Bio (optional)</label><textarea id="s-bio" rows="3" placeholder="Deine kurze Beschreibung…">${escHtml(state.data.bio)}</textarea></div>`
+}
+function collectStep1(){
+  const n=document.getElementById('s-fullname')?.value.trim()
+  if(!n){showToast('Bitte gib deinen Namen ein.');return false}
+  state.data.fullName=n;state.data.bio=document.getElementById('s-bio')?.value.trim()||''
+  return true
+}
+
+function renderStep2(el){
+  el.innerHTML+=`<div class="field"><label>Instagram-Handle</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-ig" value="${escHtml(state.data.ig)}" placeholder="dein_handle"/></div></div>
+    <div class="field"><label>TikTok-Handle</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-tt" value="${escHtml(state.data.tt)}" placeholder="dein_handle"/></div></div>`
+}
+function collectStep2(){
+  state.data.ig=document.getElementById('s-ig')?.value.trim().replace(/^@/,'')||''
+  state.data.tt=document.getElementById('s-tt')?.value.trim().replace(/^@/,'')||''
+  return true
+}
+
+function renderStep3(el){
+  el.innerHTML+=`<div class="niche-grid">${NICHES.map(n=>`<button class="niche-btn ${state.data.niche===n.key?'active':''}" data-key="${n.key}" onclick="selectNiche('${n.key}')"><div class="niche-emoji">${n.emoji}</div><div class="niche-label">${n.label}</div></button>`).join('')}</div>`
+}
+window.selectNiche=function(key){state.data.niche=key;document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.key===key))}
+
+function renderStep4(el){
+  const thumb=state.data.photoUrl?`<img src="${escHtml(state.data.photoUrl)}" alt=""/>`:`<div class="photo-icon">📷</div><div class="photo-hint">Tippen zum Hochladen</div>`
+  el.innerHTML+=`<div class="photo-area"><div class="photo-circle" id="photo-circle" onclick="document.getElementById('photo-input').click()">${thumb}</div><div class="photo-upload-status" id="upload-status">${state.data.photoUrl?'✓ Foto hochgeladen':'Max. 5 MB · JPG, PNG oder WebP'}</div></div>`
+}
+
+document.getElementById('photo-input').addEventListener('change',async(e)=>{
+  const file=e.target.files?.[0];if(!file)return
+  if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
+  const circle=document.getElementById('photo-circle'),statusEl=document.getElementById('upload-status')
+  if(!circle)return
+  const reader=new FileReader()
+  reader.onload=ev=>{circle.innerHTML=`<img src="${ev.target.result}" alt=""/>`;if(statusEl)statusEl.textContent='Wird hochgeladen…'}
+  reader.readAsDataURL(file)
+  if(!state.user)return
+  const path=`${state.user.id}/${Date.now()}.${file.name.split('.').pop()}`
+  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
+  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);if(statusEl)statusEl.textContent='Upload fehlgeschlagen';return}
+  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
+  state.data.photoUrl=publicUrl;if(statusEl)statusEl.textContent='✓ Foto hochgeladen'
+  e.target.value=''
+})
+
+function renderStep5(el){
+  const d=state.data
+  el.innerHTML+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    ${d.photoUrl?`<div style="text-align:center;padding:20px 0"><img src="${escHtml(d.photoUrl)}" alt="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong)"/></div>`:''}
+    <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">Name</span><span style="font-size:13px;font-weight:500">${escHtml(d.fullName)}</span></div>
+      ${d.ig?`<div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">Instagram</span><span style="font-size:13px;font-weight:500">@${escHtml(d.ig)}</span></div>`:''}
+      ${d.tt?`<div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">TikTok</span><span style="font-size:13px;font-weight:500">@${escHtml(d.tt)}</span></div>`:''}
+      <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">Nische</span><span style="font-size:13px;font-weight:500">${escHtml(NICHES.find(n=>n.key===d.niche)?.emoji+' '+NICHES.find(n=>n.key===d.niche)?.label||d.niche)}</span></div>
+    </div>
+  </div>`
+}
+
+window.nextStep=async function(){
+  const collect=STEPS[state.step-1].collect
+  if(!collect())return
+  if(state.step<state.total){state.step++;renderStep();return}
+  await saveAndFinish()
+}
+window.prevStep=function(){if(state.step>1){state.step--;renderStep()}}
+
+async function saveAndFinish(){
+  const btn=document.getElementById('btn-next')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const d=state.data
+  const{error}=await sb.from('users').update({
+    full_name:d.fullName,bio:d.bio||null,
+    instagram_handle:d.ig||null,tiktok_handle:d.tt||null,
+    niche_category:d.niche,profile_image_url:d.photoUrl||null,
+    onboarding_completed:true,updated_at:new Date().toISOString()
+  }).eq('id',state.user.id)
+  btn.disabled=false;btn.textContent='Abschließen ✓'
+  if(error){showToast('Fehler beim Speichern: '+error.message,4000);return}
+  document.getElementById('ob-wrap').classList.add('hidden')
+  document.getElementById('success-wrap').classList.remove('hidden')
+  confetti()
+}
+
+function confetti(){
+  const el=document.getElementById('confetti-area')
+  const emojis=['🎉','✨','🌟','💫','🎊','🎈']
+  let i=0;const iv=setInterval(()=>{el.textContent=emojis[i%emojis.length];i++;if(i>12)clearInterval(iv)},200)
+}
+</script>
+</body>
+</html>
