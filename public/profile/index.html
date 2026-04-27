@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>veuno · Profil</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f5f4f2;
+  --surface: #ffffff;
+  --surface2: #f0efed;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.13);
+  --text: #111110;
+  --muted: #7a7975;
+  --subtle: #b0afa9;
+  --green: #1a7f4b;
+  --green-bg: #edf7f1;
+  --red: #c0392b;
+  --red-bg: #fdf0ef;
+  --orange: #b85c00;
+  --orange-bg: #fdf3e7;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-h: 56px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ─── LOGIN ─── */
+#login-screen { min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.login-card { width: 100%; max-width: 360px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; }
+.login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.login-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--text); color: white; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+.login-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
+.login-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.field input, .field textarea, .field select {
+  width: 100%; padding: 11px 14px;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 14px; color: var(--text);
+  background: var(--bg); outline: none; transition: border-color .15s;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--text); }
+.field textarea { resize: none; line-height: 1.5; }
+.btn-login { width: 100%; padding: 12px; margin-top: 8px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-login:disabled { opacity: .5; }
+.login-error { font-size: 12px; color: var(--red); margin-top: 10px; text-align: center; min-height: 18px; }
+
+/* ─── APP ─── */
+#app { display: none; min-height: 100dvh; flex-direction: column; }
+#app.visible { display: flex; }
+
+.topbar { position: sticky; top: 0; z-index: 50; background: rgba(245,244,242,0.92); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 0 20px; height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; }
+.topbar-logo { display: flex; align-items: center; gap: 8px; }
+.topbar-mark { width: 26px; height: 26px; border-radius: 6px; background: var(--text); color: white; display: grid; place-items: center; font-size: 11px; font-weight: 700; }
+.topbar-name { font-size: 15px; font-weight: 700; letter-spacing: -.03em; }
+.topbar-right { display: flex; gap: 8px; align-items: center; }
+.btn-logout { font-size: 12px; font-weight: 500; color: var(--muted); background: none; border: 1px solid var(--border-strong); border-radius: 99px; padding: 5px 12px; cursor: pointer; font-family: inherit; }
+
+.page { flex: 1; padding-bottom: calc(80px + var(--safe-bottom)); overflow-y: auto; }
+
+/* ── PROFILE HERO ── */
+.profile-hero {
+  padding: 24px 20px 0;
+  display: flex; align-items: flex-start; gap: 16px;
+}
+.profile-photo {
+  width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+  border: 2px solid var(--border-strong); background: var(--surface2);
+}
+.profile-photo-fallback {
+  width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0;
+  background: var(--text); color: white;
+  display: grid; place-items: center; font-size: 26px; font-weight: 700;
+  border: 2px solid var(--border-strong);
+}
+.photo-wrap {
+  position: relative; width: 72px; height: 72px; flex-shrink: 0; cursor: pointer;
+}
+.photo-edit-btn {
+  position: absolute; bottom: 0; right: 0;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--text); color: white;
+  display: grid; place-items: center; font-size: 11px;
+  border: 2px solid var(--surface); pointer-events: none;
+}
+.photo-upload-status { font-size: 11px; color: var(--muted); margin-top: 4px; min-height: 16px; }
+.profile-info { flex: 1; min-width: 0; }
+.profile-name { font-size: 20px; font-weight: 700; letter-spacing: -.03em; color: var(--text); }
+.profile-handle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.profile-plan {
+  display: inline-flex; align-items: center; gap: 5px; margin-top: 8px;
+  font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px;
+}
+.plan-free { background: var(--surface2); color: var(--muted); border: 1px solid var(--border-strong); }
+.plan-pro  { background: #111110; color: white; }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; padding: 16px 20px 0;
+}
+.stat-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 12px; text-align: center;
+}
+.stat-box-value { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.03em; }
+.stat-box-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+/* ── SECTION ── */
+.section { padding: 20px 20px 0; }
+.section-label { font-size: 10px; font-weight: 600; color: var(--subtle); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
+
+/* ── BIO LINK CARD ── */
+.biolink-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+}
+.biolink-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.biolink-url { font-size: 13px; font-weight: 500; color: var(--text); }
+.biolink-url a { color: var(--text); text-decoration: none; }
+.biolink-url a:hover { text-decoration: underline; }
+
+.status-indicator {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px;
+}
+.si-active { background: var(--green-bg); color: var(--green); }
+.si-inactive { background: var(--surface2); color: var(--subtle); border: 1px solid var(--border-strong); }
+
+.biolink-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.biolink-stat { text-align: center; }
+.biolink-stat-val { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+.biolink-stat-label { font-size: 10px; color: var(--muted); margin-top: 1px; }
+
+.biolink-sources { display: flex; gap: 6px; flex-wrap: wrap; }
+.source-pill { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 99px; background: var(--surface2); color: var(--muted); }
+
+/* ── EDIT FORM ── */
+.edit-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+}
+.edit-card .field { margin-bottom: 10px; }
+.edit-card .field:last-child { margin-bottom: 0; }
+.edit-card .field label { font-size: 11px; }
+
+.handle-input-wrap { display: flex; align-items: center; }
+.handle-prefix { padding: 11px 10px 11px 14px; border: 1px solid var(--border-strong); border-right: none; border-radius: var(--radius-sm) 0 0 var(--radius-sm); font-size: 14px; color: var(--muted); background: var(--surface2); }
+.handle-input-wrap input { border-radius: 0 var(--radius-sm) var(--radius-sm) 0 !important; }
+
+.niche-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.niche-btn {
+  padding: 8px 4px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 500;
+  font-family: inherit; cursor: pointer; text-align: center; transition: all .15s;
+}
+.niche-btn.active { background: var(--text); color: white; border-color: var(--text); }
+
+/* ── SAVE BUTTON ── */
+.btn-save {
+  width: 100%; padding: 13px; margin-top: 14px;
+  background: var(--text); color: white; border: none;
+  border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: opacity .15s;
+}
+.btn-save:disabled { opacity: .5; cursor: not-allowed; }
+.save-success { font-size: 12px; color: var(--green); text-align: center; margin-top: 8px; min-height: 18px; }
+
+/* ── DANGER ZONE ── */
+.danger-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px;
+}
+.danger-row { display: flex; align-items: center; justify-content: space-between; }
+.danger-info .danger-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.danger-info .danger-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.btn-danger { padding: 8px 16px; border-radius: var(--radius-sm); background: var(--red-bg); color: var(--red); border: 1px solid rgba(192,57,43,.2); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+
+/* bottom nav */
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; background: rgba(245,244,242,0.95); backdrop-filter: blur(16px); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 calc(14px + var(--safe-bottom)); }
+.nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; padding: 4px 14px; border-radius: 12px; transition: background .12s; min-width: 60px; text-decoration: none; }
+.nav-item:active { background: var(--surface2); }
+.nav-icon { width: 24px; height: 24px; display: grid; place-items: center; }
+.nav-label { font-size: 10px; font-weight: 500; color: var(--subtle); }
+.nav-item.active .nav-label { color: var(--text); font-weight: 600; }
+
+/* toast */
+.toast-wrap { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
+.toast { background: var(--text); color: white; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 99px; animation: toastIn .25s ease-out; white-space: nowrap; }
+@keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+.skeleton { background: linear-gradient(90deg, var(--surface2) 25%, #e8e6e2 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: var(--radius); }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">v</div>
+      <div class="login-logo-text">veuno</div>
+    </div>
+    <div class="login-title">Willkommen zurück.</div>
+    <div class="login-sub">Melde dich mit deinem veuno-Account an.</div>
+    <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
+    <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <div class="topbar-mark">v</div>
+      <div class="topbar-name">veuno</div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="page" id="page">
+
+    <!-- skeleton while loading -->
+    <div id="skeleton-area" style="padding:20px">
+      <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
+        <div class="skeleton" style="width:72px;height:72px;border-radius:50%;flex-shrink:0"></div>
+        <div style="flex:1"><div class="skeleton" style="height:22px;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:60%"></div></div>
+      </div>
+      <div class="skeleton" style="height:80px;margin-bottom:12px"></div>
+      <div class="skeleton" style="height:120px;margin-bottom:12px"></div>
+      <div class="skeleton" style="height:200px"></div>
+    </div>
+
+    <!-- real content, hidden until loaded -->
+    <div id="profile-content" class="hidden"></div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <a class="nav-item" href="dashboard.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+      <span class="nav-label">Home</span>
+    </a>
+    <a class="nav-item" href="digest.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <span class="nav-label">Digest</span>
+    </a>
+    <a class="nav-item" href="trends.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+      <span class="nav-label">Trends</span>
+    </a>
+    <a class="nav-item" href="requests.html">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+      <span class="nav-label">Anfragen</span>
+    </a>
+    <div class="nav-item active">
+      <div class="nav-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <span class="nav-label">Profil</span>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap hidden" id="toast-wrap">
+  <div class="toast" id="toast-msg"></div>
+</div>
+
+<input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, autoRefreshToken: true } })
+
+const state = { user: null, profile: null, bioStats: null, niche: null }
+
+const NICHES = [
+  { key: 'lifestyle',     label: '🌿 Lifestyle' },
+  { key: 'fashion',       label: '👗 Fashion' },
+  { key: 'beauty',        label: '💄 Beauty' },
+  { key: 'food',          label: '🍕 Food' },
+  { key: 'fitness',       label: '💪 Fitness' },
+  { key: 'travel',        label: '✈️ Travel' },
+  { key: 'gaming',        label: '🎮 Gaming' },
+  { key: 'music',         label: '🎵 Music' },
+  { key: 'comedy',        label: '😂 Comedy' },
+  { key: 'education',     label: '📚 Edu' },
+  { key: 'business',      label: '💼 Business' },
+  { key: 'tech',          label: '💻 Tech' },
+  { key: 'art',           label: '🎨 Art' },
+  { key: 'family',        label: '👨‍👩‍👧 Family' },
+  { key: 'mental_health', label: '🧠 Mental' },
+  { key: 'general',       label: '🌐 Allgemein' },
+]
+
+function escHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+function fmt(n) {
+  if (n == null || isNaN(Number(n))) return '0'
+  n = Number(n)
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M'
+  if (n >= 1_000)     return (n/1_000).toFixed(1).replace(/\.0$/,'') + 'k'
+  return n.toLocaleString('de-DE')
+}
+
+window.showToast = function(msg, dur = 2500) {
+  const w = document.getElementById('toast-wrap')
+  document.getElementById('toast-msg').textContent = msg
+  w.classList.remove('hidden')
+  clearTimeout(w._t)
+  w._t = setTimeout(() => w.classList.add('hidden'), dur)
+}
+
+// ─── auth ───
+async function init() {
+  const { data: { session } } = await sb.auth.getSession()
+  if (session) { await enterApp(session); return }
+  setupLogin()
+}
+
+function setupLogin() {
+  document.getElementById('login-screen').style.display = 'flex'
+  document.getElementById('btn-login').addEventListener('click', doLogin)
+  document.getElementById('inp-pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
+}
+
+async function doLogin() {
+  const email = document.getElementById('inp-email').value.trim()
+  const pw    = document.getElementById('inp-pw').value
+  const errEl = document.getElementById('login-error')
+  const btn   = document.getElementById('btn-login')
+  errEl.textContent = ''
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
+  btn.disabled = false; btn.textContent = 'Einloggen'
+  if (error) { errEl.textContent = 'Falsche E-Mail oder Passwort.'; return }
+  await enterApp(data.session)
+}
+
+async function enterApp(session) {
+  state.user = session.user
+  document.getElementById('login-screen').style.display = 'none'
+  document.getElementById('app').classList.add('visible')
+  await loadProfile()
+}
+
+window.logout = async function() { await sb.auth.signOut(); location.reload() }
+
+// ─── load ───
+async function loadProfile() {
+  const uid = state.user.id
+
+  const [profileRes, bioRes, bioStatsRes] = await Promise.all([
+    sb.from('users').select('*').eq('id', uid).single(),
+    sb.from('biolink_settings').select('*').eq('user_id', uid).single(),
+    sb.from('bio_stats').select('*').eq('user_id', uid).single(),
+  ])
+
+  state.profile  = { ...profileRes.data, ...bioRes.data }
+  state.bioStats = bioStatsRes.data
+  state.niche    = profileRes.data?.niche_category || 'general'
+
+  document.getElementById('skeleton-area').classList.add('hidden')
+  document.getElementById('profile-content').classList.remove('hidden')
+
+  renderProfile()
+}
+
+// ─── render ───
+function renderProfile() {
+  const p  = state.profile
+  const bs = state.bioStats
+  const bioUrl = p.slug ? `biouno.de/${p.slug}` : '—'
+  const bioFullUrl = p.slug ? `https://biouno.de/${p.slug}` : null
+
+  const initial = (p.display_name || p.full_name || '?')[0].toUpperCase()
+  const photoInner = p.profile_image_url
+    ? `<img class="profile-photo" src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;profile-photo-fallback&quot;>${initial}</div>'">`
+    : `<div class="profile-photo-fallback">${initial}</div>`
+  const photoHtml = `
+    <div class="photo-wrap" onclick="document.getElementById('photo-input').click()" title="Foto ändern">
+      ${photoInner}
+      <div class="photo-edit-btn">✎</div>
+    </div>`
+
+  document.getElementById('profile-content').innerHTML = `
+
+    <!-- ── Hero ── -->
+    <div class="profile-hero">
+      ${photoHtml}
+      <div class="profile-info">
+        <div class="profile-name">${escHtml(p.display_name || p.full_name || '–')}</div>
+        <div class="profile-handle">${p.email ? escHtml(p.email) : ''}</div>
+        <div class="profile-plan ${p.subscription_type === 'pro' ? 'plan-pro' : 'plan-free'}">
+          ${p.subscription_type === 'pro' ? '⭐ Pro' : 'Free Plan'}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Stats ── -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-box-value">${fmt(p.total_followers)}</div>
+        <div class="stat-box-label">Follower</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${fmt(bs?.views_total)}</div>
+        <div class="stat-box-label">Bio-Aufrufe</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${fmt(p.new_requests_count)}</div>
+        <div class="stat-box-label">Anfragen</div>
+      </div>
+    </div>
+
+    <!-- ── BioLink ── -->
+    <div class="section">
+      <div class="section-label">BioLink</div>
+      <div class="biolink-card">
+        <div class="biolink-top">
+          <div class="biolink-url">
+            ${bioFullUrl
+              ? `<a href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>`
+              : `<span style="color:var(--subtle)">Noch kein Slug gesetzt</span>`}
+          </div>
+          <span class="status-indicator ${p.is_active ? 'si-active' : 'si-inactive'}">
+            ${p.is_active ? '● Aktiv' : '○ Inaktiv'}
+          </span>
+        </div>
+        <div class="biolink-stats">
+          <div class="biolink-stat">
+            <div class="biolink-stat-val">${fmt(bs?.views_today)}</div>
+            <div class="biolink-stat-label">Heute</div>
+          </div>
+          <div class="biolink-stat">
+            <div class="biolink-stat-val">${fmt(bs?.views_last_7_days)}</div>
+            <div class="biolink-stat-label">7 Tage</div>
+          </div>
+          <div class="biolink-stat">
+            <div class="biolink-stat-val">${fmt(bs?.views_total)}</div>
+            <div class="biolink-stat-label">Gesamt</div>
+          </div>
+        </div>
+        <div class="biolink-sources">
+          ${bs?.instagram_pct > 0 ? `<span class="source-pill">📸 Instagram ${bs.instagram_pct}%</span>` : ''}
+          ${bs?.tiktok_pct > 0   ? `<span class="source-pill">🎵 TikTok ${bs.tiktok_pct}%</span>` : ''}
+          ${bs?.direct_pct > 0   ? `<span class="source-pill">🔗 Direkt ${bs.direct_pct}%</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Profil bearbeiten ── -->
+    <div class="section">
+      <div class="section-label">Profil bearbeiten</div>
+      <div class="edit-card">
+
+        <div class="field">
+          <label>Name</label>
+          <input type="text" id="edit-fullname" value="${escHtml(p.full_name || '')}" placeholder="Dein Name"/>
+        </div>
+
+        <div class="field">
+          <label>Bio</label>
+          <textarea id="edit-bio" rows="3" placeholder="Kurze Beschreibung von dir…">${escHtml(p.bio || '')}</textarea>
+        </div>
+
+        <div class="field">
+          <label>Kontakt-E-Mail</label>
+          <input type="email" id="edit-contact-email" value="${escHtml(p.contact_email || '')}" placeholder="fuer@brands.de"/>
+        </div>
+
+        <div class="field">
+          <label>Instagram</label>
+          <div class="handle-input-wrap">
+            <span class="handle-prefix">@</span>
+            <input type="text" id="edit-ig" value="${escHtml((p.instagram_handle||'').replace(/^@/,''))}" placeholder="deinhandle"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>TikTok</label>
+          <div class="handle-input-wrap">
+            <span class="handle-prefix">@</span>
+            <input type="text" id="edit-tt" value="${escHtml((p.tiktok_handle||'').replace(/^@/,''))}" placeholder="deinhandle"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Stadt</label>
+          <input type="text" id="edit-city" value="${escHtml(p.city || '')}" placeholder="z.B. München"/>
+        </div>
+
+        <div class="field">
+          <label>Nische</label>
+          <div class="niche-grid" id="niche-grid">
+            ${NICHES.map(n => `
+              <button class="niche-btn ${state.niche === n.key ? 'active' : ''}"
+                data-niche="${n.key}" onclick="selectNiche('${n.key}')">
+                ${n.label}
+              </button>`).join('')}
+          </div>
+        </div>
+
+        <button class="btn-save" id="btn-save" onclick="saveProfile()">Speichern</button>
+        <div class="save-success hidden" id="save-success">✓ Gespeichert</div>
+      </div>
+    </div>
+
+    <!-- ── Account ── -->
+    <div class="section" style="padding-bottom:8px">
+      <div class="section-label">Account</div>
+      <div class="danger-card">
+        <div class="danger-row" style="margin-bottom:12px">
+          <div class="danger-info">
+            <div class="danger-title">E-Mail Adresse</div>
+            <div class="danger-sub">${escHtml(p.email || '–')}</div>
+          </div>
+        </div>
+        <div class="danger-row">
+          <div class="danger-info">
+            <div class="danger-title">Account löschen</div>
+            <div class="danger-sub">Alle Daten werden unwiderruflich gelöscht.</div>
+          </div>
+          <button class="btn-danger" onclick="showToast('Bitte wende dich an den Support.')">Löschen</button>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+// ─── niche select ───
+window.selectNiche = function(key) {
+  state.niche = key
+  document.querySelectorAll('.niche-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.niche === key)
+  })
+}
+
+// ─── save ───
+window.saveProfile = async function() {
+  const btn = document.getElementById('btn-save')
+  const successEl = document.getElementById('save-success')
+  btn.disabled = true
+  btn.innerHTML = '<span class="spinner"></span> Speichern…'
+  successEl.classList.add('hidden')
+
+  const ig = document.getElementById('edit-ig').value.trim().replace(/^@/, '')
+  const tt = document.getElementById('edit-tt').value.trim().replace(/^@/, '')
+
+  const patch = {
+    full_name:        document.getElementById('edit-fullname').value.trim() || null,
+    bio:              document.getElementById('edit-bio').value.trim() || null,
+    contact_email:    document.getElementById('edit-contact-email').value.trim() || null,
+    instagram_handle: ig || null,
+    tiktok_handle:    tt || null,
+    city:             document.getElementById('edit-city').value.trim() || null,
+    niche_category:   state.niche,
+    updated_at:       new Date().toISOString(),
+  }
+
+  const { error } = await sb.from('users').update(patch).eq('id', state.user.id)
+
+  btn.disabled = false
+  btn.textContent = 'Speichern'
+
+  if (error) {
+    showToast('Fehler beim Speichern: ' + error.message, 4000)
+    return
+  }
+
+  // update local state
+  Object.assign(state.profile, patch)
+  successEl.classList.remove('hidden')
+  setTimeout(() => successEl.classList.add('hidden'), 3000)
+  showToast('Profil gespeichert ✓')
+}
+
+// ─── foto upload ───
+document.getElementById('photo-input').addEventListener('change', async (e) => {
+  const file = e.target.files?.[0]
+  if (!file) return
+  if (file.size > 5 * 1024 * 1024) { showToast('Bild zu groß. Max. 5 MB.'); return }
+
+  // Sofort Preview anzeigen
+  const reader = new FileReader()
+  reader.onload = (ev) => {
+    const wrap = document.querySelector('.photo-wrap')
+    if (!wrap) return
+    const existing = wrap.querySelector('img, .profile-photo-fallback')
+    if (existing) existing.remove()
+    const img = document.createElement('img')
+    img.className = 'profile-photo'
+    img.src = ev.target.result
+    wrap.insertBefore(img, wrap.querySelector('.photo-edit-btn'))
+  }
+  reader.readAsDataURL(file)
+
+  // Upload zu Supabase Storage
+  showToast('Wird hochgeladen…', 8000)
+  const path = `${state.user.id}/${Date.now()}.${file.name.split('.').pop()}`
+  const { error } = await sb.storage.from('profile-images').upload(path, file, { upsert: true })
+  if (error) { showToast('Upload fehlgeschlagen: ' + error.message, 4000); return }
+
+  const { data: { publicUrl } } = sb.storage.from('profile-images').getPublicUrl(path)
+  await sb.from('users').update({ profile_image_url: publicUrl }).eq('id', state.user.id)
+  state.profile.profile_image_url = publicUrl
+  showToast('Profilbild gespeichert ✓')
+  e.target.value = ''
+})
+
+init()
+</script>
+</body>
+</html>
