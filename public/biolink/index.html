@@ -268,6 +268,10 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         BioLink
       </a>
+      <a class="sidebar-item" href="/mediakit">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        Media Kit
+      </a>
       <a class="sidebar-item" href="/profile">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         Profil
@@ -276,6 +280,13 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
     <div class="sidebar-footer">
       <div class="sidebar-user" id="sidebar-user-email"></div>
       <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
+      <div style="margin-top:12px;display:flex;gap:10px;justify-content:center">
+        <a href="/legal/impressum" style="font-size:11px;color:var(--subtle);text-decoration:none">Impressum</a>
+        <span style="font-size:11px;color:var(--subtle)">·</span>
+        <a href="/legal/datenschutz" style="font-size:11px;color:var(--subtle);text-decoration:none">Datenschutz</a>
+        <span style="font-size:11px;color:var(--subtle)">·</span>
+        <a href="/legal/agb" style="font-size:11px;color:var(--subtle);text-decoration:none">AGB</a>
+      </div>
     </div>
   </div>
 
@@ -362,7 +373,19 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
     <div class="sheet-title">Profil-Infos</div>
     <div class="sheet-sub">Diese Infos erscheinen auf deiner BioLink-Seite.</div>
     <div class="sheet-body">
-      <div class="field"><label>Profilbild URL</label><input type="url" id="s-photo" placeholder="https://…"/></div>
+      <!-- Photo upload -->
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+        <div id="s-photo-wrap" style="position:relative;width:64px;height:64px;flex-shrink:0;cursor:pointer" onclick="document.getElementById('s-photo-input').click()">
+          <div id="s-photo-inner" style="width:64px;height:64px;border-radius:50%;background:var(--surface2);border:2px solid var(--border-strong);display:grid;place-items:center;font-size:22px;font-weight:700;color:var(--text);overflow:hidden"></div>
+          <div style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:10px;border:2px solid white;pointer-events:none">✎</div>
+        </div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Profilbild</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">Tippe um zu ändern</div>
+          <div id="s-photo-status" style="font-size:11px;color:var(--muted);margin-top:2px"></div>
+        </div>
+      </div>
+      <input type="file" id="s-photo-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
       <div class="field"><label>Bio</label><textarea id="s-bio" rows="3" placeholder="Kurze Beschreibung über dich…"></textarea></div>
       <div class="field"><label>Nische</label>
         <select id="s-niche">
@@ -385,7 +408,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
         </select>
       </div>
       <div class="field">
-        <label>Impressum <span class="req-badge">Pflicht</span></label>
+        <label>Impressum <span style="color:var(--text);font-weight:700">(Pflichtfeld)</span></label>
         <textarea id="s-impressum" rows="4" placeholder="Angaben gemäß §5 TMG: Vorname Nachname, Straße Nr., PLZ Ort…"></textarea>
       </div>
     </div>
@@ -581,14 +604,10 @@ function renderPage(){
       <button class="action-btn action-btn-secondary" onclick="openThemeSheet()">🎨 Design ändern · ${capitalizeTheme(state.selectedTheme)}</button>
       <button class="action-btn action-btn-secondary" onclick="openProfileSheet()">👤 Profil-Infos bearbeiten</button>
       <button class="action-btn action-btn-secondary" onclick="openLinksSheet()">🔗 Social & Links bearbeiten</button>
-      <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
-        Seite aktualisieren
-      </button>
     </div>
 
-    <!-- Delete -->
-    <div style="padding:16px 20px 0">
+    <!-- Delete always at bottom -->
+    <div style="padding:24px 20px 8px">
       <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 BioLink-Seite löschen</button>
     </div>
 
@@ -660,7 +679,7 @@ function renderPage(){
           ${checks.map(c=>`<div class="check-item"><div class="check-icon ${c.ok?'check-ok':'check-missing'}">${c.ok?'✓':'✕'}</div><span>${c.label}</span></div>`).join('')}
         </div>
         <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()" ${allOk?'':'disabled'}>
-          ${allOk?'✨ BioLink-Seite generieren':'Bitte alle Punkte erfüllen'}
+          ${allOk?'✨ BioLink-Seite erstellen':'Bitte alle Punkte erfüllen'}
         </button>
       </div>
     </div>
@@ -710,21 +729,52 @@ function capitalizeTheme(t){return{clean:'Clean',color:'Color',dark:'Dark'}[t]||
 
 function initSheets(){
   const p=state.profile,b=state.biolink
-  // profile sheet
-  document.getElementById('s-photo').value=p?.profile_image_url||''
+  // profile sheet - photo
+  const photoInner=document.getElementById('s-photo-inner')
+  if(photoInner){
+    const imgUrl=p?.profile_image_url
+    if(imgUrl){photoInner.innerHTML=`<img src="${escHtml(imgUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`}
+    else{photoInner.textContent=(p?.display_name||p?.full_name||'?')[0]?.toUpperCase()||'?'}
+  }
   document.getElementById('s-bio').value=p?.bio||''
   document.getElementById('s-niche').value=p?.niche_category||'general'
   document.getElementById('s-impressum').value=b?.impressum_text||''
-  // links sheet
+  // links sheet — always load fresh from state
   document.getElementById('s-ig').value=(p?.instagram_handle||'').replace(/^@/,'')
   document.getElementById('s-tt').value=(p?.tiktok_handle||'').replace(/^@/,'')
   document.getElementById('s-threads').value=b?.threads_handle||''
   document.getElementById('s-yt').value=b?.youtube_handle||''
-  // custom links
-  renderCustomLinksList(b?.custom_links||[])
+  // custom links — load fresh from state.biolink
+  const rawLinks=b?.custom_links
+  const links=Array.isArray(rawLinks)?rawLinks:[]
+  renderCustomLinksList(links)
   // theme
   updateThemeGrid(state.selectedTheme)
 }
+
+// ── PHOTO UPLOAD in profile sheet ──
+document.getElementById('s-photo-input').addEventListener('change',async(e)=>{
+  const file=e.target.files?.[0];if(!file)return
+  if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
+  const statusEl=document.getElementById('s-photo-status')
+  statusEl.textContent='Wird hochgeladen…'
+  // show preview immediately
+  const reader=new FileReader()
+  reader.onload=ev=>{
+    const wrap=document.getElementById('s-photo-inner')
+    if(wrap)wrap.innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+  }
+  reader.readAsDataURL(file)
+  const path=`${state.user.id}/${Date.now()}.${file.name.split('.').pop()}`
+  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
+  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);statusEl.textContent='';return}
+  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
+  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',state.user.id)
+  if(state.profile)state.profile.profile_image_url=publicUrl
+  statusEl.textContent='✓ Gespeichert'
+  setTimeout(()=>statusEl.textContent='',2000)
+  e.target.value=''
+})
 
 // ── THEME ──
 window.openThemeSheet=function(){openSheet('theme-sheet');updateThemeGrid(state.selectedTheme)}
@@ -733,7 +783,23 @@ function updateThemeGrid(t){document.querySelectorAll('.theme-opt').forEach(o=>o
 window.saveTheme=async function(){
   await sb.from('biolink_settings').update({theme:state.selectedTheme,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
   if(state.biolink)state.biolink.theme=state.selectedTheme
-  closeSheet('theme-sheet');showToast('Design gespeichert ✓')
+  closeSheet('theme-sheet')
+  // If BioPage is active → regenerate so theme takes effect
+  const isActive=state.biolink?.is_active===true
+  if(isActive){
+    showToast('Design wird angewendet…',4000)
+    const{data:{session}}=await sb.auth.getSession()
+    if(session){
+      await fetch(`${SUPABASE_URL}/functions/v1/generate-bio-page`,{
+        method:'POST',
+        headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({theme:state.selectedTheme})
+      })
+      showToast('Design aktualisiert ✓')
+    }
+  }else{
+    showToast('Design gespeichert ✓')
+  }
   renderPage()
 }
 
@@ -741,12 +807,11 @@ window.saveTheme=async function(){
 window.openProfileSheet=function(){initSheets();openSheet('profile-sheet')}
 window.saveProfileSheet=async function(){
   const impressum=document.getElementById('s-impressum').value.trim()
-  if(!impressum){showToast('Impressum ist Pflicht.');return}
-  const photo=document.getElementById('s-photo').value.trim()
+  if(!impressum){showToast('Impressum ist (Pflichtfeld).');return}
   const bio=document.getElementById('s-bio').value.trim()
   const niche=document.getElementById('s-niche').value
   await Promise.all([
-    sb.from('users').update({bio:bio||null,niche_category:niche,profile_image_url:photo||undefined,updated_at:new Date().toISOString()}).eq('id',state.user.id),
+    sb.from('users').update({bio:bio||null,niche_category:niche,updated_at:new Date().toISOString()}).eq('id',state.user.id),
     sb.from('biolink_settings').update({impressum_text:impressum,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
   ])
   if(state.profile){state.profile.bio=bio;state.profile.niche_category=niche}
