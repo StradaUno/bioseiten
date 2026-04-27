@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>viuno · Creator e brand nel mercato DACH</title>
+<meta name="description" content="viuno collega brand internazionali con creator nel mercato di lingua tedesca. Network, gestione, risultati misurabili.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #FAFAF8;
+  color: #18181B;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+:root {
+  --bg: #FAFAF8;
+  --surface: #FFFFFF;
+  --border: #E8E8E3;
+  --border-strong: #D4D4CE;
+  --text: #18181B;
+  --muted: #71717A;
+  --subtle: #A1A1AA;
+  --accent: #18181B;
+  --accent-hover: #27272A;
+  --soft: #F4F4EE;
+  --highlight: #FAF7F0;
+  --error: #DC2626;
+  --success: #16A34A;
+  --success-bg: #DCFCE7;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(250,250,248,0.85);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+.nav-logo-mark {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700; color: #fff;
+  letter-spacing: -0.02em;
+}
+.nav-logo-text { font-size: 1.05rem; font-weight: 700; color: var(--text); letter-spacing: -0.03em; }
+.nav-cta {
+  background: var(--accent); color: #fff; border: none; border-radius: 9px;
+  padding: 9px 18px; font-family: inherit; font-size: 0.84rem; font-weight: 600;
+  cursor: pointer; transition: background 0.15s, transform 0.1s;
+  text-decoration: none; display: inline-block;
+}
+.nav-cta:hover { background: var(--accent-hover); }
+
+/* LANG SWITCHER */
+.nav-right {
+  display: flex; align-items: center; gap: 14px;
+}
+.lang-switcher {
+  display: inline-flex; align-items: center;
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.lang-switcher a {
+  padding: 6px 10px;
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+.lang-switcher a.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.lang-switcher a:not(.active):hover { color: var(--text); }
+@media(max-width: 480px) {
+  .nav-right { gap: 8px; }
+  .lang-switcher { font-size: 0.7rem; }
+  .lang-switcher a { padding: 5px 8px; }
+}
+
+/* HERO */
+.hero {
+  padding: 160px 24px 90px;
+  text-align: center;
+  position: relative;
+}
+.hero-inner { max-width: 720px; margin: 0 auto; position: relative; z-index: 1; }
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4.2rem);
+  font-weight: 800; line-height: 1.05; letter-spacing: -0.045em;
+  color: var(--text); margin-bottom: 14px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.15s forwards;
+}
+.hero h1 em {
+  font-style: normal; color: var(--muted); font-weight: 400;
+  display: block;
+}
+.hero-actions {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  margin-top: 38px;
+  opacity: 0; animation: fadeUp 0.6s ease 0.3s forwards;
+}
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff; text-decoration: none;
+  border-radius: 11px; padding: 14px 26px;
+  font-family: inherit; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--accent);
+  transition: background 0.15s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--surface); color: var(--text); text-decoration: none;
+  border-radius: 11px; padding: 14px 26px;
+  font-family: inherit; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border-strong);
+  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+}
+.btn-secondary:hover { border-color: var(--text); background: var(--soft); transform: translateY(-1px); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
+
+/* SECTION HEADERS */
+.section-head { text-align: center; max-width: 640px; margin: 0 auto 50px; }
+.section-eyebrow {
+  font-size: 0.74rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--muted); margin-bottom: 14px;
+}
+.section-head h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1.1; color: var(--text);
+}
+
+/* FREE FEATURES */
+.free-section {
+  padding: 90px 24px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.free-inner { max-width: 1080px; margin: 0 auto; }
+.feature-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+}
+@media(max-width: 880px) { .feature-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width: 560px) { .feature-grid { grid-template-columns: 1fr; } }
+.feature-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 24px 22px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.feature-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.feature-card .ico {
+  font-size: 1.3rem; margin-bottom: 12px;
+}
+.feature-card h4 {
+  font-size: 0.98rem; font-weight: 700; color: var(--text);
+  margin-bottom: 6px; letter-spacing: -0.01em;
+}
+.feature-card p {
+  font-size: 0.85rem; color: var(--muted); line-height: 1.55;
+}
+
+/* MANAGED */
+.managed { padding: 90px 24px; max-width: 880px; margin: 0 auto; }
+.managed-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAF7F0 100%);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 56px 56px;
+  text-align: center;
+}
+@media(max-width: 700px) {
+  .managed-card { padding: 40px 28px; }
+}
+.managed-card h2 {
+  font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 800;
+  letter-spacing: -0.035em; line-height: 1.15; color: var(--text); margin-bottom: 28px;
+}
+.managed-list { list-style: none; margin: 0 auto 32px; max-width: 520px; text-align: left; }
+.managed-list li {
+  font-size: 0.93rem; color: var(--text); padding: 9px 0;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.managed-list li::before {
+  content: "→"; color: var(--muted); font-weight: 600; flex-shrink: 0;
+}
+
+/* BUSINESS */
+.business {
+  padding: 90px 24px;
+  background: var(--accent);
+  color: #fff;
+}
+.business-inner {
+  max-width: 720px; margin: 0 auto; text-align: center;
+}
+.business-eyebrow {
+  font-size: 0.74rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: rgba(255,255,255,0.55); margin-bottom: 14px;
+}
+.business h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800;
+  letter-spacing: -0.04em; line-height: 1.1; margin-bottom: 18px;
+}
+.business p {
+  font-size: 1.02rem; color: rgba(255,255,255,0.7); line-height: 1.6;
+  margin-bottom: 32px;
+}
+.business .btn-primary {
+  background: #fff; color: var(--text); border-color: #fff;
+}
+.business .btn-primary:hover { background: #f4f4ee; }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 28px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px;
+  background: var(--bg);
+}
+.footer-left { display: flex; align-items: center; gap: 9px; }
+.footer-mark {
+  width: 22px; height: 22px; border-radius: 6px; background: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.62rem; font-weight: 700; color: #fff;
+}
+.footer-text { font-size: 0.82rem; color: var(--muted); }
+.footer-links { display: flex; gap: 18px; }
+.footer-link {
+  font-size: 0.78rem; color: var(--muted); text-decoration: none;
+  transition: color 0.15s; cursor: pointer; background: none; border: none;
+  font-family: inherit; padding: 0;
+}
+.footer-link:hover { color: var(--text); }
+
+/* REVEAL */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ============================================
+   BACKDROP (shared)
+   ============================================ */
+.backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.28s ease;
+}
+.backdrop.open { opacity: 1; pointer-events: all; }
+
+/* ============================================
+   BOTTOM SHEET (Impressum)
+   ============================================ */
+.sheet {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  z-index: 101;
+  border-top: 1px solid var(--border);
+  transform: translateY(100%);
+  transition: transform 0.38s cubic-bezier(0.32,0.72,0,1);
+  max-width: 640px; margin: 0 auto;
+  box-shadow: 0 -8px 60px rgba(0,0,0,0.18);
+  display: flex; flex-direction: column;
+  max-height: 88vh;
+}
+.sheet.open { transform: translateY(0); }
+.sheet-handle-wrap {
+  flex-shrink: 0; padding: 12px 0 0;
+  display: flex; justify-content: center;
+}
+.sheet-handle {
+  width: 42px; height: 4px; background: var(--border-strong); border-radius: 2px;
+}
+.sheet-header {
+  flex-shrink: 0;
+  padding: 18px 26px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+.sheet-title {
+  font-size: 1.15rem; font-weight: 700; color: var(--text);
+  letter-spacing: -0.02em;
+}
+.sheet-close {
+  background: var(--soft); border: none;
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--muted);
+  transition: background 0.15s, color 0.15s;
+  font-family: inherit; font-size: 16px;
+  flex-shrink: 0;
+}
+.sheet-close:hover { background: var(--border); color: var(--text); }
+.sheet-body {
+  flex: 1; min-height: 0;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+.sheet-body iframe {
+  flex: 1; width: 100%; border: none; background: var(--surface);
+}
+
+/* ============================================
+   FULL-SCREEN MODAL (Kontakt + Datenschutz)
+   ============================================ */
+.modal {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  z-index: 110;
+  opacity: 0; pointer-events: none;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.32,0.72,0,1);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.modal.open { opacity: 1; pointer-events: all; transform: translateY(0); }
+.modal-header {
+  flex-shrink: 0;
+  padding: 16px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(250,250,248,0.92);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.modal-title {
+  font-size: 1.05rem; font-weight: 700; color: var(--text);
+  letter-spacing: -0.02em;
+}
+.modal-close {
+  background: var(--surface); border: 1px solid var(--border);
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--muted);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  font-family: inherit; font-size: 16px;
+}
+.modal-close:hover { background: var(--soft); color: var(--text); border-color: var(--border-strong); }
+.modal-body {
+  flex: 1; min-height: 0; overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.modal-body iframe { width: 100%; height: 100%; border: none; background: var(--bg); display: block; }
+
+/* CONTACT FORM (inside modal) */
+.contact-wrap {
+  max-width: 520px; margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+.contact-wrap h2 {
+  font-size: 1.7rem; font-weight: 800; letter-spacing: -0.03em;
+  color: var(--text); margin-bottom: 8px;
+}
+.contact-sub {
+  font-size: 0.92rem; color: var(--muted); margin-bottom: 28px; line-height: 1.6;
+}
+.field { margin-bottom: 14px; }
+.field label {
+  display: block; font-size: 0.78rem; font-weight: 600; color: var(--text);
+  margin-bottom: 7px;
+}
+.field label .opt {
+  font-weight: 400; color: var(--subtle); margin-left: 4px;
+}
+.field input, .field textarea {
+  width: 100%; padding: 12px 14px;
+  border: 1px solid var(--border-strong); border-radius: 9px;
+  background: var(--surface); color: var(--text);
+  font-family: inherit; font-size: 0.93rem; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  resize: vertical;
+}
+.field textarea { min-height: 110px; line-height: 1.5; }
+.field input:focus, .field textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(24,24,27,0.08);
+}
+.field input.error, .field textarea.error { border-color: var(--error); }
+.field-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+}
+@media(max-width: 480px) {
+  .field-row { grid-template-columns: 1fr; }
+}
+.contact-submit {
+  width: 100%; background: var(--accent); color: #fff; border: none;
+  border-radius: 11px; padding: 14px;
+  font-family: inherit; font-size: 0.95rem; font-weight: 600;
+  cursor: pointer; margin-top: 8px;
+  transition: background 0.15s;
+}
+.contact-submit:hover { background: var(--accent-hover); }
+.contact-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.contact-error {
+  font-size: 0.82rem; color: var(--error); text-align: center;
+  margin-top: 12px; display: none;
+}
+.contact-error.visible { display: block; }
+.contact-success {
+  text-align: center; padding: 14px 0; display: none;
+}
+.contact-success.visible { display: block; }
+.success-icon {
+  width: 56px; height: 56px; background: var(--success-bg); color: var(--success);
+  border-radius: 50%; display: grid; place-items: center;
+  font-size: 26px; margin: 0 auto 16px; font-weight: 700;
+}
+.contact-success h3 {
+  font-size: 1.25rem; font-weight: 800; color: var(--text); margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.contact-success p { font-size: 0.92rem; color: var(--muted); line-height: 1.55; }
+
+/* MOBILE */
+@media(max-width:600px) {
+  nav { padding: 12px 18px; }
+  .hero { padding: 130px 20px 70px; }
+  .free-section, .business { padding: 70px 20px; }
+  .managed { padding: 70px 20px; }
+  footer { padding: 22px 20px; }
+  .modal-header { padding: 14px 20px; }
+  .contact-wrap { padding: 32px 20px 50px; }
+}
+
+body.locked { overflow: hidden; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#top" class="nav-logo">
+    <div class="nav-logo-mark">v</div>
+    <span class="nav-logo-text">viuno</span>
+  </a>
+  <div class="nav-right">
+    <div class="lang-switcher" role="group" aria-label="Seleziona lingua">
+      <a href="/">DE</a>
+      <a href="/it/" class="active" aria-current="page">IT</a>
+    </div>
+    <button class="nav-cta" onclick="openContact()">Contatto</button>
+  </div>
+</nav>
+
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <h1>
+      Creator nel mercato DACH.
+      <em>Connessioni che funzionano davvero.</em>
+    </h1>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="openContact()">Parliamone</button>
+      <a href="https://app.viuno.de" class="btn-secondary">App viuno</a>
+    </div>
+  </div>
+</section>
+
+<section class="business" id="brand">
+  <div class="business-inner">
+    <div class="business-eyebrow">Per brand e aziende</div>
+    <h2>Social media,<br>direttamente con i creator.</h2>
+    <p>
+      Content, community management, reporting. Su richiesta, creator selezionati dal network viuno come ambasciatori del tuo brand nel mercato di lingua tedesca.
+    </p>
+    <button class="btn-primary" onclick="openContact()">Parliamone</button>
+  </div>
+</section>
+
+<section class="managed">
+  <div class="section-head">
+    <div class="section-eyebrow">Managed Creator</div>
+    <h2>Il nostro network.</h2>
+  </div>
+  <div class="managed-card reveal">
+    <h2>Crescita, deal, reporting.</h2>
+    <ul class="managed-list">
+      <li>Selezione attiva di creator per ogni brand</li>
+      <li>Negoziazione e verifica dei contratti</li>
+      <li>Reporting mensile con prossimi passi concreti</li>
+      <li>Strategia di contenuto su misura</li>
+      <li>Durate brevi, nessun lock in, condizioni trasparenti</li>
+    </ul>
+    <button class="btn-primary" onclick="openContact()">Parliamone</button>
+  </div>
+</section>
+
+<section class="free-section" id="creator">
+  <div class="free-inner">
+    <div class="section-head">
+      <div class="section-eyebrow">App viuno</div>
+      <h2>Cosa offriamo ai creator.</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card reveal">
+        <div class="ico">📈</div>
+        <h4>Analytics</h4>
+        <p>Follower, engagement, performance. In un colpo d'occhio.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">📰</div>
+        <h4>Daily Digest</h4>
+        <p>Trending topic e news del settore, ogni mattina.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">🔗</div>
+        <h4>BioLink</h4>
+        <p>Una bio page con tutti i link, nel tuo stile.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">📄</div>
+        <h4>Media Kit</h4>
+        <p>Generato automaticamente con dati live, pronto per i brand.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">🎯</div>
+        <h4>Content News</h4>
+        <p>Cosa funziona ora. Format, hook, trend.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="ico">⚡</div>
+        <h4>Insights</h4>
+        <p>Suggerimenti concreti per il tuo prossimo post.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-left">
+    <div class="footer-mark">v</div>
+    <span class="footer-text">© 2026 viuno</span>
+  </div>
+  <div class="footer-links">
+    <button class="footer-link" onclick="openImpressum()">Note legali</button>
+    <button class="footer-link" onclick="openDatenschutz()">Privacy</button>
+  </div>
+</footer>
+
+<!-- BACKDROP -->
+<div class="backdrop" id="backdrop" onclick="closeAll()"></div>
+
+<!-- IMPRESSUM SHEET (bottom) -->
+<div class="sheet" id="impressum-sheet" role="dialog" aria-label="Note legali">
+  <div class="sheet-handle-wrap"><div class="sheet-handle"></div></div>
+  <div class="sheet-header">
+    <div class="sheet-title">Note legali</div>
+    <button class="sheet-close" onclick="closeAll()" aria-label="Chiudi">✕</button>
+  </div>
+  <div class="sheet-body">
+    <iframe id="impressum-iframe" title="Note legali" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- DATENSCHUTZ MODAL (full screen) -->
+<div class="modal" id="datenschutz-modal" role="dialog" aria-label="Privacy">
+  <div class="modal-header">
+    <div class="modal-title">Privacy</div>
+    <button class="modal-close" onclick="closeAll()" aria-label="Chiudi">✕</button>
+  </div>
+  <div class="modal-body">
+    <iframe id="datenschutz-iframe" title="Privacy" loading="lazy"></iframe>
+  </div>
+</div>
+
+<!-- KONTAKT MODAL (full screen) -->
+<div class="modal" id="contact-modal" role="dialog" aria-label="Contatto">
+  <div class="modal-header">
+    <div class="modal-title">Contatto</div>
+    <button class="modal-close" onclick="closeAll()" aria-label="Chiudi">✕</button>
+  </div>
+  <div class="modal-body">
+    <div class="contact-wrap">
+      <div id="contact-form-view">
+        <h2>Scrivici direttamente.</h2>
+        <p class="contact-sub">
+          Brand, progetto aziendale o semplice domanda. In breve di cosa si tratta, ti rispondiamo personalmente.
+        </p>
+        <div class="field">
+          <label for="c-name">Nome</label>
+          <input type="text" id="c-name" placeholder="Come ti chiami?" autocomplete="name" />
+        </div>
+        <div class="field">
+          <label for="c-email">E mail</label>
+          <input type="email" id="c-email" placeholder="tu@esempio.it" autocomplete="email" />
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="c-instagram">Instagram <span class="opt">(opzionale)</span></label>
+            <input type="text" id="c-instagram" placeholder="@il.tuo.handle" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="c-tiktok">TikTok <span class="opt">(opzionale)</span></label>
+            <input type="text" id="c-tiktok" placeholder="@il.tuo.handle" autocomplete="off" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="c-website">Sito web <span class="opt">(opzionale)</span></label>
+          <input type="url" id="c-website" placeholder="https://" autocomplete="url" />
+        </div>
+        <div class="field">
+          <label for="c-message">Di cosa si tratta?</label>
+          <textarea id="c-message" placeholder="In breve cosa cerchi. Brand partnership, social media per la tua azienda o solo una domanda."></textarea>
+        </div>
+        <button class="contact-submit" id="c-submit" onclick="submitContact()">Invia messaggio</button>
+        <div class="contact-error" id="c-error">Qualcosa è andato storto. Riprova per favore.</div>
+      </div>
+      <div class="contact-success" id="contact-success-view">
+        <div class="success-icon">✓</div>
+        <h3>Grazie. Ricevuto.</h3>
+        <p>Ti rispondiamo personalmente entro 24 ore.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const EDGE_URL = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/contact-submit';
+const IMPRESSUM_URL = 'https://itrk.legal/1hAc.0.ZIR-de-iframe.html';
+const DATENSCHUTZ_URL = 'https://itrk.legal/1hAc.8U.ZIR-iframe.html';
+
+// Lazy-load iframes
+let impressumLoaded = false;
+let datenschutzLoaded = false;
+
+function lockBody() { document.body.classList.add('locked'); }
+function unlockBody() { document.body.classList.remove('locked'); }
+
+function openImpressum() {
+  if (!impressumLoaded) {
+    document.getElementById('impressum-iframe').src = IMPRESSUM_URL;
+    impressumLoaded = true;
+  }
+  document.getElementById('backdrop').classList.add('open');
+  document.getElementById('impressum-sheet').classList.add('open');
+  lockBody();
+}
+
+function openDatenschutz() {
+  if (!datenschutzLoaded) {
+    document.getElementById('datenschutz-iframe').src = DATENSCHUTZ_URL;
+    datenschutzLoaded = true;
+  }
+  document.getElementById('datenschutz-modal').classList.add('open');
+  lockBody();
+}
+
+function openContact() {
+  document.getElementById('contact-modal').classList.add('open');
+  lockBody();
+  setTimeout(() => {
+    const nameInput = document.getElementById('c-name');
+    if (nameInput && document.getElementById('contact-form-view').style.display !== 'none') {
+      nameInput.focus();
+    }
+  }, 350);
+}
+
+function closeAll() {
+  document.getElementById('backdrop').classList.remove('open');
+  document.getElementById('impressum-sheet').classList.remove('open');
+  document.getElementById('datenschutz-modal').classList.remove('open');
+  document.getElementById('contact-modal').classList.remove('open');
+  unlockBody();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+
+async function submitContact() {
+  const nameEl = document.getElementById('c-name');
+  const emailEl = document.getElementById('c-email');
+  const msgEl = document.getElementById('c-message');
+  const igEl = document.getElementById('c-instagram');
+  const ttEl = document.getElementById('c-tiktok');
+  const webEl = document.getElementById('c-website');
+  const btn = document.getElementById('c-submit');
+  const errEl = document.getElementById('c-error');
+
+  const name = nameEl.value.trim();
+  const email = emailEl.value.trim();
+  const message = msgEl.value.trim();
+  const instagram_handle = igEl.value.trim() || null;
+  const tiktok_handle = ttEl.value.trim() || null;
+  const website_url = webEl.value.trim() || null;
+
+  [nameEl, emailEl, msgEl].forEach(el => el.classList.remove('error'));
+  errEl.classList.remove('visible');
+
+  let hasError = false;
+  let firstErrorEl = null;
+  if (!name || name.length < 2) { nameEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || nameEl; }
+  if (!email || !email.includes('@') || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    emailEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || emailEl;
+  }
+  if (!message || message.length < 5) { msgEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || msgEl; }
+  if (hasError) {
+    if (firstErrorEl) firstErrorEl.focus();
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Invio in corso…';
+
+  try {
+    const res = await fetch(EDGE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, email, message,
+        instagram_handle, tiktok_handle, website_url,
+        source: 'landing-page-it'
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.success === false) throw new Error(data.error || 'Errore');
+
+    document.getElementById('contact-form-view').style.display = 'none';
+    document.getElementById('contact-success-view').classList.add('visible');
+    document.querySelector('#contact-modal .modal-body').scrollTop = 0;
+  } catch (err) {
+    errEl.textContent = err.message && err.message !== 'Errore' ? err.message : 'Qualcosa è andato storto. Riprova per favore.';
+    errEl.classList.add('visible');
+    btn.disabled = false;
+    btn.textContent = 'Invia messaggio';
+  }
+}
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), 50); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
