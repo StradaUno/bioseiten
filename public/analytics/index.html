@@ -9,7 +9,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);--text:#111110;--muted:#7a7975;--subtle:#b0afa9;--green:#1a7f4b;--green-bg:#edf7f1;--green-border:rgba(26,127,75,.2);--red:#c0392b;--red-bg:#fdf0ef;--orange:#b85c00;--orange-bg:#fdf3e7;--blue:#3b5bdb;--blue-bg:#f0f4ff;--radius:16px;--radius-sm:10px;--nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)}
-html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:15px}
 #app{display:none;min-height:100dvh;flex-direction:column;overflow:hidden}
 #app.visible{display:flex}
 .topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
@@ -21,7 +21,23 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .topbar-avatar img{width:100%;height:100%;object-fit:cover}
 .page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(40px + var(--safe-bottom))}
 .section{padding:12px 20px 0}
-.section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.section-label{font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.kpi-card.dark{background:var(--text);border-color:var(--text);grid-column:1/-1;padding:16px 20px}
+.kpi-card.dark .kpi-label{color:rgba(255,255,255,.5)}
+.kpi-card.dark .kpi-value{color:white}
+.kpi-card.dark .kpi-delta{color:rgba(255,255,255,.6)}
+.kpi-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.kpi-value{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1}
+.kpi-delta{font-size:12px;font-weight:500;margin-top:4px}
+.kpi-delta.up{color:var(--green)}.kpi-delta.down{color:var(--red)}.kpi-delta.flat{color:var(--muted)}
+.timing-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.timing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.timing-icon{font-size:20px;margin-bottom:6px}
+.timing-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.timing-value{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.02em}
 .hidden{display:none!important}
 .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
 .spinner-dark{width:13px;height:13px;border:2px solid rgba(0,0,0,.12);border-top-color:var(--muted);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
@@ -52,7 +68,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .step-dot.done{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
 .step-dot.active{background:var(--text);color:white}
 .step-dot.wait{background:var(--surface2);border:1.5px solid var(--border-strong)}
-.step-label{font-size:12px;font-weight:500}
+.step-label{font-size:13px;font-weight:500}
 .step-label.done{color:var(--subtle)}
 .step-label.active{color:var(--text);font-weight:600}
 .step-label.wait{color:var(--subtle)}
@@ -64,34 +80,34 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 
 /* ── CONTENT CARDS ── */
 .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.summary-text{font-size:13px;color:var(--text);line-height:1.7;white-space:pre-line}
+.summary-text{font-size:14px;color:var(--text);line-height:1.7;white-space:pre-line}
 .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .insight-row{padding:14px 16px;border-bottom:1px solid var(--border)}
 .insight-row:last-child{border-bottom:none}
-.insight-tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.insight-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
 .tag-good{background:var(--green-bg);color:var(--green)}
 .tag-improve{background:var(--orange-bg);color:var(--orange)}
 .tag-tip{background:var(--surface2);color:var(--muted)}
 .tag-dev{background:var(--blue-bg);color:var(--blue)}
-.insight-text{font-size:13px;color:var(--text);line-height:1.65;white-space:pre-line}
+.insight-text{font-size:14px;color:var(--text);line-height:1.65;white-space:pre-line}
 .tips-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .tip-row{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
 .tip-row:last-child{border-bottom:none}
 .tip-num{width:22px;height:22px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
-.tip-text{font-size:13px;color:var(--text);line-height:1.5;flex:1}
+.tip-text{font-size:14px;color:var(--text);line-height:1.5;flex:1}
 .top-posts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .top-post-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit}
 .top-post-row:last-child{border-bottom:none}
 .top-post-rank{width:22px;height:22px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0}
 .top-post-rank.first{background:var(--text);color:white}
 .top-post-body{flex:1;min-width:0}
-.top-post-why{font-size:12px;color:var(--text);line-height:1.4;margin-bottom:3px}
-.top-post-stat{font-size:11px;color:var(--muted)}
+.top-post-why{font-size:13px;color:var(--text);line-height:1.4;margin-bottom:3px}
+.top-post-stat{font-size:12px;color:var(--muted)}
 .top-post-arrow{color:var(--subtle);font-size:14px}
 .empty-state{text-align:center;padding:48px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
 .empty-icon{font-size:32px;margin-bottom:10px}
 .empty-title{font-size:15px;font-weight:600;margin-bottom:4px}
-.empty-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:16px}
+.empty-sub{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:16px}
 .btn-empty{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
 .btn-share{width:100%;padding:13px;background:var(--surface);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
 
@@ -303,6 +319,7 @@ window.logout=async function(){try{await sb.auth.signOut()}catch(_){}location.re
 const S={
   user:null, profile:null,
   ki:{instagram:null,tiktok:null},
+  stats:{instagram:null,tiktok:null},
   platform:'instagram',
   runId:null, pollTimer:null
 }
@@ -371,10 +388,17 @@ window.switchPlatform=function(p){
 
 // ── Load KI results ──
 async function loadKi(){
-  const{data}=await sb.from('analyse_ki').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(4)
-  if(data?.length){
-    S.ki.instagram=data.find(r=>r.platform==='instagram')||null
-    S.ki.tiktok=data.find(r=>r.platform==='tiktok')||null
+  const[kiRes,statsRes]=await Promise.all([
+    sb.from('analyse_ki').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(4),
+    sb.from('analyse_stats').select('*').eq('user_id',S.user.id).order('created_at',{ascending:false}).limit(4)
+  ])
+  if(kiRes.data?.length){
+    S.ki.instagram=kiRes.data.find(r=>r.platform==='instagram')||null
+    S.ki.tiktok=kiRes.data.find(r=>r.platform==='tiktok')||null
+  }
+  if(statsRes.data?.length){
+    S.stats.instagram=statsRes.data.find(r=>r.platform==='instagram')||null
+    S.stats.tiktok=statsRes.data.find(r=>r.platform==='tiktok')||null
   }
   renderContent()
 }
@@ -537,6 +561,60 @@ function renderContent(){
 
   let h=''
   const date=fmtDate(ki.created_at)
+  const st=S.stats[pl]
+
+  // ── KPI-Kacheln aus analyse_stats ──
+  if(st){
+    const follDelta=st.followers_change
+    const erDelta=st.engagement_rate_change
+    const follDeltaStr=follDelta!=null?(follDelta>=0?`↑ +${fmt(follDelta)}`:`↓ ${fmt(follDelta)}`):null
+    const erDeltaStr=erDelta!=null?(erDelta>=0?`↑ +${(+erDelta).toFixed(2)}%`:`↓ ${Math.abs(+erDelta).toFixed(2)}%`):null
+    h+=`<div class="section" style="margin-top:12px"><div class="kpi-grid">
+      <div class="kpi-card dark">
+        <div class="kpi-label">Follower</div>
+        <div class="kpi-value">${fmt(st.followers)}</div>
+        ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} diese Woche</div>`:'<div class="kpi-delta flat">Erste Messung</div>'}
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">⌀ Likes</div>
+        <div class="kpi-value">${fmt(st.avg_likes)}</div>
+        <div class="kpi-delta flat">Pro Beitrag</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Engagement Rate</div>
+        <div class="kpi-value">${st.engagement_rate!=null?(+st.engagement_rate).toFixed(2)+'%':'–'}</div>
+        ${erDeltaStr?`<div class="kpi-delta ${erDelta>=0?'up':'down'}">${erDeltaStr}</div>`:'<div class="kpi-delta flat">Erste Messung</div>'}
+      </div>
+      ${st.avg_views!=null?`<div class="kpi-card">
+        <div class="kpi-label">⌀ Views</div>
+        <div class="kpi-value">${fmt(st.avg_views)}</div>
+        <div class="kpi-delta flat">Pro Beitrag</div>
+      </div>`:`<div class="kpi-card">
+        <div class="kpi-label">⌀ Kommentare</div>
+        <div class="kpi-value">${fmt(st.avg_comments)}</div>
+        <div class="kpi-delta flat">Pro Beitrag</div>
+      </div>`}
+    </div></div>`
+    // Timing-Kacheln wenn vorhanden
+    if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null){
+      h+=`<div class="section"><div class="timing-grid">`
+      if(st.best_posting_day||st.best_posting_hour!=null){
+        const timeStr=st.best_posting_hour!=null?`${st.best_posting_hour}:00 Uhr`:'–'
+        const dayStr=st.best_posting_day||''
+        h+=`<div class="timing-card"><div class="timing-icon">⏰</div><div class="timing-label">Beste Zeit</div><div class="timing-value">${dayStr}${dayStr&&timeStr?' · ':''}${timeStr}</div></div>`
+      }
+      if(st.top_format){
+        h+=`<div class="timing-card"><div class="timing-icon">🎬</div><div class="timing-label">Top Format</div><div class="timing-value">${esc(st.top_format)}</div></div>`
+      }
+      if(st.posts_per_week!=null){
+        h+=`<div class="timing-card"><div class="timing-icon">📅</div><div class="timing-label">Posts / Woche</div><div class="timing-value">${(+st.posts_per_week).toFixed(1)}</div></div>`
+      }
+      if(st.avg_shares!=null&&+st.avg_shares>0){
+        h+=`<div class="timing-card"><div class="timing-icon">↗</div><div class="timing-label">⌀ Shares</div><div class="timing-value">${fmt(st.avg_shares)}</div></div>`
+      }
+      h+=`</div></div>`
+    }
+  }
 
   if(ki.analyse_ueberblick){
     h+=`<div class="section" style="margin-top:12px"><div class="section-label">${label} · ${date}</div>
@@ -603,11 +681,34 @@ function renderContent(){
 // ── Share ──
 window.shareAnalytics=function(){
   const ki=S.ki[S.platform]
-  const label=S.platform==='instagram'?'Instagram':'TikTok'
-  const text=ki
-    ?`📊 Meine ${label}-Analyse\n\n${(ki.analyse_ueberblick||'').slice(0,200)}…\n\nErstellt mit viuno.de`
-    :`📊 Meine ${label}-Analyse — viuno.de`
-  if(navigator.share)navigator.share({title:`Meine ${label} Analyse`,text}).catch(()=>{})
+  const st=S.stats[S.platform]
+  const pl=S.platform==='instagram'?'Instagram':'TikTok'
+  const handle=S.platform==='instagram'?S.profile?.instagram_handle:S.profile?.tiktok_handle
+  const handleStr=handle?handle.startsWith('@')?handle:'@'+handle:''
+
+  const lines=[]
+  lines.push(`📊 Meine ${pl}-Analyse`)
+  if(handleStr)lines.push(handleStr)
+  lines.push('')
+
+  if(st){
+    const follStr=st.followers!=null?`👥 ${fmt(st.followers)} Follower`+( st.followers_change!=null&&st.followers_change!==0?` (${st.followers_change>=0?'+':''}${fmt(st.followers_change)} diese Woche)`:'' ):null
+    if(follStr)lines.push(follStr)
+    if(st.engagement_rate!=null)lines.push(`💫 ${(+st.engagement_rate).toFixed(2)}% Engagement Rate`)
+    if(st.avg_likes!=null)lines.push(`❤️  ⌀ ${fmt(st.avg_likes)} Likes pro Post`)
+    if(st.avg_views!=null)lines.push(`👁  ⌀ ${fmt(st.avg_views)} Views pro Post`)
+    if(st.best_posting_day&&st.best_posting_hour!=null)lines.push(`⏰ Beste Zeit: ${st.best_posting_day} ${st.best_posting_hour}:00 Uhr`)
+  } else if(ki?.analyse_ueberblick){
+    lines.push((ki.analyse_ueberblick||'').slice(0,120)+'…')
+  }
+
+  lines.push('')
+  lines.push('Analysiert mit viuno — dem kostenlosen Tool für Creator-Wachstum.')
+  lines.push('👉 viuno.de')
+
+  const text=lines.filter(l=>l!=null).join('\n')
+
+  if(navigator.share)navigator.share({title:`Meine ${pl}-Analyse`,text}).catch(()=>{})
   else navigator.clipboard.writeText(text).then(()=>showToast('Kopiert ✓')).catch(()=>showToast('Teilen nicht verfügbar'))
 }
 </script>
