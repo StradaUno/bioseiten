@@ -313,14 +313,11 @@ function renderNewsletterBoxes(){
     </div>`
     botEl.innerHTML=''
   } else {
-    topEl.innerHTML=`<div class="nl-box" id="nl-box-top">
-      <div class="nl-title">📬 Creator News per Mail</div>
-      <div class="nl-sub">Tägliche Highlights direkt in dein Postfach — kostenlos.</div>
-      <div class="nl-row">
-        <input type="email" class="nl-input" id="nl-email-top" value="${escHtml(state.userEmail)}" placeholder="deine@email.de"/>
-        <button class="nl-btn" onclick="digestSubscribe('top')">Anmelden</button>
-      </div>
-      <div class="nl-success" id="nl-success-top">✓ Erfolgreich angemeldet!</div>
+    topEl.innerHTML=`<div style="margin:8px 20px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:10px">
+      <span style="font-size:16px;flex-shrink:0">📬</span>
+      <span style="font-size:12px;color:var(--muted);flex:1">Creator News auch per Mail?</span>
+      <input type="email" id="nl-email-top" value="${escHtml(state.userEmail)}" placeholder="E-Mail" style="width:130px;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;flex-shrink:0"/>
+      <button onclick="digestSubscribe('top')" style="padding:7px 12px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;white-space:nowrap">Ja!</button>
     </div>`
     botEl.innerHTML=`<div class="nl-box" id="nl-box-bottom" style="margin:12px 20px 24px">
       <div class="nl-title">📬 Nie wieder was verpassen</div>
