@@ -242,6 +242,26 @@ input,textarea,select{font-size:16px!important}
   </div>
   <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
 </div>
+<!-- USERNAME SHEET -->
+<div class="sheet-backdrop hidden" id="username-sheet" onclick="closeUsernameSheet()">
+  <div class="sheet" onclick="event.stopPropagation()" style="padding-bottom:calc(24px + var(--safe-bottom))">
+    <div class="sheet-handle"></div>
+    <div style="padding:16px 20px 0">
+      <div style="font-size:17px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px">Username ändern</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5">Dein BioLink und Media Kit werden automatisch aktualisiert. Alte Links funktionieren danach nicht mehr.</div>
+      <div style="margin-bottom:8px">
+        <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neuer Username</label>
+        <input type="text" id="sheet-new-username" placeholder="Neuer Username"
+          style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
+          oninput="checkUsernameAvailability()"/>
+      </div>
+      <div id="username-status" style="font-size:12px;min-height:18px;margin-bottom:16px"></div>
+      <button id="btn-save-username" onclick="confirmUsernameChange()" disabled style="width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;opacity:.5">Weiter</button>
+      <button onclick="closeUsernameSheet()" style="width:100%;padding:13px;margin-top:8px;background:var(--surface2);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
@@ -314,9 +334,9 @@ function renderProfile(){
     <div class="section"><div class="section-label">Profil bearbeiten</div>
       <div class="edit-card">
         <div class="field"><label>Username</label>
-          <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="edit-username" value="${escHtml(p.display_name||'')}" style="flex:1"/>
-            <button onclick="openUsernameModal()" style="padding:11px 14px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap">Ändern</button>
+          <div style="display:flex;gap:8px;align-items:center;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg)">
+            <span style="flex:1;font-size:14px;color:var(--text)" id="display-username">${escHtml(p.display_name||'–')}</span>
+            <button onclick="openUsernameSheet()" style="padding:6px 12px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">Ändern</button>
           </div>
           <div class="username-hint">Dein öffentlicher Name auf viuno.de</div>
         </div>
@@ -349,22 +369,56 @@ function renderProfile(){
 }
 window.selectNiche=function(key){state.niche=key;document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===key))}
 
-// ── Username Modal ──
-window.openUsernameModal=function(){
-  const newName=document.getElementById('edit-username').value.trim()
-  if(!newName){showToast('Bitte gib einen Username ein.');return}
-  if(newName===state.profile.display_name){showToast('Das ist bereits dein Username.');return}
-  // Step 1: confirm new username
-  showModal(`Username ändern zu "${newName}"?`,
-    `Dein neuer Username wird: <b>${newName}</b><br><br>Klicke Weiter um die Auswirkungen zu sehen.`,
-    'Weiter',()=>showUsernameWarning(newName))
+// ── Username Sheet ──
+window.openUsernameSheet=function(){
+  const input=document.getElementById('sheet-new-username')
+  const status=document.getElementById('username-status')
+  const btn=document.getElementById('btn-save-username')
+  if(input)input.value=''
+  if(status)status.textContent=''
+  if(btn){btn.disabled=true;btn.style.opacity='.5'}
+  document.getElementById('username-sheet').classList.remove('hidden')
+  document.body.style.overflow='hidden'
+  setTimeout(()=>input?.focus(),200)
 }
-function showUsernameWarning(newName){
-  showModal('Wichtiger Hinweis',
+window.closeUsernameSheet=function(){
+  document.getElementById('username-sheet').classList.add('hidden')
+  document.body.style.overflow=''
+}
+let _usernameTimer=null
+window.checkUsernameAvailability=async function(){
+  const input=document.getElementById('sheet-new-username')
+  const status=document.getElementById('username-status')
+  const btn=document.getElementById('btn-save-username')
+  const val=input.value.trim()
+  clearTimeout(_usernameTimer)
+  btn.disabled=true;btn.style.opacity='.5'
+  if(!val){status.textContent='';return}
+  if(val===state.profile?.display_name){status.style.color='var(--muted)';status.textContent='Das ist bereits dein Username.';return}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(val)){status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.';return}
+  status.style.color='var(--muted)';status.textContent='Wird geprüft…'
+  _usernameTimer=setTimeout(async()=>{
+    const{data}=await sb.from('users').select('id').ilike('display_name',val).maybeSingle()
+    if(data){
+      status.style.color='var(--red)';status.textContent='❌ Leider vergeben.'
+      btn.disabled=true;btn.style.opacity='.5'
+    } else {
+      status.style.color='var(--green)';status.textContent='✓ Verfügbar!'
+      btn.disabled=false;btn.style.opacity='1'
+    }
+  },500)
+}
+window.confirmUsernameChange=function(){
+  const newName=document.getElementById('sheet-new-username').value.trim()
+  if(!newName)return
+  closeUsernameSheet()
+  showModal(
+    `Username ändern zu "${newName}"?`,
     null,
     'Ja, Username ändern',
     ()=>commitUsername(newName),
-    `Dein BioLink und Media Kit werden automatisch auf den neuen Username aktualisiert. Alte Links funktionieren danach nicht mehr. Bist du sicher?`)
+    'Dein BioLink und Media Kit werden automatisch auf den neuen Username aktualisiert. Alte Links funktionieren danach nicht mehr.'
+  )
 }
 async function commitUsername(newName){
   closeModal()
@@ -375,6 +429,8 @@ async function commitUsername(newName){
   const body=await res.json().catch(()=>({}))
   if(!res.ok&&body.success!==true){showToast('Fehler: '+(body.error||'Unbekannt'),4000);return}
   state.profile.display_name=newName
+  const du=document.getElementById('display-username')
+  if(du)du.textContent=newName
   showToast('Username geändert ✓')
   await loadProfile()
 }
