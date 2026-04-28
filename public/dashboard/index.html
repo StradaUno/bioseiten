@@ -549,7 +549,7 @@ async function doLogin(){
   const{data,error}=await sb.auth.signInWithPassword({email,password:pw})
   btn.disabled=false;btn.textContent='Einloggen'
   if(error){errEl.textContent='Falsche E-Mail oder Passwort.';return}
-  location.reload()
+  await enterApp(data.session)
 }
 baseInit(enterApp)
 </script>
