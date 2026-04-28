@@ -356,7 +356,6 @@ async function loadDashboard(uid){
   const greet   = hour<12?'Guten Morgen':hour<18?'Guten Tag':'Guten Abend'
   const newReqs = reqs.filter(r=>r.status==='new').length
   const follDelta = an?.followers_change
-  const lineSvg   = buildLineSvg(anRows)
 
   document.getElementById('skeleton-area').classList.add('hidden')
   document.getElementById('dashboard-content').classList.remove('hidden')
@@ -392,28 +391,6 @@ async function loadDashboard(uid){
         <div class="kpi-delta neu">Neu</div>
       </a>
     </div>
-
-    <!-- Analytics (Linie) -->
-    ${an?`<div class="section">
-      <div class="section-header"><div class="section-title">Analytics</div><a class="section-link" href="/analytics">Alle →</a></div>
-      <a class="mini-chart-card" href="/analytics">
-        <div class="mini-top">
-          <div>
-            <div class="a-label">Instagram · Follower</div>
-            <div class="a-value">${fmt(an.followers)}</div>
-            ${follDelta!=null?`<div class="a-delta ${follDelta>=0?'up':'down'}">${follDelta>=0?'↑':'↓'} ${Math.abs(follDelta).toLocaleString('de-DE')} diese Woche</div>`:''}
-          </div>
-          <div style="font-size:12px;color:var(--muted)">↗</div>
-        </div>
-        ${lineSvg}
-        <div class="mini-footer">
-          <span class="a-stat"><strong>${fmt(an.avg_likes)}</strong> Ø Likes</span>
-          <span class="a-stat"><strong>${fmt(an.avg_views)}</strong> Ø Views</span>
-          <span class="a-stat"><strong>${Number(an.engagement_rate).toFixed(1)}%</strong> ER</span>
-          ${an.avg_saves?`<span class="a-stat"><strong>${fmt(an.avg_saves)}</strong> Ø Saves</span>`:''}
-        </div>
-      </a>
-    </div>`:''}
 
     <!-- Daily Digest — tägliche Zusammenfassung -->
     ${d?`<div class="section">
@@ -459,9 +436,9 @@ async function loadDashboard(uid){
       }).join('')}
     </div>`:''}
 
-    <!-- viuno PRO -->
+    <!-- viuno -->
     <div class="section" style="padding-bottom:calc(16px + var(--safe-bottom))">
-      <div class="section-title" style="margin-bottom:10px">viuno PRO</div>
+      <div class="section-title" style="margin-bottom:10px">viuno</div>
       <a class="extras-banner" href="/extras">
         <div class="extras-banner-icon">✦</div>
         <div class="extras-banner-body">
@@ -485,11 +462,6 @@ async function loadDashboard(uid){
           <div class="extras-card-icon">📋</div>
           <div class="extras-card-title">Media Kit</div>
           <div class="extras-card-sub">Für Brand-Anfragen</div>
-        </a>
-        <a class="extras-card" href="/extras">
-          <div class="extras-card-icon">✦</div>
-          <div class="extras-card-title">Extras</div>
-          <div class="extras-card-sub">Alle PRO Features</div>
         </a>
       </div>
     </div>
