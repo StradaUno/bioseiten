@@ -106,6 +106,19 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .card-share:hover{color:var(--text);border-color:var(--border-strong)}
 
 
+/* NEWSLETTER */
+.nl-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:12px 20px 0}
+.nl-subscribed{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin:12px 20px 0;display:flex;align-items:center;gap:10px}
+.nl-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
+.nl-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.nl-row{display:flex;gap:8px}
+.nl-input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.nl-input:focus{border-color:var(--text)}
+.nl-btn{padding:10px 16px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.nl-btn:disabled{opacity:.5;cursor:not-allowed}
+.nl-success{font-size:12px;color:var(--green);margin-top:8px;display:none}
+.nl-unsub-btn{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0;margin-left:auto}
+
 /* iOS zoom fix */
 input,textarea,select{font-size:16px!important}
 
@@ -184,18 +197,13 @@ input,textarea,select{font-size:16px!important}
   </div>
   <nav class="sidebar-nav"><div class="sidebar-section">Übersicht</div>
 <a class="sidebar-item" href="/dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
-<a class="sidebar-item active" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Daily Digest</a>
-<div class="sidebar-section">Creator</div>
-<a class="sidebar-item" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics</a>
-<a class="sidebar-item" href="/trends"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Trends</a>
-<div class="sidebar-section">Business</div>
-<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
+<a class="sidebar-item active" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Creator News</a>
 <a class="sidebar-item" href="/biolink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>BioLink</a>
 <a class="sidebar-item" href="/mediakit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Media Kit</a>
-<a class="sidebar-item" href="/extras"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Extras<span class="sidebar-item-badge">viuno Pro</span></a>
+<a class="sidebar-item" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analyse</a>
+<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
 <div class="sidebar-section">Konto</div>
-<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
-</nav>
+<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a></nav>
   <div class="sidebar-footer">
     <div class="sidebar-pro-banner" id="sidebar-pro-banner">
       <span style="font-size:18px">⭐</span>
@@ -221,10 +229,12 @@ input,textarea,select{font-size:16px!important}
   </div>
   <div class="page">
     <div class="page-header"><div class="page-title">Daily Digest</div><div class="page-sub" id="digest-sub">Was heute in der Creator-Welt passiert.</div></div>
+    <div id="nl-top"></div>
     <div class="date-scroll" id="date-scroll"></div>
     <div class="filter-row" id="filter-row"><button class="f-pill active" data-filter="alle">Alle</button></div>
     <div id="skeleton-area" style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div class="skeleton" style="height:180px;border-radius:16px"></div><div class="skeleton" style="height:140px;border-radius:16px"></div></div>
     <div class="cards-list hidden" id="cards-list"></div>
+    <div id="nl-bottom"></div>
     <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">📭</div><div class="empty-title">Kein Digest</div><div class="empty-sub">Wird täglich um 7:00 Uhr generiert.</div></div>
   </div>
 </div>
@@ -274,12 +284,81 @@ async function doLogin(){
 window.logout=async function(){try{if(window.sb)await window.sb.auth.signOut()}catch(_){}location.replace('https://viuno.de')}
 
 
-const state={digests:[],activeDate:null,activeFilter:'alle'}
+const state={digests:[],activeDate:null,activeFilter:'alle',uid:null,isSubscribed:false,userEmail:''}
 function fmtDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}
 function fmtDayNum(d){return new Date(d+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit'})}
 function fmtDayName(d){return['So','Mo','Di','Mi','Do','Fr','Sa'][new Date(d+'T12:00:00').getDay()]}
-async function enterApp(session){;document.getElementById('app').classList.add('visible')
-  await setupSidebar(session);await setupAvatar(session);await loadDigests()}
+async function enterApp(session){
+  document.getElementById('app').classList.add('visible')
+  state.uid=session.user.id
+  state.userEmail=session.user.email||''
+  await setupSidebar(session)
+  await setupAvatar(session)
+  const{data:p}=await sb.from('users').select('newsletter_subscribed,email').eq('id',state.uid).single()
+  state.isSubscribed=p?.newsletter_subscribed||false
+  state.userEmail=p?.email||state.userEmail
+  renderNewsletterBoxes()
+  await loadDigests()
+}
+
+function renderNewsletterBoxes(){
+  const topEl=document.getElementById('nl-top')
+  const botEl=document.getElementById('nl-bottom')
+  if(!topEl||!botEl)return
+  if(state.isSubscribed){
+    topEl.innerHTML=`<div class="nl-subscribed">
+      <span style="font-size:18px">📬</span>
+      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">Newsletter aktiv</div><div style="font-size:11px;color:var(--muted);margin-top:1px">Du erhältst täglich Creator News per Mail.</div></div>
+      <button class="nl-unsub-btn" onclick="unsubscribeNewsletter()">Abmelden</button>
+    </div>`
+    botEl.innerHTML=''
+  } else {
+    topEl.innerHTML=`<div class="nl-box" id="nl-box-top">
+      <div class="nl-title">📬 Creator News per Mail</div>
+      <div class="nl-sub">Tägliche Highlights direkt in dein Postfach — kostenlos.</div>
+      <div class="nl-row">
+        <input type="email" class="nl-input" id="nl-email-top" value="${escHtml(state.userEmail)}" placeholder="deine@email.de"/>
+        <button class="nl-btn" onclick="digestSubscribe('top')">Anmelden</button>
+      </div>
+      <div class="nl-success" id="nl-success-top">✓ Erfolgreich angemeldet!</div>
+    </div>`
+    botEl.innerHTML=`<div class="nl-box" id="nl-box-bottom" style="margin:12px 20px 24px">
+      <div class="nl-title">📬 Nie wieder was verpassen</div>
+      <div class="nl-sub">Melde dich für den viuno Newsletter an und bekomme die wichtigsten Creator-News täglich.</div>
+      <div class="nl-row">
+        <input type="email" class="nl-input" id="nl-email-bottom" placeholder="${escHtml(state.userEmail||'deine@email.de')}"/>
+        <button class="nl-btn" onclick="digestSubscribe('bottom')">Anmelden</button>
+      </div>
+      <div class="nl-success" id="nl-success-bottom">✓ Erfolgreich angemeldet!</div>
+    </div>`
+  }
+}
+
+window.digestSubscribe=async function(pos){
+  const inputId=pos==='top'?'nl-email-top':'nl-email-bottom'
+  const successId=pos==='top'?'nl-success-top':'nl-success-bottom'
+  const email=document.getElementById(inputId)?.value?.trim()
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Bitte gültige E-Mail eingeben.');return}
+  const btn=event.target;btn.disabled=true;btn.textContent='…'
+  await sb.from('newsletter_subscribers').upsert({
+    email,user_id:state.uid||null,source:'digest_'+pos,status:'active',subscribed_at:new Date().toISOString()
+  },{onConflict:'email'})
+  if(state.uid)await sb.from('users').update({newsletter_subscribed:true}).eq('id',state.uid)
+  state.isSubscribed=true
+  btn.disabled=false;btn.textContent='Anmelden'
+  document.getElementById(successId).style.display='block'
+  setTimeout(()=>renderNewsletterBoxes(),1500)
+  showToast('Newsletter abonniert ✓')
+}
+
+window.unsubscribeNewsletter=async function(){
+  if(!state.uid)return
+  await sb.from('newsletter_subscribers').update({status:'unsubscribed',unsubscribed_at:new Date().toISOString()}).eq('user_id',state.uid)
+  await sb.from('users').update({newsletter_subscribed:false}).eq('id',state.uid)
+  state.isSubscribed=false
+  renderNewsletterBoxes()
+  showToast('Newsletter abgemeldet')
+}
 async function loadDigests(){
   const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at').order('date',{ascending:false}).limit(14)
   document.getElementById('skeleton-area').classList.add('hidden')
