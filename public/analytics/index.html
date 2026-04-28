@@ -60,6 +60,32 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .hidden{display:none!important}
 
 
+/* SHEET */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:100;pointer-events:none;transition:background .25s}
+.sheet-backdrop.open{background:rgba(0,0,0,.4);pointer-events:auto}
+.sheet{position:absolute;bottom:0;left:0;right:0;background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 calc(24px + var(--safe-bottom));transform:translateY(100%);transition:transform .3s cubic-bezier(.32,.72,0,1)}
+.sheet-backdrop.open .sheet{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;border-radius:2px;background:var(--border-strong);margin:12px auto 0}
+.sheet-title{font-size:16px;font-weight:700;letter-spacing:-.02em;padding:14px 20px 4px}
+.sheet-sub{font-size:13px;color:var(--muted);padding:0 20px 16px;line-height:1.5}
+.sheet-field{padding:0 20px 10px}
+.sheet-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.sheet-input-wrap{display:flex;align-items:center;gap:0;border:1px solid var(--border-strong);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
+.sheet-prefix{padding:12px 10px 12px 14px;font-size:15px;color:var(--subtle);background:var(--surface2);border-right:1px solid var(--border-strong);flex-shrink:0}
+.sheet-input{flex:1;padding:12px 14px;border:none;font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none}
+.sheet-hint{font-size:11px;padding:4px 20px 0;min-height:16px}
+.sheet-hint.ok{color:var(--green)}.sheet-hint.err{color:var(--red)}
+.sheet-actions{padding:16px 20px 0;display:flex;flex-direction:column;gap:8px}
+.btn-sheet-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn-sheet-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-sheet-cancel{width:100%;padding:12px;background:var(--surface2);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
+/* HANDLE EMPTY STATE */
+.handle-empty{text-align:center;padding:32px 24px}
+.handle-empty-icon{font-size:40px;margin-bottom:12px}
+.handle-empty-title{font-size:16px;font-weight:700;letter-spacing:-.02em;color:var(--text);margin-bottom:6px}
+.handle-empty-sub{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:20px}
+.btn-handle-link{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+
 .platform-row{display:flex;gap:6px;padding:16px 20px 0}
 .plat-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;text-align:center;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-family:inherit;transition:all .15s}
 .plat-btn.active{background:var(--text);color:white;border-color:var(--text)}
@@ -195,18 +221,13 @@ input,textarea,select{font-size:16px!important}
   </div>
   <nav class="sidebar-nav"><div class="sidebar-section">Übersicht</div>
 <a class="sidebar-item" href="/dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
-<a class="sidebar-item" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Daily Digest</a>
-<div class="sidebar-section">Creator</div>
-<a class="sidebar-item active" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics</a>
-<a class="sidebar-item" href="/trends"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Trends</a>
-<div class="sidebar-section">Business</div>
-<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
+<a class="sidebar-item" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Creator News</a>
 <a class="sidebar-item" href="/biolink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>BioLink</a>
 <a class="sidebar-item" href="/mediakit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Media Kit</a>
-<a class="sidebar-item" href="/extras"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Extras<span class="sidebar-item-badge">viuno Pro</span></a>
+<a class="sidebar-item active" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analyse</a>
+<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
 <div class="sidebar-section">Konto</div>
-<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
-</nav>
+<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a></nav>
   <div class="sidebar-footer">
     <div class="sidebar-pro-banner" id="sidebar-pro-banner">
       <span style="font-size:18px">⭐</span>
@@ -244,6 +265,27 @@ input,textarea,select{font-size:16px!important}
     </div>
   </div>
 </div>
+<!-- HANDLE LINK SHEET -->
+<div class="sheet-backdrop" id="handle-sheet" onclick="closeHandleSheet()">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="handle-sheet-title">Handle verknüpfen</div>
+    <div class="sheet-sub" id="handle-sheet-sub">Verbinde deinen Kanal um Analytics zu laden.</div>
+    <div class="sheet-field">
+      <div class="sheet-label" id="handle-sheet-label">Handle</div>
+      <div class="sheet-input-wrap">
+        <span class="sheet-prefix">@</span>
+        <input type="text" class="sheet-input" id="handle-input" placeholder="dein_handle" autocomplete="off" oninput="onHandleInput()"/>
+      </div>
+      <div class="sheet-hint" id="handle-hint"></div>
+    </div>
+    <div class="sheet-actions">
+      <button class="btn-sheet-primary" id="btn-save-handle" onclick="saveHandle()" disabled>Handle speichern</button>
+      <button class="btn-sheet-cancel" onclick="closeHandleSheet()">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
@@ -349,7 +391,20 @@ function renderAnalytics(){
   const content=document.getElementById('analytics-content')
   const data=state.analytics[state.activePlatform],s=state.settings
   const available=state.activePlatform==='instagram'?s?.ig_done:s?.tt_done
-  if(!data&&!available){content.innerHTML=`<div class="section"><div class="empty-state"><div class="empty-icon">${state.activePlatform==='instagram'?'📸':'🎵'}</div><div class="empty-title">Noch nicht verknüpft</div><div class="empty-sub">Handle im Profil hinzufügen.</div></div></div>`;document.getElementById('last-updated-label').textContent='Keine Daten';return}
+  if(!data&&!available){
+    const isIg=state.activePlatform==='instagram'
+    content.innerHTML=`<div class="section"><div class="handle-empty">
+      <div class="handle-empty-icon">${isIg?'📸':'🎵'}</div>
+      <div class="handle-empty-title">Noch kein ${isIg?'Instagram':'TikTok'}-Handle</div>
+      <div class="handle-empty-sub">Verknüpfe deinen Kanal um deine Analytics zu sehen — Follower, Engagement, Wachstum und mehr.</div>
+      <button class="btn-handle-link" onclick="openHandleSheet('${state.activePlatform}')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        Handle verknüpfen
+      </button>
+    </div></div>`
+    document.getElementById('last-updated-label').textContent='Keine Daten'
+    return
+  }
   if(!data){content.innerHTML=`<div class="section"><div class="empty-state"><div class="empty-icon">⏳</div><div class="empty-title">Analyse läuft…</div><div class="empty-sub">Dauert 2–5 Minuten.</div></div></div>`;document.getElementById('last-updated-label').textContent='Analyse läuft…';return}
   document.getElementById('last-updated-label').textContent='Aktualisiert: '+fmtDate(data.fetched_at)
   const history=state.history[state.activePlatform]
@@ -427,14 +482,63 @@ async function triggerRefresh(){
   }catch(err){showToast('Fehler: '+err.message,4000);if(btn){btn.disabled=false;btn.textContent='Jetzt'}}
 }
 
-async function setupSidebar(session){
-  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type').eq('id',session.user.id).single()
-  const name=p?.display_name||p?.full_name||session.user.email||'?'
-  const av=document.getElementById('user-avatar')
-  if(av){if(p?.profile_image_url){av.innerHTML=`<img src="${p.profile_image_url.replace(/"/g,'&quot;')}" alt="">`}else{av.textContent=name[0].toUpperCase()}}
-  const emailEl=document.getElementById('sidebar-user-email')
-  if(emailEl)emailEl.textContent=session.user.email||''
-  if(p?.subscription_type==='pro'){document.getElementById('sidebar-pro-banner')?.classList.add('show')}
+// ── Handle Sheet ──
+let _handlePlatform = 'instagram'
+window.openHandleSheet=function(platform){
+  _handlePlatform=platform||state.activePlatform
+  const isIg=_handlePlatform==='instagram'
+  document.getElementById('handle-sheet-title').textContent=`${isIg?'Instagram':'TikTok'}-Handle verknüpfen`
+  document.getElementById('handle-sheet-sub').textContent=`Gib deinen ${isIg?'Instagram':'TikTok'}-Handle ein. Wir laden deine Analytics automatisch.`
+  document.getElementById('handle-sheet-label').textContent=isIg?'Instagram-Handle':'TikTok-Handle'
+  const input=document.getElementById('handle-input')
+  // Pre-fill existing handle if set
+  const existing=isIg?state.settings?.ig_handle:state.settings?.tt_handle
+  input.value=existing?existing.replace(/^@/,''):''
+  document.getElementById('handle-hint').textContent=''
+  document.getElementById('handle-hint').className='sheet-hint'
+  document.getElementById('btn-save-handle').disabled=!input.value.trim()
+  document.getElementById('handle-sheet').classList.add('open')
+  document.body.style.overflow='hidden'
+  setTimeout(()=>input.focus(),300)
+}
+window.closeHandleSheet=function(){
+  document.getElementById('handle-sheet').classList.remove('open')
+  document.body.style.overflow=''
+}
+window.onHandleInput=function(){
+  const val=document.getElementById('handle-input').value.trim()
+  const hint=document.getElementById('handle-hint')
+  const btn=document.getElementById('btn-save-handle')
+  if(!val){hint.textContent='';btn.disabled=true;return}
+  if(!/^[a-zA-Z0-9._]{1,50}$/.test(val)){
+    hint.textContent='Nur Buchstaben, Zahlen, Punkte und Unterstriche.'
+    hint.className='sheet-hint err';btn.disabled=true;return
+  }
+  hint.textContent='✓ Gültiger Handle';hint.className='sheet-hint ok'
+  btn.disabled=false
+}
+window.saveHandle=async function(){
+  const val=document.getElementById('handle-input').value.trim().replace(/^@/,'')
+  if(!val)return
+  const btn=document.getElementById('btn-save-handle')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const isIg=_handlePlatform==='instagram'
+  const field=isIg?'instagram_handle':'tiktok_handle'
+  const enableField=isIg?'ig_enabled':'tt_enabled'
+  // Save to users table
+  await sb.from('users').update({[field]:'@'+val}).eq('id',state.user.id)
+  // Enable in analytics_settings
+  await sb.from('analytics_settings').update({[enableField]:true}).eq('user_id',state.user.id)
+  // Update local state
+  if(!state.settings)state.settings={}
+  state.settings[enableField]=true
+  if(isIg)state.settings.ig_handle='@'+val
+  else state.settings.tt_handle='@'+val
+  closeHandleSheet()
+  showToast(`@${val} verknüpft ✓`)
+  // Reload analytics to show "Analyse läuft…" state
+  await loadAnalytics()
+  btn.disabled=false;btn.innerHTML='Handle speichern'
 }
 
 baseInit(enterApp)
