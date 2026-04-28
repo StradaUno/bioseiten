@@ -273,6 +273,22 @@ input,textarea,select{font-size:16px!important}
 <!-- TOAST -->
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
+<!-- MK EDIT SHEET -->
+<div class="sheet-backdrop hidden" id="mk-edit-sheet" onclick="closeSheet('mk-edit-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Media Kit bearbeiten</div>
+    <div class="sheet-actions" style="padding-top:20px">
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openProfilSheet()">👤 Profil-Infos bearbeiten</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openOffersSheet()">🎬 Content-Angebote bearbeiten</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openAudienceSheet()">📊 Audience & Engagement</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openBrandsSheet()">🤝 Kollaborationen bearbeiten</button>
+      <button class="action-btn action-btn-primary" onclick="closeSheet('mk-edit-sheet');generateKit()">✨ Media Kit neu generieren</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet')" style="margin-top:4px">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 <!-- ── PROFIL SHEET ── -->
 <div class="sheet-backdrop hidden" id="profil-sheet" onclick="closeSheet('profil-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
@@ -534,11 +550,7 @@ function renderPage(){
       </div>
     </div>
     <div class="action-stack">
-      <button class="action-btn action-btn-secondary" onclick="openProfilSheet()">👤 Profil-Infos bearbeiten</button>
-      <button class="action-btn action-btn-secondary" onclick="openOffersSheet()">🎬 Content-Angebote bearbeiten</button>
-      <button class="action-btn action-btn-secondary" onclick="openAudienceSheet()">📊 Audience & Engagement</button>
-      <button class="action-btn action-btn-secondary" onclick="openBrandsSheet()">🤝 Kollaborationen bearbeiten</button>
-      <button class="action-btn action-btn-primary" id="btn-generate" onclick="generateKit()">✨ Media Kit neu generieren</button>
+      <button class="action-btn action-btn-primary" onclick="openSheet('mk-edit-sheet')">✎ Bearbeiten</button>
     </div>
     <div style="padding:8px 20px 8px">
       <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 Media Kit löschen</button>
