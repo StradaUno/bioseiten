@@ -72,6 +72,39 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .dash-card-icon{font-size:24px;margin-bottom:6px}
 .dash-card-icon-only{justify-content:center;align-items:flex-start;padding:20px 16px}
 
+/* DIGEST CARDS */
+.dash-digest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;cursor:pointer}
+.dash-digest-card.expanded .dash-card-body-full{display:block}
+.dash-digest-card.expanded .dash-card-chevron{transform:rotate(180deg)}
+.dash-card-image{width:100%;height:120px;object-fit:cover;background:var(--surface2);display:block}
+.dash-card-image-fallback{width:100%;height:120px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:28px}
+.dash-card-inner{padding:12px 14px}
+.dash-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.dash-platform-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.03em}
+.pb-tiktok{background:#f0f9ff;color:#0891b2}.pb-instagram{background:#fdf2f8;color:#9d174d}.pb-youtube{background:#fff7ed;color:#c2410c}.pb-meta{background:#eff6ff;color:#1d4ed8}.pb-allgemein{background:var(--surface2);color:var(--muted)}
+.dash-card-source{font-size:11px;color:var(--subtle);margin-left:auto}
+.dash-card-chevron{font-size:12px;color:var(--subtle);transition:transform .2s;margin-left:4px}
+.dash-card-headline{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.35;margin-bottom:5px}
+.dash-card-summary{font-size:13px;color:var(--muted);line-height:1.5}
+.dash-card-body-full{display:none;border-top:1px solid var(--border);padding-top:12px;margin-top:10px}
+.dash-card-full-text{font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-line}
+.dash-card-impact{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px}
+.dash-card-impact-label{font-size:10px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.dash-card-impact-text{font-size:12px;color:var(--text);line-height:1.5;font-weight:500}
+.dash-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
+.dash-card-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface)}
+.dash-card-share{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit}
+/* NEWSLETTER */
+.newsletter-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px}
+.newsletter-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
+.newsletter-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.newsletter-row{display:flex;gap:8px}
+.newsletter-input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.newsletter-input:focus{border-color:var(--text)}
+.newsletter-btn{padding:10px 16px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.newsletter-btn:disabled{opacity:.5;cursor:not-allowed}
+.newsletter-success{font-size:12px;color:var(--green);margin-top:8px;display:none}
+
 /* KPI SCROLL (kept for other pages) */
 .kpi-scroll{display:flex;gap:10px;padding:16px 20px 0;overflow-x:auto;scrollbar-width:none}
 .kpi-scroll::-webkit-scrollbar{display:none}
@@ -248,18 +281,13 @@ input,textarea,select{font-size:16px!important}
   </div>
   <nav class="sidebar-nav"><div class="sidebar-section">Übersicht</div>
 <a class="sidebar-item active" href="/dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
-<a class="sidebar-item" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Daily Digest</a>
-<div class="sidebar-section">Creator</div>
-<a class="sidebar-item" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics</a>
-<a class="sidebar-item" href="/trends"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Trends</a>
-<div class="sidebar-section">Business</div>
-<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
+<a class="sidebar-item" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Creator News</a>
 <a class="sidebar-item" href="/biolink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>BioLink</a>
 <a class="sidebar-item" href="/mediakit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Media Kit</a>
-<a class="sidebar-item" href="/extras"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Extras<span class="sidebar-item-badge">viuno Pro</span></a>
+<a class="sidebar-item" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analyse</a>
+<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
 <div class="sidebar-section">Konto</div>
-<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
-</nav>
+<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a></nav>
   <div class="sidebar-footer">
     <div class="sidebar-pro-banner" id="sidebar-pro-banner">
       <span style="font-size:18px">⭐</span>
@@ -350,39 +378,58 @@ async function enterApp(session){
 
 // ── DATA ──
 async function loadDashboard(uid){
-  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes] = await Promise.all([
-    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count').eq('id',uid).single(),
+  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes,dailyTextRes] = await Promise.all([
+    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count,newsletter_subscribed').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
-    sb.from('daily_digest').select('date,teaser').order('date',{ascending:false}).limit(1).single(),
+    sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
     sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).eq('status','new').is('deleted_at',null).order('created_at',{ascending:false}).limit(3),
     sb.from('bio_stats').select('views_today,views_last_7_days,views_total').eq('user_id',uid).single(),
     sb.from('user_goals').select('goal_type,target_value,current_value,deadline,platform,is_active,achieved').eq('user_id',uid).eq('is_active',true).eq('achieved',false).limit(3),
     sb.from('mediakit_settings').select('views_last_7_days').eq('user_id',uid).single(),
+    sb.rpc('get_daily_text',{p_user_id:uid}),
   ])
 
-  const p      = profileRes.data
-  const anRows = analyticsRes.data || []
-  const an     = anRows[0] || null
-  const d      = digestRes.data
-  const reqs   = requestsRes.data || []
-  const bs     = bioStatsRes.data
-  const goals  = goalsRes.data || []
-  const mk     = mkRes.data
+  const p           = profileRes.data
+  const anRows      = analyticsRes.data || []
+  const an          = anRows[0] || null
+  const d           = digestRes.data
+  const cards       = d?.cards || []
+  const reqs        = requestsRes.data || []
+  const bs          = bioStatsRes.data
+  const goals       = goalsRes.data || []
+  const mk          = mkRes.data
+  const dailyText   = dailyTextRes.data || null
+  const isSubscribed= p?.newsletter_subscribed || false
 
-  const name    = p?.display_name||p?.full_name||'Creator'
-  const hour    = new Date().getHours()
-  const greet   = hour<12?'Guten Morgen':hour<18?'Guten Tag':'Guten Abend'
-  const newReqs = reqs.filter(r=>r.status==='new').length
+  const name      = p?.display_name||p?.full_name||'Creator'
+  const newReqs   = reqs.filter(r=>r.status==='new').length
   const follDelta = an?.followers_change
+
+  // greeting: get_daily_text result or fallback
+  const greetText = dailyText || (()=>{
+    const h=new Date().getHours()
+    return h<12?`Guten Morgen, ${name.split(' ')[0]}.`:h<18?`Guten Tag, ${name.split(' ')[0]}.`:`Guten Abend, ${name.split(' ')[0]}.`
+  })()
 
   document.getElementById('skeleton-area').classList.add('hidden')
   document.getElementById('dashboard-content').classList.remove('hidden')
   document.getElementById('dashboard-content').innerHTML = `
 
     <div class="greeting-section">
-      <div class="greeting-hi">${greet}, ${escHtml(name.split(' ')[0])}.</div>
+      <div class="greeting-hi">${escHtml(greetText)}</div>
       <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
     </div>
+
+    <!-- Newsletter oben — nur wenn nicht abonniert -->
+    ${!isSubscribed?`<div class="section"><div class="newsletter-box" id="nl-box-top">
+      <div class="newsletter-title">📬 Creator News per Mail</div>
+      <div class="newsletter-sub">Tägliche Highlights direkt in dein Postfach — kostenlos.</div>
+      <div class="newsletter-row">
+        <input type="email" class="newsletter-input" id="nl-email-top" placeholder="${escHtml(p?.email||'')}" value="${escHtml(p?.email||'')}"/>
+        <button class="newsletter-btn" onclick="subscribeNewsletter('top','${uid}')">Anmelden</button>
+      </div>
+      <div class="newsletter-success" id="nl-success-top">✓ Erfolgreich angemeldet!</div>
+    </div></div>`:''}
 
     <!-- Row 1: Follower + Anfragen -->
     <div class="section">
@@ -416,32 +463,36 @@ async function loadDashboard(uid){
       </div>
     </div>
 
-    <!-- Daily Digest -->
-    ${d?`<div class="section">
-      <div class="section-header"><div class="section-title">Daily Digest</div><a class="section-link" href="/digest">Alle →</a></div>
-      <a class="digest-summary-card" href="/digest">
-        <div class="digest-summary-date">${new Date(d.date).toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}</div>
-        <div class="digest-summary-text">${escHtml(d.teaser||'')}</div>
-        <div class="digest-summary-footer">Vollständigen Digest lesen →</div>
-      </a>
+    <!-- Daily Digest Karten — heute, ausklappbar, teilbar -->
+    ${d&&cards.length?`<div class="section">
+      <div class="section-header">
+        <div class="section-title">Creator News</div>
+        <a class="section-link" href="/digest">Alle →</a>
+      </div>
+      <div id="dash-cards-list">${cards.map(c=>dashCardHtml(c)).join('')}</div>
     </div>`:''}
 
-    <!-- Row 3: Trends + viuno Extras -->
-    <div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
-      <div class="dash-grid">
-        <a class="dash-card dash-card-icon-only" href="/trends">
-          <div class="dash-card-icon">🔥</div>
-          <div class="dash-card-label">Trends</div>
-          <div class="dash-card-sub">Sounds & Creators</div>
-        </a>
-        <a class="dash-card dash-card-icon-only dash-card-dark" href="/extras">
-          <div class="dash-card-icon">✦</div>
-          <div class="dash-card-label">viuno Extras</div>
-          <div class="dash-card-sub">PRO Features</div>
-        </a>
+    <!-- Newsletter unten — nur wenn nicht abonniert -->
+    ${!isSubscribed?`<div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
+      <div class="newsletter-box" id="nl-box-bottom">
+        <div class="newsletter-title">📬 Nie wieder was verpassen</div>
+        <div class="newsletter-sub">Melde dich für den viuno Newsletter an und bekomme die wichtigsten Creator-News täglich.</div>
+        <div class="newsletter-row">
+          <input type="email" class="newsletter-input" id="nl-email-bottom" placeholder="${escHtml(p?.email||'deine@email.de')}"/>
+          <button class="newsletter-btn" onclick="subscribeNewsletter('bottom','${uid}')">Anmelden</button>
+        </div>
+        <div class="newsletter-success" id="nl-success-bottom">✓ Erfolgreich angemeldet!</div>
       </div>
-    </div>
+    </div>`:`<div style="height:calc(24px + var(--safe-bottom))"></div>`}
   `
+
+  // Wire up card interactions
+  document.getElementById('dash-cards-list')?.querySelectorAll('.dash-digest-card').forEach(card=>{
+    card.addEventListener('click',()=>card.classList.toggle('expanded'))
+  })
+  document.getElementById('dash-cards-list')?.querySelectorAll('.dash-card-share').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.stopPropagation();dashShareCard(btn.dataset.headline,btn.dataset.summary)})
+  })
 }
 
 // ── Linien-Chart SVG aus echten historischen Daten ──
@@ -477,6 +528,71 @@ function buildLineSvg(rows){
   </svg>`
 }
 
+
+// ── Digest card helpers ──
+function dashPlatformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p||'News'}
+function dashPlatformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta'}[p]||'pb-allgemein'}
+function dashPlatformEmoji(p){return{tiktok:'🎵',instagram:'📸',youtube:'📺',meta:'🔵'}[p]||'📰'}
+
+function dashCardHtml(c){
+  const hasImg=c.image_url?.trim()
+  const hasFull=c.full_content?.trim()
+  const hasExtra=hasFull||c.impact||c.source_url
+  const shareBtn=`<button class="dash-card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">↗ Teilen</button>`
+  const imgHtml=hasImg
+    ?`<img class="dash-card-image" src="${escHtml(c.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;dash-card-image-fallback&quot;>${dashPlatformEmoji(c.platform)}</div>'">`
+    :`<div class="dash-card-image-fallback">${dashPlatformEmoji(c.platform)}</div>`
+  return`<div class="dash-digest-card">${imgHtml}
+    <div class="dash-card-inner">
+      <div class="dash-card-meta">
+        <span class="dash-platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
+        <span class="dash-card-source">${escHtml(c.source||'')}</span>
+        ${hasExtra?'<span class="dash-card-chevron">▼</span>':''}
+      </div>
+      <div class="dash-card-headline">${escHtml(c.headline||'')}</div>
+      <div class="dash-card-summary">${escHtml(c.summary||'')}</div>
+      ${hasExtra?`<div class="dash-card-body-full">
+        ${hasFull?`<div class="dash-card-full-text">${escHtml(c.full_content)}</div>`:''}
+        ${c.impact?`<div class="dash-card-impact"><div class="dash-card-impact-label">⚡ Was das für dich bedeutet</div><div class="dash-card-impact-text">${escHtml(c.impact)}</div></div>`:''}
+        <div class="dash-card-actions">
+          ${c.source_url?`<a class="dash-card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ↗</a>`:''}
+          ${shareBtn}
+        </div>
+      </div>`:''}
+    </div>
+  </div>`
+}
+
+async function dashShareCard(headline,summary){
+  const text=`📰 ${headline}\n\n${summary?summary.slice(0,120)+'…':''}\n\nMehr Creator-News auf viuno.de`
+  if(navigator.share){try{await navigator.share({title:headline,text,url:'https://viuno.de'});return}catch(_){}}
+  try{await navigator.clipboard.writeText(text);showToast('In Zwischenablage kopiert ✓')}catch(_){showToast('Teilen nicht verfügbar')}
+}
+
+// ── Newsletter ──
+window.subscribeNewsletter=async function(pos,uid){
+  const inputId=pos==='top'?'nl-email-top':'nl-email-bottom'
+  const successId=pos==='top'?'nl-success-top':'nl-success-bottom'
+  const email=document.getElementById(inputId)?.value?.trim()
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Bitte gültige E-Mail eingeben.');return}
+  const btn=event.target;btn.disabled=true;btn.textContent='…'
+  // Upsert into newsletter_subscribers
+  const{error}=await sb.from('newsletter_subscribers').upsert({
+    email,user_id:uid||null,source:pos==='top'?'dashboard_top':'dashboard_bottom',status:'active',subscribed_at:new Date().toISOString()
+  },{onConflict:'email'})
+  // Update users table flag
+  if(uid)await sb.from('users').update({newsletter_subscribed:true}).eq('id',uid)
+  btn.disabled=false;btn.textContent='Anmelden'
+  if(error){showToast('Fehler beim Anmelden.');return}
+  const successEl=document.getElementById(successId)
+  if(successEl){successEl.style.display='block'}
+  // Hide both boxes after 2s
+  setTimeout(()=>{
+    document.getElementById('nl-box-top')?.remove()
+    document.getElementById('nl-box-bottom')?.remove()
+  },2000)
+  showToast('Newsletter abonniert ✓')
+}
 
 async function setupSidebar(session){
   const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type').eq('id',session.user.id).single()
