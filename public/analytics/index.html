@@ -252,7 +252,7 @@ input,textarea,select{font-size:16px!important}
     <div class="topbar-avatar" id="user-avatar">?</div>
   </div>
   <div class="page">
-    <div class="page-header"><div class="page-sub" id="last-updated-label">Wird geladen…</div></div>
+    <div class="page-header"><div class="page-sub" id="last-updated-label"></div></div>
     <div class="platform-row">
       <button class="plat-btn active" id="btn-ig" onclick="switchPlatform('instagram')">Instagram</button>
       <button class="plat-btn" id="btn-tt" onclick="switchPlatform('tiktok')">TikTok</button>
@@ -369,8 +369,14 @@ function buildLineChart(history,key='followers'){
 async function enterApp(session){
   state.user=session.user
   document.getElementById('app').classList.add('visible')
-  await setupSidebar(session)
-  await setupAvatar(session)
+  // Eine Abfrage für Sidebar + Avatar
+  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type').eq('id',session.user.id).single()
+  const name=p?.display_name||p?.full_name||session.user.email||'?'
+  const av=document.getElementById('user-avatar')
+  if(av){if(p?.profile_image_url){av.innerHTML=`<img src="${escHtml(p.profile_image_url)}" alt="">`}else{av.textContent=name[0].toUpperCase()}}
+  const emailEl=document.getElementById('sidebar-user-email')
+  if(emailEl)emailEl.textContent=session.user.email||''
+  if(p?.subscription_type==='pro')document.getElementById('sidebar-pro-banner')?.classList.add('show')
   await loadAnalytics()
 }
 async function loadAnalytics(){
