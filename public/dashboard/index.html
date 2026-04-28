@@ -415,21 +415,12 @@ async function loadDashboard(uid){
   document.getElementById('dashboard-content').classList.remove('hidden')
   document.getElementById('dashboard-content').innerHTML = `
 
-    <div class="greeting-section">
-      <div class="greeting-hi">${escHtml(greetText)}</div>
-      <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
-    </div>
-
-    <!-- Newsletter oben — nur wenn nicht abonniert -->
-    ${!isSubscribed?`<div class="section"><div class="newsletter-box" id="nl-box-top">
-      <div class="newsletter-title">📬 Creator News per Mail</div>
-      <div class="newsletter-sub">Tägliche Highlights direkt in dein Postfach — kostenlos.</div>
-      <div class="newsletter-row">
-        <input type="email" class="newsletter-input" id="nl-email-top" placeholder="${escHtml(p?.email||'')}" value="${escHtml(p?.email||'')}"/>
-        <button class="newsletter-btn" onclick="subscribeNewsletter('top','${uid}')">Anmelden</button>
+    <div class="section" style="padding-top:16px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+        <div class="greeting-hi" style="font-size:17px">${escHtml(greetText)}</div>
+        <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
       </div>
-      <div class="newsletter-success" id="nl-success-top">✓ Erfolgreich angemeldet!</div>
-    </div></div>`:''}
+    </div>
 
     <!-- Row 1: Follower + Anfragen -->
     <div class="section">
@@ -475,8 +466,8 @@ async function loadDashboard(uid){
     <!-- Newsletter unten — nur wenn nicht abonniert -->
     ${!isSubscribed?`<div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
       <div class="newsletter-box" id="nl-box-bottom">
-        <div class="newsletter-title">📬 Nie wieder was verpassen</div>
-        <div class="newsletter-sub">Melde dich für den viuno Newsletter an und bekomme die wichtigsten Creator-News täglich.</div>
+        <div class="newsletter-title">📬 Hol dir die Creator News als Newsletter</div>
+        <div class="newsletter-sub">Täglich die wichtigsten Updates — kostenlos in dein Postfach.</div>
         <div class="newsletter-row">
           <input type="email" class="newsletter-input" id="nl-email-bottom" placeholder="${escHtml(p?.email||'deine@email.de')}"/>
           <button class="newsletter-btn" onclick="subscribeNewsletter('bottom','${uid}')">Anmelden</button>
@@ -535,14 +526,10 @@ function dashPlatformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram'
 function dashPlatformEmoji(p){return{tiktok:'🎵',instagram:'📸',youtube:'📺',meta:'🔵'}[p]||'📰'}
 
 function dashCardHtml(c){
-  const hasImg=c.image_url?.trim()
   const hasFull=c.full_content?.trim()
   const hasExtra=hasFull||c.impact||c.source_url
   const shareBtn=`<button class="dash-card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">↗ Teilen</button>`
-  const imgHtml=hasImg
-    ?`<img class="dash-card-image" src="${escHtml(c.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;dash-card-image-fallback&quot;>${dashPlatformEmoji(c.platform)}</div>'">`
-    :`<div class="dash-card-image-fallback">${dashPlatformEmoji(c.platform)}</div>`
-  return`<div class="dash-digest-card">${imgHtml}
+  return`<div class="dash-digest-card">
     <div class="dash-card-inner">
       <div class="dash-card-meta">
         <span class="dash-platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
@@ -588,7 +575,6 @@ window.subscribeNewsletter=async function(pos,uid){
   if(successEl){successEl.style.display='block'}
   // Hide both boxes after 2s
   setTimeout(()=>{
-    document.getElementById('nl-box-top')?.remove()
     document.getElementById('nl-box-bottom')?.remove()
   },2000)
   showToast('Newsletter abonniert ✓')
