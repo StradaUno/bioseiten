@@ -11,27 +11,12 @@
 :root{--bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);--text:#111110;--muted:#7a7975;--subtle:#b0afa9;--green:#1a7f4b;--green-bg:#edf7f1;--red:#c0392b;--red-bg:#fdf0ef;--orange:#b85c00;--orange-bg:#fdf3e7;--radius:16px;--radius-sm:10px;--nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)}
 html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
 
-/* LOGIN */
-#login-screen{min-height:100dvh;display:none;align-items:center;justify-content:center;padding:24px}
-.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px}
-.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
-.login-logo-mark{width:32px;height:32px;border-radius:8px;background:var(--text);color:white;display:grid;place-items:center;font-size:14px;font-weight:700}
-.login-logo-text{font-size:17px;font-weight:700;letter-spacing:-.03em}
-.login-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
-.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.field input,.field textarea,.field select{width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
-.field input:focus,.field textarea:focus{border-color:var(--text)}
-.field textarea{resize:none;line-height:1.5}
-.btn-login{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.btn-login:disabled{opacity:.5}
-.login-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
+
 /* APP */
-#app{display:none;min-height:100dvh;flex-direction:column}
+#app{display:none;min-height:100dvh;flex-direction:column;overflow:hidden}
 #app.visible{display:flex}
 /* TOPBAR */
-.topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .topbar-left{display:flex;align-items:center;gap:10px}
 .hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;transition:background .15s;padding:0}
 .hamburger:hover{background:var(--surface2)}
@@ -39,9 +24,8 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .topbar-title{font-size:15px;font-weight:700;letter-spacing:-.03em}
 .topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;cursor:pointer;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
 .topbar-avatar img{width:100%;height:100%;object-fit:cover}
-/* SIDEBAR */
 /* COMMON */
-.page{flex:1;padding:0 0 calc(32px + var(--safe-bottom));overflow-y:auto}
+.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(32px + var(--safe-bottom));overflow-y:auto}
 .page-header{padding:20px 20px 0}
 .page-title{font-size:22px;font-weight:700;letter-spacing:-.04em}
 .page-sub{font-size:13px;color:var(--muted);margin-top:3px}
@@ -124,10 +108,61 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 
 /* iOS zoom fix */
 input,textarea,select{font-size:16px!important}
+
+/* SIDEBAR */
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:80;pointer-events:none;transition:background .25s}
+.sidebar-overlay.open{background:rgba(0,0,0,.35);pointer-events:auto}
+.sidebar{position:fixed;top:0;left:0;bottom:0;width:272px;background:var(--surface);z-index:90;transform:translateX(-100%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.08)}
+.sidebar.open{transform:translateX(0)}
+.sidebar-header{padding:20px 20px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.sidebar-logo{display:flex;align-items:center;gap:8px}
+.sidebar-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
+.sidebar-logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em}
+.sidebar-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--muted);line-height:1}
+.sidebar-nav{flex:1;padding:10px;overflow-y:auto}
+.sidebar-section{font-size:10px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;padding:12px 10px 4px}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px}
+.sidebar-item:hover{background:var(--surface2);color:var(--text)}
+.sidebar-item.active{background:var(--text);color:white}
+.sidebar-item svg{flex-shrink:0}
+.sidebar-item-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-left:auto;background:var(--text);color:white;flex-shrink:0}
+.sidebar-item.active .sidebar-item-badge{background:rgba(255,255,255,.25);color:white}
+.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
+.sidebar-pro-banner{background:var(--text);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
+.sidebar-pro-banner.show{display:flex}
+.sidebar-pro-title{font-size:12px;font-weight:700;color:white;margin-bottom:1px}
+.sidebar-pro-sub{font-size:10px;color:rgba(255,255,255,.55)}
+.sidebar-user{font-size:12px;color:var(--muted);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.btn-sidebar-logout{width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border-strong);font-family:inherit;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;margin-bottom:10px}
+.btn-sidebar-logout:hover{background:var(--border)}
+.sidebar-legal{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.sidebar-legal a{font-size:11px;color:var(--subtle);text-decoration:none}
+.sidebar-legal a:hover{color:var(--muted)}
+.sidebar-legal span{font-size:11px;color:var(--subtle)}
+
+
+/* LOGIN */
+#login-screen{min-height:100dvh;display:none;align-items:center;justify-content:center;padding:24px;flex-direction:column}
+.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-logo-mark{width:32px;height:32px;border-radius:8px;background:var(--text);color:white;display:grid;place-items:center;font-size:14px;font-weight:700}
+.login-logo-text{font-size:17px;font-weight:700;letter-spacing:-.03em}
+.login-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.field input:focus,.field textarea:focus{border-color:var(--text)}
+.btn-login{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn-login:disabled{opacity:.5}
+.login-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
+.login-register{font-size:13px;color:var(--muted);text-align:center;margin-top:16px}
+.login-register a{color:var(--text);font-weight:600;text-decoration:none}
+
 </style>
-<script src="/sidebar.js"></script>
 </head>
 <body>
+<!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
     <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
@@ -137,9 +172,45 @@ input,textarea,select{font-size:16px!important}
     <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
     <button class="btn-login" id="btn-login">Einloggen</button>
     <div class="login-error" id="login-error"></div>
+    <div class="login-register">Noch kein Account? <a href="/register">Jetzt registrieren</a></div>
   </div>
 </div>
-<div id="sidebar-root"></div>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
+    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+  </div>
+  <nav class="sidebar-nav"><div class="sidebar-section">Übersicht</div>
+<a class="sidebar-item" href="/dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
+<a class="sidebar-item active" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Daily Digest</a>
+<div class="sidebar-section">Creator</div>
+<a class="sidebar-item" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analytics</a>
+<a class="sidebar-item" href="/trends"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Trends</a>
+<div class="sidebar-section">Business</div>
+<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
+<a class="sidebar-item" href="/biolink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>BioLink</a>
+<a class="sidebar-item" href="/mediakit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Media Kit</a>
+<a class="sidebar-item" href="/extras"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Extras<span class="sidebar-item-badge">viuno Pro</span></a>
+<div class="sidebar-section">Konto</div>
+<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
+</nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-pro-banner" id="sidebar-pro-banner">
+      <span style="font-size:18px">⭐</span>
+      <div><div class="sidebar-pro-title">viuno Pro</div><div class="sidebar-pro-sub">Managed Creator</div></div>
+    </div>
+    <div class="sidebar-user" id="sidebar-user-email"></div>
+    <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
+    <div class="sidebar-legal">
+      <a href="/legal#impressum">Impressum</a><span>·</span>
+      <a href="/legal#datenschutz">Datenschutz</a><span>·</span>
+      <a href="/legal#agb">AGB</a>
+    </div>
+  </div>
+</div>
+
 <div id="app">
   <div class="topbar">
     <div class="topbar-left">
@@ -163,7 +234,8 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
 
 const SUPABASE_URL='https://bzejndghppuipnedasuv.supabase.co'
 const SUPABASE_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
-const sb=createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
+window.sb=createClient(SUPABASE_URL,SUPABASE_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
+const sb=window.sb
 
 function escHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(n,d=1){if(n==null||isNaN(+n))return'–';n=+n;if(n>=1e6)return(n/1e6).toFixed(d).replace(/\.0$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(d).replace(/\.0$/,'')+'k';return n.toFixed(0)}
@@ -173,21 +245,19 @@ window.showToast=function(msg,dur=2800){
   t.textContent=msg;w.classList.remove('hidden')
   clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)
 }
-window.openSidebar=()=>{document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
-window.closeSidebar=()=>{document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
+window.openSidebar=function(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
+window.closeSidebar=function(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
 
 async function setupAvatar(session){
   const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url').eq('id',session.user.id).single()
   const name=p?.display_name||p?.full_name||session.user.email||'?'
   const av=document.getElementById('user-avatar')
   if(p?.profile_image_url){av.innerHTML=`<img src="${escHtml(p.profile_image_url)}" alt="">`}else{av.textContent=name[0].toUpperCase()}
-  document.getElementById('sidebar-user-email').textContent=session.user.email
 }
-
 async function baseInit(onSession){
   const{data:{session}}=await sb.auth.getSession()
   if(session){await onSession(session);return}
-  location.replace('/login')
+  document.getElementById('login-screen').style.display='flex'
   document.getElementById('btn-login').addEventListener('click',doLogin)
   document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
 }
@@ -201,14 +271,15 @@ async function doLogin(){
   if(error){errEl.textContent='Falsche E-Mail oder Passwort.';return}
   await enterApp(data.session)
 }
-window.logout=window.sidebarLogout||(async()=>{try{const c=window.sb||window.supabase;if(c)await c.auth.signOut();}catch(_){}location.replace('https://viuno.de')})
+window.logout=async function(){try{if(window.sb)await window.sb.auth.signOut()}catch(_){}location.replace('https://viuno.de')}
 
 
 const state={digests:[],activeDate:null,activeFilter:'alle'}
 function fmtDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}
 function fmtDayNum(d){return new Date(d+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit'})}
 function fmtDayName(d){return['So','Mo','Di','Mi','Do','Fr','Sa'][new Date(d+'T12:00:00').getDay()]}
-async function enterApp(session){document.getElementById('login-screen').style.display='none';document.getElementById('app').classList.add('visible');await setupAvatar(session);await loadDigests()}
+async function enterApp(session){;document.getElementById('app').classList.add('visible')
+  await setupSidebar(session);await setupAvatar(session);await loadDigests()}
 async function loadDigests(){
   const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at').order('date',{ascending:false}).limit(14)
   document.getElementById('skeleton-area').classList.add('hidden')
@@ -257,6 +328,17 @@ function cardHtml(c){
       </div>`:''}
     </div></div>`
 }
+
+async function setupSidebar(session){
+  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type').eq('id',session.user.id).single()
+  const name=p?.display_name||p?.full_name||session.user.email||'?'
+  const av=document.getElementById('user-avatar')
+  if(av){if(p?.profile_image_url){av.innerHTML=`<img src="${p.profile_image_url.replace(/"/g,'&quot;')}" alt="">`}else{av.textContent=name[0].toUpperCase()}}
+  const emailEl=document.getElementById('sidebar-user-email')
+  if(emailEl)emailEl.textContent=session.user.email||''
+  if(p?.subscription_type==='pro'){document.getElementById('sidebar-pro-banner')?.classList.add('show')}
+}
+
 baseInit(enterApp)
 
 </script>
