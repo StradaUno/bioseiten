@@ -355,7 +355,7 @@ async function loadDashboard(uid){
     sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
     sb.from('daily_digest').select('date,teaser').order('date',{ascending:false}).limit(1).single(),
-    sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).is('deleted_at',null).neq('status','deleted').order('created_at',{ascending:false}).limit(3),
+    sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).eq('status','new').is('deleted_at',null).order('created_at',{ascending:false}).limit(3),
     sb.from('bio_stats').select('views_today,views_last_7_days,views_total').eq('user_id',uid).single(),
     sb.from('user_goals').select('goal_type,target_value,current_value,deadline,platform,is_active,achieved').eq('user_id',uid).eq('is_active',true).eq('achieved',false).limit(3),
   ])
@@ -443,19 +443,23 @@ async function loadDashboard(uid){
     </div>`:''}
 
     <!-- Anfragen -->
-    ${reqs.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Anfragen</div><a class="section-link" href="/requests">Alle →</a></div>
-      <a class="list-card" href="/requests">
+    <div class="section">
+      <div class="section-header"><div class="section-title">Neue Anfragen</div><a class="section-link" href="/requests">Alle →</a></div>
+      ${reqs.length?`<a class="list-card" href="/requests">
         ${reqs.map(r=>`<div class="list-row">
           <div class="req-initial">${escHtml(r.sender_initial||r.sender_name?.[0]||'?')}</div>
           <div style="flex:1;min-width:0">
             <div class="req-name">${escHtml(r.sender_name)}</div>
             <div class="req-sub">${escHtml(r.message||'–')}</div>
           </div>
-          ${r.status==='new'?'<div class="req-dot"></div>':''}
+          <div class="req-dot"></div>
         </div>`).join('')}
-      </a>
-    </div>`:''}
+      </a>`:`<a class="list-card" href="/requests" style="text-align:center;padding:20px;display:block">
+        <div style="font-size:22px;margin-bottom:6px">📭</div>
+        <div style="font-size:13px;color:var(--muted)">Noch keine neuen Anfragen</div>
+        <div style="font-size:11px;color:var(--subtle);margin-top:3px">Erstelle deinen BioLink damit Brands dich finden</div>
+      </a>`}
+    </div>
 
     <!-- Ziele -->
     ${goals.length?`<div class="section">
@@ -472,29 +476,23 @@ async function loadDashboard(uid){
       }).join('')}
     </div>`:''}
 
-    <!-- Schnellzugriff -->
-    <div class="section" style="padding-bottom:8px">
-      <div class="section-title" style="margin-bottom:10px">Schnellzugriff</div>
-      <div class="quick-links">
-        <a class="quick-link" href="/analytics"><div class="quick-link-icon">📊</div><div class="quick-link-label">Analytics</div><div class="quick-link-sub">Instagram & TikTok</div></a>
-        <a class="quick-link" href="/digest"><div class="quick-link-icon">📰</div><div class="quick-link-label">Daily Digest</div><div class="quick-link-sub">Creator News</div></a>
-        <a class="quick-link" href="/trends"><div class="quick-link-icon">🔥</div><div class="quick-link-label">Trends</div><div class="quick-link-sub">Hashtags & Sounds</div></a>
-        <a class="quick-link" href="/requests"><div class="quick-link-icon">✉️</div><div class="quick-link-label">Anfragen</div><div class="quick-link-sub">Kooperationen</div></a>
-      </div>
-    </div>
-
-    <!-- Extras -->
+    <!-- viuno PRO -->
     <div class="section" style="padding-bottom:calc(16px + var(--safe-bottom))">
-      <div class="section-title" style="margin-bottom:10px">Extras</div>
+      <div class="section-title" style="margin-bottom:10px">viuno PRO</div>
       <a class="extras-banner" href="/extras">
         <div class="extras-banner-icon">✦</div>
         <div class="extras-banner-body">
-          <div class="extras-banner-title">viuno Extras entdecken</div>
-          <div class="extras-banner-sub">Exklusive Features für managed Creator · viuno Pro</div>
+          <div class="extras-banner-title">viuno PRO</div>
+          <div class="extras-banner-sub">Exklusive Features für managed Creator</div>
         </div>
         <div class="extras-banner-arrow">→</div>
       </a>
       <div class="extras-grid">
+        <a class="extras-card" href="/trends">
+          <div class="extras-card-icon">🔥</div>
+          <div class="extras-card-title">Trends</div>
+          <div class="extras-card-sub">Sounds & Creators</div>
+        </a>
         <a class="extras-card" href="/biolink">
           <div class="extras-card-icon">🔗</div>
           <div class="extras-card-title">BioLink</div>
@@ -504,6 +502,11 @@ async function loadDashboard(uid){
           <div class="extras-card-icon">📋</div>
           <div class="extras-card-title">Media Kit</div>
           <div class="extras-card-sub">Für Brand-Anfragen</div>
+        </a>
+        <a class="extras-card" href="/extras">
+          <div class="extras-card-icon">✦</div>
+          <div class="extras-card-title">Extras</div>
+          <div class="extras-card-sub">Alle PRO Features</div>
         </a>
       </div>
     </div>
