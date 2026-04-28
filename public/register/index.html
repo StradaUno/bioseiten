@@ -68,14 +68,9 @@ input,textarea,select{font-size:16px!important}
     <div class="card-sub">Starte kostenlos — kein Abo nötig.</div>
 
     <div class="field">
-      <label>Vorname</label>
-      <input type="text" id="inp-name" placeholder="Dein Vorname" autocomplete="given-name"/>
-    </div>
-
-    <div class="field">
       <label>Username</label>
-      <input type="text" id="inp-username" placeholder="z.B. maria_lifestyle" autocomplete="username" oninput="validateUsername()"/>
-      <div class="field-hint" id="username-hint">Nur Buchstaben, Zahlen und Unterstriche. Erscheint auf deinem BioLink.</div>
+      <input type="text" id="inp-username" placeholder="z.B. maria_lifestyle" autocomplete="username" oninput="onUsernameInput()"/>
+      <div class="field-hint" id="username-hint">Dein öffentlicher Name auf viuno.de</div>
     </div>
 
     <div class="field">
@@ -157,28 +152,70 @@ const{data:{session}}=await sb.auth.getSession()
 if(session)location.replace('/dashboard')
 
 let selectedNiche=null
+let usernameValid=false
+let _unameTimer=null
 
+// ── Nische ──
 window.selectNiche=function(n){
   selectedNiche=n
   document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===n))
   document.getElementById('niche-hint').style.display='none'
 }
 
-window.validateUsername=function(){
+// ── Username: live check mit Debounce ──
+window.onUsernameInput=function(){
   const val=document.getElementById('inp-username').value.trim()
   const hint=document.getElementById('username-hint')
   const input=document.getElementById('inp-username')
-  if(!val){hint.textContent='Nur Buchstaben, Zahlen und Unterstriche.';hint.className='field-hint';input.classList.remove('invalid');return true}
-  const valid=/^[a-zA-Z0-9_]{3,30}$/.test(val)
-  if(!valid){
-    hint.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _ erlaubt.'
-    hint.className='field-hint error';input.classList.add('invalid');return false
+  usernameValid=false
+  clearTimeout(_unameTimer)
+
+  if(!val){
+    hint.textContent='Dein öffentlicher Name auf viuno.de'
+    hint.className='field-hint'
+    input.classList.remove('invalid')
+    return
   }
-  hint.textContent='✓ Gültiger Username'
-  hint.className='field-hint';hint.style.color='var(--green)';input.classList.remove('invalid')
-  return true
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(val)){
+    hint.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _'
+    hint.className='field-hint error'
+    input.classList.add('invalid')
+    return
+  }
+  // Format ok — check availability after 500ms
+  hint.textContent='Wird geprüft…'
+  hint.className='field-hint'
+  hint.style.color='var(--muted)'
+  input.classList.remove('invalid')
+
+  _unameTimer=setTimeout(async()=>{
+    const{data,error}=await sb.rpc('is_username_available',{p_username:val})
+    if(error||!data){
+      hint.textContent='Fehler beim Prüfen — bitte nochmal versuchen.'
+      hint.className='field-hint error'
+      return
+    }
+    if(data.available){
+      hint.textContent='✓ Verfügbar!'
+      hint.className='field-hint'
+      hint.style.color='var(--green)'
+      input.classList.remove('invalid')
+      usernameValid=true
+    } else {
+      const msgs={
+        taken:'Dieser Username ist leider vergeben.',
+        reserved:'Dieser Username ist reserviert.',
+        invalid_format:'Ungültiges Format.'
+      }
+      hint.textContent=msgs[data.reason]||'Nicht verfügbar.'
+      hint.className='field-hint error'
+      input.classList.add('invalid')
+      usernameValid=false
+    }
+  },500)
 }
 
+// ── Passwort Stärke ──
 window.checkPwStrength=function(){
   const pw=document.getElementById('inp-pw').value
   const hint=document.getElementById('pw-hint')
@@ -195,18 +232,17 @@ function showError(msg){
 }
 function hideError(){document.getElementById('error-msg').classList.remove('show')}
 
+// ── Registrieren ──
 document.getElementById('btn-register').addEventListener('click',async()=>{
   hideError()
-  const name=document.getElementById('inp-name').value.trim()
   const username=document.getElementById('inp-username').value.trim()
   const email=document.getElementById('inp-email').value.trim()
   const pw=document.getElementById('inp-pw').value
   const pw2=document.getElementById('inp-pw2').value
   const legal=document.getElementById('chk-legal').checked
 
-  // Validation
-  if(!name){showError('Bitte gib deinen Vornamen ein.');return}
-  if(!validateUsername()){showError('Bitte gib einen gültigen Username ein.');return}
+  if(!username){showError('Bitte gib einen Username ein.');return}
+  if(!usernameValid){showError('Bitte wähle einen verfügbaren Username.');return}
   if(!email){showError('Bitte gib deine E-Mail-Adresse ein.');return}
   if(pw.length<8){showError('Das Passwort muss mindestens 8 Zeichen lang sein.');return}
   if(pw!==pw2){showError('Die Passwörter stimmen nicht überein.');return}
@@ -216,26 +252,24 @@ document.getElementById('btn-register').addEventListener('click',async()=>{
     document.getElementById('niche-hint').className='field-hint error'
     showError('Bitte wähle deine Nische aus.');return
   }
-  if(!legal){showError('Bitte akzeptiere AGB, Nutzungsbedingungen und Datenschutzerklärung.');return}
+  if(!legal){showError('Bitte akzeptiere AGB und Datenschutzerklärung.');return}
 
-  // Check username availability
   const btn=document.getElementById('btn-register')
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird geprüft…'
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Account wird erstellt…'
 
-  const{data:existing}=await sb.from('users').select('id').ilike('display_name',username).maybeSingle()
-  if(existing){
+  // Final availability check before submit (race condition safety)
+  const{data:check}=await sb.rpc('is_username_available',{p_username:username})
+  if(!check?.available){
     btn.disabled=false;btn.textContent='Account erstellen'
-    showError('Dieser Username ist bereits vergeben. Bitte wähle einen anderen.');return
+    showError('Dieser Username ist nicht mehr verfügbar. Bitte wähle einen anderen.');return
   }
-
-  btn.innerHTML='<span class="spinner"></span> Account wird erstellt…'
 
   // Sign up
   const{data,error}=await sb.auth.signUp({
     email,
     password:pw,
     options:{
-      data:{full_name:name,display_name:username,niche_category:selectedNiche},
+      data:{display_name:username,niche_category:selectedNiche},
       emailRedirectTo:'https://viuno.de/onboarding'
     }
   })
@@ -250,10 +284,9 @@ document.getElementById('btn-register').addEventListener('click',async()=>{
     return
   }
 
-  // Update users table with extra fields (trigger creates the row)
+  // Update users table (trigger creates the row, we set display_name + niche)
   if(data.user){
     await sb.from('users').update({
-      full_name:name,
       display_name:username,
       niche_category:selectedNiche,
       updated_at:new Date().toISOString()
