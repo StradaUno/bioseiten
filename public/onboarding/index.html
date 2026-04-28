@@ -75,7 +75,6 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 /* iOS zoom fix */
 input,textarea,select{font-size:16px!important}
 </style>
-<script src="/sidebar.js"></script>
 </head>
 <body>
 
@@ -95,7 +94,7 @@ input,textarea,select{font-size:16px!important}
   <div class="ob-wrap" id="ob-wrap">
     <div class="ob-topbar">
       <div class="ob-logo"><div class="ob-logo-mark">v</div><div class="ob-logo-text">viuno</div></div>
-      <div class="ob-step-label" id="step-label">Schritt 1 von 5</div>
+      <div class="ob-step-label" id="step-label">Schritt 1 von 3</div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
     <div class="ob-content" id="ob-content"></div>
@@ -130,7 +129,7 @@ const NICHES=[
   {key:'art',emoji:'🎨',label:'Art'},{key:'family',emoji:'👨‍👩‍👧',label:'Family'},{key:'mental_health',emoji:'🧠',label:'Mental'},{key:'general',emoji:'🌐',label:'Allgemein'}
 ]
 
-const state={step:1,total:5,user:null,data:{fullName:'',bio:'',ig:'',tt:'',niche:'general',photoUrl:null}}
+const state={step:1,total:3,user:null,data:{ig:'',tt:'',niche:'general',photoUrl:null,username:'',email:''}}
 
 function showToast(msg,dur=2800){
   const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg')
@@ -147,25 +146,17 @@ document.getElementById('btn-login').addEventListener('click',async()=>{
   const{data,error}=await sb.auth.signInWithPassword({email,password:pw})
   btn.disabled=false;btn.textContent='Einloggen'
   if(error){errEl.textContent='Falsche E-Mail oder Passwort.';return}
-  state.user=data.session.user
-  document.getElementById('login-section').classList.add('hidden')
-  document.getElementById('onboarding-section').classList.remove('hidden')
-  renderStep()
+  await startOnboarding(data.session)
 })
 document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('btn-login').click()})
 
-// check existing session
-;(async()=>{
-  const{data:{session}}=await sb.auth.getSession()
-  if(!session)return // stay on login screen
+async function startOnboarding(session){
   state.user=session.user
-  // If onboarding already completed → go to dashboard
-  const{data:profile}=await sb.from('users').select('full_name,bio,instagram_handle,tiktok_handle,niche_category,profile_image_url,onboarding_completed').eq('id',session.user.id).single()
+  state.data.email=session.user.email||''
+  const{data:profile}=await sb.from('users').select('display_name,instagram_handle,tiktok_handle,niche_category,profile_image_url,onboarding_completed').eq('id',session.user.id).single()
   if(profile?.onboarding_completed===true){location.replace('/dashboard');return}
-  // Pre-fill from existing data (e.g. from register.html)
   if(profile){
-    if(profile.full_name)state.data.fullName=profile.full_name
-    if(profile.bio)state.data.bio=profile.bio
+    state.data.username=profile.display_name||''
     if(profile.instagram_handle)state.data.ig=profile.instagram_handle.replace(/^@/,'')
     if(profile.tiktok_handle)state.data.tt=profile.tiktok_handle.replace(/^@/,'')
     if(profile.niche_category)state.data.niche=profile.niche_category
@@ -174,15 +165,20 @@ document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Ent
   document.getElementById('login-section').classList.add('hidden')
   document.getElementById('onboarding-section').classList.remove('hidden')
   renderStep()
+}
+
+// check existing session
+;(async()=>{
+  const{data:{session}}=await sb.auth.getSession()
+  if(!session)return
+  await startOnboarding(session)
 })()
 
 // ─── steps ───
 const STEPS=[
-  {title:'Wie heißt du?',sub:'Dein Name erscheint auf deiner BioLink-Seite.',render:renderStep1,collect:collectStep1},
-  {title:'Dein Account.',sub:'Verbinde deine Social-Media-Kanäle.',render:renderStep2,collect:collectStep2},
-  {title:'Deine Nische.',sub:'Was machst du am liebsten? Das hilft uns, dich besser zu unterstützen.',render:renderStep3,collect:collectStep3},
-  {title:'Profilbild.',sub:'Lade ein Foto hoch — das erscheint auf deiner BioLink-Seite.',render:renderStep4,collect:()=>true},
-  {title:'Fast fertig.',sub:'Überprüfe deine Daten und klick auf Abschließen.',render:renderStep5,collect:()=>true},
+  {title:'Deine Kanäle.',sub:'Verbinde deine Social-Media-Kanäle. Du kannst das auch später erledigen.',render:renderStep1,collect:collectStep1},
+  {title:'Deine Nische.',sub:'Was machst du am liebsten? Das hilft uns, dich besser zu unterstützen.',render:renderStep2,collect:collectStep2},
+  {title:'Fast fertig.',sub:'Überprüfe deine Angaben und klick auf Abschließen.',render:renderStep3,collect:()=>true},
 ]
 
 function renderStep(){
@@ -199,71 +195,85 @@ function renderStep(){
 }
 
 function renderStep1(el){
-  el.innerHTML+=`<div class="field"><label>Vollständiger Name</label><input type="text" id="s-fullname" value="${escHtml(state.data.fullName)}" placeholder="Anna Mustermann"/></div>
-    <div class="field"><label>Kurz-Bio (optional)</label><textarea id="s-bio" rows="3" placeholder="Deine kurze Beschreibung…">${escHtml(state.data.bio)}</textarea></div>`
+  el.innerHTML+=`<div class="field"><label>Instagram-Handle (optional)</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-ig" value="${escHtml(state.data.ig)}" placeholder="dein_handle"/></div></div>
+    <div class="field"><label>TikTok-Handle (optional)</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-tt" value="${escHtml(state.data.tt)}" placeholder="dein_handle"/></div></div>`
 }
 function collectStep1(){
-  const n=document.getElementById('s-fullname')?.value.trim()
-  if(!n){showToast('Bitte gib deinen Namen ein.');return false}
-  state.data.fullName=n;state.data.bio=document.getElementById('s-bio')?.value.trim()||''
-  return true
-}
-
-function renderStep2(el){
-  el.innerHTML+=`<div class="field"><label>Instagram-Handle</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-ig" value="${escHtml(state.data.ig)}" placeholder="dein_handle"/></div></div>
-    <div class="field"><label>TikTok-Handle</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-tt" value="${escHtml(state.data.tt)}" placeholder="dein_handle"/></div></div>`
-}
-function collectStep2(){
   state.data.ig=document.getElementById('s-ig')?.value.trim().replace(/^@/,'')||''
   state.data.tt=document.getElementById('s-tt')?.value.trim().replace(/^@/,'')||''
   return true
 }
 
-function renderStep3(el){
+function renderStep2(el){
   el.innerHTML+=`<div class="niche-grid">${NICHES.map(n=>`<button class="niche-btn ${state.data.niche===n.key?'active':''}" data-key="${n.key}" onclick="selectNiche('${n.key}')"><div class="niche-emoji">${n.emoji}</div><div class="niche-label">${n.label}</div></button>`).join('')}</div>`
 }
 window.selectNiche=function(key){state.data.niche=key;document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.key===key))}
-function collectStep3(){
+function collectStep2(){
   if(!state.data.niche){showToast('Bitte wähle eine Nische.');return false}
   return true
 }
 
-function renderStep4(el){
-  const thumb=state.data.photoUrl?`<img src="${escHtml(state.data.photoUrl)}" alt=""/>`:`<div class="photo-icon">📷</div><div class="photo-hint">Tippen zum Hochladen</div>`
-  el.innerHTML+=`<div class="photo-area"><div class="photo-circle" id="photo-circle" onclick="document.getElementById('photo-input').click()">${thumb}</div><div class="photo-upload-status" id="upload-status">${state.data.photoUrl?'✓ Foto hochgeladen':'Max. 5 MB · JPG, PNG oder WebP'}</div></div>`
+function renderStep3(el){
+  const d=state.data
+  const nicheFound=NICHES.find(n=>n.key===d.niche)
+  const nicheLabel=nicheFound?(nicheFound.emoji+' '+nicheFound.label):(d.niche||'–')
+  const defaultPhoto='https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/profile-images/Profilbild_BioUno.png'
+  const photoSrc=d.photoUrl||defaultPhoto
+  const isCustomPhoto=!!(d.photoUrl&&d.photoUrl!==defaultPhoto)
+  el.innerHTML+=`
+    <!-- Profilbild -->
+    <div style="display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer" onclick="document.getElementById('photo-input').click()">
+      <div style="position:relative;flex-shrink:0">
+        <img src="${escHtml(photoSrc)}" alt="" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong)"/>
+        <div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;border:2px solid white;background:${isCustomPhoto?'var(--green)':'var(--subtle)'}; color:white">${isCustomPhoto?'✓':'✕'}</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">Profilbild</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px" id="upload-status">${isCustomPhoto?'✓ Eigenes Foto':'Tippen um Foto hochzuladen'}</div>
+      </div>
+    </div>
+    <!-- Review -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;color:var(--muted)">Username</span>
+          <span style="font-size:13px;font-weight:600">@${escHtml(d.username||'–')}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:12px">
+          <span style="font-size:12px;color:var(--muted)">E-Mail</span>
+          <span style="font-size:13px;font-weight:500;max-width:60%;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">${escHtml(d.email||'–')}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:12px">
+          <span style="font-size:12px;color:var(--muted)">Nische</span>
+          <span style="font-size:13px;font-weight:500">${escHtml(nicheLabel)}</span>
+        </div>
+      </div>
+    </div>`
 }
 
 document.getElementById('photo-input').addEventListener('change',async(e)=>{
   const file=e.target.files?.[0];if(!file)return
   if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
-  const circle=document.getElementById('photo-circle'),statusEl=document.getElementById('upload-status')
-  if(!circle)return
+  const statusEl=document.getElementById('upload-status')
+  if(statusEl)statusEl.textContent='Wird hochgeladen…'
   const reader=new FileReader()
-  reader.onload=ev=>{circle.innerHTML=`<img src="${ev.target.result}" alt=""/>`;if(statusEl)statusEl.textContent='Wird hochgeladen…'}
+  reader.onload=ev=>{
+    const img=document.querySelector('#ob-content img[style*="56px"]')
+    if(img)img.src=ev.target.result
+  }
   reader.readAsDataURL(file)
   if(!state.user)return
   const path=`${state.user.id}/${Date.now()}.${file.name.split('.').pop()}`
   const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
   if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);if(statusEl)statusEl.textContent='Upload fehlgeschlagen';return}
   const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
-  state.data.photoUrl=publicUrl;if(statusEl)statusEl.textContent='✓ Foto hochgeladen'
+  state.data.photoUrl=publicUrl
+  if(statusEl)statusEl.textContent='✓ Eigenes Foto hochgeladen'
+  // Update badge
+  const badge=document.querySelector('#ob-content div[style*="bottom:-2px"]')
+  if(badge){badge.style.background='var(--green)';badge.textContent='✓'}
   e.target.value=''
 })
-
-function renderStep5(el){
-  const d=state.data
-  const nicheFound=NICHES.find(n=>n.key===d.niche)
-  const nicheLabel=nicheFound?(nicheFound.emoji+' '+nicheFound.label):(d.niche||'–')
-  el.innerHTML+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
-    ${d.photoUrl?`<div style="text-align:center;padding:20px 0"><img src="${escHtml(d.photoUrl)}" alt="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong)"/></div>`:''}
-    <div style="padding:0 16px 16px;display:flex;flex-direction:column;gap:10px">
-      <div style="display:flex;justify-content:space-between;padding-top:14px;border-top:1px solid var(--border)"><span style="font-size:12px;color:var(--muted)">Name</span><span style="font-size:13px;font-weight:500">${escHtml(d.fullName||'–')}</span></div>
-      ${d.ig?`<div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">Instagram</span><span style="font-size:13px;font-weight:500">@${escHtml(d.ig)}</span></div>`:''}
-      ${d.tt?`<div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">TikTok</span><span style="font-size:13px;font-weight:500">@${escHtml(d.tt)}</span></div>`:''}
-      <div style="display:flex;justify-content:space-between"><span style="font-size:12px;color:var(--muted)">Nische</span><span style="font-size:13px;font-weight:500">${escHtml(nicheLabel)}</span></div>
-    </div>
-  </div>`
-}
 
 window.nextStep=async function(){
   const collect=STEPS[state.step-1].collect
@@ -278,10 +288,12 @@ async function saveAndFinish(){
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   const d=state.data
   const{error}=await sb.from('users').update({
-    full_name:d.fullName,bio:d.bio||null,
-    instagram_handle:d.ig||null,tiktok_handle:d.tt||null,
-    niche_category:d.niche,profile_image_url:d.photoUrl||null,
-    onboarding_completed:true,updated_at:new Date().toISOString()
+    instagram_handle:d.ig||null,
+    tiktok_handle:d.tt||null,
+    niche_category:d.niche,
+    profile_image_url:d.photoUrl||null,
+    onboarding_completed:true,
+    updated_at:new Date().toISOString()
   }).eq('id',state.user.id)
   btn.disabled=false;btn.textContent='Abschließen ✓'
   if(error){showToast('Fehler beim Speichern: '+error.message,4000);return}
