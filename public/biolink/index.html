@@ -714,8 +714,8 @@ function renderPage(){
     </div>
     `}
 
-    <!-- Delete always at absolute bottom (only shown when generated) -->
-    ${isGenerated?`<div style="padding:8px 20px 8px">
+    <!-- Delete only shown when active -->
+    ${isActive?`<div style="padding:8px 20px 8px">
       <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 BioLink-Seite löschen</button>
     </div>`:''}
   `
