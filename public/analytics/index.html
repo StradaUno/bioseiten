@@ -265,21 +265,19 @@ window.openSidebar=function(){document.getElementById('sidebar').classList.add('
 window.closeSidebar=function(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
 
 async function setupAvatar(session){
-  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url').eq('id',session.user.id).single()
+  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type').eq('id',session.user.id).single()
   const name=p?.display_name||p?.full_name||session.user.email||'?'
   const av=document.getElementById('user-avatar')
   if(p?.profile_image_url){av.innerHTML=`<img src="${escHtml(p.profile_image_url)}" alt="">`}else{av.textContent=name[0].toUpperCase()}
-  }
+  const emailEl=document.getElementById('sidebar-user-email')
+  if(emailEl)emailEl.textContent=session.user.email||''
+  if(p?.subscription_type==='pro')document.getElementById('sidebar-pro-banner')?.classList.add('show')
+}
 
 async function baseInit(onSession){
   const{data:{session}}=await sb.auth.getSession()
   if(session){await onSession(session);return}
   document.getElementById('login-screen').style.display='flex'
-  document.getElementById('btn-login').addEventListener('click',doLogin)
-  document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
-}}=await sb.auth.getSession()
-  if(session){await onSession(session);return}
-  location.replace('/login')
   document.getElementById('btn-login').addEventListener('click',doLogin)
   document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
 }
