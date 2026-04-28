@@ -94,7 +94,7 @@ input,textarea,select{font-size:16px!important}
   <div class="ob-wrap" id="ob-wrap">
     <div class="ob-topbar">
       <div class="ob-logo"><div class="ob-logo-mark">v</div><div class="ob-logo-text">viuno</div></div>
-      <div class="ob-step-label" id="step-label">Schritt 1 von 3</div>
+      <div class="ob-step-label" id="step-label">Schritt 1 von 2</div>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
     <div class="ob-content" id="ob-content"></div>
@@ -129,7 +129,7 @@ const NICHES=[
   {key:'art',emoji:'🎨',label:'Art'},{key:'family',emoji:'👨‍👩‍👧',label:'Family'},{key:'mental_health',emoji:'🧠',label:'Mental'},{key:'general',emoji:'🌐',label:'Allgemein'}
 ]
 
-const state={step:1,total:3,user:null,data:{ig:'',tt:'',niche:'general',photoUrl:null,username:'',email:''}}
+const state={step:1,total:2,user:null,data:{ig:'',tt:'',niche:'general',photoUrl:null,username:'',email:''}}
 
 function showToast(msg,dur=2800){
   const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg')
@@ -177,7 +177,6 @@ async function startOnboarding(session){
 // ─── steps ───
 const STEPS=[
   {title:'Deine Kanäle.',sub:'Verbinde deine Social-Media-Kanäle. Du kannst das auch später erledigen.',render:renderStep1,collect:collectStep1},
-  {title:'Deine Nische.',sub:'Was machst du am liebsten? Das hilft uns, dich besser zu unterstützen.',render:renderStep2,collect:collectStep2},
   {title:'Fast fertig.',sub:'Überprüfe deine Angaben und klick auf Abschließen.',render:renderStep3,collect:()=>true},
 ]
 
