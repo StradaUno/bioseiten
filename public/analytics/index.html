@@ -472,8 +472,36 @@ function renderAnalytics(){
     <div class="section" style="padding-bottom:8px"><div class="refresh-card">
       <div><div class="refresh-title">Analyse aktualisieren</div><div class="refresh-sub">${nextLabel}</div></div>
       <button class="btn-refresh" id="btn-refresh-action" ${canRefresh?'':'disabled'}>${canRefresh?'Jetzt':'Gesperrt'}</button>
-    </div></div>`
+    </div></div>
+    <div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
+      <button onclick="shareAnalytics()" style="width:100%;padding:13px;background:var(--surface);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        Analytics-Snapshot teilen
+      </button>
+    </div>`
   document.getElementById('btn-refresh-action')?.addEventListener('click',triggerRefresh)
+}
+window.shareAnalytics=function(){
+  const data=state.analytics[state.activePlatform]
+  if(!data){showToast('Keine Daten zum Teilen.');return}
+  const platform=data.platform==='instagram'?'Instagram':'TikTok'
+  const lines=[
+    `📊 Meine ${platform}-Analytics`,
+    ``,
+    `👥 ${data.followers?.toLocaleString('de-DE')||'–'} Follower`,
+    data.engagement_rate!=null?`💫 ${(+data.engagement_rate).toFixed(2)}% Engagement Rate`:'',
+    data.avg_views!=null?`👁 ⌀ ${data.avg_views?.toLocaleString('de-DE')||'–'} Views/Post`:'',
+    data.avg_likes!=null?`❤️ ⌀ ${data.avg_likes?.toLocaleString('de-DE')||'–'} Likes/Post`:'',
+    data.best_posting_day?`📅 Bester Tag: ${data.best_posting_day}`:'',
+    data.best_posting_hour!=null?`⏰ Beste Zeit: ${data.best_posting_hour}:00 Uhr`:'',
+    ``,
+    `Erstellt mit viuno.de`,
+  ].filter(Boolean).join('\n')
+  if(navigator.share){
+    navigator.share({title:`Meine ${platform} Analytics`,text:lines}).catch(()=>{})
+  } else {
+    navigator.clipboard.writeText(lines).then(()=>showToast('Snapshot kopiert ✓')).catch(()=>showToast('Teilen nicht verfügbar'))
+  }
 }
 async function triggerRefresh(){
   const btn=document.getElementById('btn-refresh-action');if(!btn)return
