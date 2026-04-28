@@ -333,9 +333,6 @@ async function baseInit(onSession){
   document.getElementById('login-screen').style.display='flex'
   document.getElementById('btn-login').addEventListener('click',doLogin)
   document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
-}}=await sb.auth.getSession()
-  if(session){await onSession(session);return}
-  location.replace('/login')
 }
 
 async function enterApp(session){
