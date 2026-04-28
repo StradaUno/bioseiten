@@ -32,6 +32,9 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 .link-row a:hover{text-decoration:underline}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* iOS zoom fix */
+input,textarea,select{font-size:16px!important}
 </style>
 </head>
 <body>
@@ -53,6 +56,9 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
     </div>
     <button class="btn-primary" id="btn-login">Einloggen</button>
     <div class="error-msg" id="error-msg"></div>
+    <div style="text-align:center;margin-top:14px">
+      <a href="/reset-password" style="font-size:13px;color:var(--muted);text-decoration:none">Passwort vergessen?</a>
+    </div>
   </div>
   <div class="link-row">
     Noch kein Account? <a href="/register">Jetzt registrieren</a>
