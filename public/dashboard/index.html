@@ -56,7 +56,23 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .greeting-hi{font-size:22px;font-weight:700;letter-spacing:-.04em}
 .greeting-date{font-size:13px;color:var(--muted);margin-top:3px}
 
-/* KPI SCROLL */
+/* DASH GRID */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;text-decoration:none;display:flex;flex-direction:column;gap:4px;transition:border-color .15s,transform .1s;cursor:pointer}
+.dash-card:hover{border-color:var(--border-strong)}
+.dash-card:active{transform:scale(.97)}
+.dash-card-dark{background:var(--text);border-color:var(--text)}
+.dash-card-dark .dash-card-label{color:rgba(255,255,255,.5)}
+.dash-card-dark .dash-card-value{color:white}
+.dash-card-dark .dash-card-sub{color:rgba(255,255,255,.45)}
+.dash-card-dark .dash-card-icon{color:white}
+.dash-card-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.dash-card-value{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1.1;margin-top:4px}
+.dash-card-sub{font-size:11px;color:var(--subtle);margin-top:2px}
+.dash-card-icon{font-size:24px;margin-bottom:6px}
+.dash-card-icon-only{justify-content:center;align-items:flex-start;padding:20px 16px}
+
+/* KPI SCROLL (kept for other pages) */
 .kpi-scroll{display:flex;gap:10px;padding:16px 20px 0;overflow-x:auto;scrollbar-width:none}
 .kpi-scroll::-webkit-scrollbar{display:none}
 .kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;min-width:120px;flex-shrink:0;text-decoration:none;cursor:pointer;transition:border-color .15s,transform .1s}
@@ -334,13 +350,14 @@ async function enterApp(session){
 
 // ── DATA ──
 async function loadDashboard(uid){
-  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes] = await Promise.all([
+  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes] = await Promise.all([
     sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
     sb.from('daily_digest').select('date,teaser').order('date',{ascending:false}).limit(1).single(),
     sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).eq('status','new').is('deleted_at',null).order('created_at',{ascending:false}).limit(3),
     sb.from('bio_stats').select('views_today,views_last_7_days,views_total').eq('user_id',uid).single(),
     sb.from('user_goals').select('goal_type,target_value,current_value,deadline,platform,is_active,achieved').eq('user_id',uid).eq('is_active',true).eq('achieved',false).limit(3),
+    sb.from('mediakit_settings').select('views_last_7_days').eq('user_id',uid).single(),
   ])
 
   const p      = profileRes.data
@@ -350,6 +367,7 @@ async function loadDashboard(uid){
   const reqs   = requestsRes.data || []
   const bs     = bioStatsRes.data
   const goals  = goalsRes.data || []
+  const mk     = mkRes.data
 
   const name    = p?.display_name||p?.full_name||'Creator'
   const hour    = new Date().getHours()
@@ -366,33 +384,39 @@ async function loadDashboard(uid){
       <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
     </div>
 
-    <!-- KPI Scroll — alle klickbar -->
-    <div class="kpi-scroll">
-      <a class="kpi-card dark" href="/analytics">
-        <div class="kpi-label">Follower</div>
-        <div class="kpi-value">${fmt(p?.total_followers)}</div>
-        ${follDelta!=null
-          ?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDelta>=0?'↑':'↓'} ${Math.abs(follDelta).toLocaleString('de-DE')}</div>`
-          :'<div class="kpi-delta neu">Gesamt</div>'}
-      </a>
-      <a class="kpi-card" href="/analytics">
-        <div class="kpi-label">Engagement</div>
-        <div class="kpi-value">${an?Number(an.engagement_rate).toFixed(1)+'%':'–'}</div>
-        <div class="kpi-delta ${Number(an?.engagement_rate||0)>6?'up':Number(an?.engagement_rate||0)>3?'neu':'down'}">${Number(an?.engagement_rate||0)>6?'Sehr gut':Number(an?.engagement_rate||0)>3?'Gut':'Niedrig'}</div>
-      </a>
-      <a class="kpi-card" href="/biolink">
-        <div class="kpi-label">Bio 7 Tage</div>
-        <div class="kpi-value">${fmt(bs?.views_last_7_days||p?.bio_views_last_7_days)}</div>
-        <div class="kpi-delta neu">Aufrufe</div>
-      </a>
-      <a class="kpi-card" href="/requests">
-        <div class="kpi-label">Anfragen</div>
-        <div class="kpi-value">${newReqs}</div>
-        <div class="kpi-delta neu">Neu</div>
-      </a>
+    <!-- Row 1: Follower + Anfragen -->
+    <div class="section">
+      <div class="dash-grid">
+        <a class="dash-card dash-card-dark" href="/analytics">
+          <div class="dash-card-label">Follower</div>
+          <div class="dash-card-value">${fmt(p?.total_followers)}</div>
+          <div class="dash-card-sub">${follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' diese Woche':'Gesamt'}</div>
+        </a>
+        <a class="dash-card" href="/requests">
+          <div class="dash-card-label">Anfragen</div>
+          <div class="dash-card-value">${newReqs}</div>
+          <div class="dash-card-sub">${newReqs===1?'Neue Anfrage':newReqs>1?'Neue Anfragen':'Keine neuen'}</div>
+        </a>
+      </div>
     </div>
 
-    <!-- Daily Digest — tägliche Zusammenfassung -->
+    <!-- Row 2: BioLink + Media Kit -->
+    <div class="section">
+      <div class="dash-grid">
+        <a class="dash-card" href="/biolink">
+          <div class="dash-card-label">BioLink</div>
+          <div class="dash-card-value">${fmt(bs?.views_last_7_days)}</div>
+          <div class="dash-card-sub">Aufrufe · 7 Tage</div>
+        </a>
+        <a class="dash-card" href="/mediakit">
+          <div class="dash-card-label">Media Kit</div>
+          <div class="dash-card-value">${fmt(mk?.views_last_7_days)}</div>
+          <div class="dash-card-sub">Aufrufe · 7 Tage</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Daily Digest -->
     ${d?`<div class="section">
       <div class="section-header"><div class="section-title">Daily Digest</div><a class="section-link" href="/digest">Alle →</a></div>
       <a class="digest-summary-card" href="/digest">
@@ -402,66 +426,18 @@ async function loadDashboard(uid){
       </a>
     </div>`:''}
 
-    <!-- Anfragen -->
-    <div class="section">
-      <div class="section-header"><div class="section-title">Neue Anfragen</div><a class="section-link" href="/requests">Alle →</a></div>
-      ${reqs.length?`<a class="list-card" href="/requests">
-        ${reqs.map(r=>`<div class="list-row">
-          <div class="req-initial">${escHtml(r.sender_initial||r.sender_name?.[0]||'?')}</div>
-          <div style="flex:1;min-width:0">
-            <div class="req-name">${escHtml(r.sender_name)}</div>
-            <div class="req-sub">${escHtml(r.message||'–')}</div>
-          </div>
-          <div class="req-dot"></div>
-        </div>`).join('')}
-      </a>`:`<a class="list-card" href="/requests" style="text-align:center;padding:20px;display:block">
-        <div style="font-size:22px;margin-bottom:6px">📭</div>
-        <div style="font-size:13px;color:var(--muted)">Noch keine neuen Anfragen</div>
-        <div style="font-size:11px;color:var(--subtle);margin-top:3px">Erstelle deinen BioLink damit Brands dich finden</div>
-      </a>`}
-    </div>
-
-    <!-- Ziele -->
-    ${goals.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Meine Ziele</div></div>
-      ${goals.map(g=>{
-        const pct=g.target_value>0?Math.min(100,Math.round((+g.current_value/+g.target_value)*100)):0
-        const labels={'followers':'Follower-Ziel','engagement':'Engagement-Ziel','revenue':'Umsatz-Ziel'}
-        const label=labels[g.goal_type]||escHtml(g.goal_type)
-        return `<div class="goal-card">
-          <div class="goal-row"><div class="goal-label">${label}${g.platform?' · '+g.platform:''}</div><div class="goal-pct">${pct}%</div></div>
-          <div class="goal-sub">${fmt(g.current_value)} von ${fmt(g.target_value)}${g.deadline?' · bis '+new Date(g.deadline).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}):''}</div>
-          <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
-        </div>`
-      }).join('')}
-    </div>`:''}
-
-    <!-- viuno -->
-    <div class="section" style="padding-bottom:calc(16px + var(--safe-bottom))">
-      <div class="section-title" style="margin-bottom:10px">viuno</div>
-      <a class="extras-banner" href="/extras">
-        <div class="extras-banner-icon">✦</div>
-        <div class="extras-banner-body">
-          <div class="extras-banner-title">viuno PRO</div>
-          <div class="extras-banner-sub">Exklusive Features für managed Creator</div>
-        </div>
-        <div class="extras-banner-arrow">→</div>
-      </a>
-      <div class="extras-grid">
-        <a class="extras-card" href="/trends">
-          <div class="extras-card-icon">🔥</div>
-          <div class="extras-card-title">Trends</div>
-          <div class="extras-card-sub">Sounds & Creators</div>
+    <!-- Row 3: Trends + viuno Extras -->
+    <div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
+      <div class="dash-grid">
+        <a class="dash-card dash-card-icon-only" href="/trends">
+          <div class="dash-card-icon">🔥</div>
+          <div class="dash-card-label">Trends</div>
+          <div class="dash-card-sub">Sounds & Creators</div>
         </a>
-        <a class="extras-card" href="/biolink">
-          <div class="extras-card-icon">🔗</div>
-          <div class="extras-card-title">BioLink</div>
-          <div class="extras-card-sub">Deine persönliche Seite</div>
-        </a>
-        <a class="extras-card" href="/mediakit">
-          <div class="extras-card-icon">📋</div>
-          <div class="extras-card-title">Media Kit</div>
-          <div class="extras-card-sub">Für Brand-Anfragen</div>
+        <a class="dash-card dash-card-icon-only dash-card-dark" href="/extras">
+          <div class="dash-card-icon">✦</div>
+          <div class="dash-card-label">viuno Extras</div>
+          <div class="dash-card-sub">PRO Features</div>
         </a>
       </div>
     </div>
