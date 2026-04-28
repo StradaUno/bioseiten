@@ -311,6 +311,20 @@ input,textarea,select{font-size:16px!important}
 <!-- TOAST -->
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
+<!-- EDIT ACTIONS SHEET -->
+<div class="sheet-backdrop hidden" id="edit-actions-sheet" onclick="closeSheet('edit-actions-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">BioLink bearbeiten</div>
+    <div class="sheet-actions" style="padding-top:20px">
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet');openThemeSheet()">🎨 Design ändern · <span id="current-theme-label"></span></button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet');openProfileSheet()">👤 Profil-Infos bearbeiten</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet');openLinksSheet()">🔗 Social & Links bearbeiten</button>
+      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet')" style="margin-top:4px">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 <!-- THEME SHEET -->
 <div class="sheet-backdrop hidden" id="theme-sheet" onclick="closeSheet('theme-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
@@ -608,9 +622,7 @@ function renderPage(){
 
     <!-- Actions -->
     <div class="action-stack">
-      <button class="action-btn action-btn-secondary" onclick="openThemeSheet()">🎨 Design ändern · ${capitalizeTheme(state.selectedTheme)}</button>
-      <button class="action-btn action-btn-secondary" onclick="openProfileSheet()">👤 Profil-Infos bearbeiten</button>
-      <button class="action-btn action-btn-secondary" onclick="openLinksSheet()">🔗 Social & Links bearbeiten</button>
+      <button class="action-btn action-btn-primary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
     </div>
 
     ` : `
@@ -699,6 +711,9 @@ function renderPage(){
 
   // init sheets with current data
   initSheets()
+  // Update theme label in edit sheet
+  const tl=document.getElementById('current-theme-label')
+  if(tl)tl.textContent=capitalizeTheme(state.selectedTheme)
 }
 
 function buildViewsChart(views){
