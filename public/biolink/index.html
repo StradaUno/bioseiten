@@ -703,7 +703,6 @@ function renderPage(){
 
 function buildViewsChart(views){
   if(!views||views.length<2)return''
-  // last 14 days
   const days=[]
   for(let i=13;i>=0;i--){
     const d=new Date();d.setDate(d.getDate()-i)
@@ -712,28 +711,36 @@ function buildViewsChart(views){
     days.push({date:key,count})
   }
   const max=Math.max(...days.map(d=>d.count),1)
-  const W=300,H=80,PAD=6
+  const W=300,H=80,PAD=6,YPAD=32
   const pts=days.map((d,i)=>{
-    const x=PAD+(i/(days.length-1))*(W-PAD*2)
+    const x=YPAD+PAD+(i/(days.length-1))*(W-YPAD-PAD*2)
     const y=PAD+(1-d.count/max)*(H-PAD*2)
     return[x.toFixed(1),y.toFixed(1)]
   })
   const lineD='M'+pts.map(p=>p.join(',')).join(' L')
   const areaD=`${lineD} L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`
   const last=pts[pts.length-1]
-  const svg=`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+  // Y-axis labels
+  const yTop=max
+  const yMid=Math.round(max/2)
+  const yBot=0
+  const svg=`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
     <defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0%" stop-color="#111110" stop-opacity=".1"/>
       <stop offset="100%" stop-color="#111110" stop-opacity="0"/>
     </linearGradient></defs>
+    <!-- Y-axis labels -->
+    <text x="${YPAD-4}" y="${PAD+4}" text-anchor="end" font-size="9" fill="#b0afa9" font-family="inherit">${yTop}</text>
+    <text x="${YPAD-4}" y="${H/2+3}" text-anchor="end" font-size="9" fill="#b0afa9" font-family="inherit">${yMid}</text>
+    <text x="${YPAD-4}" y="${H-PAD+2}" text-anchor="end" font-size="9" fill="#b0afa9" font-family="inherit">${yBot}</text>
+    <!-- Y-axis line -->
+    <line x1="${YPAD-2}" y1="${PAD}" x2="${YPAD-2}" y2="${H-PAD}" stroke="#e0efed" stroke-width="1"/>
     <path d="${areaD}" fill="url(#vg)"/>
     <path d="${lineD}" fill="none" stroke="#111110" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#111110" stroke="white" stroke-width="2"/>
   </svg>`
-  const firstDay=fmtShort(days[0].date)
-  const midDay=fmtShort(days[6].date)
-  const lastDay=fmtShort(days[13].date)
-  return`<div class="section"><div class="chart-card">${svg}<div class="chart-dates"><span class="chart-date">${firstDay}</span><span class="chart-date">${midDay}</span><span class="chart-date">${lastDay}</span></div></div></div>`
+  const fmtShort=d=>new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})
+  return`<div class="section"><div class="chart-card">${svg}<div class="chart-dates"><span class="chart-date">${fmtShort(days[0].date)}</span><span class="chart-date">${fmtShort(days[6].date)}</span><span class="chart-date">${fmtShort(days[13].date)}</span></div></div></div>`
 }
 
 function capitalizeTheme(t){return{clean:'Clean',color:'Color',dark:'Dark'}[t]||t}
