@@ -115,6 +115,31 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .btn-add-link:hover{background:var(--surface2);color:var(--text)}
 .empty-links{text-align:center;padding:24px;color:var(--muted);font-size:13px}
 
+/* PREVIEW PHONE — kleine Vorschau wie die Live-Seite aussieht */
+.preview-wrap{padding:14px 20px 0}
+.preview-frame{margin:0 auto;width:240px;max-width:100%;border-radius:24px;border:8px solid #1a1a1a;background:#000;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.12);position:relative}
+.preview-screen{aspect-ratio:9/16;display:flex;flex-direction:column;align-items:center;padding:18px 14px 12px;text-align:center;overflow:hidden;position:relative}
+.preview-screen.theme-color{background:linear-gradient(160deg,#7C5CFC 0%,#C23D8E 50%,#F59E0B 100%);color:#fff}
+.preview-screen.theme-dark{background:#0D1B2A;color:#E8F0FE}
+.preview-screen.theme-clean{background:#FAFAFA;color:#111}
+.preview-avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:16px;font-weight:600;overflow:hidden;flex-shrink:0;margin-bottom:8px}
+.theme-color .preview-avatar{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff}
+.theme-dark .preview-avatar{background:rgba(91,138,245,.18);border:1px solid rgba(91,138,245,.3);color:#E8F0FE}
+.theme-clean .preview-avatar{background:#ECECEC;border:1px solid rgba(0,0,0,.12);color:#111}
+.preview-avatar img{width:100%;height:100%;object-fit:cover}
+.preview-name{font-size:11px;font-weight:600;letter-spacing:-.01em;margin-bottom:3px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.preview-bio{font-size:9px;line-height:1.35;opacity:.8;max-width:90%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;min-height:23px}
+.preview-btn-stack{width:100%;display:flex;flex-direction:column;gap:5px;align-items:center}
+.preview-btn{width:100%;height:18px;border-radius:5px;font-size:8px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:4px}
+.theme-color .preview-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff}
+.theme-color .preview-btn-primary{background:#fff;color:#1A1025;border:none;font-weight:600}
+.theme-dark .preview-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#E8F0FE}
+.theme-dark .preview-btn-primary{background:#3D6FD4;color:#fff;border:none;font-weight:600}
+.theme-clean .preview-btn{background:#fff;border:1px solid rgba(0,0,0,.1);color:#111}
+.theme-clean .preview-btn-primary{background:#111;color:#fff;border:none;font-weight:600}
+.preview-empty{opacity:.5;font-style:italic}
+.preview-caption{font-size:11px;color:var(--muted);text-align:center;padding:10px 20px 0;line-height:1.4}
+
 /* SHEET / MODAL */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
 .sheet-backdrop.hidden{display:none}
@@ -646,6 +671,9 @@ function renderPage(){
         <div><div class="status-text">Seite ist inaktiv<span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span></div></div></div>`
     :''
 
+  // Vorschau (nur im inactive Zustand — wird zusammen mit Checkliste ausgeblendet wenn live)
+  const previewHtml=!isActive?buildPreview():''
+
   // Checklist (always shown if not all ok)
   const checklistHtml=!allOk?`<div class="section">
     <div class="check-card">
@@ -686,6 +714,7 @@ function renderPage(){
 
   page.innerHTML=`
     ${statusHtml}
+    ${previewHtml}
     ${checklistHtml}
     ${termsHtml}
     ${deleteHtml}`
@@ -747,6 +776,51 @@ function buildChart(aufrufe){
         <span style="font-size:10px;color:var(--subtle)">${lastLabel}</span>
       </div>
     </div>
+  </div>`
+}
+
+// ── Build BioLink-Vorschau (Mockup) ──
+function buildPreview(){
+  const p=S.profile||{}
+  const theme=S.theme||'color'
+  const name=p.display_name||p.full_name||''
+  const bio=p.bio||''
+  const hasIg=!!p.instagram_handle
+  const hasTt=!!p.tiktok_handle
+  const hasYt=!!p.youtube_handle
+  const hasTh=!!p.threads_handle
+  const hasAnySocial=hasIg||hasTt||hasYt||hasTh
+
+  const avatarHtml=p.profile_image_url
+    ?`<img src="${esc(p.profile_image_url)}" alt="">`
+    :(name?esc(name[0].toUpperCase()):'<span style="opacity:.5">?</span>')
+
+  const nameHtml=name?esc(name):'<span class="preview-empty">Dein Name</span>'
+  const bioHtml=bio?esc(bio):'<span class="preview-empty">Deine Bio erscheint hier</span>'
+
+  // Social-Buttons (nur die echten zeigen, sonst Platzhalter)
+  let btnsHtml=''
+  if(hasAnySocial){
+    if(hasIg)btnsHtml+='<div class="preview-btn">Instagram</div>'
+    if(hasTt)btnsHtml+='<div class="preview-btn">TikTok</div>'
+    if(hasYt)btnsHtml+='<div class="preview-btn">YouTube</div>'
+    if(hasTh)btnsHtml+='<div class="preview-btn">Threads</div>'
+  }else{
+    btnsHtml='<div class="preview-btn preview-empty">Dein Social-Kanal</div>'
+  }
+  // "Anfragen" Primary-Button immer dabei (gehört fest zur Live-Seite)
+  btnsHtml+='<div class="preview-btn preview-btn-primary">Anfragen</div>'
+
+  return `<div class="preview-wrap">
+    <div class="preview-frame">
+      <div class="preview-screen theme-${theme}">
+        <div class="preview-avatar">${avatarHtml}</div>
+        <div class="preview-name">${nameHtml}</div>
+        <div class="preview-bio">${bioHtml}</div>
+        <div class="preview-btn-stack">${btnsHtml}</div>
+      </div>
+    </div>
+    <div class="preview-caption">So sieht deine Seite live aus</div>
   </div>`
 }
 
