@@ -412,7 +412,10 @@ async function checkActiveRun(){
 // ── Status Flow ──
 function showFlow(run){
   document.getElementById('status-flow').classList.remove('hidden')
-  document.getElementById('btn-start').disabled=true
+  const btn=document.getElementById('btn-start')
+  btn.disabled=true
+  // Text zurücksetzen — kein Spinner wenn Analyse bereits läuft
+  btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Analyse läuft…`
   renderFlow(run)
 }
 
@@ -464,7 +467,9 @@ function poll(runId){
         showToast('Analyse fertig ✓')
         setTimeout(()=>{document.getElementById('status-flow').classList.add('hidden')},4000)
       } else {
-        document.getElementById('btn-start').disabled=false
+        const btn=document.getElementById('btn-start')
+        btn.disabled=false
+        btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Neue Analyse starten`
         renderBtn()
         showToast('Analyse fehlgeschlagen',4000)
       }
