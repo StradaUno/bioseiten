@@ -12,140 +12,158 @@
   --bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;
   --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);
   --text:#111110;--muted:#7a7975;--subtle:#b0afa9;
-  --green:#1a7f4b;--green-bg:#edf7f1;
-  --red:#c0392b;--red-bg:#fdf0ef;
-  --radius:16px;--radius-sm:10px;
-  --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)
+  --green:#1a7f4b;--green-bg:#edf7f1;--green-border:rgba(26,127,75,.2);
+  --red:#c0392b;--red-bg:#fdf0ef;--red-border:rgba(192,57,43,.2);
+  --blue:#1a6ed8;--blue-bg:#eef4fd;
+  --radius:16px;--radius-sm:10px;--nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)
 }
 html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
-
-
-
-/* APP */
 #app{display:none;min-height:100dvh;flex-direction:column;overflow:hidden}
 #app.visible{display:flex}
 
 /* TOPBAR */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .topbar-left{display:flex;align-items:center;gap:10px}
-.hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;transition:background .15s;padding:0}
-.hamburger:hover{background:var(--surface2)}
+.hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;padding:0}
 .hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
 .topbar-title{font-size:15px;font-weight:700;letter-spacing:-.03em}
-.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;cursor:pointer;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
 .topbar-avatar img{width:100%;height:100%;object-fit:cover}
 
 /* PAGE */
-.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(40px + var(--safe-bottom));overflow-y:auto}
-.page-header{padding:20px 20px 0}
-.page-title{font-size:22px;font-weight:700;letter-spacing:-.04em}
-.page-sub{font-size:13px;color:var(--muted);margin-top:3px}
+.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(48px + var(--safe-bottom))}
+.section{padding:12px 20px 0}
 .section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
 
-/* UTILS */
-.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,#e8e6e2 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
-.toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap}
-@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hidden{display:none!important}
-
 /* STATUS BANNER */
-.status-banner{margin:16px 20px 0;padding:14px 16px;border-radius:var(--radius);border:1px solid;display:flex;align-items:center;gap:12px}
-.status-banner.active{background:var(--green-bg);border-color:rgba(26,127,75,.2)}
-.status-banner.inactive{background:var(--surface);border-color:var(--border)}
+.status-banner{margin:12px 20px 0;padding:12px 16px;border-radius:var(--radius);display:flex;align-items:center;gap:10px;border:1px solid}
+.status-banner.active{background:var(--green-bg);border-color:var(--green-border)}
+.status-banner.inactive{background:var(--surface2);border-color:var(--border-strong)}
 .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .status-dot.active{background:var(--green)}
 .status-dot.inactive{background:var(--subtle)}
-.status-text{flex:1;font-size:13px;font-weight:500}
-.status-text span{font-size:11px;color:var(--muted);display:block;margin-top:1px;font-weight:400}
+.status-text{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.status-text span{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:1px}
 
 /* LINK BAR */
-.link-bar{margin:12px 20px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.link-bar{margin:10px 20px 0;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:10px}
 .link-url{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
-.link-url:hover{text-decoration:underline}
-.link-action-btn{padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface2);font-family:inherit;font-size:11px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.link-action-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
 
 /* ACTION BUTTONS */
-.action-btn{width:100%;padding:14px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
-.action-btn:disabled{opacity:.5;cursor:not-allowed}
-.action-btn-primary{background:var(--text);color:white}
-.action-btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border-strong)}
-.action-btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.2)}
-.action-stack{display:flex;flex-direction:column;gap:8px;padding:16px 20px 0}
+.action-stack{padding:12px 20px 0;display:flex;flex-direction:column;gap:8px}
+.action-btn{width:100%;padding:13px 16px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;transition:opacity .15s}
+.action-btn:disabled{opacity:.4;cursor:not-allowed}
+.action-btn-primary{background:var(--text);color:white;border-color:var(--text)}
+.action-btn-secondary{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.action-btn-danger{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
 
-/* PREVIEW CARD (not generated) */
-.preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.preview-header{padding:16px;border-bottom:1px solid var(--border)}
-.preview-header-title{font-size:14px;font-weight:600}
-.preview-header-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.preview-mockup{padding:20px;display:flex;justify-content:center}
-.kit-mock{width:200px;background:white;border:1px solid var(--border);border-radius:12px;padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:8px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
-.kit-mock-avatar{width:48px;height:48px;border-radius:50%;background:#e0e0e0}
-.kit-mock-name{height:8px;border-radius:4px;background:#111;width:80px}
-.kit-mock-tag{height:6px;border-radius:3px;background:#ddd;width:60px}
-.kit-mock-divider{width:100%;height:1px;background:#eee;margin:4px 0}
-.kit-mock-row{display:flex;gap:6px;width:100%}
-.kit-mock-stat{flex:1;background:#f5f5f5;border-radius:6px;height:36px}
-.kit-mock-bar{height:6px;border-radius:3px;background:#111;width:90%}
-.kit-mock-bar-sm{height:6px;border-radius:3px;background:#ddd;width:70%}
+/* STATS GRID */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
+.stat-box-value{font-size:20px;font-weight:700;letter-spacing:-.04em}
+.stat-box-label{font-size:11px;color:var(--muted);margin-top:2px}
 
-/* GENERATE CARD */
-.generate-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.generate-title{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
-.generate-sub{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:16px}
-.generate-checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-.check-item{display:flex;align-items:center;gap:8px;font-size:13px}
-.check-icon{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;flex-shrink:0}
-.check-ok{background:var(--green-bg);color:var(--green)}
-.check-missing{background:var(--red-bg);color:var(--red)}
+/* CARD */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-title{font-size:13px;font-weight:600;color:var(--text)}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.card-action{font-size:12px;font-weight:600;color:var(--text);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 8px;border-radius:6px}
+.card-action:hover{background:var(--surface2)}
+.card-body{padding:14px 16px}
 
-/* BOTTOM SHEET */
-.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;transition:opacity .25s}
+/* TABS */
+.tab-bar{display:flex;background:var(--surface2);border-radius:10px;padding:3px;margin-bottom:14px}
+.tab-btn{flex:1;padding:8px;border:none;border-radius:7px;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;background:none;transition:all .15s}
+.tab-btn.active{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* FIELD ROW */
+.field-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
+.field-row:last-child{border-bottom:none}
+.field-label{font-size:13px;color:var(--muted);flex:1}
+.field-value{font-size:13px;font-weight:600;color:var(--text)}
+.field-input{border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--text);background:none;text-align:right;outline:none;width:100px}
+.field-input::placeholder{color:var(--subtle);font-weight:400}
+.field-input-wrap{display:flex;align-items:center;gap:4px}
+.field-suffix{font-size:12px;color:var(--muted)}
+.field-edit-btn{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.field-edit-btn:hover{background:var(--surface2);color:var(--text)}
+
+/* AUTOFILL BANNER */
+.autofill-banner{background:var(--blue-bg);border:1px solid rgba(26,110,216,.18);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.autofill-banner-text{flex:1;font-size:12px;color:var(--blue);line-height:1.5}
+.autofill-banner-btn{flex-shrink:0;background:var(--blue);color:white;border:none;border-radius:7px;padding:8px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.autofill-banner.hidden{display:none}
+
+/* PLATFORM PILL */
+.platform-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 8px;border-radius:999px;font-size:12px;font-weight:500;border:1px solid var(--border)}
+.platform-pill.ig{background:#fce4ec;color:#c2185b;border-color:rgba(194,24,91,.15)}
+.platform-pill.tt{background:#e8eaf6;color:#3949ab;border-color:rgba(57,73,171,.15)}
+.platform-pill-dot{width:6px;height:6px;border-radius:50%}
+.platform-pill.ig .platform-pill-dot{background:#c2185b}
+.platform-pill.tt .platform-pill-dot{background:#3949ab}
+
+/* OFFERS GRID */
+.offers-grid{display:flex;flex-direction:column;gap:1px}
+.offer-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.offer-row:last-child{border-bottom:none}
+.offer-row:hover{background:var(--surface2)}
+.offer-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0}
+.offer-label{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.offer-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border-strong);display:grid;place-items:center;flex-shrink:0;transition:all .15s}
+.offer-check.checked{background:var(--text);border-color:var(--text)}
+.offer-check.checked::after{content:'✓';font-size:11px;font-weight:700;color:white}
+
+/* BRANDS */
+.brands-list{display:flex;flex-direction:column;gap:6px}
+.brand-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.brand-name{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-url{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+.brand-del{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:none;display:grid;place-items:center;cursor:pointer;color:var(--muted);font-size:14px;flex-shrink:0}
+.brand-del:hover{color:var(--red);border-color:var(--red-border);background:var(--red-bg)}
+.btn-add{width:100%;padding:11px;background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px}
+.btn-add:hover{background:var(--surface2);color:var(--text)}
+.brands-count{font-size:11px;color:var(--subtle);text-align:right;margin-top:6px}
+
+/* GENDER BAR */
+.gender-bars{display:flex;flex-direction:column;gap:8px}
+.gender-row{display:flex;align-items:center;gap:10px}
+.gender-label{font-size:12px;color:var(--muted);width:20px;font-weight:500}
+.gender-track{flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.gender-fill{height:100%;border-radius:999px;background:var(--text);transition:width .4s ease}
+.gender-fill.female{background:#e91e8c}
+.gender-pct{font-size:12px;font-weight:600;color:var(--text);width:34px;text-align:right}
+
+/* SHEET */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
 .sheet-backdrop.hidden{display:none}
-.sheet{background:var(--surface);border-radius:22px 22px 0 0;width:100%;max-height:92dvh;overflow-y:auto;padding:0 0 calc(24px + var(--safe-bottom))}
+.sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 calc(20px + var(--safe-bottom));width:100%;max-width:540px;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .sheet-handle{width:36px;height:4px;background:var(--border-strong);border-radius:2px;margin:12px auto 0}
-.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 0}
-.sheet-sub{font-size:13px;color:var(--muted);padding:4px 20px 0;line-height:1.5}
-.sheet-body{padding:16px 20px 0}
-.sheet-actions{padding:16px 20px 0;display:flex;flex-direction:column;gap:8px}
-.sheet-divider{height:1px;background:var(--border);margin:16px 0 0}
-
-/* TOGGLE GRID */
-.toggle-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.toggle-btn{padding:14px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface2);font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s}
-.toggle-btn.active{background:var(--text);color:white;border-color:var(--text)}
-
-/* LANG TOGGLE */
-.lang-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
-.lang-btn-opt{padding:12px 10px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface2);font-family:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;text-align:center;transition:all .15s}
-.lang-btn-opt.active{background:var(--text);color:white;border-color:var(--text)}
-
-/* BRAND ROWS */
-.brand-row{display:flex;gap:6px;margin-bottom:8px;align-items:center}
-.brand-row input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;color:var(--text);background:var(--bg);outline:none}
-.brand-row input:focus{border-color:var(--text)}
-.brand-remove-btn{width:30px;height:30px;border-radius:var(--radius-sm);background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;display:grid;place-items:center}
-.brand-add-btn{width:100%;padding:10px;border-radius:var(--radius-sm);background:none;border:1px dashed var(--border-strong);font-family:inherit;font-size:13px;color:var(--muted);cursor:pointer;margin-top:4px}
-
-/* ER HINT */
-.er-hint{font-size:11px;color:var(--subtle);margin-top:5px}
+.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 4px}
+.sheet-sub{font-size:13px;color:var(--muted);padding:0 20px 16px;line-height:1.5}
+.sheet-field{padding:0 20px 12px}
+.sheet-label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.sheet-input{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.sheet-input:focus{border-color:var(--text)}
+.sheet-hint{font-size:11px;margin-top:5px;color:var(--muted)}
+.sheet-actions{padding:8px 20px 0;display:flex;flex-direction:column;gap:8px}
+.sheet-btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.sheet-btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.sheet-btn-cancel{width:100%;padding:13px;background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
 
 /* MODAL */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;padding:24px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .modal-backdrop.hidden{display:none}
-.modal-card{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:380px;margin:0 auto}
+.modal-card{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:400px}
 .modal-title{font-size:17px;font-weight:700;margin-bottom:6px}
-.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:20px}
 .modal-actions{display:flex;gap:8px}
-.modal-btn{flex:1;padding:12px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border-strong)}
-.modal-btn-cancel{background:var(--surface2);color:var(--text)}
-.modal-btn-danger{background:var(--red);color:white;border-color:var(--red)}
-
-/* iOS zoom fix */
-input,textarea,select{font-size:16px!important}
+.modal-btn{flex:1;padding:12px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.modal-btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
+.modal-btn-danger{background:var(--red);color:white}
 
 /* SIDEBAR */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:80;pointer-events:none;transition:background .25s}
@@ -156,660 +174,763 @@ input,textarea,select{font-size:16px!important}
 .sidebar-logo{display:flex;align-items:center;gap:8px}
 .sidebar-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
 .sidebar-logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em}
-.sidebar-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--muted);line-height:1}
+.sidebar-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--muted)}
 .sidebar-nav{flex:1;padding:10px;overflow-y:auto}
 .sidebar-section{font-size:10px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;padding:12px 10px 4px}
 .sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px}
 .sidebar-item:hover{background:var(--surface2);color:var(--text)}
 .sidebar-item.active{background:var(--text);color:white}
-.sidebar-item svg{flex-shrink:0}
-.sidebar-item-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-left:auto;background:var(--text);color:white;flex-shrink:0}
-.sidebar-item.active .sidebar-item-badge{background:rgba(255,255,255,.25);color:white}
-.sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
-.sidebar-pro-banner{background:var(--text);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
-.sidebar-pro-banner.show{display:flex}
-.sidebar-pro-title{font-size:12px;font-weight:700;color:white;margin-bottom:1px}
-.sidebar-pro-sub{font-size:10px;color:rgba(255,255,255,.55)}
-.sidebar-user{font-size:12px;color:var(--muted);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.btn-sidebar-logout{width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border-strong);font-family:inherit;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;margin-bottom:10px}
-.btn-sidebar-logout:hover{background:var(--border)}
-.sidebar-legal{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
-.sidebar-legal a{font-size:11px;color:var(--subtle);text-decoration:none}
-.sidebar-legal a:hover{color:var(--muted)}
-.sidebar-legal span{font-size:11px;color:var(--subtle)}
 
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
+.toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-/* LOGIN */
-#login-screen{min-height:100dvh;display:none;align-items:center;justify-content:center;padding:24px;flex-direction:column}
-.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px}
-.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
-.login-logo-mark{width:32px;height:32px;border-radius:8px;background:var(--text);color:white;display:grid;place-items:center;font-size:14px;font-weight:700}
-.login-logo-text{font-size:17px;font-weight:700;letter-spacing:-.03em}
-.login-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
-.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
-.field{margin-bottom:12px}
-.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.field input,.field textarea,.field select{width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
-.field input:focus,.field textarea:focus{border-color:var(--text)}
-.btn-login{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.btn-login:disabled{opacity:.5}
-.login-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
-.login-register{font-size:13px;color:var(--muted);text-align:center;margin-top:16px}
-.login-register a{color:var(--text);font-weight:600;text-decoration:none}
+/* SPINNER */
+.spinner-sm{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+.spinner-sm.dark{border-color:rgba(0,0,0,.15);border-top-color:var(--text)}
+@keyframes spin{to{transform:rotate(360deg)}}
 
+.gap-v{height:12px}
+.hint-text{font-size:12px;color:var(--muted);line-height:1.5;padding:0 20px}
+.divider{height:1px;background:var(--border);margin:16px 0}
 </style>
 </head>
 <body>
 
-<!-- APP -->
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-card">
-    <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
-    <div class="login-title">Willkommen zurück.</div>
-    <div class="login-sub">Melde dich mit deinem viuno-Account an.</div>
-    <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
-    <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
-    <button class="btn-login" id="btn-login">Einloggen</button>
-    <div class="login-error" id="login-error"></div>
-    <div class="login-register">Noch kein Account? <a href="/register">Jetzt registrieren</a></div>
-  </div>
-</div>
-
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
-    <button class="sidebar-close" onclick="closeSidebar()">✕</button>
-  </div>
-  <nav class="sidebar-nav"><div class="sidebar-section">Übersicht</div>
-<a class="sidebar-item" href="/dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
-<a class="sidebar-item" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Creator News</a>
-<a class="sidebar-item" href="/biolink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>BioLink</a>
-<a class="sidebar-item active" href="/mediakit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Media Kit</a>
-<a class="sidebar-item" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analyse</a>
-<a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
-<div class="sidebar-section">Konto</div>
-<a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a></nav>
-  <div class="sidebar-footer">
-    <div class="sidebar-pro-banner" id="sidebar-pro-banner">
-      <span style="font-size:18px">⭐</span>
-      <div><div class="sidebar-pro-title">viuno Pro</div><div class="sidebar-pro-sub">Managed Creator</div></div>
-    </div>
-    <div class="sidebar-user" id="sidebar-user-email"></div>
-    <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
-    <div class="sidebar-legal">
-      <a href="/legal#impressum">Impressum</a><span>·</span>
-      <a href="/legal#datenschutz">Datenschutz</a><span>·</span>
-      <a href="/legal#agb">AGB</a>
-    </div>
-  </div>
-</div>
-
 <div id="app">
-  <div class="topbar">
+  <!-- SIDEBAR -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-mark">v</div>
+        <span class="sidebar-logo-text">viuno</span>
+      </div>
+      <button class="sidebar-close" id="sidebarClose">✕</button>
+    </div>
+    <div class="sidebar-nav">
+      <div class="sidebar-section">Menü</div>
+      <a class="sidebar-item" href="dashboard.html">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-item" href="analytics.html">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </a>
+      <a class="sidebar-item" href="biolink.html">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        BioLink
+      </a>
+      <a class="sidebar-item active" href="mediakit.html">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Media Kit
+      </a>
+      <a class="sidebar-item" href="requests.html">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Anfragen
+      </a>
+    </div>
+  </nav>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
     <div class="topbar-left">
-      <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
       <span class="topbar-title">Media Kit</span>
     </div>
-    <div class="topbar-avatar" id="user-avatar">?</div>
-  </div>
+    <div class="topbar-avatar" id="topbarAvatar">?</div>
+  </header>
 
-  <div class="page">
-    <div id="skeleton-area" style="padding:20px;display:flex;flex-direction:column;gap:12px">
-      <div class="skeleton" style="height:60px;border-radius:12px"></div>
-      <div class="skeleton" style="height:120px;border-radius:12px"></div>
-      <div class="skeleton" style="height:200px;border-radius:16px"></div>
+  <!-- PAGE -->
+  <div class="page" id="page">
+
+    <!-- STATUS BANNER -->
+    <div class="status-banner inactive" id="statusBanner">
+      <div class="status-dot inactive" id="statusDot"></div>
+      <div class="status-text" id="statusText">
+        Nicht aktiv
+        <span id="statusSub">Fülle die Daten aus und erstelle dein Media Kit.</span>
+      </div>
     </div>
-    <div id="page-content" class="hidden"></div>
+
+    <!-- LINK BAR (nur wenn aktiv) -->
+    <div class="link-bar" id="linkBar" style="display:none">
+      <a class="link-url" id="linkUrl" href="#" target="_blank">viuno.de/kit/…</a>
+      <button class="link-action-btn" id="btnCopyLink">Kopieren</button>
+      <button class="link-action-btn" id="btnOpenLink">↗</button>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="action-stack">
+      <button class="action-btn action-btn-primary" id="btnGenerate">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        <span id="btnGenerateLabel">Media Kit erstellen</span>
+      </button>
+      <button class="action-btn action-btn-danger" id="btnDelete" style="display:none">
+        🗑 Media Kit löschen
+      </button>
+    </div>
+
+    <div class="gap-v"></div>
+
+    <!-- ───── PLATFORM TABS ───── -->
+    <div class="section">
+      <div class="section-label">Kennzahlen</div>
+
+      <!-- Autofill Banner -->
+      <div class="autofill-banner" id="autofillBanner">
+        <div class="autofill-banner-text">
+          📊 Analysedaten verfügbar — Kennzahlen automatisch übernehmen?
+        </div>
+        <button class="autofill-banner-btn" id="btnAutofill">Übernehmen</button>
+      </div>
+
+      <div class="card">
+        <div class="card-header" style="padding-bottom:0;border-bottom:none">
+          <div class="tab-bar" style="margin-bottom:0;width:100%">
+            <button class="tab-btn active" data-tab="ig">Instagram</button>
+            <button class="tab-btn" data-tab="tt">TikTok</button>
+          </div>
+        </div>
+
+        <!-- INSTAGRAM TAB -->
+        <div class="tab-panel active card-body" data-panel="ig">
+          <div class="field-row">
+            <div class="field-label">Engagement Rate</div>
+            <div class="field-input-wrap">
+              <input class="field-input" id="igEr" type="number" step="0.01" min="0" max="100" placeholder="–" inputmode="decimal">
+              <span class="field-suffix">%</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Follower</div>
+            <input class="field-input" id="igFollowers" type="number" min="0" placeholder="–" inputmode="numeric">
+          </div>
+          <div class="field-row" style="border-bottom:none">
+            <div class="field-label">⌀ Likes pro Post</div>
+            <input class="field-input" id="igAvgLikes" type="number" min="0" placeholder="–" inputmode="numeric">
+          </div>
+        </div>
+
+        <!-- TIKTOK TAB -->
+        <div class="tab-panel card-body" data-panel="tt">
+          <div class="field-row">
+            <div class="field-label">Engagement Rate</div>
+            <div class="field-input-wrap">
+              <input class="field-input" id="ttEr" type="number" step="0.01" min="0" max="100" placeholder="–" inputmode="decimal">
+              <span class="field-suffix">%</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field-label">Follower</div>
+            <input class="field-input" id="ttFollowers" type="number" min="0" placeholder="–" inputmode="numeric">
+          </div>
+          <div class="field-row" style="border-bottom:none">
+            <div class="field-label">⌀ Views pro Video</div>
+            <input class="field-input" id="ttAvgViews" type="number" min="0" placeholder="–" inputmode="numeric">
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:10px 0 0;display:flex;justify-content:flex-end">
+        <button class="action-btn action-btn-secondary" id="btnSaveStats" style="width:auto;padding:10px 20px;font-size:13px">
+          Speichern
+        </button>
+      </div>
+    </div>
+
+    <div class="gap-v"></div>
+
+    <!-- ───── ZIELGRUPPE ───── -->
+    <div class="section">
+      <div class="section-label">Zielgruppe</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Geschlecht &amp; Länder</div>
+          </div>
+          <button class="card-action" id="btnEditAudience">Bearbeiten</button>
+        </div>
+        <div class="card-body" id="audiencePreview">
+          <div class="gender-bars" id="genderBars" style="margin-bottom:14px">
+            <div class="gender-row">
+              <span class="gender-label">W</span>
+              <div class="gender-track"><div class="gender-fill female" id="genderBarF" style="width:0%"></div></div>
+              <span class="gender-pct" id="genderPctF">–</span>
+            </div>
+            <div class="gender-row">
+              <span class="gender-label">M</span>
+              <div class="gender-track"><div class="gender-fill" id="genderBarM" style="width:0%"></div></div>
+              <span class="gender-pct" id="genderPctM">–</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px" id="countriesPreview">
+            <div style="font-size:13px;color:var(--muted)" id="country1Display">– Land 1</div>
+            <div style="font-size:13px;color:var(--muted)" id="country2Display">– Land 2</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap-v"></div>
+
+    <!-- ───── CONTENT ANGEBOTE ───── -->
+    <div class="section">
+      <div class="section-label">Content Angebote</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Was bietest du an?</div>
+            <div class="card-sub">Wähle alle zutreffenden Formate aus.</div>
+          </div>
+        </div>
+        <div class="offers-grid" id="offersGrid">
+          <div class="offer-row" data-offer="ugc_video">
+            <div class="offer-icon">🎬</div>
+            <div class="offer-label">UGC Video</div>
+            <div class="offer-check" id="chk-ugc_video"></div>
+          </div>
+          <div class="offer-row" data-offer="instagram_reel">
+            <div class="offer-icon">📸</div>
+            <div class="offer-label">Instagram Reel</div>
+            <div class="offer-check" id="chk-instagram_reel"></div>
+          </div>
+          <div class="offer-row" data-offer="tiktok_post">
+            <div class="offer-icon">🎵</div>
+            <div class="offer-label">TikTok Post</div>
+            <div class="offer-check" id="chk-tiktok_post"></div>
+          </div>
+          <div class="offer-row" data-offer="story_package">
+            <div class="offer-icon">📱</div>
+            <div class="offer-label">Story Package</div>
+            <div class="offer-check" id="chk-story_package"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap-v"></div>
+
+    <!-- ───── BRANDS ───── -->
+    <div class="section">
+      <div class="section-label">Marken Kooperationen</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Zusammenarbeiten</div>
+            <div class="card-sub">Max. 10 Marken. Klick öffnet die URL.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="brands-list" id="brandsList"></div>
+          <button class="btn-add" id="btnAddBrand">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Brand hinzufügen
+          </button>
+          <div class="brands-count" id="brandsCount">0 / 10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gap-v"></div>
+    <div class="gap-v"></div>
+
+  </div><!-- /page -->
+</div><!-- /app -->
+
+<!-- ───── SHEET: ZIELGRUPPE ───── -->
+<div class="sheet-backdrop hidden" id="audienceSheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Zielgruppe bearbeiten</div>
+    <div class="sheet-sub">Geschlecht in % (muss nicht 100% ergeben) und Top-Länder.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Weiblich %</label>
+      <input class="sheet-input" id="inputFemalePct" type="number" min="0" max="100" placeholder="z.B. 72" inputmode="numeric">
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Männlich %</label>
+      <input class="sheet-input" id="inputMalePct" type="number" min="0" max="100" placeholder="z.B. 28" inputmode="numeric">
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Top Land 1</label>
+      <input class="sheet-input" id="inputCountry1" type="text" placeholder="z.B. Deutschland" autocomplete="off">
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Top Land 2</label>
+      <input class="sheet-input" id="inputCountry2" type="text" placeholder="z.B. Österreich" autocomplete="off">
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" id="btnSaveAudience">Speichern</button>
+      <button class="sheet-btn-cancel" id="btnCancelAudience">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───── SHEET: BRAND HINZUFÜGEN ───── -->
+<div class="sheet-backdrop hidden" id="brandSheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Brand hinzufügen</div>
+    <div class="sheet-sub">Name erscheint als Pill. URL wird beim Tippen geöffnet — mit oder ohne https:// eingeben.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Name *</label>
+      <input class="sheet-input" id="brandName" type="text" placeholder="z.B. Nike" autocomplete="off">
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Website URL (optional)</label>
+      <input class="sheet-input" id="brandUrl" type="text" placeholder="z.B. nike.com" autocomplete="off" inputmode="url">
+      <div class="sheet-hint">https:// wird automatisch ergänzt</div>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" id="btnSaveBrand">Hinzufügen</button>
+      <button class="sheet-btn-cancel" id="btnCancelBrand">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ───── MODAL: LÖSCHEN BESTÄTIGEN ───── -->
+<div class="modal-backdrop hidden" id="deleteModal">
+  <div class="modal-card">
+    <div class="modal-title">Media Kit löschen?</div>
+    <div class="modal-sub">Die Seite wird von viuno.de entfernt. Deine eingetragenen Daten bleiben gespeichert — du kannst das Media Kit jederzeit neu erstellen.</div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" id="btnCancelDelete">Abbrechen</button>
+      <button class="modal-btn modal-btn-danger" id="btnConfirmDelete">Ja, löschen</button>
+    </div>
   </div>
 </div>
 
 <!-- TOAST -->
-<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
-<input type="file" id="mk-photo-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
-
-<!-- MK EDIT SHEET -->
-<div class="sheet-backdrop hidden" id="mk-edit-sheet" onclick="closeSheet('mk-edit-sheet')">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Media Kit bearbeiten</div>
-    <div class="sheet-actions" style="padding-top:20px">
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openProfilSheet()">👤 Profil-Infos bearbeiten</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openOffersSheet()">🎬 Content-Angebote bearbeiten</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openAudienceSheet()">📊 Audience & Engagement</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet');openBrandsSheet()">🤝 Kollaborationen bearbeiten</button>
-      <button class="action-btn action-btn-primary" onclick="closeSheet('mk-edit-sheet');generateKit()">✨ Media Kit neu generieren</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('mk-edit-sheet')" style="margin-top:4px">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── PROFIL SHEET ── -->
-<div class="sheet-backdrop hidden" id="profil-sheet" onclick="closeSheet('profil-sheet')">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Profil-Infos</div>
-    <div class="sheet-sub">Diese Infos erscheinen auf deinem Media Kit.</div>
-    <div class="sheet-body">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div id="mk-photo-wrap" style="position:relative;width:64px;height:64px;flex-shrink:0;cursor:pointer" onclick="document.getElementById('mk-photo-input').click()">
-          <div id="mk-photo-inner" style="width:64px;height:64px;border-radius:50%;background:var(--surface2);border:2px solid var(--border-strong);display:grid;place-items:center;font-size:22px;font-weight:700;color:var(--text);overflow:hidden"></div>
-          <div style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--text);border:2px solid white;display:grid;place-items:center">
-            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Profilbild</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px" id="mk-photo-status">Tippen zum Ändern</div>
-        </div>
-      </div>
-      <div class="field"><label>Bio</label><textarea id="mk-bio" rows="3" placeholder="Kurze Beschreibung über dich…"></textarea></div>
-      <div class="field"><label>Stadt</label><input type="text" id="mk-city" placeholder="z.B. Berlin"/></div>
-      <div class="field"><label>Kontakt-E-Mail</label><input type="email" id="mk-email" placeholder="anfragen@beispiel.de"/></div>
-      <div class="field"><label>Sprache</label>
-        <div class="lang-grid" id="lang-grid">
-          <button class="lang-btn-opt" data-lang="de" onclick="selectLang('de')">🇩🇪 DE</button>
-          <button class="lang-btn-opt" data-lang="en" onclick="selectLang('en')">🇬🇧 EN</button>
-          <button class="lang-btn-opt" data-lang="it" onclick="selectLang('it')">🇮🇹 IT</button>
-        </div>
-      </div>
-    </div>
-    <div class="sheet-actions">
-      <button class="action-btn action-btn-primary" onclick="saveProfilSheet()">Speichern</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('profil-sheet')">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── CONTENT ANGEBOTE SHEET ── -->
-<div class="sheet-backdrop hidden" id="offers-sheet" onclick="closeSheet('offers-sheet')">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Content-Angebote</div>
-    <div class="sheet-sub">Was bietest du Brands an?</div>
-    <div class="sheet-body">
-      <div class="toggle-grid">
-        <button class="toggle-btn" data-offer="ugc" onclick="toggleOffer('ugc')">UGC Video</button>
-        <button class="toggle-btn" data-offer="reel" onclick="toggleOffer('reel')">Instagram Reel</button>
-        <button class="toggle-btn" data-offer="post" onclick="toggleOffer('post')">TikTok Post</button>
-        <button class="toggle-btn" data-offer="story" onclick="toggleOffer('story')">Story Package</button>
-      </div>
-    </div>
-    <div class="sheet-actions">
-      <button class="action-btn action-btn-primary" onclick="saveOffersSheet()">Speichern</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('offers-sheet')">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── AUDIENCE & ER SHEET ── -->
-<div class="sheet-backdrop hidden" id="audience-sheet" onclick="closeSheet('audience-sheet')">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Audience & Engagement</div>
-    <div class="sheet-sub">Deine Zielgruppe und Engagement-Raten.</div>
-    <div class="sheet-body">
-      <div class="section-label" style="margin-bottom:8px">Engagement Rate (manuell)</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px">
-        <div class="field" style="margin:0">
-          <label>Instagram ER %</label>
-          <input type="number" id="mk-er-ig" placeholder="z.B. 4.2" step="0.1" min="0" max="100"/>
-        </div>
-        <div class="field" style="margin:0">
-          <label>TikTok ER %</label>
-          <input type="number" id="mk-er-tt" placeholder="z.B. 6.8" step="0.1" min="0" max="100"/>
-        </div>
-      </div>
-      <div class="er-hint">Leer lassen = automatisch aus Analytics übernommen.</div>
-      <div class="sheet-divider"></div>
-      <div class="section-label" style="margin-top:16px;margin-bottom:8px">Geschlecht</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-        <div class="field" style="margin:0"><label>Frauen %</label><input type="number" id="mk-female" placeholder="z.B. 65" min="0" max="100"/></div>
-        <div class="field" style="margin:0"><label>Männer %</label><input type="number" id="mk-male" placeholder="z.B. 35" min="0" max="100"/></div>
-      </div>
-      <div class="sheet-divider"></div>
-      <div class="section-label" style="margin-top:16px;margin-bottom:8px">Top-Länder</div>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-bottom:8px">
-        <div class="field" style="margin:0"><label>Land 1</label><input type="text" id="mk-c1" placeholder="z.B. Deutschland"/></div>
-        <div class="field" style="margin:0"><label>Anteil %</label><input type="number" id="mk-c1p" placeholder="z.B. 45" min="0" max="100"/></div>
-      </div>
-      <div style="display:grid;grid-template-columns:2fr 1fr;gap:8px">
-        <div class="field" style="margin:0"><label>Land 2</label><input type="text" id="mk-c2" placeholder="z.B. Österreich"/></div>
-        <div class="field" style="margin:0"><label>Anteil %</label><input type="number" id="mk-c2p" placeholder="z.B. 20" min="0" max="100"/></div>
-      </div>
-    </div>
-    <div class="sheet-actions">
-      <button class="action-btn action-btn-primary" onclick="saveAudienceSheet()">Speichern</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('audience-sheet')">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── BRANDS SHEET ── -->
-<div class="sheet-backdrop hidden" id="brands-sheet" onclick="closeSheet('brands-sheet')">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Bisherige Kollaborationen</div>
-    <div class="sheet-sub">Brands mit denen du bereits zusammengearbeitet hast.</div>
-    <div class="sheet-body">
-      <div id="brands-list"></div>
-      <button class="brand-add-btn" id="brand-add-btn" onclick="addBrand()">+ Brand hinzufügen</button>
-    </div>
-    <div class="sheet-actions">
-      <button class="action-btn action-btn-primary" onclick="saveBrandsSheet()">Speichern</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('brands-sheet')">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
-<!-- DELETE MODAL 1 -->
-<div class="modal-backdrop hidden" id="delete-modal-1">
-  <div class="modal-card">
-    <div class="modal-title">Media Kit löschen?</div>
-    <div class="modal-sub">Dein Media Kit wird gelöscht. Alle Links dorthin funktionieren danach nicht mehr.</div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeModal(1)">Abbrechen</button>
-      <button class="modal-btn modal-btn-danger" onclick="showDeleteModal2()">Weiter</button>
-    </div>
-  </div>
-</div>
-
-<!-- DELETE MODAL 2 -->
-<div class="modal-backdrop hidden" id="delete-modal-2">
-  <div class="modal-card">
-    <div class="modal-title">Wirklich unwiderruflich löschen?</div>
-    <div class="modal-sub">Diese Aktion kann nicht rückgängig gemacht werden. Das Media Kit ist sofort offline.</div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeModal(2)">Abbrechen</button>
-      <button class="modal-btn modal-btn-danger" id="btn-confirm-delete" onclick="confirmDelete()">Ja, jetzt löschen</button>
-    </div>
-  </div>
-</div>
+<div class="toast-wrap" id="toastWrap" style="display:none"></div>
 
 <script type="module">
-import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
-window.sb = createClient(SUPABASE_URL, SUPABASE_ANON, {auth:{persistSession:true,autoRefreshToken:true}})
-const sb = window.sb
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true } })
 
-function escHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function fmtNum(n){if(n==null||isNaN(+n))return'–';n=+n;if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'k';return n.toFixed(0)}
+let session = null, userId = null, slug = null
+let mkData = null      // mediakit_viuno row
+let brands = []        // mediakit_brands rows
+let offers = new Set() // active offer_types
+let analyseStats = {}  // { instagram: row, tiktok: row }
+let isActive = false
 
-window.showToast=function(msg,dur=2800){
-  const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg')
-  t.textContent=msg;w.classList.remove('hidden')
-  clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)
-}
-window.openSidebar=function(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
-window.closeSidebar=function(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
-window.logout=async function(){try{if(window.sb)await window.sb.auth.signOut()}catch(_){}location.replace('https://viuno.de')}
-window.openSheet=function(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden'}
-window.closeSheet=function(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow=''}
-window.closeModal=function(n){document.getElementById(`delete-modal-${n}`).classList.add('hidden')}
+// ─── INIT ───────────────────────────────────────────
+async function init() {
+  const { data: { session: s } } = await sb.auth.getSession()
+  if (!s) { window.location.href = 'login.html'; return }
+  session = s; userId = s.user.id
 
-// ── AUTH ──
-async function baseInit(onSession){
-  const{data:{session}}=await sb.auth.getSession()
-  if(session){await onSession(session);return}
-  document.getElementById('login-screen').style.display='flex'
-  document.getElementById('btn-login').addEventListener('click',doLogin)
-  document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
-}
-async function doLogin(){
-  const email=document.getElementById('inp-email').value.trim(),pw=document.getElementById('inp-pw').value
-  const errEl=document.getElementById('login-error'),btn=document.getElementById('btn-login')
-  errEl.textContent='';btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
-  const{data,error}=await sb.auth.signInWithPassword({email,password:pw})
-  btn.disabled=false;btn.textContent='Einloggen'
-  if(error){errEl.textContent='Falsche E-Mail oder Passwort.';return}
-  await enterApp(data.session)
-}
+  const { data: u } = await sb.from('users')
+    .select('display_name, profile_image_url, mediakit_active')
+    .eq('id', userId).single()
 
-// ── STATE ──
-const state={user:null,profile:null,mkSettings:null,bioSlug:null,selectedLang:'de',offers:{ugc:false,reel:false,post:false,story:false}}
+  if (u?.display_name) {
+    slug = slugify(u.display_name)
+    isActive = u.mediakit_active ?? false
+  }
 
-async function enterApp(session){
-  state.user=session.user
+  renderAvatar(u)
+  await Promise.all([loadMKData(), loadBrands(), loadOffers(), loadAnalyseStats()])
+  renderAll()
   document.getElementById('app').classList.add('visible')
-  await setupSidebar(session)
-  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url').eq('id',state.user.id).single()
-  const name=p?.display_name||p?.full_name||session.user.email||'?'
-  const av=document.getElementById('user-avatar')
-  if(p?.profile_image_url){av.innerHTML=`<img src="${escHtml(p.profile_image_url)}" alt="">`}else{av.textContent=name[0].toUpperCase()}
-  await loadAll()
 }
 
-async function loadAll(){
-  const uid=state.user.id
-  const[profileRes,mkRes,bsRes]=await Promise.all([
-    sb.from('users').select('display_name,full_name,bio,profile_image_url,city,contact_email,instagram_handle,tiktok_handle,niche_category').eq('id',uid).single(),
-    sb.from('mediakit_settings').select('*').eq('user_id',uid).maybeSingle(),
-    sb.from('biolink_settings').select('slug,is_active').eq('user_id',uid).single()
-  ])
-  state.profile=profileRes.data
-  state.mkSettings=mkRes.data
-  state.bioSlug=bsRes.data?.slug||null
-  // Fallback: wenn kein BioLink-Slug, display_name als Slug nutzen
-  if(!state.bioSlug&&state.profile?.display_name){
-    state.bioSlug=state.profile.display_name.toLowerCase().replace(/[^a-z0-9_]/g,'_')
-  }
-  if(state.mkSettings){
-    state.selectedLang=state.mkSettings.language||'de'
-    state.offers={ugc:!!state.mkSettings.mediakit_ugc,reel:!!state.mkSettings.mediakit_reel,post:!!state.mkSettings.mediakit_post,story:!!state.mkSettings.mediakit_story}
-  }
-  document.getElementById('skeleton-area').classList.add('hidden')
-  document.getElementById('page-content').classList.remove('hidden')
-  renderPage()
+function slugify(name) {
+  return name.toLowerCase().trim()
+    .replace(/[äÄ]/g,'ae').replace(/[öÖ]/g,'oe').replace(/[üÜ]/g,'ue').replace(/[ß]/g,'ss')
+    .replace(/[^a-z0-9\s_-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')
 }
 
-function renderPage(){
-  const mk=state.mkSettings
-  const p=state.profile
-  const isGenerated=mk?.is_active===true
-  const kitUrl=state.bioSlug?`viuno.de/kit/${state.bioSlug}`:null
-  const kitFullUrl=state.bioSlug?`https://viuno.de/kit/${state.bioSlug}`:null
+function renderAvatar(u) {
+  const el = document.getElementById('topbarAvatar')
+  if (u?.profile_image_url) {
+    el.innerHTML = `<img src="${u.profile_image_url}" alt="">`
+  } else {
+    el.textContent = (u?.display_name || '?')[0].toUpperCase()
+  }
+}
 
-  // checklist
-  const checks=[
-    {label:'Bio',ok:!!(p?.bio)},
-    {label:'Profilbild',ok:!!(p?.profile_image_url)},
-    {label:'Instagram oder TikTok Handle',ok:!!(p?.instagram_handle||p?.tiktok_handle)},
-    {label:'Mindestens 1 Content-Angebot',ok:!!(state.offers.ugc||state.offers.reel||state.offers.post||state.offers.story)},
-  ]
-  const allOk=checks.every(c=>c.ok)
+// ─── LOAD DATA ───────────────────────────────────────
+async function loadMKData() {
+  const { data } = await sb.from('mediakit_viuno').select('*').eq('user_id', userId).maybeSingle()
+  mkData = data || {}
+}
 
-  document.getElementById('page-content').innerHTML=`
-    <div class="page-header">
-      <div class="page-title">Media Kit</div>
-      <div class="page-sub">${isGenerated?'Verwalte dein öffentliches Media Kit':'Erstelle dein professionelles Media Kit für Brands'}</div>
-    </div>
+async function loadBrands() {
+  const { data } = await sb.from('mediakit_brands').select('*').eq('user_id', userId).order('position', { ascending: true })
+  brands = data || []
+}
 
-    ${isGenerated?`
-    <div class="status-banner active">
-      <div class="status-dot active"></div>
-      <div class="status-text">Media Kit ist live
-        <span>Öffentlich erreichbar unter ${escHtml(kitUrl||'')}</span>
-      </div>
-    </div>
-    <div class="link-bar">
-      <a class="link-url" href="${kitFullUrl}" target="_blank" rel="noopener">${escHtml(kitUrl)} ↗</a>
-      <button class="link-action-btn" onclick="copyLink('${kitFullUrl}')">Kopieren</button>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px 20px 0">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;letter-spacing:-.03em">${fmtNum(mk?.views_today)}</div>
-        <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">Heute</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;letter-spacing:-.03em">${fmtNum(mk?.views_last_7_days)}</div>
-        <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">7 Tage</div>
-      </div>
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center">
-        <div style="font-size:20px;font-weight:700;letter-spacing:-.03em">${fmtNum(mk?.views_total)}</div>
-        <div style="font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px">Gesamt</div>
-      </div>
-    </div>
-    <div class="action-stack">
-      <button class="action-btn action-btn-primary" onclick="openSheet('mk-edit-sheet')">✎ Bearbeiten</button>
-    </div>
-    <div style="padding:8px 20px 8px">
-      <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 Media Kit löschen</button>
-    </div>
-    `:`
-    <div style="padding:16px 20px 0">
-      <div class="preview-card">
-        <div class="preview-header">
-          <div class="preview-header-title">Vorschau · So sieht dein Media Kit aus</div>
-          <div class="preview-header-sub">Fülle deine Daten aus und erstelle dein professionelles Kit für Brands</div>
+async function loadOffers() {
+  const { data } = await sb.from('mediakit_content_offers').select('offer_type').eq('user_id', userId)
+  offers = new Set((data || []).map(r => r.offer_type))
+}
+
+async function loadAnalyseStats() {
+  const { data } = await sb.from('analyse_stats')
+    .select('platform, engagement_rate, followers, avg_likes, avg_views')
+    .eq('user_id', userId)
+  if (!data) return
+  for (const row of data) {
+    analyseStats[row.platform] = row
+  }
+}
+
+// ─── RENDER ──────────────────────────────────────────
+function renderAll() {
+  renderStatus()
+  renderStats()
+  renderAudience()
+  renderOffers()
+  renderBrands()
+  renderAutofillBanner()
+}
+
+function renderStatus() {
+  const banner = document.getElementById('statusBanner')
+  const dot = document.getElementById('statusDot')
+  const text = document.getElementById('statusText')
+  const sub = document.getElementById('statusSub')
+  const linkBar = document.getElementById('linkBar')
+  const btnDel = document.getElementById('btnDelete')
+  const btnGen = document.getElementById('btnGenerate')
+  const btnLabel = document.getElementById('btnGenerateLabel')
+
+  if (isActive && slug) {
+    banner.className = 'status-banner active'
+    dot.className = 'status-dot active'
+    text.childNodes[0].textContent = 'Aktiv'
+    sub.textContent = 'Dein Media Kit ist live auf viuno.de.'
+    linkBar.style.display = 'flex'
+    document.getElementById('linkUrl').href = `https://viuno.de/kit/${slug}`
+    document.getElementById('linkUrl').textContent = `viuno.de/kit/${slug}`
+    btnDel.style.display = 'flex'
+    btnLabel.textContent = 'Media Kit aktualisieren'
+  } else {
+    banner.className = 'status-banner inactive'
+    dot.className = 'status-dot inactive'
+    text.childNodes[0].textContent = 'Nicht aktiv'
+    sub.textContent = 'Fülle die Daten aus und erstelle dein Media Kit.'
+    linkBar.style.display = 'none'
+    btnDel.style.display = 'none'
+    btnLabel.textContent = 'Media Kit erstellen'
+  }
+}
+
+function renderStats() {
+  const v = mkData || {}
+  setVal('igEr', v.er_instagram)
+  setVal('igFollowers', v.avg_likes_instagram !== undefined ? undefined : undefined) // Follower not in mkData
+  setVal('igAvgLikes', v.avg_likes_instagram)
+  setVal('ttEr', v.er_tiktok)
+  setVal('ttAvgViews', v.avg_views_tiktok)
+  // Followers from analyse_stats for display (read-only context, editable via autofill)
+  if (analyseStats.instagram?.followers) setVal('igFollowers', analyseStats.instagram.followers)
+  if (analyseStats.tiktok?.followers) setVal('ttFollowers', analyseStats.tiktok.followers)
+}
+
+function setVal(id, val) {
+  const el = document.getElementById(id)
+  if (!el) return
+  el.value = (val != null && val !== '') ? val : ''
+}
+
+function renderAudience() {
+  const v = mkData || {}
+  const f = v.gender_female_pct ?? null
+  const m = v.gender_male_pct ?? null
+  document.getElementById('genderBarF').style.width = (f ?? 0) + '%'
+  document.getElementById('genderBarM').style.width = (m ?? 0) + '%'
+  document.getElementById('genderPctF').textContent = f != null ? f + '%' : '–'
+  document.getElementById('genderPctM').textContent = m != null ? m + '%' : '–'
+  document.getElementById('country1Display').textContent = v.top_country_1 ? '📍 ' + v.top_country_1 : '– Land 1 (nicht gesetzt)'
+  document.getElementById('country2Display').textContent = v.top_country_2 ? '📍 ' + v.top_country_2 : '– Land 2 (nicht gesetzt)'
+}
+
+function renderOffers() {
+  const types = ['ugc_video', 'instagram_reel', 'tiktok_post', 'story_package']
+  types.forEach(t => {
+    const el = document.getElementById('chk-' + t)
+    if (!el) return
+    el.classList.toggle('checked', offers.has(t))
+  })
+}
+
+function renderBrands() {
+  const list = document.getElementById('brandsList')
+  list.innerHTML = ''
+  if (brands.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--muted);text-align:center;padding:12px 0">Noch keine Marken eingetragen.</div>'
+  } else {
+    brands.forEach((b, i) => {
+      const row = document.createElement('div')
+      row.className = 'brand-item'
+      row.innerHTML = `
+        <div style="flex:1;min-width:0">
+          <div class="brand-name">${esc(b.name)}</div>
+          ${b.url ? `<div class="brand-url">${esc(b.url)}</div>` : ''}
         </div>
-        <div class="preview-mockup">
-          <div class="kit-mock">
-            <div class="kit-mock-avatar"></div>
-            <div class="kit-mock-name"></div>
-            <div class="kit-mock-tag"></div>
-            <div class="kit-mock-divider"></div>
-            <div class="kit-mock-row">
-              <div class="kit-mock-stat"></div>
-              <div class="kit-mock-stat"></div>
-            </div>
-            <div class="kit-mock-divider"></div>
-            <div class="kit-mock-bar"></div>
-            <div class="kit-mock-bar-sm"></div>
-            <div class="kit-mock-divider"></div>
-            <div class="kit-mock-bar"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="action-stack">
-      <button class="action-btn action-btn-secondary" onclick="openProfilSheet()">👤 Profil-Infos eingeben</button>
-      <button class="action-btn action-btn-secondary" onclick="openOffersSheet()">🎬 Content-Angebote wählen</button>
-      <button class="action-btn action-btn-secondary" onclick="openAudienceSheet()">📊 Audience & Engagement</button>
-      <button class="action-btn action-btn-secondary" onclick="openBrandsSheet()">🤝 Bisherige Brands hinzufügen</button>
-    </div>
-    <div style="padding:16px 20px 8px">
-      <div class="generate-card">
-        <div class="generate-title">Media Kit erstellen</div>
-        <div class="generate-sub">Prüfe ob alles vollständig ist, damit Brands einen professionellen Eindruck erhalten.</div>
-        <div class="generate-checklist">
-          ${checks.map(c=>`<div class="check-item"><div class="check-icon ${c.ok?'check-ok':'check-missing'}">${c.ok?'✓':'✕'}</div><span>${c.label}</span></div>`).join('')}
-        </div>
-        <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer">
-          <input type="checkbox" id="mk-terms-check" style="width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--text);cursor:pointer"/>
-          <span style="font-size:12px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#mediakit_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> von viuno.</span>
-        </label>
-        <button class="action-btn action-btn-primary" id="btn-generate" onclick="generateKit()" ${allOk?'':'disabled'}>
-          ${allOk?'✨ Media Kit erstellen':'Bitte alle Punkte erfüllen'}
-        </button>
-      </div>
-    </div>
-    `}
-  `
-  initSheets()
+        <button class="brand-del" data-idx="${i}" title="Löschen">✕</button>
+      `
+      list.appendChild(row)
+    })
+    list.querySelectorAll('.brand-del').forEach(btn => {
+      btn.addEventListener('click', () => deleteBrand(parseInt(btn.dataset.idx)))
+    })
+  }
+  document.getElementById('brandsCount').textContent = `${brands.length} / 10`
+  document.getElementById('btnAddBrand').style.display = brands.length >= 10 ? 'none' : 'flex'
 }
 
-// ── INIT SHEETS ──
-function initSheets(){
-  const p=state.profile,mk=state.mkSettings
-  // profil sheet photo
-  const photoInner=document.getElementById('mk-photo-inner')
-  if(photoInner){
-    if(p?.profile_image_url){photoInner.innerHTML=`<img src="${escHtml(p.profile_image_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`}
-    else{photoInner.textContent=(p?.display_name||p?.full_name||'?')[0]?.toUpperCase()||'?'}
-  }
-  const bioEl=document.getElementById('mk-bio');if(bioEl)bioEl.value=p?.bio||''
-  const cityEl=document.getElementById('mk-city');if(cityEl)cityEl.value=p?.city||''
-  const emailEl=document.getElementById('mk-email');if(emailEl)emailEl.value=p?.contact_email||''
-  updateLangGrid(state.selectedLang)
-  // offers
-  updateOfferButtons()
-  // audience
-  const erIg=document.getElementById('mk-er-ig');if(erIg)erIg.value=mk?.engagement_rate_instagram??''
-  const erTt=document.getElementById('mk-er-tt');if(erTt)erTt.value=mk?.engagement_rate_tiktok??''
-  const female=document.getElementById('mk-female');if(female)female.value=mk?.audience_female_pct??''
-  const male=document.getElementById('mk-male');if(male)male.value=mk?.audience_male_pct??''
-  const c1=document.getElementById('mk-c1');if(c1)c1.value=mk?.top_country_1||''
-  const c1p=document.getElementById('mk-c1p');if(c1p)c1p.value=mk?.top_country_1_pct??''
-  const c2=document.getElementById('mk-c2');if(c2)c2.value=mk?.top_country_2||''
-  const c2p=document.getElementById('mk-c2p');if(c2p)c2p.value=mk?.top_country_2_pct??''
-  // brands
-  renderBrandsList(Array.isArray(mk?.collaborations)?mk.collaborations:[])
+function renderAutofillBanner() {
+  const hasStats = Object.keys(analyseStats).length > 0
+  document.getElementById('autofillBanner').classList.toggle('hidden', !hasStats)
 }
 
-// ── LANG ──
-let selectedLang='de'
-window.selectLang=function(l){selectedLang=l;updateLangGrid(l)}
-function updateLangGrid(l){document.querySelectorAll('.lang-btn-opt').forEach(b=>b.classList.toggle('active',b.dataset.lang===l))}
-
-// ── OFFERS ──
-window.toggleOffer=function(key){state.offers[key]=!state.offers[key];updateOfferButtons()}
-function updateOfferButtons(){document.querySelectorAll('.toggle-btn').forEach(b=>b.classList.toggle('active',!!state.offers[b.dataset.offer]))}
-
-// ── PROFIL SHEET ──
-window.openProfilSheet=function(){initSheets();selectedLang=state.selectedLang;openSheet('profil-sheet')}
-
-// Photo upload in profil-sheet
-document.getElementById('mk-photo-input').addEventListener('change',async(e)=>{
-  const file=e.target.files?.[0];if(!file)return
-  if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
-  const statusEl=document.getElementById('mk-photo-status')
-  const photoInner=document.getElementById('mk-photo-inner')
-  if(statusEl)statusEl.textContent='Wird hochgeladen…'
-  // Preview
-  const reader=new FileReader()
-  reader.onload=ev=>{
-    if(photoInner)photoInner.innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-  }
-  reader.readAsDataURL(file)
-  // Upload
-  const path=`${state.user.id}/${Date.now()}.${file.name.split('.').pop()}`
-  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
-  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);if(statusEl)statusEl.textContent='Upload fehlgeschlagen';return}
-  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
-  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',state.user.id)
-  if(state.profile)state.profile.profile_image_url=publicUrl
-  if(statusEl)statusEl.textContent='✓ Foto gespeichert'
-  showToast('Profilbild gespeichert ✓')
-  e.target.value=''
+// ─── TABS ────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab))
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.dataset.panel === tab))
+  })
 })
-window.saveProfilSheet=async function(){
-  const bio=document.getElementById('mk-bio').value.trim()
-  const city=document.getElementById('mk-city').value.trim()
-  const email=document.getElementById('mk-email').value.trim()
-  state.selectedLang=selectedLang
-  await Promise.all([
-    sb.from('users').update({bio:bio||null,city:city||null,contact_email:email||null,updated_at:new Date().toISOString()}).eq('id',state.user.id),
-    upsertMkSettings({language:selectedLang})
-  ])
-  if(state.profile){state.profile.bio=bio;state.profile.city=city;state.profile.contact_email=email}
-  if(state.mkSettings)state.mkSettings.language=selectedLang
-  else state.mkSettings={language:selectedLang}
-  closeSheet('profil-sheet');showToast('Gespeichert ✓');renderPage()
-}
 
-// ── OFFERS SHEET ──
-window.openOffersSheet=function(){initSheets();openSheet('offers-sheet')}
-window.saveOffersSheet=async function(){
-  await upsertMkSettings({mediakit_ugc:state.offers.ugc,mediakit_reel:state.offers.reel,mediakit_post:state.offers.post,mediakit_story:state.offers.story})
-  if(!state.mkSettings)state.mkSettings={}
-  Object.assign(state.mkSettings,{mediakit_ugc:state.offers.ugc,mediakit_reel:state.offers.reel,mediakit_post:state.offers.post,mediakit_story:state.offers.story})
-  closeSheet('offers-sheet');showToast('Gespeichert ✓');renderPage()
-}
-
-// ── AUDIENCE SHEET ──
-window.openAudienceSheet=function(){initSheets();openSheet('audience-sheet')}
-window.saveAudienceSheet=async function(){
-  const numOrNull=v=>{const n=parseFloat(v);return isNaN(n)?null:n}
-  const erIg=numOrNull(document.getElementById('mk-er-ig').value)
-  const erTt=numOrNull(document.getElementById('mk-er-tt').value)
-  const patch={
-    engagement_rate_instagram:erIg,
-    engagement_rate_tiktok:erTt,
-    audience_female_pct:numOrNull(document.getElementById('mk-female').value),
-    audience_male_pct:numOrNull(document.getElementById('mk-male').value),
-    top_country_1:document.getElementById('mk-c1').value.trim()||null,
-    top_country_1_pct:numOrNull(document.getElementById('mk-c1p').value),
-    top_country_2:document.getElementById('mk-c2').value.trim()||null,
-    top_country_2_pct:numOrNull(document.getElementById('mk-c2p').value),
+// ─── AUTOFILL ────────────────────────────────────────
+document.getElementById('btnAutofill').addEventListener('click', () => {
+  const ig = analyseStats.instagram
+  const tt = analyseStats.tiktok
+  if (ig) {
+    if (ig.engagement_rate != null) document.getElementById('igEr').value = Number(ig.engagement_rate).toFixed(2)
+    if (ig.followers != null) document.getElementById('igFollowers').value = ig.followers
+    if (ig.avg_likes != null) document.getElementById('igAvgLikes').value = Math.round(ig.avg_likes)
   }
-  await upsertMkSettings(patch)
-  if(!state.mkSettings)state.mkSettings={}
-  Object.assign(state.mkSettings,patch)
-  closeSheet('audience-sheet');showToast('Gespeichert ✓');renderPage()
+  if (tt) {
+    if (tt.engagement_rate != null) document.getElementById('ttEr').value = Number(tt.engagement_rate).toFixed(2)
+    if (tt.followers != null) document.getElementById('ttFollowers').value = tt.followers
+    if (tt.avg_views != null) document.getElementById('ttAvgViews').value = Math.round(tt.avg_views)
+  }
+  toast('Kennzahlen übernommen ✓')
+})
+
+// ─── SAVE STATS ──────────────────────────────────────
+document.getElementById('btnSaveStats').addEventListener('click', async () => {
+  const btn = document.getElementById('btnSaveStats')
+  btn.disabled = true
+  btn.innerHTML = '<span class="spinner-sm"></span>'
+
+  const patch = {
+    user_id: userId,
+    er_instagram: parseFloat(document.getElementById('igEr').value) || null,
+    avg_likes_instagram: parseInt(document.getElementById('igAvgLikes').value) || null,
+    er_tiktok: parseFloat(document.getElementById('ttEr').value) || null,
+    avg_views_tiktok: parseInt(document.getElementById('ttAvgViews').value) || null,
+    updated_at: new Date().toISOString()
+  }
+
+  const { error } = await sb.from('mediakit_viuno').upsert(patch, { onConflict: 'user_id' })
+  btn.disabled = false
+  btn.textContent = 'Speichern'
+  if (error) { toast('Fehler: ' + error.message, true); return }
+  mkData = { ...mkData, ...patch }
+  toast('Kennzahlen gespeichert ✓')
+})
+
+// ─── AUDIENCE SHEET ───────────────────────────────────
+document.getElementById('btnEditAudience').addEventListener('click', () => {
+  const v = mkData || {}
+  document.getElementById('inputFemalePct').value = v.gender_female_pct ?? ''
+  document.getElementById('inputMalePct').value = v.gender_male_pct ?? ''
+  document.getElementById('inputCountry1').value = v.top_country_1 ?? ''
+  document.getElementById('inputCountry2').value = v.top_country_2 ?? ''
+  document.getElementById('audienceSheet').classList.remove('hidden')
+})
+document.getElementById('btnCancelAudience').addEventListener('click', () => {
+  document.getElementById('audienceSheet').classList.add('hidden')
+})
+document.getElementById('btnSaveAudience').addEventListener('click', async () => {
+  const btn = document.getElementById('btnSaveAudience')
+  btn.disabled = true; btn.innerHTML = '<span class="spinner-sm"></span>'
+
+  const patch = {
+    user_id: userId,
+    gender_female_pct: parseInt(document.getElementById('inputFemalePct').value) || null,
+    gender_male_pct: parseInt(document.getElementById('inputMalePct').value) || null,
+    top_country_1: document.getElementById('inputCountry1').value.trim() || null,
+    top_country_2: document.getElementById('inputCountry2').value.trim() || null,
+    updated_at: new Date().toISOString()
+  }
+
+  const { error } = await sb.from('mediakit_viuno').upsert(patch, { onConflict: 'user_id' })
+  btn.disabled = false; btn.textContent = 'Speichern'
+  if (error) { toast('Fehler: ' + error.message, true); return }
+  mkData = { ...mkData, ...patch }
+  document.getElementById('audienceSheet').classList.add('hidden')
+  renderAudience()
+  toast('Zielgruppe gespeichert ✓')
+})
+
+// ─── OFFERS ──────────────────────────────────────────
+document.querySelectorAll('.offer-row').forEach(row => {
+  row.addEventListener('click', async () => {
+    const type = row.dataset.offer
+    const wasChecked = offers.has(type)
+    if (wasChecked) {
+      await sb.from('mediakit_content_offers').delete().eq('user_id', userId).eq('offer_type', type)
+      offers.delete(type)
+    } else {
+      await sb.from('mediakit_content_offers').insert({ user_id: userId, offer_type: type })
+      offers.add(type)
+    }
+    renderOffers()
+  })
+})
+
+// ─── BRANDS ──────────────────────────────────────────
+document.getElementById('btnAddBrand').addEventListener('click', () => {
+  document.getElementById('brandName').value = ''
+  document.getElementById('brandUrl').value = ''
+  document.getElementById('brandSheet').classList.remove('hidden')
+  document.getElementById('brandName').focus()
+})
+document.getElementById('btnCancelBrand').addEventListener('click', () => {
+  document.getElementById('brandSheet').classList.add('hidden')
+})
+document.getElementById('btnSaveBrand').addEventListener('click', async () => {
+  const name = document.getElementById('brandName').value.trim()
+  if (!name) { document.getElementById('brandName').focus(); return }
+  if (brands.length >= 10) { toast('Max. 10 Marken', true); return }
+
+  const btn = document.getElementById('btnSaveBrand')
+  btn.disabled = true; btn.innerHTML = '<span class="spinner-sm"></span>'
+
+  let url = document.getElementById('brandUrl').value.trim()
+  if (url && !url.startsWith('http')) url = 'https://' + url
+
+  const { data, error } = await sb.from('mediakit_brands')
+    .insert({ user_id: userId, name, url: url || null, position: brands.length })
+    .select().single()
+
+  btn.disabled = false; btn.textContent = 'Hinzufügen'
+  if (error) { toast('Fehler: ' + error.message, true); return }
+  brands.push(data)
+  document.getElementById('brandSheet').classList.add('hidden')
+  renderBrands()
+  toast('Brand hinzugefügt ✓')
+})
+
+async function deleteBrand(idx) {
+  const brand = brands[idx]
+  if (!brand) return
+  const { error } = await sb.from('mediakit_brands').delete().eq('id', brand.id)
+  if (error) { toast('Fehler: ' + error.message, true); return }
+  brands.splice(idx, 1)
+  renderBrands()
+  toast('Brand entfernt')
 }
 
-// ── BRANDS SHEET ──
-let brands=[]
-function renderBrandsList(list){
-  brands=list.map(b=>({...b}))
-  const el=document.getElementById('brands-list')
-  const addBtn=document.getElementById('brand-add-btn')
-  if(!el)return
-  el.innerHTML=brands.map((b,i)=>`<div class="brand-row">
-    <input type="text" placeholder="Brand Name" value="${escHtml(b.name||'')}" data-idx="${i}" data-field="name" style="width:40%"/>
-    <input type="url" placeholder="https://brand.de" value="${escHtml(b.url||'')}" data-idx="${i}" data-field="url"/>
-    <button class="brand-remove-btn" data-remove="${i}">×</button>
-  </div>`).join('')
-  el.oninput=e=>{const idx=+e.target.dataset.idx,field=e.target.dataset.field;if(!isNaN(idx)&&field&&brands[idx])brands[idx][field]=e.target.value}
-  el.onclick=e=>{const btn=e.target.closest('[data-remove]');if(btn){brands.splice(+btn.dataset.remove,1);renderBrandsList(brands)}}
-  if(addBtn)addBtn.style.display=brands.length>=8?'none':'block'
-}
-window.openBrandsSheet=function(){renderBrandsList(Array.isArray(state.mkSettings?.collaborations)?state.mkSettings.collaborations:[]);openSheet('brands-sheet')}
-window.addBrand=function(){if(brands.length>=8)return;brands.push({name:'',url:''});renderBrandsList(brands)}
-window.saveBrandsSheet=async function(){
-  const valid=brands.filter(b=>b.name?.trim()).slice(0,8)
-  await upsertMkSettings({collaborations:valid})
-  if(!state.mkSettings)state.mkSettings={}
-  state.mkSettings.collaborations=valid
-  closeSheet('brands-sheet');showToast('Brands gespeichert ✓');renderPage()
-}
+// ─── COPY / OPEN LINK ────────────────────────────────
+document.getElementById('btnCopyLink').addEventListener('click', () => {
+  const url = `https://viuno.de/kit/${slug}`
+  navigator.clipboard?.writeText(url).then(() => toast('Link kopiert ✓'))
+})
+document.getElementById('btnOpenLink').addEventListener('click', () => {
+  window.open(`https://viuno.de/kit/${slug}`, '_blank')
+})
 
-// ── UPSERT HELPER ──
-async function upsertMkSettings(patch){
-  const payload={...patch,user_id:state.user.id,updated_at:new Date().toISOString()}
-  const{error}=await sb.from('mediakit_settings').upsert(payload,{onConflict:'user_id'})
-  if(error)throw error
-}
+// ─── GENERATE ────────────────────────────────────────
+document.getElementById('btnGenerate').addEventListener('click', async () => {
+  const btn = document.getElementById('btnGenerate')
+  btn.disabled = true
+  btn.innerHTML = '<span class="spinner-sm"></span> Wird erstellt…'
 
-// ── COPY ──
-window.copyLink=async function(url){
-  try{await navigator.clipboard.writeText(url);showToast('Link kopiert ✓')}
-  catch(_){showToast('Konnte nicht kopieren')}
-}
-
-// ── GENERATE ──
-window.generateKit=async function(){
-  const termsCheck=document.getElementById('mk-terms-check')
-  if(termsCheck&&!termsCheck.checked){showToast('Bitte Nutzungsbedingungen akzeptieren.');return}
-  const btn=document.getElementById('btn-generate');if(!btn)return
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'
-  try{
-    const{data:{session}}=await sb.auth.getSession()
-    if(!session){showToast('Session abgelaufen');location.reload();return}
-    const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-media-kit`,{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+  try {
+    const { data: { session: s } } = await sb.auth.getSession()
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/generate-mediakit`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${s.access_token}`, 'Content-Type': 'application/json' }
     })
-    const body=await res.json().catch(()=>({}))
-    if(!res.ok&&body.success!==true){showToast('Fehler: '+(body.error||'Unbekannt'),4000);btn.disabled=false;btn.textContent='Erneut versuchen';return}
-    showToast('Media Kit generiert ✓',4000)
-    await loadAll()
-  }catch(err){showToast('Fehler: '+err.message,4000);if(btn){btn.disabled=false;btn.textContent='Erneut versuchen'}}
-}
+    const body = await res.json()
+    if (!res.ok || body.success === false) throw new Error(body.error || 'Fehler')
+    isActive = true
+    renderStatus()
+    toast('Media Kit live ✓')
+  } catch (err) {
+    toast('Fehler: ' + err.message, true)
+  } finally {
+    btn.disabled = false
+    btn.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg> <span id="btnGenerateLabel">${isActive ? 'Media Kit aktualisieren' : 'Media Kit erstellen'}</span>`
+  }
+})
 
-// ── DELETE ──
-window.showDeleteModal1=function(){document.getElementById('delete-modal-1').classList.remove('hidden')}
-window.showDeleteModal2=function(){document.getElementById('delete-modal-1').classList.add('hidden');document.getElementById('delete-modal-2').classList.remove('hidden')}
-window.confirmDelete=async function(){
-  const btn=document.getElementById('btn-confirm-delete')
-  btn.disabled=true;btn.textContent='Wird gelöscht…'
-  try{
-    const{data:{session}}=await sb.auth.getSession()
-    await fetch(`${SUPABASE_URL}/functions/v1/generate-media-kit?action=delete`,{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+// ─── DELETE ──────────────────────────────────────────
+document.getElementById('btnDelete').addEventListener('click', () => {
+  document.getElementById('deleteModal').classList.remove('hidden')
+})
+document.getElementById('btnCancelDelete').addEventListener('click', () => {
+  document.getElementById('deleteModal').classList.add('hidden')
+})
+document.getElementById('btnConfirmDelete').addEventListener('click', async () => {
+  const btn = document.getElementById('btnConfirmDelete')
+  btn.disabled = true; btn.textContent = '…'
+
+  try {
+    const { data: { session: s } } = await sb.auth.getSession()
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/generate-mediakit?action=delete`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${s.access_token}`, 'Content-Type': 'application/json' }
     })
-    document.getElementById('delete-modal-2').classList.add('hidden')
-    showToast('Media Kit gelöscht')
-    await loadAll()
-  }catch(err){showToast('Fehler: '+err.message,4000);btn.disabled=false;btn.textContent='Ja, jetzt löschen'}
+    const body = await res.json()
+    if (!res.ok || body.success === false) throw new Error(body.error || 'Fehler')
+    isActive = false
+    document.getElementById('deleteModal').classList.add('hidden')
+    renderStatus()
+    toast('Media Kit gelöscht')
+  } catch (err) {
+    toast('Fehler: ' + err.message, true)
+  } finally {
+    btn.disabled = false; btn.textContent = 'Ja, löschen'
+  }
+})
+
+// ─── SIDEBAR ─────────────────────────────────────────
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.add('open')
+  document.getElementById('sidebarOverlay').classList.add('open')
+})
+document.getElementById('sidebarClose').addEventListener('click', closeSidebar)
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar)
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open')
+  document.getElementById('sidebarOverlay').classList.remove('open')
 }
 
-
-async function setupSidebar(session){
-  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type').eq('id',session.user.id).single()
-  const name=p?.display_name||p?.full_name||session.user.email||'?'
-  const av=document.getElementById('user-avatar')
-  if(av){if(p?.profile_image_url){av.innerHTML=`<img src="${p.profile_image_url.replace(/"/g,'&quot;')}" alt="">`}else{av.textContent=name[0].toUpperCase()}}
-  const emailEl=document.getElementById('sidebar-user-email')
-  if(emailEl)emailEl.textContent=session.user.email||''
-  if(p?.subscription_type==='pro'){document.getElementById('sidebar-pro-banner')?.classList.add('show')}
+// ─── TOAST ───────────────────────────────────────────
+function toast(msg, isError = false) {
+  const wrap = document.getElementById('toastWrap')
+  wrap.style.display = 'block'
+  const t = document.createElement('div')
+  t.className = 'toast'
+  t.style.background = isError ? '#c0392b' : 'var(--text)'
+  t.textContent = msg
+  wrap.innerHTML = ''
+  wrap.appendChild(t)
+  setTimeout(() => { wrap.style.display = 'none' }, 2800)
 }
 
-baseInit(enterApp)
+function esc(s) {
+  return String(s ?? '').replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))
+}
+
+init()
 </script>
 </body>
 </html>
