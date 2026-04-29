@@ -345,6 +345,36 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 
     <div class="gap-v"></div>
 
+    <!-- ───── YOUTUBE / THREADS FOLLOWER ───── -->
+    <div class="section">
+      <div class="section-label">Weitere Plattformen</div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">YouTube &amp; Threads</div>
+            <div class="card-sub">Nur sichtbar wenn Handle in deinem Profil hinterlegt ist.</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="field-row">
+            <div class="field-label">YouTube Abonnenten</div>
+            <input class="field-input" id="ytFollowers" type="number" min="0" placeholder="–" inputmode="numeric">
+          </div>
+          <div class="field-row" style="border-bottom:none">
+            <div class="field-label">Threads Follower</div>
+            <input class="field-input" id="thFollowers" type="number" min="0" placeholder="–" inputmode="numeric">
+          </div>
+        </div>
+      </div>
+      <div style="padding:10px 0 0;display:flex;justify-content:flex-end">
+        <button class="action-btn action-btn-secondary" id="btnSaveOtherPlats" style="width:auto;padding:10px 20px;font-size:13px">
+          Speichern
+        </button>
+      </div>
+    </div>
+
+    <div class="gap-v"></div>
+
     <!-- ───── ZIELGRUPPE ───── -->
     <div class="section">
       <div class="section-label">Zielgruppe</div>
@@ -368,7 +398,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
               <span class="gender-pct" id="genderPctM">–</span>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;gap:6px" id="countriesPreview">
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:14px" id="countriesPreview">
             <div style="font-size:13px;color:var(--muted)" id="country1Display">– Land 1</div>
             <div style="font-size:13px;color:var(--muted)" id="country2Display">– Land 2</div>
           </div>
@@ -628,11 +658,11 @@ function renderStatus() {
 function renderStats() {
   const v = mkData || {}
   setVal('igEr', v.er_instagram)
-  setVal('igFollowers', v.avg_likes_instagram !== undefined ? undefined : undefined) // Follower not in mkData
   setVal('igAvgLikes', v.avg_likes_instagram)
   setVal('ttEr', v.er_tiktok)
   setVal('ttAvgViews', v.avg_views_tiktok)
-  // Followers from analyse_stats for display (read-only context, editable via autofill)
+  setVal('ytFollowers', v.followers_youtube)
+  setVal('thFollowers', v.followers_threads)
   if (analyseStats.instagram?.followers) setVal('igFollowers', analyseStats.instagram.followers)
   if (analyseStats.tiktok?.followers) setVal('ttFollowers', analyseStats.tiktok.followers)
 }
@@ -742,6 +772,27 @@ document.getElementById('btnSaveStats').addEventListener('click', async () => {
   if (error) { toast('Fehler: ' + error.message, true); return }
   mkData = { ...mkData, ...patch }
   toast('Kennzahlen gespeichert ✓')
+})
+
+// ─── SAVE YOUTUBE / THREADS ──────────────────────────
+document.getElementById('btnSaveOtherPlats').addEventListener('click', async () => {
+  const btn = document.getElementById('btnSaveOtherPlats')
+  btn.disabled = true
+  btn.innerHTML = '<span class="spinner-sm"></span>'
+
+  const patch = {
+    user_id: userId,
+    followers_youtube: parseInt(document.getElementById('ytFollowers').value) || null,
+    followers_threads: parseInt(document.getElementById('thFollowers').value) || null,
+    updated_at: new Date().toISOString()
+  }
+
+  const { error } = await sb.from('mediakit_viuno').upsert(patch, { onConflict: 'user_id' })
+  btn.disabled = false
+  btn.textContent = 'Speichern'
+  if (error) { toast('Fehler: ' + error.message, true); return }
+  mkData = { ...mkData, ...patch }
+  toast('Gespeichert ✓')
 })
 
 // ─── AUDIENCE SHEET ───────────────────────────────────
