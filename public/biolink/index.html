@@ -837,8 +837,10 @@ window.copyLink=function(url){
 
 // ── Loading Overlay ──
 const LOADING_STEPS=[
-  'BioLink wird erstellt',
+  'Vorbereitung',
   'Layout wird generiert',
+  'Design wird angewendet',
+  'Inhalte werden eingefügt',
   'Wird auf den Server geladen',
   'Fast fertig'
 ]
@@ -850,7 +852,7 @@ function showLoadingOverlay(){
   const setStep=(idx)=>{
     const el=document.getElementById('loading-status')
     if(!el)return
-    // Trick: Element neu klonen damit die CSS-Animation jedes Mal erneut triggert
+    // Trick: Animation jedes Mal neu triggern
     el.style.animation='none'
     el.offsetHeight  // Force reflow
     el.style.animation=''
@@ -861,7 +863,7 @@ function showLoadingOverlay(){
     i++
     if(i>=LOADING_STEPS.length){clearInterval(t);return}
     setStep(i)
-  },2500)
+  },4200)
   return t
 }
 function hideLoadingOverlay(timer){
