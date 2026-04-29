@@ -122,11 +122,15 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sheet-panel{display:none}
 .sheet-panel.active{display:block}
 
-/* AUTOFILL BANNER */
-.autofill-banner{margin:0 20px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:10px}
-.autofill-banner.hidden{display:none}
-.autofill-text{flex:1;font-size:12px;color:var(--text);line-height:1.4}
-.autofill-btn{flex-shrink:0;background:var(--text);color:white;border:none;border-radius:7px;padding:7px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}
+/* AUTOFILL BUTTON (prominenter Button oben im Stats-Sheet) */
+.autofill-wrap{padding:0 20px 14px}
+.autofill-wrap.hidden{display:none}
+.autofill-button{width:100%;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);padding:14px 16px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
+.autofill-button:hover{opacity:.92}
+.autofill-button:active{opacity:.85}
+.autofill-button:disabled{opacity:.5;cursor:not-allowed}
+.autofill-icon{font-size:16px}
+.autofill-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:6px;line-height:1.4}
 
 /* EDIT ACTIONS SHEET (Hauptmenü) */
 .edit-action-list{display:flex;flex-direction:column}
@@ -370,9 +374,12 @@ input,textarea,select{font-size:16px!important}
       </div>
       <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
     </div>
-    <div class="autofill-banner hidden" id="autofill-banner">
-      <div class="autofill-text">Analysedaten verfügbar — automatisch übernehmen?</div>
-      <button class="autofill-btn" onclick="doAutofill()">Übernehmen</button>
+    <div class="autofill-wrap hidden" id="autofill-wrap">
+      <button class="autofill-button" onclick="doAutofill()">
+        <span class="autofill-icon">⚡</span>
+        <span>Aus Analyse übernehmen</span>
+      </button>
+      <div class="autofill-hint">Engagement, Likes/Views & Follower aus deiner letzten Analyse vorausfüllen</div>
     </div>
     <div class="sheet-tabs">
       <button class="sheet-tab active" data-tab="ig" onclick="switchStatsTab('ig')">Instagram</button>
@@ -1093,7 +1100,7 @@ window.openStatsSheet=function(){
   document.getElementById('s-tt-views').value=mk.avg_views_tiktok??''
   document.getElementById('s-tt-followers').value=mk.followers_tiktok??S.analyseStats.tiktok?.followers??''
   const has=Object.keys(S.analyseStats).length>0
-  document.getElementById('autofill-banner').classList.toggle('hidden',!has)
+  document.getElementById('autofill-wrap').classList.toggle('hidden',!has)
   switchStatsTab('ig')
   openSheet('stats-sheet')
 }
