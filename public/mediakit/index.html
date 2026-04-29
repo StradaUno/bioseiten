@@ -100,6 +100,9 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sheet-prefix{padding:12px 10px 12px 14px;font-size:14px;color:var(--subtle);background:var(--surface2);border-right:1px solid var(--border-strong);flex-shrink:0}
 .sheet-suffix{padding:12px 14px 12px 10px;font-size:14px;color:var(--muted);background:var(--surface2);border-left:1px solid var(--border-strong);flex-shrink:0}
 .sheet-prefix-input{flex:1;padding:12px 14px;border:none;font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;width:100%}
+.sheet-country-row{display:flex;gap:8px}
+.sheet-country-row .sheet-input{flex:1;min-width:0}
+.sheet-country-pct-wrap{flex-shrink:0;width:96px}
 .sheet-textarea{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;resize:none;min-height:90px;line-height:1.5}
 .sheet-textarea:focus{border-color:var(--text)}
 .sheet-hint{font-size:11px;margin-top:5px;min-height:16px;color:var(--muted)}
@@ -485,11 +488,17 @@ input,textarea,select{font-size:16px!important}
     <div class="sheet-divider"></div>
     <div class="sheet-field">
       <label class="sheet-label">Top Land 1</label>
-      <input type="text" class="sheet-input" id="s-country1" placeholder="z.B. Deutschland"/>
+      <div class="sheet-country-row">
+        <input type="text" class="sheet-input" id="s-country1" placeholder="z.B. Deutschland"/>
+        <div class="sheet-input-wrap sheet-country-pct-wrap"><input type="number" class="sheet-prefix-input" id="s-country1-pct" min="0" max="100" placeholder="%" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
+      </div>
     </div>
     <div class="sheet-field">
       <label class="sheet-label">Top Land 2</label>
-      <input type="text" class="sheet-input" id="s-country2" placeholder="z.B. Österreich"/>
+      <div class="sheet-country-row">
+        <input type="text" class="sheet-input" id="s-country2" placeholder="z.B. Österreich"/>
+        <div class="sheet-input-wrap sheet-country-pct-wrap"><input type="number" class="sheet-prefix-input" id="s-country2-pct" min="0" max="100" placeholder="%" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
+      </div>
     </div>
     <div class="sheet-actions">
       <button class="sheet-btn-primary" onclick="saveAudience()">Speichern</button>
@@ -571,8 +580,7 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-field">
       <label class="sheet-label">Website (optional)</label>
-      <input type="text" class="sheet-input" id="brand-url" placeholder="nike.com"/>
-      <div class="sheet-hint">https:// wird automatisch ergänzt.</div>
+      <input type="text" class="sheet-input" id="brand-url" placeholder="z.B. nike.de"/>
     </div>
     <div class="sheet-field"><div class="sheet-hint err" id="brand-hint"></div></div>
     <div class="sheet-actions">
@@ -1208,17 +1216,23 @@ window.openAudienceSheet=function(){
   document.getElementById('s-female').value=mk.gender_female_pct??''
   document.getElementById('s-male').value=mk.gender_male_pct??''
   document.getElementById('s-country1').value=mk.top_country_1??''
+  document.getElementById('s-country1-pct').value=mk.top_country_1_pct??''
   document.getElementById('s-country2').value=mk.top_country_2??''
+  document.getElementById('s-country2-pct').value=mk.top_country_2_pct??''
   openSheet('audience-sheet')
 }
 window.saveAudience=async function(){
   const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const c1pct=parseInt(document.getElementById('s-country1-pct').value)
+  const c2pct=parseInt(document.getElementById('s-country2-pct').value)
   const patch={
     user_id:S.user.id,
     gender_female_pct:parseInt(document.getElementById('s-female').value)||null,
     gender_male_pct:parseInt(document.getElementById('s-male').value)||null,
     top_country_1:document.getElementById('s-country1').value.trim()||null,
+    top_country_1_pct:isNaN(c1pct)?null:Math.min(100,Math.max(0,c1pct)),
     top_country_2:document.getElementById('s-country2').value.trim()||null,
+    top_country_2_pct:isNaN(c2pct)?null:Math.min(100,Math.max(0,c2pct)),
     updated_at:new Date().toISOString()
   }
   const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
@@ -1272,6 +1286,32 @@ window.openAddBrand=function(){
   openSheet('add-brand-sheet')
   setTimeout(()=>document.getElementById('brand-name').focus(),50)
 }
+// ── URL Normalisierung für Brand-URLs ──
+// Akzeptiert: Nike.de, nike.de, www.nike.de, https://www.Nike.de/, http://nike.de
+// Ausgabe einheitlich: https://nike.de (lowercase, kein www, kein trailing slash)
+function normalizeBrandUrl(raw){
+  if(!raw)return null
+  let s=raw.trim()
+  if(!s)return null
+  // Protokoll abtrennen falls vorhanden
+  s=s.replace(/^https?:\/\//i,'')
+  // Trailing slash & paths abschneiden? Nein - Pfad evtl. wichtig (z.B. /shop)
+  // Nur trailing slash am Domain-Ende entfernen
+  s=s.replace(/\/+$/,'')
+  // www. abtrennen
+  s=s.replace(/^www\./i,'')
+  // Domain-Teil (vor erstem /) lowercase, Rest des Pfads beibehalten
+  const slashIdx=s.indexOf('/')
+  if(slashIdx>=0){
+    s=s.substring(0,slashIdx).toLowerCase()+s.substring(slashIdx)
+  }else{
+    s=s.toLowerCase()
+  }
+  // Validierung: muss mindestens einen Punkt haben (z.B. "nike.de")
+  if(!/^[a-z0-9-]+\.[a-z0-9.-]+/i.test(s))return null
+  return 'https://'+s
+}
+
 window.confirmAddBrand=async function(){
   const name=document.getElementById('brand-name').value.trim()
   const urlRaw=document.getElementById('brand-url').value.trim()
@@ -1279,7 +1319,11 @@ window.confirmAddBrand=async function(){
   if(!name){hint.textContent='Name ist Pflichtfeld';return}
   if(S.brands.length>=10){hint.textContent='Maximal 10 Marken';return}
   hint.textContent=''
-  const url=urlRaw?(urlRaw.startsWith('http')?urlRaw:'https://'+urlRaw):null
+  let url=null
+  if(urlRaw){
+    url=normalizeBrandUrl(urlRaw)
+    if(!url){hint.textContent='Ungültige URL. Beispiel: nike.de';return}
+  }
   const{data,error}=await sb.from('mediakit_brands').insert({
     user_id:S.user.id,name,url,position:S.brands.length
   }).select().single()
