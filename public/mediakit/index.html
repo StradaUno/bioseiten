@@ -32,7 +32,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .section{padding:12px 20px 0}
 .section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
 
-/* STATUS BANNER */
+/* STATUS */
 .status-banner{margin:12px 20px 0;padding:12px 16px;border-radius:var(--radius);display:flex;align-items:center;gap:10px;border:1px solid}
 .status-banner.active{background:var(--green-bg);border-color:var(--green-border)}
 .status-banner.inactive{background:var(--surface2);border-color:var(--border-strong)}
@@ -47,11 +47,18 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .link-url{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
 .link-action-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
 
-/* STATS */
+/* STATS GRID */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
 .stat-box-value{font-size:20px;font-weight:700;letter-spacing:-.04em;color:var(--text)}
 .stat-box-label{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* PREVIEW (1 Mockup-Bild) */
+.preview-wrap{padding:14px 20px 0}
+.preview-title{font-size:13px;font-weight:600;color:var(--text);text-align:center;margin-bottom:4px}
+.preview-sub{font-size:11px;color:var(--muted);text-align:center;margin-bottom:14px;line-height:1.4}
+.preview-img-wrap{margin:0 auto;max-width:240px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.preview-img-wrap img{display:block;width:100%;height:auto}
 
 /* ACTION BUTTONS */
 .action-stack{padding:12px 20px 0;display:flex;flex-direction:column;gap:8px}
@@ -73,41 +80,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .check-label.ok{color:var(--muted);text-decoration:line-through}
 .check-label.miss{color:var(--text);font-weight:500}
 
-/* DATA CARDS (Übersichtskarten) */
-.data-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.data-card-head{padding:14px 16px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.data-card-head-text{flex:1;min-width:0}
-.data-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:1px}
-.data-card-sub{font-size:11px;color:var(--muted)}
-.data-card-edit{flex-shrink:0;padding:6px 12px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer}
-.data-card-edit:hover{background:var(--border)}
-.data-card-body{padding:0 16px 14px}
-.data-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--border);font-size:13px}
-.data-row:first-child{border-top:none;padding-top:4px}
-.data-row-label{color:var(--muted);display:flex;align-items:center;gap:6px}
-.data-row-icon{font-size:14px}
-.data-row-val{font-weight:600;color:var(--text)}
-.data-row-val.empty{color:var(--subtle);font-weight:400;font-style:italic}
-.data-subhead{font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.05em;padding:6px 0 2px;margin-top:0}
-.data-subhead.with-divider{margin-top:10px;padding-top:12px;border-top:1px solid var(--border)}
-.data-empty{font-size:12px;color:var(--subtle);text-align:center;padding:8px 0;font-style:italic}
-
-/* GENDER BARS */
-.gender-bars{display:flex;flex-direction:column;gap:8px;padding:8px 0 4px}
-.gender-row{display:flex;align-items:center;gap:10px}
-.gender-label{font-size:11px;color:var(--muted);width:18px;font-weight:600}
-.gender-track{flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden}
-.gender-fill{height:100%;border-radius:999px;transition:width .4s ease}
-.gender-fill.female{background:#e91e8c}
-.gender-fill.male{background:var(--text)}
-.gender-pct{font-size:11px;font-weight:700;color:var(--text);width:36px;text-align:right}
-
-/* PILLS / TAGS */
-.pills{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 2px}
-.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:12px;font-weight:500;color:var(--text)}
-.pill-icon{font-size:13px}
-
-/* SHEET */
+/* SHEETS */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
 .sheet-backdrop.hidden{display:none}
 .sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 calc(20px + var(--safe-bottom));width:100%;max-width:540px;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -123,9 +96,11 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sheet-prefix{padding:12px 10px 12px 14px;font-size:14px;color:var(--subtle);background:var(--surface2);border-right:1px solid var(--border-strong);flex-shrink:0}
 .sheet-suffix{padding:12px 14px 12px 10px;font-size:14px;color:var(--muted);background:var(--surface2);border-left:1px solid var(--border-strong);flex-shrink:0}
 .sheet-prefix-input{flex:1;padding:12px 14px;border:none;font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;width:100%}
+.sheet-textarea{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;resize:none;min-height:90px;line-height:1.5}
+.sheet-textarea:focus{border-color:var(--text)}
 .sheet-hint{font-size:11px;margin-top:5px;min-height:16px;color:var(--muted)}
 .sheet-hint.err{color:var(--red)}
-.sheet-divider{height:1px;background:var(--border);margin:8px 0 12px}
+.sheet-divider{height:1px;background:var(--border);margin:8px 20px 12px}
 .sheet-actions{padding:8px 20px 0;display:flex;flex-direction:column;gap:8px}
 .sheet-btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .sheet-btn-primary:disabled{opacity:.4;cursor:not-allowed}
@@ -138,23 +113,36 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sheet-panel{display:none}
 .sheet-panel.active{display:block}
 
-/* AUTOFILL BANNER in sheet */
+/* AUTOFILL BANNER */
 .autofill-banner{margin:0 20px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:10px}
 .autofill-banner.hidden{display:none}
 .autofill-text{flex:1;font-size:12px;color:var(--text);line-height:1.4}
 .autofill-btn{flex-shrink:0;background:var(--text);color:white;border:none;border-radius:7px;padding:7px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}
 
+/* EDIT ACTIONS SHEET (Hauptmenü) */
+.edit-action-list{display:flex;flex-direction:column}
+.edit-action-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;text-align:left;width:100%;transition:background .15s}
+.edit-action-row:last-child{border-bottom:none}
+.edit-action-row:hover{background:var(--surface2)}
+.edit-action-icon{font-size:18px;width:20px;text-align:center;flex-shrink:0}
+.edit-action-body{flex:1;min-width:0}
+.edit-action-label{font-size:14px;font-weight:500;color:var(--text)}
+.edit-action-sub{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.edit-action-arrow{font-size:14px;color:var(--subtle)}
+.edit-action-status{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;flex-shrink:0}
+.edit-action-status.ok{background:var(--green-bg);color:var(--green)}
+.edit-action-status.miss{background:var(--surface2);color:var(--muted)}
+
 /* OFFER ROWS */
 .offer-list{display:flex;flex-direction:column;border-top:1px solid var(--border)}
 .offer-row{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;text-align:left;width:100%;transition:background .15s}
 .offer-row:hover{background:var(--surface2)}
-.offer-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
 .offer-label{font-size:14px;font-weight:500;flex:1;color:var(--text)}
 .offer-check{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border-strong);display:grid;place-items:center;flex-shrink:0;transition:all .15s;background:var(--surface)}
 .offer-check.checked{background:var(--text);border-color:var(--text)}
 .offer-check.checked::after{content:'✓';font-size:12px;font-weight:700;color:white}
 
-/* BRANDS LIST */
+/* BRANDS */
 .brands-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
 .brand-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 12px;display:flex;align-items:center;gap:10px}
 .brand-row-body{flex:1;min-width:0}
@@ -211,6 +199,21 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hidden{display:none!important}
+
+/* LOADING OVERLAY */
+.loading-overlay{position:fixed;inset:0;background:rgba(245,244,242,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;animation:fadeIn .25s ease-out}
+.loading-overlay.hidden{display:none}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.loading-spinner-big{width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:24px}
+.loading-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:8px}
+.loading-status{font-size:14px;color:var(--muted);min-height:20px;animation:statusFade .4s ease-out}
+@keyframes statusFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.loading-dots{display:inline-flex;gap:4px;margin-left:4px}
+.loading-dots span{width:4px;height:4px;background:var(--muted);border-radius:50%;animation:dotPulse 1.2s infinite}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,60%,100%{opacity:.3;transform:scale(.8)}30%{opacity:1;transform:scale(1)}}
+
 input,textarea,select{font-size:16px!important}
 </style>
 </head>
@@ -260,6 +263,71 @@ input,textarea,select{font-size:16px!important}
   </div>
 </div>
 
+<!-- EDIT ACTIONS SHEET (Hauptmenü) -->
+<div class="sheet-backdrop hidden" id="edit-actions-sheet" onclick="closeSheet('edit-actions-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Bearbeiten</div>
+    <div class="sheet-sub">Tippe auf einen Bereich um die Daten einzutragen oder zu ändern.</div>
+    <div class="edit-action-list" id="edit-action-list"></div>
+  </div>
+</div>
+
+<!-- PROFIL SHEET (Name, Bio, Profilbild, Niche, Stadt) -->
+<div class="sheet-backdrop hidden" id="profile-sheet" onclick="closeSheet('profile-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Profil</div>
+    <div class="sheet-sub">Diese Daten erscheinen oben auf deinem Media Kit.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Profilbild</label>
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="document.getElementById('photo-input').click()">
+        <div id="profile-photo-wrap" style="width:52px;height:52px;border-radius:50%;background:var(--surface2);border:2px solid var(--border-strong);overflow:hidden;display:grid;place-items:center;font-size:18px;font-weight:700;color:var(--muted);flex-shrink:0"></div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Foto ändern</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px" id="photo-status">Tippen zum Hochladen</div>
+        </div>
+      </div>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Nische</label>
+      <input type="text" class="sheet-input" id="s-niche" placeholder="z.B. Italian Lifestyle & Fashion" maxlength="60"/>
+      <div class="sheet-hint">Erscheint als kleiner Tag unter deinem Namen.</div>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Stadt</label>
+      <input type="text" class="sheet-input" id="s-city" placeholder="z.B. Berlin" maxlength="60"/>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Bio</label>
+      <textarea class="sheet-textarea" id="s-bio" placeholder="Wer du bist und was du machst — 1-2 Sätze."></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="saveProfile()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('profile-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
+
+<!-- KONTAKT SHEET -->
+<div class="sheet-backdrop hidden" id="contact-sheet" onclick="closeSheet('contact-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Kontakt</div>
+    <div class="sheet-sub">Diese E-Mail-Adresse erscheint auf deinem Media Kit. Marken senden Anfragen direkt dorthin.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Anfrage-E-Mail</label>
+      <input type="email" class="sheet-input" id="s-contact-email" placeholder="anfragen@deinedomain.de" autocomplete="email"/>
+      <div class="sheet-hint" id="contact-hint">Empfohlen: eigene Adresse, nicht deine private.</div>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="saveContact()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('contact-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
 <!-- KENNZAHLEN SHEET (IG/TT Tabs) -->
 <div class="sheet-backdrop hidden" id="stats-sheet" onclick="closeSheet('stats-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
@@ -276,6 +344,10 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-panel active" data-panel="ig">
       <div class="sheet-field">
+        <label class="sheet-label">Instagram Handle</label>
+        <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-ig-handle" placeholder="dein_handle"/></div>
+      </div>
+      <div class="sheet-field">
         <label class="sheet-label">Engagement Rate</label>
         <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-ig-er" step="0.01" min="0" max="100" placeholder="z.B. 4.2" inputmode="decimal"/><span class="sheet-suffix">%</span></div>
       </div>
@@ -289,6 +361,10 @@ input,textarea,select{font-size:16px!important}
       </div>
     </div>
     <div class="sheet-panel" data-panel="tt">
+      <div class="sheet-field">
+        <label class="sheet-label">TikTok Handle</label>
+        <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-tt-handle" placeholder="dein_handle"/></div>
+      </div>
       <div class="sheet-field">
         <label class="sheet-label">Engagement Rate</label>
         <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-tt-er" step="0.01" min="0" max="100" placeholder="z.B. 6.8" inputmode="decimal"/><span class="sheet-suffix">%</span></div>
@@ -437,7 +513,23 @@ input,textarea,select{font-size:16px!important}
   </div>
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
+<!-- IMPRESSUM SHEET -->
+<div class="sheet-backdrop hidden" id="impressum-sheet" onclick="closeSheet('impressum-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Impressum</div>
+    <div class="sheet-sub">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Wird über das Impressum-Sheet auf deiner Live-Seite angezeigt.</div>
+    <div class="sheet-field">
+      <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="saveImpressum()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('impressum-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
 <div class="modal-backdrop hidden" id="delete-modal" onclick="closeModal('delete-modal')">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-title">Media Kit löschen?</div>
@@ -449,6 +541,13 @@ input,textarea,select{font-size:16px!important}
   </div>
 </div>
 
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="loading-spinner-big"></div>
+  <div class="loading-title">Media Kit wird erstellt</div>
+  <div class="loading-status" id="loading-status">Vorbereitung<span class="loading-dots"><span></span><span></span><span></span></span></div>
+</div>
+
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
 <script type="module">
@@ -456,6 +555,7 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
 
 const SB_URL='https://bzejndghppuipnedasuv.supabase.co'
 const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const PREVIEW_IMG='https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/Website/mediakit/mediakit-preview.jpg'
 window.sb=createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
 const sb=window.sb
 
@@ -473,11 +573,11 @@ window.closeModal=function(id){document.getElementById(id).classList.add('hidden
 // ── State ──
 const S={
   user:null,
-  profile:null,
-  mkData:{},
+  profile:null,       // users row
+  mkData:null,        // mediakit_viuno row
   brands:[],
   offers:new Set(),
-  analyseStats:{},
+  analyseStats:{},    // analyse_stats by platform
   aufrufe:[],
   isActive:false,
   slug:null
@@ -501,7 +601,7 @@ function slugify(name){
 async function loadAll(){
   const uid=S.user.id
   const[profileRes,mkRes,brandsRes,offersRes,analyseRes,aufrufeRes]=await Promise.all([
-    sb.from('users').select('display_name,profile_image_url,bio,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,mediakit_active,subscription_type').eq('id',uid).single(),
+    sb.from('users').select('display_name,full_name,profile_image_url,bio,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,mediakit_active,subscription_type,niche_category,city,contact_email').eq('id',uid).single(),
     sb.from('mediakit_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('mediakit_brands').select('*').eq('user_id',uid).order('position',{ascending:true}),
     sb.from('mediakit_content_offers').select('offer_type').eq('user_id',uid),
@@ -518,7 +618,6 @@ async function loadAll(){
   S.isActive=S.profile.mediakit_active===true
   S.slug=S.profile.display_name?slugify(S.profile.display_name):null
 
-  // Topbar avatar + sidebar
   const p=S.profile
   const av=document.getElementById('user-avatar')
   if(p.profile_image_url)av.innerHTML=`<img src="${esc(p.profile_image_url)}" alt="">`
@@ -531,7 +630,7 @@ async function loadAll(){
 
 // ── Render Main ──
 function renderPage(){
-  const p=S.profile,mk=S.mkData
+  const p=S.profile,mk=S.mkData||{}
   const isActive=S.isActive&&!!S.slug
   const kitUrl=S.slug?`viuno.de/kit/${S.slug}`:null
   const kitFullUrl=S.slug?`https://viuno.de/kit/${S.slug}`:null
@@ -543,15 +642,11 @@ function renderPage(){
   const views7=S.aufrufe.filter(a=>(now-new Date(a.viewed_at).getTime())<7*86400000).length
   const viewsTotal=S.aufrufe.length
 
-  // Checklist
-  const checks=[
-    {label:'Instagram oder TikTok Handle hinterlegt',ok:!!(p.instagram_handle||p.tiktok_handle)},
-    {label:'Mindestens eine Kennzahl eingetragen',ok:!!(mk.er_instagram||mk.er_tiktok||mk.avg_likes_instagram||mk.avg_views_tiktok)},
-    {label:'Impressum hinterlegt (im Profil)',ok:!!(p.impressum_text&&p.impressum_text.trim())}
-  ]
+  // Voraussetzungen
+  const checks=getChecks()
   const allChecksOk=checks.every(c=>c.ok)
 
-  // Status section
+  // STATUS
   const statusHtml=isActive
     ?`<div class="status-banner active"><div class="status-dot active"></div>
         <div class="status-text">Media Kit ist live<span>Deine Seite ist öffentlich erreichbar</span></div></div>
@@ -568,13 +663,20 @@ function renderPage(){
          </div>
        </div>`
     :`<div class="status-banner inactive"><div class="status-dot inactive"></div>
-        <div class="status-text">Noch nicht aktiv<span>Fülle die Daten aus und erstelle dein Media Kit</span></div></div>`
+        <div class="status-text">Noch nicht aktiv<span>Trage deine Daten ein und erstelle dein Media Kit</span></div></div>`
 
-  // Checklist (nur wenn nicht aktiv)
+  // PREVIEW (1 Mockup-Bild) — nur im inactive Zustand
+  const previewHtml=!isActive?`<div class="preview-wrap">
+    <div class="preview-title">Erstelle dein Media Kit</div>
+    <div class="preview-sub">Eine professionelle Seite mit allen wichtigen Daten für Marken-Anfragen.</div>
+    <div class="preview-img-wrap"><img src="${PREVIEW_IMG}" alt="Media Kit Vorschau" onerror="this.parentElement.style.display='none'"/></div>
+  </div>`:''
+
+  // CHECKLISTE (nur wenn nicht aktiv)
   const checklistHtml=!isActive?`<div class="section">
     <div class="check-card">
       <div class="check-card-title">Voraussetzungen</div>
-      <div class="check-card-sub">Diese Punkte sind nötig bevor du dein Media Kit erstellen kannst.</div>
+      <div class="check-card-sub">Mindest-Angaben damit dein Media Kit veröffentlicht werden kann.</div>
       ${checks.map(c=>`<div class="check-item">
         <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'·'}</div>
         <span class="check-label ${c.ok?'ok':'miss'}">${c.label}</span>
@@ -582,160 +684,35 @@ function renderPage(){
     </div>
   </div>`:''
 
-  // KENNZAHLEN-Karte
-  const igFollowers=mk.followers_instagram??S.analyseStats.instagram?.followers
-  const ttFollowers=mk.followers_tiktok??S.analyseStats.tiktok?.followers
-  const hasIgStats=mk.er_instagram!=null||mk.avg_likes_instagram!=null||igFollowers!=null
-  const hasTtStats=mk.er_tiktok!=null||mk.avg_views_tiktok!=null||ttFollowers!=null
-  const statsCardHtml=`<div class="section">
-    <div class="section-label">Kennzahlen</div>
-    <div class="data-card">
-      <div class="data-card-head">
-        <div class="data-card-head-text">
-          <div class="data-card-title">Engagement & Follower</div>
-          <div class="data-card-sub">Instagram & TikTok Performance</div>
-        </div>
-        <button class="data-card-edit" onclick="openStatsSheet()">Bearbeiten</button>
-      </div>
-      <div class="data-card-body">
-        ${(hasIgStats||hasTtStats)?'':'<div class="data-empty">Keine Kennzahlen eingetragen</div>'}
-        ${hasIgStats?`
-          <div class="data-subhead">Instagram</div>
-          <div class="data-row"><span class="data-row-label">Engagement Rate</span><span class="data-row-val ${mk.er_instagram==null?'empty':''}">${mk.er_instagram!=null?mk.er_instagram+'%':'–'}</span></div>
-          <div class="data-row"><span class="data-row-label">⌀ Likes pro Post</span><span class="data-row-val ${mk.avg_likes_instagram==null?'empty':''}">${mk.avg_likes_instagram!=null?fmt(mk.avg_likes_instagram):'–'}</span></div>
-          <div class="data-row"><span class="data-row-label">Follower</span><span class="data-row-val ${igFollowers==null?'empty':''}">${igFollowers!=null?fmt(igFollowers):'–'}</span></div>
-        `:''}
-        ${hasTtStats?`
-          <div class="data-subhead${hasIgStats?' with-divider':''}">TikTok</div>
-          <div class="data-row"><span class="data-row-label">Engagement Rate</span><span class="data-row-val ${mk.er_tiktok==null?'empty':''}">${mk.er_tiktok!=null?mk.er_tiktok+'%':'–'}</span></div>
-          <div class="data-row"><span class="data-row-label">⌀ Views pro Video</span><span class="data-row-val ${mk.avg_views_tiktok==null?'empty':''}">${mk.avg_views_tiktok!=null?fmt(mk.avg_views_tiktok):'–'}</span></div>
-          <div class="data-row"><span class="data-row-label">Follower</span><span class="data-row-val ${ttFollowers==null?'empty':''}">${ttFollowers!=null?fmt(ttFollowers):'–'}</span></div>
-        `:''}
-      </div>
-    </div>
+  // BEARBEITEN-Button + Terms + Erstellen
+  const editAndCreateHtml=!isActive?`<div class="action-stack">
+    <button class="action-btn action-btn-secondary" onclick="openEditMenu()">✎ Bearbeiten</button>
+  </div>
+  <div class="section">
+    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
+      <input type="checkbox" id="terms-check" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--text);margin-top:2px;cursor:pointer"/>
+      <span style="font-size:13px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#mediakit_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> und bestätige dass meine Angaben korrekt sind.</span>
+    </label>
+  </div>
+  <div class="action-stack">
+    <button class="action-btn action-btn-primary" id="btn-create" disabled onclick="generateMK()">Media Kit erstellen</button>
+  </div>`
+  :`<div class="action-stack">
+    <button class="action-btn action-btn-primary" onclick="openEditMenu()">✎ Bearbeiten</button>
   </div>`
 
-  // PLATTFORMEN-Karte
-  const ytHandle=p.youtube_handle?p.youtube_handle.replace(/^@/,''):null
-  const thHandle=p.threads_handle?p.threads_handle.replace(/^@/,''):null
-  const hasYt=!!ytHandle
-  const hasTh=!!thHandle
-  const platformsCardHtml=`<div class="section">
-    <div class="section-label">Weitere Plattformen</div>
-    <div class="data-card">
-      <div class="data-card-head">
-        <div class="data-card-head-text">
-          <div class="data-card-title">YouTube & Threads</div>
-          <div class="data-card-sub">Optional zusätzliche Kanäle</div>
-        </div>
-        <button class="data-card-edit" onclick="openPlatformsSheet()">Bearbeiten</button>
-      </div>
-      <div class="data-card-body">
-        ${(!hasYt&&!hasTh)?'<div class="data-empty">Keine weiteren Plattformen</div>':''}
-        ${hasYt?`<div class="data-row"><span class="data-row-label">YouTube</span><span class="data-row-val">@${esc(ytHandle)}${mk.followers_youtube?` · ${fmt(mk.followers_youtube)}`:''}</span></div>`:''}
-        ${hasTh?`<div class="data-row"><span class="data-row-label">Threads</span><span class="data-row-val">@${esc(thHandle)}${mk.followers_threads?` · ${fmt(mk.followers_threads)}`:''}</span></div>`:''}
-      </div>
-    </div>
-  </div>`
-
-  // ZIELGRUPPE-Karte
-  const f=mk.gender_female_pct,m=mk.gender_male_pct
-  const c1=mk.top_country_1,c2=mk.top_country_2
-  const hasAudience=f!=null||m!=null||c1||c2
-  const audienceCardHtml=`<div class="section">
-    <div class="section-label">Zielgruppe</div>
-    <div class="data-card">
-      <div class="data-card-head">
-        <div class="data-card-head-text">
-          <div class="data-card-title">Demografie</div>
-          <div class="data-card-sub">Geschlecht & Top-Länder</div>
-        </div>
-        <button class="data-card-edit" onclick="openAudienceSheet()">Bearbeiten</button>
-      </div>
-      <div class="data-card-body">
-        ${!hasAudience?'<div class="data-empty">Noch keine Daten zur Zielgruppe</div>':`
-          ${(f!=null||m!=null)?`<div class="gender-bars">
-            <div class="gender-row"><span class="gender-label">W</span><div class="gender-track"><div class="gender-fill female" style="width:${f||0}%"></div></div><span class="gender-pct">${f!=null?f+'%':'–'}</span></div>
-            <div class="gender-row"><span class="gender-label">M</span><div class="gender-track"><div class="gender-fill male" style="width:${m||0}%"></div></div><span class="gender-pct">${m!=null?m+'%':'–'}</span></div>
-          </div>`:''}
-          ${(c1||c2)?`<div class="data-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:10px"><span class="data-row-label">Top Länder</span><span class="data-row-val">${[c1,c2].filter(Boolean).map(esc).join(' · ')}</span></div>`:''}
-        `}
-      </div>
-    </div>
-  </div>`
-
-  // ANGEBOTE-Karte
-  const offerLabels={ugc_video:'UGC Video',instagram_reel:'Instagram Reel',tiktok_post:'TikTok Post',story_package:'Story Package'}
-  const selectedOffers=[...S.offers]
-  const offersCardHtml=`<div class="section">
-    <div class="section-label">Content Angebote</div>
-    <div class="data-card">
-      <div class="data-card-head">
-        <div class="data-card-head-text">
-          <div class="data-card-title">Was du anbietest</div>
-          <div class="data-card-sub">${selectedOffers.length} ausgewählt</div>
-        </div>
-        <button class="data-card-edit" onclick="openSheet('offers-sheet')">Bearbeiten</button>
-      </div>
-      <div class="data-card-body">
-        ${selectedOffers.length===0?'<div class="data-empty">Noch keine Angebote ausgewählt</div>':
-          `<div class="pills">${selectedOffers.map(o=>`<span class="pill">${esc(offerLabels[o]||o)}</span>`).join('')}</div>`}
-      </div>
-    </div>
-  </div>`
-
-  // BRANDS-Karte
-  const brandsCardHtml=`<div class="section">
-    <div class="section-label">Marken Kooperationen</div>
-    <div class="data-card">
-      <div class="data-card-head">
-        <div class="data-card-head-text">
-          <div class="data-card-title">Bisherige Marken</div>
-          <div class="data-card-sub">${S.brands.length} / 10</div>
-        </div>
-        <button class="data-card-edit" onclick="openBrandsSheet()">Bearbeiten</button>
-      </div>
-      <div class="data-card-body">
-        ${S.brands.length===0?'<div class="data-empty">Noch keine Marken eingetragen</div>':
-          `<div class="pills">${S.brands.map(b=>`<span class="pill">${esc(b.name)}</span>`).join('')}</div>`}
-      </div>
-    </div>
-  </div>`
-
-  // Action Section
-  let actionHtml=''
-  if(isActive){
-    actionHtml=`<div class="action-stack">
-      <button class="action-btn action-btn-primary" id="btn-update" onclick="generateMK(this,'Media Kit aktualisieren')">Media Kit aktualisieren</button>
-    </div>`
-  }else{
-    actionHtml=`<div class="section">
-      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
-        <input type="checkbox" id="terms-check" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--text);margin-top:2px;cursor:pointer"/>
-        <span style="font-size:13px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#mediakit_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> und bestätige, dass meine Angaben korrekt sind.</span>
-      </label>
-    </div>
-    <div class="action-stack">
-      <button class="action-btn action-btn-primary" id="btn-create" disabled onclick="generateMK(this,'Media Kit erstellen')">Media Kit erstellen</button>
-    </div>`
-  }
-
-  // Delete (nur wenn aktiv)
+  // DELETE (nur aktiv)
   const deleteHtml=isActive
     ?`<div class="action-stack" style="padding-top:24px;padding-bottom:calc(8px + var(--safe-bottom))">
-        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">Media Kit löschen</button>
+        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">🗑 Media Kit löschen</button>
       </div>`
     :''
 
   document.getElementById('page-content').innerHTML=`
     ${statusHtml}
+    ${previewHtml}
     ${checklistHtml}
-    ${statsCardHtml}
-    ${platformsCardHtml}
-    ${audienceCardHtml}
-    ${offersCardHtml}
-    ${brandsCardHtml}
-    ${actionHtml}
+    ${editAndCreateHtml}
     ${deleteHtml}
   `
 
@@ -746,11 +723,93 @@ function renderPage(){
       const bg=document.getElementById('btn-create')
       if(!tc||!bg)return
       const update=()=>{bg.disabled=!tc.checked||!allChecksOk}
-      if(!allChecksOk)bg.title='Bitte alle Punkte der Voraussetzungen erfüllen'
+      if(!allChecksOk)bg.title='Bitte alle Voraussetzungen erfüllen'
       tc.addEventListener('change',update)
       update()
     },0)
   }
+}
+
+// ── Voraussetzungen-Check (was muss da sein damit Live-Seite Sinn macht) ──
+function getChecks(){
+  const p=S.profile||{},mk=S.mkData||{}
+  return [
+    {label:'Profilbild hochgeladen',ok:!!p.profile_image_url},
+    {label:'Bio ausgefüllt',ok:!!(p.bio&&p.bio.trim())},
+    {label:'Anfrage-E-Mail hinterlegt',ok:!!(p.contact_email&&p.contact_email.trim())},
+    {label:'Mindestens 1 Plattform mit Kennzahlen',ok:!!(p.instagram_handle&&(mk.er_instagram!=null||mk.followers_instagram!=null||mk.avg_likes_instagram!=null))||!!(p.tiktok_handle&&(mk.er_tiktok!=null||mk.followers_tiktok!=null||mk.avg_views_tiktok!=null))},
+    {label:'Impressum hinterlegt',ok:!!(p.impressum_text&&p.impressum_text.trim())}
+  ]
+}
+
+// ── Edit-Menu öffnen: rendert die Liste mit Status pro Bereich ──
+window.openEditMenu=function(){
+  const p=S.profile||{},mk=S.mkData||{}
+  const profileOk=!!(p.profile_image_url&&p.bio&&p.bio.trim())
+  const profileSub=[p.niche_category||null,p.city||null].filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Bild & Bio fehlen')
+  const contactOk=!!(p.contact_email&&p.contact_email.trim())
+  const statsOk=!!(p.instagram_handle&&(mk.er_instagram!=null))||!!(p.tiktok_handle&&(mk.er_tiktok!=null))
+  const statsSub=[]
+  if(p.instagram_handle&&mk.er_instagram!=null)statsSub.push('IG ✓')
+  if(p.tiktok_handle&&mk.er_tiktok!=null)statsSub.push('TT ✓')
+  const platformsOk=!!(p.youtube_handle||p.threads_handle)
+  const platformsSub=[p.youtube_handle?'YouTube':null,p.threads_handle?'Threads':null].filter(Boolean).join(' · ')||'Optional'
+  const audOk=mk.gender_female_pct!=null||mk.top_country_1
+  const offersCount=S.offers.size
+  const brandsCount=S.brands.length
+  const impOk=!!(p.impressum_text&&p.impressum_text.trim())
+
+  const items=[
+    {id:'profile-sheet',icon:'👤',label:'Profil',sub:profileSub,status:profileOk?'ok':'miss',statusLabel:profileOk?'OK':'Pflicht'},
+    {id:'contact-sheet',icon:'📧',label:'Kontakt-E-Mail',sub:p.contact_email||'Anfrage-Adresse für Marken',status:contactOk?'ok':'miss',statusLabel:contactOk?'OK':'Pflicht'},
+    {id:'stats-sheet',icon:'📊',label:'Kennzahlen',sub:statsSub.length?statsSub.join(' · '):'IG / TikTok Performance',status:statsOk?'ok':'miss',statusLabel:statsOk?'OK':'Pflicht'},
+    {id:'platforms-sheet',icon:'🔗',label:'Weitere Plattformen',sub:platformsSub,status:'',statusLabel:''},
+    {id:'audience-sheet',icon:'👥',label:'Zielgruppe',sub:audOk?'Demografie eingetragen':'Optional',status:'',statusLabel:''},
+    {id:'offers-sheet',icon:'🎬',label:'Content Angebote',sub:offersCount?`${offersCount} ausgewählt`:'Optional',status:'',statusLabel:''},
+    {id:'brands-sheet',icon:'🤝',label:'Marken Kooperationen',sub:brandsCount?`${brandsCount} / 10`:'Optional',status:'',statusLabel:''},
+    {id:'impressum-sheet',icon:'📄',label:'Impressum',sub:impOk?'Hinterlegt':'Gesetzlich vorgeschrieben',status:impOk?'ok':'miss',statusLabel:impOk?'OK':'Pflicht'}
+  ]
+
+  document.getElementById('edit-action-list').innerHTML=items.map(it=>`
+    <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');setTimeout(()=>openEditSubSheet('${it.id}'),50)">
+      <span class="edit-action-icon">${it.icon}</span>
+      <div class="edit-action-body">
+        <div class="edit-action-label">${esc(it.label)}</div>
+        <div class="edit-action-sub">${esc(it.sub)}</div>
+      </div>
+      ${it.statusLabel?`<span class="edit-action-status ${it.status}">${esc(it.statusLabel)}</span>`:''}
+      <span class="edit-action-arrow">›</span>
+    </button>`).join('')
+
+  openSheet('edit-actions-sheet')
+}
+
+window.openEditSubSheet=function(id){
+  // Pre-fill je nach Sheet
+  if(id==='profile-sheet'){
+    const p=S.profile||{}
+    const bw=document.getElementById('profile-photo-wrap')
+    if(p.profile_image_url)bw.innerHTML=`<img src="${esc(p.profile_image_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+    else bw.textContent=(p.display_name||'?')[0].toUpperCase()
+    document.getElementById('s-niche').value=p.niche_category||''
+    document.getElementById('s-city').value=p.city||''
+    document.getElementById('s-bio').value=p.bio||''
+  } else if(id==='contact-sheet'){
+    document.getElementById('s-contact-email').value=S.profile?.contact_email||''
+  } else if(id==='stats-sheet'){
+    openStatsSheet();return
+  } else if(id==='platforms-sheet'){
+    openPlatformsSheet();return
+  } else if(id==='audience-sheet'){
+    openAudienceSheet();return
+  } else if(id==='offers-sheet'){
+    renderOffers()
+  } else if(id==='brands-sheet'){
+    renderBrandsList()
+  } else if(id==='impressum-sheet'){
+    document.getElementById('s-impressum').value=S.profile?.impressum_text||''
+  }
+  openSheet(id)
 }
 
 // ── Copy ──
@@ -758,9 +817,48 @@ window.copyLink=function(url){
   navigator.clipboard.writeText(url).then(()=>showToast('Link kopiert ✓')).catch(()=>showToast('Nicht kopierbar'))
 }
 
+// ── Loading Overlay ──
+const LOADING_STEPS=[
+  'Vorbereitung',
+  'Layout wird generiert',
+  'Design wird angewendet',
+  'Inhalte werden eingefügt',
+  'Wird auf den Server geladen',
+  'Fast fertig'
+]
+function showLoadingOverlay(){
+  document.getElementById('loading-overlay').classList.remove('hidden')
+  document.body.style.overflow='hidden'
+  let i=0
+  const dotsHtml='<span class="loading-dots"><span></span><span></span><span></span></span>'
+  const setStep=(idx)=>{
+    const el=document.getElementById('loading-status')
+    if(!el)return
+    el.style.animation='none'
+    el.offsetHeight
+    el.style.animation=''
+    el.innerHTML=LOADING_STEPS[idx]+dotsHtml
+  }
+  setStep(0)
+  const t=setInterval(()=>{
+    i++
+    if(i>=LOADING_STEPS.length){clearInterval(t);return}
+    setStep(i)
+  },4200)
+  return t
+}
+function hideLoadingOverlay(timer){
+  if(timer)clearInterval(timer)
+  document.getElementById('loading-overlay').classList.add('hidden')
+  document.body.style.overflow=''
+}
+
 // ── Generate / Delete ──
-window.generateMK=async function(btn,origLabel){
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'
+window.generateMK=async function(){
+  const btn=document.getElementById('btn-create')
+  const isUpdate=S.isActive
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'}
+  const loadingTimer=showLoadingOverlay()
   try{
     const{data:{session}}=await sb.auth.getSession()
     const res=await fetch(`${SB_URL}/functions/v1/generate-mediakit`,{
@@ -769,11 +867,13 @@ window.generateMK=async function(btn,origLabel){
     })
     const body=await res.json()
     if(!res.ok||!body.success)throw new Error(body.error||`HTTP ${res.status}`)
+    hideLoadingOverlay(loadingTimer)
     showToast('Media Kit live ✓')
     await loadAll()
   }catch(err){
+    hideLoadingOverlay(loadingTimer)
     showToast('Fehler: '+err.message,5000)
-    btn.disabled=false;btn.textContent=origLabel
+    if(btn){btn.disabled=false;btn.textContent=isUpdate?'Media Kit aktualisieren':'Media Kit erstellen'}
   }
 }
 
@@ -792,15 +892,78 @@ window.confirmDelete=async function(){
   }catch(err){showToast('Fehler: '+err.message,4000)}
 }
 
+// ── Photo Upload ──
+document.getElementById('photo-input').addEventListener('change',async(e)=>{
+  const file=e.target.files?.[0];if(!file)return
+  if(file.size>5*1024*1024){showToast('Max. 5 MB');return}
+  const status=document.getElementById('photo-status')
+  if(status)status.textContent='Wird hochgeladen…'
+  const reader=new FileReader()
+  reader.onload=ev=>{const bw=document.getElementById('profile-photo-wrap');if(bw)bw.innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`}
+  reader.readAsDataURL(file)
+  const path=`${S.user.id}/${Date.now()}.${file.name.split('.').pop()}`
+  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
+  if(error){showToast('Upload fehlgeschlagen');if(status)status.textContent='Fehler';return}
+  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
+  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',S.user.id)
+  S.profile.profile_image_url=publicUrl
+  if(status)status.textContent='✓ Foto hochgeladen'
+  showToast('Profilbild gespeichert ✓')
+  const av=document.getElementById('user-avatar')
+  if(av)av.innerHTML=`<img src="${esc(publicUrl)}" alt="">`
+  e.target.value=''
+})
+
+// ── Save Profile ──
+window.saveProfile=async function(){
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const patch={
+    bio:document.getElementById('s-bio').value.trim()||null,
+    niche_category:document.getElementById('s-niche').value.trim()||null,
+    city:document.getElementById('s-city').value.trim()||null,
+    updated_at:new Date().toISOString()
+  }
+  const{error}=await sb.from('users').update(patch).eq('id',S.user.id)
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  Object.assign(S.profile,patch)
+  closeSheet('profile-sheet')
+  showToast('Profil gespeichert ✓')
+  renderPage()
+}
+
+// ── Save Contact ──
+window.saveContact=async function(){
+  const email=document.getElementById('s-contact-email').value.trim()
+  const hint=document.getElementById('contact-hint')
+  hint.classList.remove('err')
+  if(email&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    hint.textContent='Bitte gültige E-Mail-Adresse eingeben'
+    hint.classList.add('err')
+    return
+  }
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{error}=await sb.from('users').update({contact_email:email||null,updated_at:new Date().toISOString()}).eq('id',S.user.id)
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  S.profile.contact_email=email||null
+  closeSheet('contact-sheet')
+  showToast('Kontakt gespeichert ✓')
+  renderPage()
+}
+
 // ── Stats Sheet ──
 window.openStatsSheet=function(){
-  document.getElementById('s-ig-er').value=S.mkData.er_instagram??''
-  document.getElementById('s-ig-likes').value=S.mkData.avg_likes_instagram??''
-  document.getElementById('s-ig-followers').value=S.mkData.followers_instagram??S.analyseStats.instagram?.followers??''
-  document.getElementById('s-tt-er').value=S.mkData.er_tiktok??''
-  document.getElementById('s-tt-views').value=S.mkData.avg_views_tiktok??''
-  document.getElementById('s-tt-followers').value=S.mkData.followers_tiktok??S.analyseStats.tiktok?.followers??''
-  // Autofill banner
+  const p=S.profile||{},mk=S.mkData||{}
+  const strip=h=>h?h.replace(/^@/,''):''
+  document.getElementById('s-ig-handle').value=strip(p.instagram_handle)
+  document.getElementById('s-tt-handle').value=strip(p.tiktok_handle)
+  document.getElementById('s-ig-er').value=mk.er_instagram??''
+  document.getElementById('s-ig-likes').value=mk.avg_likes_instagram??''
+  document.getElementById('s-ig-followers').value=mk.followers_instagram??S.analyseStats.instagram?.followers??''
+  document.getElementById('s-tt-er').value=mk.er_tiktok??''
+  document.getElementById('s-tt-views').value=mk.avg_views_tiktok??''
+  document.getElementById('s-tt-followers').value=mk.followers_tiktok??S.analyseStats.tiktok?.followers??''
   const has=Object.keys(S.analyseStats).length>0
   document.getElementById('autofill-banner').classList.toggle('hidden',!has)
   switchStatsTab('ig')
@@ -826,22 +989,31 @@ window.doAutofill=function(){
 }
 window.saveStats=async function(){
   const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
-  const igF=parseInt(document.getElementById('s-ig-followers').value)||null
-  const ttF=parseInt(document.getElementById('s-tt-followers').value)||null
-  const patch={
+  const igH=document.getElementById('s-ig-handle').value.trim().replace(/^@/,'')
+  const ttH=document.getElementById('s-tt-handle').value.trim().replace(/^@/,'')
+  const userPatch={
+    instagram_handle:igH?'@'+igH:null,
+    tiktok_handle:ttH?'@'+ttH:null,
+    updated_at:new Date().toISOString()
+  }
+  const mkPatch={
     user_id:S.user.id,
     er_instagram:parseFloat(document.getElementById('s-ig-er').value)||null,
     avg_likes_instagram:parseInt(document.getElementById('s-ig-likes').value)||null,
-    followers_instagram:igF,
+    followers_instagram:parseInt(document.getElementById('s-ig-followers').value)||null,
     er_tiktok:parseFloat(document.getElementById('s-tt-er').value)||null,
     avg_views_tiktok:parseInt(document.getElementById('s-tt-views').value)||null,
-    followers_tiktok:ttF,
+    followers_tiktok:parseInt(document.getElementById('s-tt-followers').value)||null,
     updated_at:new Date().toISOString()
   }
-  const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
+  const[r1,r2]=await Promise.all([
+    sb.from('users').update(userPatch).eq('id',S.user.id),
+    sb.from('mediakit_viuno').upsert(mkPatch,{onConflict:'user_id'})
+  ])
   btn.disabled=false;btn.textContent='Speichern'
-  if(error){showToast('Fehler: '+error.message,4000);return}
-  Object.assign(S.mkData,patch)
+  if(r1.error||r2.error){showToast('Fehler beim Speichern',4000);return}
+  Object.assign(S.profile,userPatch)
+  S.mkData=Object.assign(S.mkData||{},mkPatch)
   closeSheet('stats-sheet')
   showToast('Kennzahlen gespeichert ✓')
   renderPage()
@@ -849,12 +1021,12 @@ window.saveStats=async function(){
 
 // ── Platforms Sheet ──
 window.openPlatformsSheet=function(){
-  const yt=S.profile.youtube_handle?S.profile.youtube_handle.replace(/^@/,''):''
-  const th=S.profile.threads_handle?S.profile.threads_handle.replace(/^@/,''):''
-  document.getElementById('s-yt-handle').value=yt
-  document.getElementById('s-th-handle').value=th
-  document.getElementById('s-yt-followers').value=S.mkData.followers_youtube??''
-  document.getElementById('s-th-followers').value=S.mkData.followers_threads??''
+  const p=S.profile||{},mk=S.mkData||{}
+  const strip=h=>h?h.replace(/^@/,''):''
+  document.getElementById('s-yt-handle').value=strip(p.youtube_handle)
+  document.getElementById('s-th-handle').value=strip(p.threads_handle)
+  document.getElementById('s-yt-followers').value=mk.followers_youtube??''
+  document.getElementById('s-th-followers').value=mk.followers_threads??''
   togglePlatformFollowerFields()
   openSheet('platforms-sheet')
 }
@@ -889,7 +1061,7 @@ window.savePlatforms=async function(){
   btn.disabled=false;btn.textContent='Speichern'
   if(r1.error||r2.error){showToast('Fehler beim Speichern',4000);return}
   Object.assign(S.profile,userPatch)
-  Object.assign(S.mkData,mkPatch)
+  S.mkData=Object.assign(S.mkData||{},mkPatch)
   closeSheet('platforms-sheet')
   showToast('Plattformen gespeichert ✓')
   renderPage()
@@ -897,10 +1069,11 @@ window.savePlatforms=async function(){
 
 // ── Audience Sheet ──
 window.openAudienceSheet=function(){
-  document.getElementById('s-female').value=S.mkData.gender_female_pct??''
-  document.getElementById('s-male').value=S.mkData.gender_male_pct??''
-  document.getElementById('s-country1').value=S.mkData.top_country_1??''
-  document.getElementById('s-country2').value=S.mkData.top_country_2??''
+  const mk=S.mkData||{}
+  document.getElementById('s-female').value=mk.gender_female_pct??''
+  document.getElementById('s-male').value=mk.gender_male_pct??''
+  document.getElementById('s-country1').value=mk.top_country_1??''
+  document.getElementById('s-country2').value=mk.top_country_2??''
   openSheet('audience-sheet')
 }
 window.saveAudience=async function(){
@@ -916,18 +1089,13 @@ window.saveAudience=async function(){
   const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
-  Object.assign(S.mkData,patch)
+  S.mkData=Object.assign(S.mkData||{},patch)
   closeSheet('audience-sheet')
   showToast('Zielgruppe gespeichert ✓')
   renderPage()
 }
 
 // ── Offers ──
-const origOpenSheet=window.openSheet
-window.openSheet=function(id){
-  origOpenSheet(id)
-  if(id==='offers-sheet')renderOffers()
-}
 function renderOffers(){
   ['ugc_video','instagram_reel','tiktok_post','story_package'].forEach(t=>
     document.getElementById('chk-'+t)?.classList.toggle('checked',S.offers.has(t)))
@@ -941,21 +1109,9 @@ window.toggleOffer=async function(type){
     S.offers.add(type)
   }
   renderOffers()
-  renderPage()
-}
-
-// Hook in close: re-render when offers sheet closes
-const origCloseSheet=window.closeSheet
-window.closeSheet=function(id){
-  origCloseSheet(id)
-  if(id==='offers-sheet')renderPage()
 }
 
 // ── Brands ──
-window.openBrandsSheet=function(){
-  renderBrandsList()
-  openSheet('brands-sheet')
-}
 function renderBrandsList(){
   const list=document.getElementById('brands-list')
   if(!list)return
@@ -996,15 +1152,26 @@ window.confirmAddBrand=async function(){
   S.brands.push(data)
   closeSheet('add-brand-sheet')
   renderBrandsList()
-  renderPage()
   showToast('Brand hinzugefügt ✓')
 }
 window.deleteBrand=async function(id){
   await sb.from('mediakit_brands').delete().eq('id',id).eq('user_id',S.user.id)
   S.brands=S.brands.filter(b=>b.id!==id)
   renderBrandsList()
-  renderPage()
   showToast('Brand entfernt')
+}
+
+// ── Save Impressum ──
+window.saveImpressum=async function(){
+  const text=document.getElementById('s-impressum').value.trim()||null
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{error}=await sb.from('users').update({impressum_text:text,updated_at:new Date().toISOString()}).eq('id',S.user.id)
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  S.profile.impressum_text=text
+  closeSheet('impressum-sheet')
+  showToast('Impressum gespeichert ✓')
+  renderPage()
 }
 </script>
 </body>
