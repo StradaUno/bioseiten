@@ -659,7 +659,10 @@ function renderPage(){
   </div>`:''
 
   // Terms + generate button (only when not active)
-  const termsHtml=!isActive?`<div class="section">
+  const termsHtml=!isActive?`<div class="action-stack">
+    <button class="action-btn action-btn-secondary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
+  </div>
+  <div class="section">
     <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
       <input type="checkbox" id="terms-check" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--text);margin-top:2px;cursor:pointer"/>
       <span style="font-size:13px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#biopage_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> von viuno.</span>
