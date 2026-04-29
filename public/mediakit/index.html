@@ -13,13 +13,14 @@
   --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);
   --text:#111110;--muted:#7a7975;--subtle:#b0afa9;
   --green:#1a7f4b;--green-bg:#edf7f1;--green-border:rgba(26,127,75,.2);
-  --red:#c0392b;--red-bg:#fdf0ef;--red-border:rgba(192,57,43,.2);
-  --blue:#1a6ed8;--blue-bg:#eef4fd;--blue-border:rgba(26,110,216,.18);
+  --red:#c0392b;--red-bg:#fdf0ef;
   --radius:16px;--radius-sm:10px;--nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)
 }
 html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
 #app{display:none;min-height:100dvh;flex-direction:column;overflow:hidden}
 #app.visible{display:flex}
+
+/* TOPBAR */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .topbar-left{display:flex;align-items:center;gap:10px}
 .hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;padding:0}
@@ -27,6 +28,154 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .topbar-title{font-size:15px;font-weight:700;letter-spacing:-.03em}
 .topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
 .topbar-avatar img{width:100%;height:100%;object-fit:cover}
+.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(40px + var(--safe-bottom))}
+.section{padding:12px 20px 0}
+.section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+
+/* STATUS BANNER */
+.status-banner{margin:12px 20px 0;padding:12px 16px;border-radius:var(--radius);display:flex;align-items:center;gap:10px;border:1px solid}
+.status-banner.active{background:var(--green-bg);border-color:var(--green-border)}
+.status-banner.inactive{background:var(--surface2);border-color:var(--border-strong)}
+.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.status-dot.active{background:var(--green)}
+.status-dot.inactive{background:var(--subtle)}
+.status-text{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.status-text span{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:1px}
+
+/* LINK BAR */
+.link-bar{margin:10px 20px 0;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:10px}
+.link-url{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
+.link-action-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
+.stat-box-value{font-size:20px;font-weight:700;letter-spacing:-.04em;color:var(--text)}
+.stat-box-label{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ACTION BUTTONS */
+.action-stack{padding:12px 20px 0;display:flex;flex-direction:column;gap:8px}
+.action-btn{width:100%;padding:13px 16px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;transition:opacity .15s}
+.action-btn-primary{background:var(--text);color:white;border-color:var(--text)}
+.action-btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.action-btn-secondary{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.action-btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(192,57,43,.2)}
+
+/* CHECKLIST */
+.check-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.check-card-title{font-size:13px;font-weight:600;color:var(--text);padding:14px 16px 10px}
+.check-card-sub{font-size:12px;color:var(--muted);padding:0 16px 12px;line-height:1.5}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--border)}
+.check-dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0}
+.check-dot.ok{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
+.check-dot.miss{background:var(--surface2);border:1.5px solid var(--border-strong);color:var(--subtle)}
+.check-label{font-size:13px;flex:1}
+.check-label.ok{color:var(--muted);text-decoration:line-through}
+.check-label.miss{color:var(--text);font-weight:500}
+
+/* DATA CARDS (Übersichtskarten) */
+.data-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.data-card-head{padding:14px 16px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.data-card-head-text{flex:1;min-width:0}
+.data-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:1px}
+.data-card-sub{font-size:11px;color:var(--muted)}
+.data-card-edit{flex-shrink:0;padding:6px 12px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:8px;font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer}
+.data-card-edit:hover{background:var(--border)}
+.data-card-body{padding:0 16px 14px}
+.data-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--border);font-size:13px}
+.data-row:first-child{border-top:none;padding-top:4px}
+.data-row-label{color:var(--muted);display:flex;align-items:center;gap:6px}
+.data-row-icon{font-size:14px}
+.data-row-val{font-weight:600;color:var(--text)}
+.data-row-val.empty{color:var(--subtle);font-weight:400;font-style:italic}
+.data-empty{font-size:12px;color:var(--subtle);text-align:center;padding:8px 0;font-style:italic}
+
+/* GENDER BARS */
+.gender-bars{display:flex;flex-direction:column;gap:8px;padding:8px 0 4px}
+.gender-row{display:flex;align-items:center;gap:10px}
+.gender-label{font-size:11px;color:var(--muted);width:18px;font-weight:600}
+.gender-track{flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden}
+.gender-fill{height:100%;border-radius:999px;transition:width .4s ease}
+.gender-fill.female{background:#e91e8c}
+.gender-fill.male{background:var(--text)}
+.gender-pct{font-size:11px;font-weight:700;color:var(--text);width:36px;text-align:right}
+
+/* PILLS / TAGS */
+.pills{display:flex;flex-wrap:wrap;gap:6px;padding:6px 0 2px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:12px;font-weight:500;color:var(--text)}
+.pill-icon{font-size:13px}
+
+/* SHEET */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.sheet-backdrop.hidden{display:none}
+.sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 calc(20px + var(--safe-bottom));width:100%;max-width:540px;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sheet-handle{width:36px;height:4px;background:var(--border-strong);border-radius:2px;margin:12px auto 0}
+.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 4px}
+.sheet-sub{font-size:13px;color:var(--muted);padding:0 20px 16px;line-height:1.5}
+.sheet-field{padding:0 20px 12px}
+.sheet-label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.sheet-input{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.sheet-input:focus{border-color:var(--text)}
+.sheet-input-wrap{display:flex;align-items:center;border:1px solid var(--border-strong);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
+.sheet-input-wrap:focus-within{border-color:var(--text)}
+.sheet-prefix{padding:12px 10px 12px 14px;font-size:14px;color:var(--subtle);background:var(--surface2);border-right:1px solid var(--border-strong);flex-shrink:0}
+.sheet-suffix{padding:12px 14px 12px 10px;font-size:14px;color:var(--muted);background:var(--surface2);border-left:1px solid var(--border-strong);flex-shrink:0}
+.sheet-prefix-input{flex:1;padding:12px 14px;border:none;font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;width:100%}
+.sheet-hint{font-size:11px;margin-top:5px;min-height:16px;color:var(--muted)}
+.sheet-hint.err{color:var(--red)}
+.sheet-divider{height:1px;background:var(--border);margin:8px 0 12px}
+.sheet-actions{padding:8px 20px 0;display:flex;flex-direction:column;gap:8px}
+.sheet-btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.sheet-btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.sheet-btn-cancel{width:100%;padding:13px;background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
+
+/* TABS in sheet */
+.sheet-tabs{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:3px;margin:0 20px 16px}
+.sheet-tab{flex:1;padding:8px;border:none;border-radius:7px;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;background:none;transition:all .15s}
+.sheet-tab.active{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.sheet-panel{display:none}
+.sheet-panel.active{display:block}
+
+/* AUTOFILL BANNER in sheet */
+.autofill-banner{margin:0 20px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:10px}
+.autofill-banner.hidden{display:none}
+.autofill-text{flex:1;font-size:12px;color:var(--text);line-height:1.4}
+.autofill-btn{flex-shrink:0;background:var(--text);color:white;border:none;border-radius:7px;padding:7px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}
+
+/* OFFER ROWS */
+.offer-list{display:flex;flex-direction:column;border-top:1px solid var(--border)}
+.offer-row{display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;text-align:left;width:100%;transition:background .15s}
+.offer-row:hover{background:var(--surface2)}
+.offer-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
+.offer-label{font-size:14px;font-weight:500;flex:1;color:var(--text)}
+.offer-check{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--border-strong);display:grid;place-items:center;flex-shrink:0;transition:all .15s;background:var(--surface)}
+.offer-check.checked{background:var(--text);border-color:var(--text)}
+.offer-check.checked::after{content:'✓';font-size:12px;font-weight:700;color:white}
+
+/* BRANDS LIST */
+.brands-list{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.brand-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 12px;display:flex;align-items:center;gap:10px}
+.brand-row-body{flex:1;min-width:0}
+.brand-row-name{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-row-url{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.brand-del{width:26px;height:26px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;display:grid;place-items:center;cursor:pointer;color:var(--muted);flex-shrink:0;font-size:14px}
+.brand-del:hover{color:var(--red);border-color:rgba(192,57,43,.3);background:var(--red-bg)}
+.btn-add-link{width:100%;padding:11px;background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-add-link:hover{background:var(--surface2);color:var(--text)}
+.empty-links{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
+.modal-backdrop.hidden{display:none}
+.modal-card{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:400px}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.modal-btn{flex:1;padding:12px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.modal-btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
+.modal-btn-danger{background:var(--red);color:white}
+
+/* SIDEBAR */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:80;pointer-events:none;transition:background .25s}
 .sidebar-overlay.open{background:rgba(0,0,0,.35);pointer-events:auto}
 .sidebar{position:fixed;top:0;left:0;bottom:0;width:272px;background:var(--surface);z-index:90;transform:translateX(-100%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.08)}
@@ -41,7 +190,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px}
 .sidebar-item:hover{background:var(--surface2);color:var(--text)}
 .sidebar-item.active{background:var(--text);color:white}
-.sidebar-item svg{flex-shrink:0;width:18px;height:18px}
+.sidebar-item svg{flex-shrink:0}
 .sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
 .sidebar-pro-banner{background:var(--text);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
 .sidebar-pro-banner.show{display:flex}
@@ -52,131 +201,20 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sidebar-legal{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .sidebar-legal a{font-size:11px;color:var(--subtle);text-decoration:none}
 .sidebar-legal span{font-size:11px;color:var(--subtle)}
-.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(48px + var(--safe-bottom))}
-.section{padding:12px 20px 0}
-.section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.status-banner{margin:12px 20px 0;padding:12px 16px;border-radius:var(--radius);display:flex;align-items:center;gap:10px;border:1px solid}
-.status-banner.active{background:var(--green-bg);border-color:var(--green-border)}
-.status-banner.inactive{background:var(--surface2);border-color:var(--border-strong)}
-.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.status-dot.active{background:var(--green)}
-.status-dot.inactive{background:var(--subtle)}
-.status-text{font-size:13px;font-weight:600;flex:1}
-.status-sub{font-size:11px;font-weight:400;color:var(--muted);margin-top:1px}
-.link-bar{margin:10px 20px 0;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:10px}
-.link-url{font-size:13px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none;color:var(--text)}
-.link-action-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
-.stat-box-value{font-size:20px;font-weight:700;letter-spacing:-.04em}
-.stat-box-label{font-size:11px;color:var(--muted);margin-top:2px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.card-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.card-title{font-size:13px;font-weight:600}
-.card-sub{font-size:11px;color:var(--muted);margin-top:2px}
-.card-action{font-size:12px;font-weight:600;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 8px;border-radius:6px;color:var(--text)}
-.card-action:hover{background:var(--surface2)}
-.card-body{padding:14px 16px}
-.tab-bar{display:flex;background:var(--surface2);border-radius:10px;padding:3px;margin-bottom:14px}
-.tab-btn{flex:1;padding:8px;border:none;border-radius:7px;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;background:none;transition:all .15s}
-.tab-btn.active{background:var(--surface);color:var(--text);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.tab-panel{display:none}
-.tab-panel.active{display:block}
-.field-row{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--border)}
-.field-row:last-child{border-bottom:none}
-.field-label{font-size:13px;color:var(--muted);flex:1}
-.field-input{border:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--text);background:none;text-align:right;outline:none;width:110px}
-.field-input::placeholder{color:var(--subtle);font-weight:400}
-.field-input-wrap{display:flex;align-items:center;gap:4px}
-.field-suffix{font-size:12px;color:var(--muted)}
-.field-prefix{font-size:13px;color:var(--muted)}
-.autofill-banner{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.autofill-banner.hidden{display:none}
-.autofill-text{flex:1;font-size:12px;color:var(--blue);line-height:1.5}
-.autofill-btn{flex-shrink:0;background:var(--blue);color:white;border:none;border-radius:7px;padding:8px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer}
-.gender-bars{display:flex;flex-direction:column;gap:8px}
-.gender-row{display:flex;align-items:center;gap:10px}
-.gender-label{font-size:12px;color:var(--muted);width:20px;font-weight:500}
-.gender-track{flex:1;height:6px;background:var(--surface2);border-radius:999px;overflow:hidden}
-.gender-fill{height:100%;border-radius:999px;transition:width .4s ease}
-.gender-fill.female{background:#e91e8c}
-.gender-fill.male{background:var(--text)}
-.gender-pct{font-size:12px;font-weight:600;width:34px;text-align:right}
-.offers-grid{display:flex;flex-direction:column}
-.offer-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;background:none;text-align:left;width:100%;font-family:inherit;transition:background .15s;border-left:none;border-right:none;border-top:none}
-.offer-row:last-child{border-bottom:none}
-.offer-row:hover{background:var(--surface2)}
-.offer-icon{font-size:18px;width:22px;text-align:center;flex-shrink:0}
-.offer-label{font-size:13px;font-weight:500;flex:1}
-.offer-check{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--border-strong);display:grid;place-items:center;flex-shrink:0;transition:all .15s}
-.offer-check.checked{background:var(--text);border-color:var(--text)}
-.offer-check.checked::after{content:'✓';font-size:11px;font-weight:700;color:white}
-.brands-list{display:flex;flex-direction:column;gap:6px}
-.brand-item{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)}
-.brand-name{font-size:13px;font-weight:500;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.brand-url-text{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
-.brand-del{width:26px;height:26px;border-radius:7px;border:1px solid var(--border);background:none;display:grid;place-items:center;cursor:pointer;color:var(--muted);font-size:14px;flex-shrink:0}
-.brand-del:hover{color:var(--red);border-color:var(--red-border);background:var(--red-bg)}
-.btn-add{width:100%;padding:11px;background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px}
-.btn-add:hover{background:var(--surface2);color:var(--text)}
-.brands-count{font-size:11px;color:var(--subtle);text-align:right;margin-top:6px}
-.action-stack{padding:12px 20px 0;display:flex;flex-direction:column;gap:8px}
-.action-btn{width:100%;padding:13px 16px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;transition:opacity .15s}
-.action-btn:disabled{opacity:.4;cursor:not-allowed}
-.action-btn-primary{background:var(--text);color:white;border-color:var(--text)}
-.action-btn-secondary{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
-.action-btn-danger{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
-.check-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.check-card-title{font-size:13px;font-weight:600;padding:14px 16px 10px}
-.check-card-sub{font-size:12px;color:var(--muted);padding:0 16px 12px;line-height:1.5}
-.check-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--border)}
-.check-dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0}
-.check-dot.ok{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
-.check-dot.miss{background:var(--surface2);border:1.5px solid var(--border-strong);color:var(--subtle)}
-.check-label{font-size:13px;flex:1}
-.check-label.ok{color:var(--muted);text-decoration:line-through}
-.check-label.miss{color:var(--text);font-weight:500}
-.terms-row{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;cursor:pointer}
-.terms-row input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;accent-color:var(--text);margin-top:1px;cursor:pointer}
-.terms-text{font-size:12px;color:var(--muted);line-height:1.5}
-.terms-text a{color:var(--text);font-weight:600;text-decoration:underline}
-.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
-.sheet-backdrop.hidden{display:none}
-.sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 calc(20px + var(--safe-bottom));width:100%;max-width:540px;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.sheet-handle{width:36px;height:4px;background:var(--border-strong);border-radius:2px;margin:12px auto 0}
-.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 4px}
-.sheet-sub{font-size:13px;color:var(--muted);padding:0 20px 16px;line-height:1.5}
-.sheet-field{padding:0 20px 12px}
-.sheet-label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.sheet-input{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
-.sheet-input:focus{border-color:var(--text)}
-.sheet-hint{font-size:11px;margin-top:5px;color:var(--muted)}
-.sheet-actions{padding:8px 20px 0;display:flex;flex-direction:column;gap:8px}
-.sheet-btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.sheet-btn-primary:disabled{opacity:.4;cursor:not-allowed}
-.sheet-btn-cancel{width:100%;padding:13px;background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
-.modal-backdrop.hidden{display:none}
-.modal-card{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:400px}
-.modal-title{font-size:17px;font-weight:700;margin-bottom:6px}
-.modal-sub{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:20px}
-.modal-actions{display:flex;gap:8px}
-.modal-btn{flex:1;padding:12px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.modal-btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
-.modal-btn-danger{background:var(--red);color:white}
+
+/* TOAST & SPINNER */
 .toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
 .toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap}
 @keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.spinner-sm{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
-.spinner-sm.dark{border-color:rgba(0,0,0,.15);border-top-color:var(--text)}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
-.gap-v{height:12px}
+.hidden{display:none!important}
 input,textarea,select{font-size:16px!important}
 </style>
 </head>
 <body>
 
-<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
@@ -184,14 +222,14 @@ input,textarea,select{font-size:16px!important}
   </div>
   <nav class="sidebar-nav">
     <div class="sidebar-section">Übersicht</div>
-    <a class="sidebar-item" href="/dashboard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
-    <a class="sidebar-item" href="/digest"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Creator News</a>
-    <a class="sidebar-item" href="/biolink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>BioLink</a>
-    <a class="sidebar-item active" href="/mediakit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Media Kit</a>
-    <a class="sidebar-item" href="/analytics"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analyse</a>
-    <a class="sidebar-item" href="/requests"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
+    <a class="sidebar-item" href="/dashboard"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Dashboard</a>
+    <a class="sidebar-item" href="/digest"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Creator News</a>
+    <a class="sidebar-item" href="/biolink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>BioLink</a>
+    <a class="sidebar-item active" href="/mediakit"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Media Kit</a>
+    <a class="sidebar-item" href="/analytics"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Analyse</a>
+    <a class="sidebar-item" href="/requests"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Anfragen</a>
     <div class="sidebar-section">Konto</div>
-    <a class="sidebar-item" href="/profile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
+    <a class="sidebar-item" href="/profile"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
   </nav>
   <div class="sidebar-footer">
     <div class="sidebar-pro-banner" id="sidebar-pro-banner">
@@ -201,675 +239,783 @@ input,textarea,select{font-size:16px!important}
     <div class="sidebar-user" id="sidebar-user-email"></div>
     <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
     <div class="sidebar-legal">
-      <a href="/legal#impressum">Impressum</a><span>·</span><a href="/legal#datenschutz">Datenschutz</a>
+      <a href="/legal#impressum">Impressum</a><span>·</span>
+      <a href="/legal#datenschutz">Datenschutz</a>
     </div>
   </div>
 </div>
 
 <div id="app">
-  <header class="topbar">
+  <div class="topbar">
     <div class="topbar-left">
       <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
       <span class="topbar-title">Media Kit</span>
     </div>
-    <div class="topbar-avatar" id="topbar-avatar">?</div>
-  </header>
+    <div class="topbar-avatar" id="user-avatar"></div>
+  </div>
+  <div class="page" id="page-content">
+    <div style="padding:60px 20px;text-align:center;color:var(--muted)">Wird geladen…</div>
+  </div>
+</div>
 
-  <div class="page">
-
-    <!-- STATUS -->
-    <div class="status-banner inactive" id="status-banner">
-      <div class="status-dot inactive" id="status-dot"></div>
-      <div class="status-text" id="status-text">Nicht aktiv
-        <div class="status-sub" id="status-sub">Fülle die Daten aus und erstelle dein Media Kit.</div>
+<!-- KENNZAHLEN SHEET (IG/TT Tabs) -->
+<div class="sheet-backdrop hidden" id="stats-sheet" onclick="closeSheet('stats-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Kennzahlen</div>
+    <div class="sheet-sub">Engagement Rate, durchschnittliche Likes/Views und Follower-Zahlen.</div>
+    <div class="autofill-banner hidden" id="autofill-banner">
+      <div class="autofill-text">📊 Analysedaten verfügbar — automatisch übernehmen?</div>
+      <button class="autofill-btn" onclick="doAutofill()">Übernehmen</button>
+    </div>
+    <div class="sheet-tabs">
+      <button class="sheet-tab active" data-tab="ig" onclick="switchStatsTab('ig')">Instagram</button>
+      <button class="sheet-tab" data-tab="tt" onclick="switchStatsTab('tt')">TikTok</button>
+    </div>
+    <div class="sheet-panel active" data-panel="ig">
+      <div class="sheet-field">
+        <label class="sheet-label">Engagement Rate</label>
+        <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-ig-er" step="0.01" min="0" max="100" placeholder="z.B. 4.2" inputmode="decimal"/><span class="sheet-suffix">%</span></div>
+      </div>
+      <div class="sheet-field">
+        <label class="sheet-label">Durchschnittliche Likes pro Post</label>
+        <input type="number" class="sheet-input" id="s-ig-likes" min="0" placeholder="z.B. 1200" inputmode="numeric"/>
+      </div>
+      <div class="sheet-field">
+        <label class="sheet-label">Follower</label>
+        <input type="number" class="sheet-input" id="s-ig-followers" min="0" placeholder="z.B. 25000" inputmode="numeric"/>
       </div>
     </div>
-
-    <!-- LINK BAR -->
-    <div class="link-bar" id="link-bar" style="display:none">
-      <a class="link-url" id="link-url" href="#" target="_blank">viuno.de/kit/…</a>
-      <button class="link-action-btn" id="btn-copy">Kopieren</button>
-      <button class="link-action-btn" id="btn-open">↗</button>
-    </div>
-
-    <!-- VIEWS -->
-    <div class="section" id="views-section" style="display:none">
-      <div class="section-label">Aufrufe</div>
-      <div class="stats-grid">
-        <div class="stat-box"><div class="stat-box-value" id="views-today">–</div><div class="stat-box-label">Heute</div></div>
-        <div class="stat-box"><div class="stat-box-value" id="views-7">–</div><div class="stat-box-label">7 Tage</div></div>
-        <div class="stat-box"><div class="stat-box-value" id="views-total">–</div><div class="stat-box-label">Gesamt</div></div>
+    <div class="sheet-panel" data-panel="tt">
+      <div class="sheet-field">
+        <label class="sheet-label">Engagement Rate</label>
+        <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-tt-er" step="0.01" min="0" max="100" placeholder="z.B. 6.8" inputmode="decimal"/><span class="sheet-suffix">%</span></div>
+      </div>
+      <div class="sheet-field">
+        <label class="sheet-label">Durchschnittliche Views pro Video</label>
+        <input type="number" class="sheet-input" id="s-tt-views" min="0" placeholder="z.B. 50000" inputmode="numeric"/>
+      </div>
+      <div class="sheet-field">
+        <label class="sheet-label">Follower</label>
+        <input type="number" class="sheet-input" id="s-tt-followers" min="0" placeholder="z.B. 18000" inputmode="numeric"/>
       </div>
     </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="saveStats()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('stats-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
 
-    <!-- AKTUALISIEREN (nur wenn aktiv) -->
-    <div class="action-stack" id="update-section" style="display:none">
-      <button class="action-btn action-btn-primary" id="btn-update">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-        Media Kit aktualisieren
+<!-- WEITERE PLATTFORMEN SHEET -->
+<div class="sheet-backdrop hidden" id="platforms-sheet" onclick="closeSheet('platforms-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Weitere Plattformen</div>
+    <div class="sheet-sub">YouTube und Threads. Trage Handle ein — Follower-Zahl erscheint dann.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">YouTube Handle</label>
+      <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-yt-handle" placeholder="KanalName"/></div>
+    </div>
+    <div class="sheet-field" id="s-yt-followers-field" style="display:none">
+      <label class="sheet-label">YouTube Abonnenten</label>
+      <input type="number" class="sheet-input" id="s-yt-followers" min="0" placeholder="z.B. 12000" inputmode="numeric"/>
+    </div>
+    <div class="sheet-divider"></div>
+    <div class="sheet-field">
+      <label class="sheet-label">Threads Handle</label>
+      <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-th-handle" placeholder="dein_handle"/></div>
+    </div>
+    <div class="sheet-field" id="s-th-followers-field" style="display:none">
+      <label class="sheet-label">Threads Follower</label>
+      <input type="number" class="sheet-input" id="s-th-followers" min="0" placeholder="z.B. 5000" inputmode="numeric"/>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="savePlatforms()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('platforms-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ZIELGRUPPE SHEET -->
+<div class="sheet-backdrop hidden" id="audience-sheet" onclick="closeSheet('audience-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Zielgruppe</div>
+    <div class="sheet-sub">Geschlechterverteilung in % und deine zwei stärksten Länder.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Weiblich</label>
+      <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-female" min="0" max="100" placeholder="z.B. 72" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Männlich</label>
+      <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-male" min="0" max="100" placeholder="z.B. 28" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
+    </div>
+    <div class="sheet-divider"></div>
+    <div class="sheet-field">
+      <label class="sheet-label">Top Land 1</label>
+      <input type="text" class="sheet-input" id="s-country1" placeholder="z.B. Deutschland"/>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Top Land 2</label>
+      <input type="text" class="sheet-input" id="s-country2" placeholder="z.B. Österreich"/>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="saveAudience()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('audience-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- ANGEBOTE SHEET -->
+<div class="sheet-backdrop hidden" id="offers-sheet" onclick="closeSheet('offers-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Content Angebote</div>
+    <div class="sheet-sub">Was möchtest du Marken anbieten? Tippe zum Auswählen.</div>
+    <div class="offer-list">
+      <button class="offer-row" data-offer="ugc_video" onclick="toggleOffer('ugc_video')">
+        <span class="offer-icon">🎬</span>
+        <span class="offer-label">UGC Video</span>
+        <span class="offer-check" id="chk-ugc_video"></span>
+      </button>
+      <button class="offer-row" data-offer="instagram_reel" onclick="toggleOffer('instagram_reel')">
+        <span class="offer-icon">📸</span>
+        <span class="offer-label">Instagram Reel</span>
+        <span class="offer-check" id="chk-instagram_reel"></span>
+      </button>
+      <button class="offer-row" data-offer="tiktok_post" onclick="toggleOffer('tiktok_post')">
+        <span class="offer-icon">🎵</span>
+        <span class="offer-label">TikTok Post</span>
+        <span class="offer-check" id="chk-tiktok_post"></span>
+      </button>
+      <button class="offer-row" data-offer="story_package" onclick="toggleOffer('story_package')">
+        <span class="offer-icon">📱</span>
+        <span class="offer-label">Story Package</span>
+        <span class="offer-check" id="chk-story_package"></span>
       </button>
     </div>
-
-    <!-- CHECKLIST + ERSTELLEN (nur wenn nicht aktiv) -->
-    <div class="section" id="checklist-section">
-      <div class="section-label">Voraussetzungen</div>
-      <div class="check-card">
-        <div class="check-card-title">Bereit für dein Media Kit?</div>
-        <div class="check-card-sub">Diese Punkte werden benötigt bevor du das Media Kit erstellen kannst.</div>
-        <div id="check-items"></div>
-        <label class="terms-row" id="terms-row" style="display:none">
-          <input type="checkbox" id="terms-check">
-          <div class="terms-text">Ich akzeptiere die <a href="/legal#nutzungsbedingungen" target="_blank">Nutzungsbedingungen</a> und bestätige, dass meine Angaben korrekt und aktuell sind.</div>
-        </label>
-      </div>
-      <div style="padding:12px 0 0">
-        <button class="action-btn action-btn-primary" id="btn-create" disabled>
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-          Media Kit erstellen
-        </button>
-      </div>
+    <div class="sheet-actions" style="margin-top:8px">
+      <button class="sheet-btn-primary" onclick="closeSheet('offers-sheet')">Fertig</button>
     </div>
-
-    <div class="gap-v"></div>
-
-    <!-- KENNZAHLEN -->
-    <div class="section">
-      <div class="section-label">Kennzahlen</div>
-      <div class="autofill-banner hidden" id="autofill-banner">
-        <div class="autofill-text">📊 Analysedaten verfügbar — Kennzahlen automatisch übernehmen?</div>
-        <button class="autofill-btn" id="btn-autofill">Übernehmen</button>
-      </div>
-      <div class="card">
-        <div class="card-header" style="padding-bottom:0;border-bottom:none">
-          <div class="tab-bar" style="width:100%;margin-bottom:0">
-            <button class="tab-btn active" data-tab="ig">Instagram</button>
-            <button class="tab-btn" data-tab="tt">TikTok</button>
-          </div>
-        </div>
-        <div class="tab-panel active card-body" data-panel="ig">
-          <div class="field-row">
-            <div class="field-label">Engagement Rate</div>
-            <div class="field-input-wrap"><input class="field-input" id="ig-er" type="number" step="0.01" min="0" max="100" placeholder="–" inputmode="decimal"><span class="field-suffix">%</span></div>
-          </div>
-          <div class="field-row">
-            <div class="field-label">⌀ Likes pro Post</div>
-            <input class="field-input" id="ig-likes" type="number" min="0" placeholder="–" inputmode="numeric">
-          </div>
-          <div class="field-row" style="border-bottom:none">
-            <div class="field-label">Follower</div>
-            <input class="field-input" id="ig-followers" type="number" min="0" placeholder="–" inputmode="numeric">
-          </div>
-        </div>
-        <div class="tab-panel card-body" data-panel="tt">
-          <div class="field-row">
-            <div class="field-label">Engagement Rate</div>
-            <div class="field-input-wrap"><input class="field-input" id="tt-er" type="number" step="0.01" min="0" max="100" placeholder="–" inputmode="decimal"><span class="field-suffix">%</span></div>
-          </div>
-          <div class="field-row">
-            <div class="field-label">⌀ Views pro Video</div>
-            <input class="field-input" id="tt-views" type="number" min="0" placeholder="–" inputmode="numeric">
-          </div>
-          <div class="field-row" style="border-bottom:none">
-            <div class="field-label">Follower</div>
-            <input class="field-input" id="tt-followers" type="number" min="0" placeholder="–" inputmode="numeric">
-          </div>
-        </div>
-      </div>
-      <div style="padding:10px 0 0;display:flex;justify-content:flex-end">
-        <button class="action-btn action-btn-secondary" id="btn-save-stats" style="width:auto;padding:10px 20px;font-size:13px">Speichern</button>
-      </div>
-    </div>
-
-    <div class="gap-v"></div>
-
-    <!-- WEITERE PLATTFORMEN -->
-    <div class="section">
-      <div class="section-label">Weitere Plattformen</div>
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">YouTube &amp; Threads</div><div class="card-sub">Handle eintragen — Follower-Feld erscheint automatisch.</div></div>
-        </div>
-        <div class="card-body">
-          <div class="field-row">
-            <div class="field-label">YouTube</div>
-            <div class="field-input-wrap"><span class="field-prefix">@</span><input class="field-input" id="yt-handle" type="text" placeholder="handle" autocomplete="off" style="text-align:left;width:130px"></div>
-          </div>
-          <div class="field-row" id="yt-followers-row" style="display:none">
-            <div class="field-label">Abonnenten</div>
-            <input class="field-input" id="yt-followers" type="number" min="0" placeholder="–" inputmode="numeric">
-          </div>
-          <div class="field-row">
-            <div class="field-label">Threads</div>
-            <div class="field-input-wrap"><span class="field-prefix">@</span><input class="field-input" id="th-handle" type="text" placeholder="handle" autocomplete="off" style="text-align:left;width:130px"></div>
-          </div>
-          <div class="field-row" id="th-followers-row" style="border-bottom:none;display:none">
-            <div class="field-label">Follower</div>
-            <input class="field-input" id="th-followers" type="number" min="0" placeholder="–" inputmode="numeric">
-          </div>
-        </div>
-      </div>
-      <div style="padding:10px 0 0;display:flex;justify-content:flex-end">
-        <button class="action-btn action-btn-secondary" id="btn-save-platforms" style="width:auto;padding:10px 20px;font-size:13px">Speichern</button>
-      </div>
-    </div>
-
-    <div class="gap-v"></div>
-
-    <!-- ZIELGRUPPE -->
-    <div class="section">
-      <div class="section-label">Zielgruppe</div>
-      <div class="card">
-        <div class="card-header">
-          <div><div class="card-title">Geschlecht &amp; Länder</div></div>
-          <button class="card-action" id="btn-edit-audience">Bearbeiten</button>
-        </div>
-        <div class="card-body">
-          <div class="gender-bars" style="margin-bottom:16px">
-            <div class="gender-row">
-              <span class="gender-label">W</span>
-              <div class="gender-track"><div class="gender-fill female" id="bar-f" style="width:0%"></div></div>
-              <span class="gender-pct" id="pct-f">–</span>
-            </div>
-            <div class="gender-row">
-              <span class="gender-label">M</span>
-              <div class="gender-track"><div class="gender-fill male" id="bar-m" style="width:0%"></div></div>
-              <span class="gender-pct" id="pct-m">–</span>
-            </div>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:6px">
-            <div style="font-size:13px;color:var(--muted)" id="country-1-display">– Land 1 (nicht gesetzt)</div>
-            <div style="font-size:13px;color:var(--muted)" id="country-2-display">– Land 2 (nicht gesetzt)</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="gap-v"></div>
-
-    <!-- CONTENT ANGEBOTE -->
-    <div class="section">
-      <div class="section-label">Content Angebote</div>
-      <div class="card">
-        <div class="card-header"><div><div class="card-title">Was bietest du an?</div><div class="card-sub">Tippe zum Auswählen.</div></div></div>
-        <div class="offers-grid">
-          <button class="offer-row" data-offer="ugc_video"><div class="offer-icon">🎬</div><div class="offer-label">UGC Video</div><div class="offer-check" id="chk-ugc_video"></div></button>
-          <button class="offer-row" data-offer="instagram_reel"><div class="offer-icon">📸</div><div class="offer-label">Instagram Reel</div><div class="offer-check" id="chk-instagram_reel"></div></button>
-          <button class="offer-row" data-offer="tiktok_post"><div class="offer-icon">🎵</div><div class="offer-label">TikTok Post</div><div class="offer-check" id="chk-tiktok_post"></div></button>
-          <button class="offer-row" data-offer="story_package"><div class="offer-icon">📱</div><div class="offer-label">Story Package</div><div class="offer-check" id="chk-story_package"></div></button>
-        </div>
-      </div>
-    </div>
-
-    <div class="gap-v"></div>
-
-    <!-- MARKEN -->
-    <div class="section">
-      <div class="section-label">Marken Kooperationen</div>
-      <div class="card">
-        <div class="card-header"><div><div class="card-title">Zusammenarbeiten</div><div class="card-sub">Max. 10 Marken mit optionaler URL.</div></div></div>
-        <div class="card-body">
-          <div class="brands-list" id="brands-list"></div>
-          <button class="btn-add" id="btn-add-brand">
-            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Brand hinzufügen
-          </button>
-          <div class="brands-count" id="brands-count">0 / 10</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="gap-v"></div>
-    <div class="gap-v"></div>
-
-    <!-- LÖSCHEN (ans Ende) -->
-    <div class="action-stack" id="delete-section" style="display:none">
-      <button class="action-btn action-btn-danger" id="btn-delete">🗑 Media Kit löschen</button>
-    </div>
-    <div class="gap-v"></div>
-
   </div>
 </div>
 
-<!-- SHEET: ZIELGRUPPE -->
-<div class="sheet-backdrop hidden" id="audience-sheet">
-  <div class="sheet">
+<!-- BRANDS SHEET -->
+<div class="sheet-backdrop hidden" id="brands-sheet" onclick="closeSheet('brands-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Zielgruppe bearbeiten</div>
-    <div class="sheet-sub">Geschlecht in % und Top-Länder deiner Audience.</div>
-    <div class="sheet-field"><label class="sheet-label">Weiblich %</label><input class="sheet-input" id="inp-female" type="number" min="0" max="100" placeholder="z.B. 72" inputmode="numeric"></div>
-    <div class="sheet-field"><label class="sheet-label">Männlich %</label><input class="sheet-input" id="inp-male" type="number" min="0" max="100" placeholder="z.B. 28" inputmode="numeric"></div>
-    <div class="sheet-field"><label class="sheet-label">Top Land 1</label><input class="sheet-input" id="inp-country1" type="text" placeholder="z.B. Deutschland" autocomplete="off"></div>
-    <div class="sheet-field"><label class="sheet-label">Top Land 2</label><input class="sheet-input" id="inp-country2" type="text" placeholder="z.B. Österreich" autocomplete="off"></div>
+    <div class="sheet-title">Marken Kooperationen</div>
+    <div class="sheet-sub">Bis zu 10 Marken mit denen du gearbeitet hast. URL ist optional.</div>
+    <div class="sheet-field">
+      <div class="brands-list" id="brands-list"></div>
+      <button class="btn-add-link" id="btn-add-brand" onclick="openAddBrand()">+ Brand hinzufügen</button>
+    </div>
     <div class="sheet-actions">
-      <button class="sheet-btn-primary" id="btn-save-audience">Speichern</button>
-      <button class="sheet-btn-cancel" id="btn-cancel-audience">Abbrechen</button>
+      <button class="sheet-btn-primary" onclick="closeSheet('brands-sheet')">Fertig</button>
     </div>
   </div>
 </div>
 
-<!-- SHEET: BRAND -->
-<div class="sheet-backdrop hidden" id="brand-sheet">
-  <div class="sheet">
+<!-- ADD BRAND SHEET -->
+<div class="sheet-backdrop hidden" id="add-brand-sheet" onclick="closeSheet('add-brand-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Brand hinzufügen</div>
-    <div class="sheet-sub">Name erscheint als Pill im Media Kit. URL öffnet beim Tippen.</div>
-    <div class="sheet-field"><label class="sheet-label">Name *</label><input class="sheet-input" id="brand-name" type="text" placeholder="z.B. Nike" autocomplete="off"></div>
     <div class="sheet-field">
-      <label class="sheet-label">Website URL (optional)</label>
-      <input class="sheet-input" id="brand-url" type="text" placeholder="z.B. nike.com" inputmode="url">
-      <div class="sheet-hint">https:// wird automatisch ergänzt</div>
+      <label class="sheet-label">Name</label>
+      <input type="text" class="sheet-input" id="brand-name" placeholder="z.B. Nike"/>
     </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Website (optional)</label>
+      <input type="text" class="sheet-input" id="brand-url" placeholder="nike.com"/>
+      <div class="sheet-hint">https:// wird automatisch ergänzt.</div>
+    </div>
+    <div class="sheet-field"><div class="sheet-hint err" id="brand-hint"></div></div>
     <div class="sheet-actions">
-      <button class="sheet-btn-primary" id="btn-save-brand">Hinzufügen</button>
-      <button class="sheet-btn-cancel" id="btn-cancel-brand">Abbrechen</button>
+      <button class="sheet-btn-primary" onclick="confirmAddBrand()">Hinzufügen</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('add-brand-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: LÖSCHEN -->
-<div class="modal-backdrop hidden" id="delete-modal">
-  <div class="modal-card">
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-backdrop hidden" id="delete-modal" onclick="closeModal('delete-modal')">
+  <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-title">Media Kit löschen?</div>
-    <div class="modal-sub">Die Seite wird von viuno.de entfernt. Deine Daten bleiben gespeichert — du kannst das Kit jederzeit neu erstellen.</div>
+    <div class="modal-sub">Deine Seite wird aus dem Internet entfernt. Deine Einstellungen und Daten bleiben gespeichert — du kannst das Kit jederzeit neu erstellen.</div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" id="btn-cancel-delete">Abbrechen</button>
-      <button class="modal-btn modal-btn-danger" id="btn-confirm-delete">Ja, löschen</button>
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('delete-modal')">Abbrechen</button>
+      <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">Löschen</button>
     </div>
   </div>
 </div>
 
-<div class="toast-wrap" id="toast-wrap" style="display:none"></div>
+<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
 <script type="module">
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-const SB_URL = 'https://bzejndghppuipnedasuv.supabase.co'
-const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
-const sb = createClient(SB_URL, SB_ANON, { auth:{ persistSession:true, autoRefreshToken:true } })
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
 
-let userId=null, slug=null, profile={}, mkData={}, brands=[], offers=new Set(), analyseStats={}, aufrufe=[], isActive=false
+const SB_URL='https://bzejndghppuipnedasuv.supabase.co'
+const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+window.sb=createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
+const sb=window.sb
 
-// SIDEBAR
-window.openSidebar = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('open') }
-window.closeSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open') }
-document.getElementById('sidebar-overlay').addEventListener('click', closeSidebar)
-window.logout = async () => { await sb.auth.signOut(); window.location.href = '/login' }
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){if(n==null||isNaN(+n))return'–';n=+n;if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'k';return n.toString()}
 
-// INIT
-async function init() {
-  const { data:{ session } } = await sb.auth.getSession()
-  if (!session) { window.location.href = '/login'; return }
-  userId = session.user.id
-  await Promise.all([loadProfile(), loadMK(), loadBrands(), loadOffers(), loadAnalyseStats(), loadAufrufe()])
-  renderAll()
-  document.getElementById('app').classList.add('visible')
+window.showToast=function(msg,dur=2800){const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg');t.textContent=msg;w.classList.remove('hidden');clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)}
+window.openSidebar=function(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
+window.closeSidebar=function(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
+window.logout=async function(){try{await sb.auth.signOut()}catch(_){}location.replace('https://viuno.de')}
+window.openSheet=function(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden'}
+window.closeSheet=function(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow=''}
+window.closeModal=function(id){document.getElementById(id).classList.add('hidden')}
+
+// ── State ──
+const S={
+  user:null,
+  profile:null,
+  mkData:{},
+  brands:[],
+  offers:new Set(),
+  analyseStats:{},
+  aufrufe:[],
+  isActive:false,
+  slug:null
 }
 
-function fmt(n) {
-  if (n==null) return '0'
-  if (n>=1000000) return (n/1000000).toFixed(1).replace(/\.0$/,'')+'M'
-  if (n>=1000) return (n/1000).toFixed(1).replace(/\.0$/,'')+'k'
-  return String(n)
-}
-function esc(s){ return String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])) }
-function nu(u){ return u?(u.startsWith('http')?u:'https://'+u):'#' }
-function setVal(id,val){ const el=document.getElementById(id); if(el) el.value=(val!=null&&val!=='')?val:'' }
-
-// LOAD
-async function loadProfile() {
-  const { data } = await sb.from('users')
-    .select('display_name,profile_image_url,bio,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,mediakit_active,subscription_type')
-    .eq('id', userId).single()
-  profile = data || {}
-  isActive = profile.mediakit_active ?? false
-  if (profile.display_name) slug = slugify(profile.display_name)
-  const av = document.getElementById('topbar-avatar')
-  if (profile.profile_image_url) av.innerHTML = `<img src="${profile.profile_image_url}" alt="">`
-  else av.textContent = (profile.display_name||'?')[0].toUpperCase()
-  document.getElementById('sidebar-user-email').textContent = profile.display_name || ''
-  if (profile.subscription_type==='managed') document.getElementById('sidebar-pro-banner').classList.add('show')
-}
-async function loadMK() {
-  const { data } = await sb.from('mediakit_viuno').select('*').eq('user_id', userId).maybeSingle()
-  mkData = data || {}
-}
-async function loadBrands() {
-  const { data } = await sb.from('mediakit_brands').select('*').eq('user_id', userId).order('position',{ascending:true})
-  brands = data || []
-}
-async function loadOffers() {
-  const { data } = await sb.from('mediakit_content_offers').select('offer_type').eq('user_id', userId)
-  offers = new Set((data||[]).map(r=>r.offer_type))
-}
-async function loadAnalyseStats() {
-  const { data } = await sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views').eq('user_id', userId)
-  for (const row of (data||[])) analyseStats[row.platform] = row
-}
-async function loadAufrufe() {
-  const since = new Date(Date.now()-90*86400000).toISOString()
-  const { data } = await sb.from('mediakit_aufrufe').select('viewed_at').eq('user_id', userId).gte('viewed_at', since)
-  aufrufe = data || []
-}
-function slugify(name) {
-  return name.toLowerCase().trim()
+function slugify(name){
+  return String(name||'').toLowerCase().trim()
     .replace(/[äÄ]/g,'ae').replace(/[öÖ]/g,'oe').replace(/[üÜ]/g,'ue').replace(/[ß]/g,'ss')
     .replace(/[^a-z0-9\s_-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')
 }
 
-// RENDER ALL
-function renderAll() {
-  renderStatus(); renderViews(); renderChecklist()
-  renderStats(); renderPlatforms(); renderAudience()
-  renderOffers(); renderBrands(); renderAutofill()
+// ── Init ──
+;(async()=>{
+  const{data:{session}}=await sb.auth.getSession()
+  if(!session){window.location.href='/login';return}
+  S.user=session.user
+  await loadAll()
+  document.getElementById('app').classList.add('visible')
+})()
+
+async function loadAll(){
+  const uid=S.user.id
+  const[profileRes,mkRes,brandsRes,offersRes,analyseRes,aufrufeRes]=await Promise.all([
+    sb.from('users').select('display_name,profile_image_url,bio,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,mediakit_active,subscription_type').eq('id',uid).single(),
+    sb.from('mediakit_viuno').select('*').eq('user_id',uid).maybeSingle(),
+    sb.from('mediakit_brands').select('*').eq('user_id',uid).order('position',{ascending:true}),
+    sb.from('mediakit_content_offers').select('offer_type').eq('user_id',uid),
+    sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views').eq('user_id',uid),
+    sb.from('mediakit_aufrufe').select('viewed_at').eq('user_id',uid).gte('viewed_at',new Date(Date.now()-90*86400000).toISOString())
+  ])
+  S.profile=profileRes.data||{}
+  S.mkData=mkRes.data||{}
+  S.brands=brandsRes.data||[]
+  S.offers=new Set((offersRes.data||[]).map(r=>r.offer_type))
+  S.analyseStats={}
+  for(const row of(analyseRes.data||[])) S.analyseStats[row.platform]=row
+  S.aufrufe=aufrufeRes.data||[]
+  S.isActive=S.profile.mediakit_active===true
+  S.slug=S.profile.display_name?slugify(S.profile.display_name):null
+
+  // Topbar avatar + sidebar
+  const p=S.profile
+  const av=document.getElementById('user-avatar')
+  if(p.profile_image_url)av.innerHTML=`<img src="${esc(p.profile_image_url)}" alt="">`
+  else av.textContent=(p.display_name||S.user.email||'?')[0].toUpperCase()
+  document.getElementById('sidebar-user-email').textContent=S.user.email||''
+  if(p.subscription_type==='managed'||p.subscription_type==='pro')document.getElementById('sidebar-pro-banner')?.classList.add('show')
+
+  renderPage()
 }
 
-function renderStatus() {
-  const active = isActive && slug
-  document.getElementById('status-banner').className = 'status-banner ' + (active?'active':'inactive')
-  document.getElementById('status-dot').className = 'status-dot ' + (active?'active':'inactive')
-  document.getElementById('status-text').childNodes[0].textContent = active ? 'Aktiv' : 'Nicht aktiv'
-  document.getElementById('status-sub').textContent = active ? 'Dein Media Kit ist live auf viuno.de.' : 'Fülle die Daten aus und erstelle dein Media Kit.'
-  document.getElementById('link-bar').style.display = active ? 'flex' : 'none'
-  document.getElementById('views-section').style.display = active ? '' : 'none'
-  document.getElementById('update-section').style.display = active ? '' : 'none'
-  document.getElementById('checklist-section').style.display = active ? 'none' : ''
-  document.getElementById('delete-section').style.display = active ? '' : 'none'
-  if (active) {
-    document.getElementById('link-url').href = `https://viuno.de/kit/${slug}`
-    document.getElementById('link-url').textContent = `viuno.de/kit/${slug}`
+// ── Render Main ──
+function renderPage(){
+  const p=S.profile,mk=S.mkData
+  const isActive=S.isActive&&!!S.slug
+  const kitUrl=S.slug?`viuno.de/kit/${S.slug}`:null
+  const kitFullUrl=S.slug?`https://viuno.de/kit/${S.slug}`:null
+
+  // Aufrufe
+  const now=Date.now()
+  const today=new Date().toISOString().slice(0,10)
+  const viewsToday=S.aufrufe.filter(a=>a.viewed_at?.slice(0,10)===today).length
+  const views7=S.aufrufe.filter(a=>(now-new Date(a.viewed_at).getTime())<7*86400000).length
+  const viewsTotal=S.aufrufe.length
+
+  // Checklist
+  const checks=[
+    {label:'Instagram oder TikTok Handle hinterlegt',ok:!!(p.instagram_handle||p.tiktok_handle)},
+    {label:'Mindestens eine Kennzahl eingetragen',ok:!!(mk.er_instagram||mk.er_tiktok||mk.avg_likes_instagram||mk.avg_views_tiktok)},
+    {label:'Impressum hinterlegt (im Profil)',ok:!!(p.impressum_text&&p.impressum_text.trim())}
+  ]
+  const allChecksOk=checks.every(c=>c.ok)
+
+  // Status section
+  const statusHtml=isActive
+    ?`<div class="status-banner active"><div class="status-dot active"></div>
+        <div class="status-text">Media Kit ist live<span>Deine Seite ist öffentlich erreichbar</span></div></div>
+       <div class="link-bar">
+         <a class="link-url" href="${kitFullUrl}" target="_blank" rel="noopener">${kitUrl} ↗</a>
+         <button class="link-action-btn" onclick="copyLink('${kitFullUrl}')">Kopieren</button>
+       </div>
+       <div class="section">
+         <div class="section-label">Aufrufe</div>
+         <div class="stats-grid">
+           <div class="stat-box"><div class="stat-box-value">${fmt(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
+           <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
+           <div class="stat-box"><div class="stat-box-value">${fmt(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
+         </div>
+       </div>`
+    :`<div class="status-banner inactive"><div class="status-dot inactive"></div>
+        <div class="status-text">Noch nicht aktiv<span>Fülle die Daten aus und erstelle dein Media Kit</span></div></div>`
+
+  // Checklist (nur wenn nicht aktiv)
+  const checklistHtml=!isActive?`<div class="section">
+    <div class="check-card">
+      <div class="check-card-title">Voraussetzungen</div>
+      <div class="check-card-sub">Diese Punkte sind nötig bevor du dein Media Kit erstellen kannst.</div>
+      ${checks.map(c=>`<div class="check-item">
+        <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'·'}</div>
+        <span class="check-label ${c.ok?'ok':'miss'}">${c.label}</span>
+      </div>`).join('')}
+    </div>
+  </div>`:''
+
+  // KENNZAHLEN-Karte
+  const igFollowers=S.analyseStats.instagram?.followers
+  const ttFollowers=S.analyseStats.tiktok?.followers
+  const hasIgStats=mk.er_instagram!=null||mk.avg_likes_instagram!=null||igFollowers!=null
+  const hasTtStats=mk.er_tiktok!=null||mk.avg_views_tiktok!=null||ttFollowers!=null
+  const statsCardHtml=`<div class="section">
+    <div class="section-label">Kennzahlen</div>
+    <div class="data-card">
+      <div class="data-card-head">
+        <div class="data-card-head-text">
+          <div class="data-card-title">Engagement & Follower</div>
+          <div class="data-card-sub">Instagram & TikTok Performance</div>
+        </div>
+        <button class="data-card-edit" onclick="openStatsSheet()">Bearbeiten</button>
+      </div>
+      <div class="data-card-body">
+        ${(hasIgStats||hasTtStats)?'':'<div class="data-empty">Keine Kennzahlen eingetragen</div>'}
+        ${hasIgStats?`
+          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">📸</span>Instagram ER</span><span class="data-row-val ${mk.er_instagram==null?'empty':''}">${mk.er_instagram!=null?mk.er_instagram+'%':'–'}</span></div>
+          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">📸</span>⌀ Likes pro Post</span><span class="data-row-val ${mk.avg_likes_instagram==null?'empty':''}">${mk.avg_likes_instagram!=null?fmt(mk.avg_likes_instagram):'–'}</span></div>
+          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">📸</span>Instagram Follower</span><span class="data-row-val ${igFollowers==null?'empty':''}">${igFollowers!=null?fmt(igFollowers):'–'}</span></div>
+        `:''}
+        ${hasTtStats?`
+          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">🎵</span>TikTok ER</span><span class="data-row-val ${mk.er_tiktok==null?'empty':''}">${mk.er_tiktok!=null?mk.er_tiktok+'%':'–'}</span></div>
+          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">🎵</span>⌀ Views pro Video</span><span class="data-row-val ${mk.avg_views_tiktok==null?'empty':''}">${mk.avg_views_tiktok!=null?fmt(mk.avg_views_tiktok):'–'}</span></div>
+          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">🎵</span>TikTok Follower</span><span class="data-row-val ${ttFollowers==null?'empty':''}">${ttFollowers!=null?fmt(ttFollowers):'–'}</span></div>
+        `:''}
+      </div>
+    </div>
+  </div>`
+
+  // PLATTFORMEN-Karte
+  const ytHandle=p.youtube_handle?p.youtube_handle.replace(/^@/,''):null
+  const thHandle=p.threads_handle?p.threads_handle.replace(/^@/,''):null
+  const hasYt=!!ytHandle
+  const hasTh=!!thHandle
+  const platformsCardHtml=`<div class="section">
+    <div class="section-label">Weitere Plattformen</div>
+    <div class="data-card">
+      <div class="data-card-head">
+        <div class="data-card-head-text">
+          <div class="data-card-title">YouTube & Threads</div>
+          <div class="data-card-sub">Optional zusätzliche Kanäle</div>
+        </div>
+        <button class="data-card-edit" onclick="openPlatformsSheet()">Bearbeiten</button>
+      </div>
+      <div class="data-card-body">
+        ${(!hasYt&&!hasTh)?'<div class="data-empty">Keine weiteren Plattformen</div>':''}
+        ${hasYt?`<div class="data-row"><span class="data-row-label"><span class="data-row-icon">▶️</span>YouTube</span><span class="data-row-val">@${esc(ytHandle)}${mk.followers_youtube?` · ${fmt(mk.followers_youtube)}`:''}</span></div>`:''}
+        ${hasTh?`<div class="data-row"><span class="data-row-label"><span class="data-row-icon">@</span>Threads</span><span class="data-row-val">@${esc(thHandle)}${mk.followers_threads?` · ${fmt(mk.followers_threads)}`:''}</span></div>`:''}
+      </div>
+    </div>
+  </div>`
+
+  // ZIELGRUPPE-Karte
+  const f=mk.gender_female_pct,m=mk.gender_male_pct
+  const c1=mk.top_country_1,c2=mk.top_country_2
+  const hasAudience=f!=null||m!=null||c1||c2
+  const audienceCardHtml=`<div class="section">
+    <div class="section-label">Zielgruppe</div>
+    <div class="data-card">
+      <div class="data-card-head">
+        <div class="data-card-head-text">
+          <div class="data-card-title">Demografie</div>
+          <div class="data-card-sub">Geschlecht & Top-Länder</div>
+        </div>
+        <button class="data-card-edit" onclick="openAudienceSheet()">Bearbeiten</button>
+      </div>
+      <div class="data-card-body">
+        ${!hasAudience?'<div class="data-empty">Noch keine Daten zur Zielgruppe</div>':`
+          ${(f!=null||m!=null)?`<div class="gender-bars">
+            <div class="gender-row"><span class="gender-label">W</span><div class="gender-track"><div class="gender-fill female" style="width:${f||0}%"></div></div><span class="gender-pct">${f!=null?f+'%':'–'}</span></div>
+            <div class="gender-row"><span class="gender-label">M</span><div class="gender-track"><div class="gender-fill male" style="width:${m||0}%"></div></div><span class="gender-pct">${m!=null?m+'%':'–'}</span></div>
+          </div>`:''}
+          ${(c1||c2)?`<div class="data-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:10px"><span class="data-row-label"><span class="data-row-icon">📍</span>Top Länder</span><span class="data-row-val">${[c1,c2].filter(Boolean).map(esc).join(' · ')}</span></div>`:''}
+        `}
+      </div>
+    </div>
+  </div>`
+
+  // ANGEBOTE-Karte
+  const offerLabels={ugc_video:{icon:'🎬',label:'UGC Video'},instagram_reel:{icon:'📸',label:'Instagram Reel'},tiktok_post:{icon:'🎵',label:'TikTok Post'},story_package:{icon:'📱',label:'Story Package'}}
+  const selectedOffers=[...S.offers]
+  const offersCardHtml=`<div class="section">
+    <div class="section-label">Content Angebote</div>
+    <div class="data-card">
+      <div class="data-card-head">
+        <div class="data-card-head-text">
+          <div class="data-card-title">Was du anbietest</div>
+          <div class="data-card-sub">${selectedOffers.length} ausgewählt</div>
+        </div>
+        <button class="data-card-edit" onclick="openSheet('offers-sheet')">Bearbeiten</button>
+      </div>
+      <div class="data-card-body">
+        ${selectedOffers.length===0?'<div class="data-empty">Noch keine Angebote ausgewählt</div>':
+          `<div class="pills">${selectedOffers.map(o=>`<span class="pill"><span class="pill-icon">${offerLabels[o]?.icon||''}</span>${esc(offerLabels[o]?.label||o)}</span>`).join('')}</div>`}
+      </div>
+    </div>
+  </div>`
+
+  // BRANDS-Karte
+  const brandsCardHtml=`<div class="section">
+    <div class="section-label">Marken Kooperationen</div>
+    <div class="data-card">
+      <div class="data-card-head">
+        <div class="data-card-head-text">
+          <div class="data-card-title">Bisherige Marken</div>
+          <div class="data-card-sub">${S.brands.length} / 10</div>
+        </div>
+        <button class="data-card-edit" onclick="openBrandsSheet()">Bearbeiten</button>
+      </div>
+      <div class="data-card-body">
+        ${S.brands.length===0?'<div class="data-empty">Noch keine Marken eingetragen</div>':
+          `<div class="pills">${S.brands.map(b=>`<span class="pill">${esc(b.name)}</span>`).join('')}</div>`}
+      </div>
+    </div>
+  </div>`
+
+  // Action Section
+  let actionHtml=''
+  if(isActive){
+    actionHtml=`<div class="action-stack">
+      <button class="action-btn action-btn-primary" id="btn-update" onclick="generateMK(this,'↻ Media Kit aktualisieren')">↻ Media Kit aktualisieren</button>
+    </div>`
+  }else{
+    actionHtml=`<div class="section">
+      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
+        <input type="checkbox" id="terms-check" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--text);margin-top:2px;cursor:pointer"/>
+        <span style="font-size:13px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#mediakit_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> und bestätige, dass meine Angaben korrekt sind.</span>
+      </label>
+    </div>
+    <div class="action-stack">
+      <button class="action-btn action-btn-primary" id="btn-create" disabled onclick="generateMK(this,'Media Kit erstellen')">Media Kit erstellen</button>
+    </div>`
+  }
+
+  // Delete (nur wenn aktiv)
+  const deleteHtml=isActive
+    ?`<div class="action-stack" style="padding-top:24px;padding-bottom:calc(8px + var(--safe-bottom))">
+        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">🗑 Media Kit löschen</button>
+      </div>`
+    :''
+
+  document.getElementById('page-content').innerHTML=`
+    ${statusHtml}
+    ${checklistHtml}
+    ${statsCardHtml}
+    ${platformsCardHtml}
+    ${audienceCardHtml}
+    ${offersCardHtml}
+    ${brandsCardHtml}
+    ${actionHtml}
+    ${deleteHtml}
+  `
+
+  // Wire terms checkbox
+  if(!isActive){
+    setTimeout(()=>{
+      const tc=document.getElementById('terms-check')
+      const bg=document.getElementById('btn-create')
+      if(!tc||!bg)return
+      const update=()=>{bg.disabled=!tc.checked||!allChecksOk}
+      if(!allChecksOk)bg.title='Bitte alle Punkte der Voraussetzungen erfüllen'
+      tc.addEventListener('change',update)
+      update()
+    },0)
   }
 }
 
-function renderViews() {
-  const now = Date.now(), today = new Date().toISOString().slice(0,10)
-  document.getElementById('views-today').textContent = fmt(aufrufe.filter(a=>a.viewed_at?.slice(0,10)===today).length)
-  document.getElementById('views-7').textContent = fmt(aufrufe.filter(a=>(now-new Date(a.viewed_at).getTime())<7*86400000).length)
-  document.getElementById('views-total').textContent = fmt(aufrufe.length)
+// ── Copy ──
+window.copyLink=function(url){
+  navigator.clipboard.writeText(url).then(()=>showToast('Link kopiert ✓')).catch(()=>showToast('Nicht kopierbar'))
 }
 
-function renderChecklist() {
-  const checks = [
-    { label:'Instagram oder TikTok Handle hinterlegt', ok:!!(profile.instagram_handle||profile.tiktok_handle) },
-    { label:'Mindestens eine Kennzahl eingetragen', ok:!!(mkData.er_instagram||mkData.er_tiktok||mkData.avg_likes_instagram||mkData.avg_views_tiktok) },
-    { label:'Impressum hinterlegt', ok:!!(profile.impressum_text?.trim()) },
-  ]
-  const allOk = checks.every(c=>c.ok)
-  document.getElementById('check-items').innerHTML = checks.map(c=>`
-    <div class="check-item">
-      <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'!'}</div>
-      <div class="check-label ${c.ok?'ok':'miss'}">${esc(c.label)}</div>
-    </div>`).join('')
-  document.getElementById('terms-row').style.display = allOk ? 'flex' : 'none'
-  if (!allOk) document.getElementById('terms-check').checked = false
-  updateCreateBtn()
+// ── Generate / Delete ──
+window.generateMK=async function(btn,origLabel){
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    const res=await fetch(`${SB_URL}/functions/v1/generate-mediakit`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json()
+    if(!res.ok||!body.success)throw new Error(body.error||`HTTP ${res.status}`)
+    showToast('Media Kit live ✓')
+    await loadAll()
+  }catch(err){
+    showToast('Fehler: '+err.message,5000)
+    btn.disabled=false;btn.textContent=origLabel
+  }
 }
 
-function updateCreateBtn() {
-  const allOk = document.querySelectorAll('.check-dot.miss').length === 0
-  const terms = document.getElementById('terms-check').checked
-  document.getElementById('btn-create').disabled = !(allOk && terms)
-}
-document.getElementById('terms-check').addEventListener('change', updateCreateBtn)
-
-function renderStats() {
-  setVal('ig-er', mkData.er_instagram)
-  setVal('ig-likes', mkData.avg_likes_instagram)
-  setVal('ig-followers', analyseStats.instagram?.followers)
-  setVal('tt-er', mkData.er_tiktok)
-  setVal('tt-views', mkData.avg_views_tiktok)
-  setVal('tt-followers', analyseStats.tiktok?.followers)
-}
-
-function renderPlatforms() {
-  setVal('yt-handle', (profile.youtube_handle||'').replace(/^@/,''))
-  setVal('th-handle', (profile.threads_handle||'').replace(/^@/,''))
-  toggleFollowerRows()
-  setVal('yt-followers', mkData.followers_youtube)
-  setVal('th-followers', mkData.followers_threads)
+window.confirmDelete=async function(){
+  closeModal('delete-modal')
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    const res=await fetch(`${SB_URL}/functions/v1/generate-mediakit?action=delete`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json()
+    if(!res.ok||!body.success)throw new Error(body.error||'Fehler')
+    showToast('Media Kit gelöscht')
+    await loadAll()
+  }catch(err){showToast('Fehler: '+err.message,4000)}
 }
 
-function toggleFollowerRows() {
-  document.getElementById('yt-followers-row').style.display = document.getElementById('yt-handle').value.trim() ? '' : 'none'
-  document.getElementById('th-followers-row').style.display = document.getElementById('th-handle').value.trim() ? '' : 'none'
+// ── Stats Sheet ──
+window.openStatsSheet=function(){
+  document.getElementById('s-ig-er').value=S.mkData.er_instagram??''
+  document.getElementById('s-ig-likes').value=S.mkData.avg_likes_instagram??''
+  document.getElementById('s-ig-followers').value=S.analyseStats.instagram?.followers??''
+  document.getElementById('s-tt-er').value=S.mkData.er_tiktok??''
+  document.getElementById('s-tt-views').value=S.mkData.avg_views_tiktok??''
+  document.getElementById('s-tt-followers').value=S.analyseStats.tiktok?.followers??''
+  // Autofill banner
+  const has=Object.keys(S.analyseStats).length>0
+  document.getElementById('autofill-banner').classList.toggle('hidden',!has)
+  switchStatsTab('ig')
+  openSheet('stats-sheet')
 }
-document.getElementById('yt-handle').addEventListener('input', toggleFollowerRows)
-document.getElementById('th-handle').addEventListener('input', toggleFollowerRows)
-
-function renderAudience() {
-  const f = mkData.gender_female_pct ?? null, m = mkData.gender_male_pct ?? null
-  document.getElementById('bar-f').style.width = (f??0)+'%'
-  document.getElementById('bar-m').style.width = (m??0)+'%'
-  document.getElementById('pct-f').textContent = f!=null ? f+'%' : '–'
-  document.getElementById('pct-m').textContent = m!=null ? m+'%' : '–'
-  document.getElementById('country-1-display').textContent = mkData.top_country_1 ? '📍 '+mkData.top_country_1 : '– Land 1 (nicht gesetzt)'
-  document.getElementById('country-2-display').textContent = mkData.top_country_2 ? '📍 '+mkData.top_country_2 : '– Land 2 (nicht gesetzt)'
+window.switchStatsTab=function(tab){
+  document.querySelectorAll('#stats-sheet .sheet-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab))
+  document.querySelectorAll('#stats-sheet .sheet-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===tab))
 }
-
-function renderOffers() {
-  ['ugc_video','instagram_reel','tiktok_post','story_package'].forEach(t=>
-    document.getElementById('chk-'+t)?.classList.toggle('checked', offers.has(t)))
-}
-
-function renderBrands() {
-  const list = document.getElementById('brands-list')
-  list.innerHTML = brands.length===0
-    ? '<div style="font-size:13px;color:var(--muted);text-align:center;padding:12px 0">Noch keine Marken eingetragen.</div>'
-    : brands.map((b,i)=>`
-      <div class="brand-item">
-        <div style="flex:1;min-width:0">
-          <div class="brand-name">${esc(b.name)}</div>
-          ${b.url?`<div class="brand-url-text">${esc(b.url)}</div>`:''}
-        </div>
-        <button class="brand-del" data-idx="${i}">✕</button>
-      </div>`).join('')
-  list.querySelectorAll('.brand-del').forEach(btn=>btn.addEventListener('click',()=>deleteBrand(+btn.dataset.idx)))
-  document.getElementById('brands-count').textContent = `${brands.length} / 10`
-  document.getElementById('btn-add-brand').style.display = brands.length>=10 ? 'none' : 'flex'
-}
-
-function renderAutofill() {
-  document.getElementById('autofill-banner').classList.toggle('hidden', Object.keys(analyseStats).length===0)
-}
-
-// TABS
-document.querySelectorAll('.tab-btn').forEach(btn=>btn.addEventListener('click',()=>{
-  const tab=btn.dataset.tab
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab))
-  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===tab))
-}))
-
-// AUTOFILL
-document.getElementById('btn-autofill').addEventListener('click',()=>{
-  const ig=analyseStats.instagram, tt=analyseStats.tiktok
+window.doAutofill=function(){
+  const ig=S.analyseStats.instagram,tt=S.analyseStats.tiktok
   if(ig){
-    if(ig.engagement_rate!=null) setVal('ig-er',+parseFloat(ig.engagement_rate).toFixed(2))
-    if(ig.avg_likes!=null) setVal('ig-likes',Math.round(ig.avg_likes))
-    if(ig.followers!=null) setVal('ig-followers',ig.followers)
+    if(ig.engagement_rate!=null)document.getElementById('s-ig-er').value=(+parseFloat(ig.engagement_rate).toFixed(2))
+    if(ig.avg_likes!=null)document.getElementById('s-ig-likes').value=Math.round(ig.avg_likes)
+    if(ig.followers!=null)document.getElementById('s-ig-followers').value=ig.followers
   }
   if(tt){
-    if(tt.engagement_rate!=null) setVal('tt-er',+parseFloat(tt.engagement_rate).toFixed(2))
-    if(tt.avg_views!=null) setVal('tt-views',Math.round(tt.avg_views))
-    if(tt.followers!=null) setVal('tt-followers',tt.followers)
+    if(tt.engagement_rate!=null)document.getElementById('s-tt-er').value=(+parseFloat(tt.engagement_rate).toFixed(2))
+    if(tt.avg_views!=null)document.getElementById('s-tt-views').value=Math.round(tt.avg_views)
+    if(tt.followers!=null)document.getElementById('s-tt-followers').value=tt.followers
   }
-  toast('Kennzahlen übernommen ✓')
-})
-
-// SAVE STATS
-document.getElementById('btn-save-stats').addEventListener('click', async()=>{
-  const btn=document.getElementById('btn-save-stats')
-  btn.disabled=true; btn.innerHTML='<span class="spinner-sm dark"></span>'
-  const patch = {
-    user_id:userId,
-    er_instagram:parseFloat(document.getElementById('ig-er').value)||null,
-    avg_likes_instagram:parseInt(document.getElementById('ig-likes').value)||null,
-    er_tiktok:parseFloat(document.getElementById('tt-er').value)||null,
-    avg_views_tiktok:parseInt(document.getElementById('tt-views').value)||null,
+  showToast('Werte übernommen ✓')
+}
+window.saveStats=async function(){
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const patch={
+    user_id:S.user.id,
+    er_instagram:parseFloat(document.getElementById('s-ig-er').value)||null,
+    avg_likes_instagram:parseInt(document.getElementById('s-ig-likes').value)||null,
+    er_tiktok:parseFloat(document.getElementById('s-tt-er').value)||null,
+    avg_views_tiktok:parseInt(document.getElementById('s-tt-views').value)||null,
     updated_at:new Date().toISOString()
   }
-  const { error } = await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
-  btn.disabled=false; btn.textContent='Speichern'
-  if(error){toast('Fehler: '+error.message,true);return}
-  mkData={...mkData,...patch}
-  renderChecklist()
-  toast('Kennzahlen gespeichert ✓')
-})
-
-// SAVE PLATFORMS
-document.getElementById('btn-save-platforms').addEventListener('click', async()=>{
-  const btn=document.getElementById('btn-save-platforms')
-  btn.disabled=true; btn.innerHTML='<span class="spinner-sm dark"></span>'
-  const ytRaw=document.getElementById('yt-handle').value.trim().replace(/^@/,'')
-  const thRaw=document.getElementById('th-handle').value.trim().replace(/^@/,'')
-  const userPatch = {
-    youtube_handle: ytRaw ? '@'+ytRaw : null,
-    threads_handle: thRaw ? '@'+thRaw : null,
+  // Followers werden in analyse_stats gespeichert (legacy struktur beibehalten)
+  const igF=parseInt(document.getElementById('s-ig-followers').value)||null
+  const ttF=parseInt(document.getElementById('s-tt-followers').value)||null
+  const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
+  // Falls Follower-Werte manuell eingetragen wurden und keine analyse_stats existieren — neu anlegen
+  const promises=[]
+  if(igF!=null){
+    promises.push(sb.from('analyse_stats').upsert({user_id:S.user.id,platform:'instagram',followers:igF},{onConflict:'user_id,platform'}))
   }
-  const mkPatch = {
-    user_id:userId,
-    followers_youtube: ytRaw ? (parseInt(document.getElementById('yt-followers').value)||null) : null,
-    followers_threads: thRaw ? (parseInt(document.getElementById('th-followers').value)||null) : null,
+  if(ttF!=null){
+    promises.push(sb.from('analyse_stats').upsert({user_id:S.user.id,platform:'tiktok',followers:ttF},{onConflict:'user_id,platform'}))
+  }
+  if(promises.length)await Promise.all(promises)
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  Object.assign(S.mkData,patch)
+  if(igF!=null)S.analyseStats.instagram={...(S.analyseStats.instagram||{}),followers:igF}
+  if(ttF!=null)S.analyseStats.tiktok={...(S.analyseStats.tiktok||{}),followers:ttF}
+  closeSheet('stats-sheet')
+  showToast('Kennzahlen gespeichert ✓')
+  renderPage()
+}
+
+// ── Platforms Sheet ──
+window.openPlatformsSheet=function(){
+  const yt=S.profile.youtube_handle?S.profile.youtube_handle.replace(/^@/,''):''
+  const th=S.profile.threads_handle?S.profile.threads_handle.replace(/^@/,''):''
+  document.getElementById('s-yt-handle').value=yt
+  document.getElementById('s-th-handle').value=th
+  document.getElementById('s-yt-followers').value=S.mkData.followers_youtube??''
+  document.getElementById('s-th-followers').value=S.mkData.followers_threads??''
+  togglePlatformFollowerFields()
+  openSheet('platforms-sheet')
+}
+function togglePlatformFollowerFields(){
+  const ytVal=document.getElementById('s-yt-handle').value.trim()
+  const thVal=document.getElementById('s-th-handle').value.trim()
+  document.getElementById('s-yt-followers-field').style.display=ytVal?'block':'none'
+  document.getElementById('s-th-followers-field').style.display=thVal?'block':'none'
+}
+document.addEventListener('input',e=>{
+  if(e.target.id==='s-yt-handle'||e.target.id==='s-th-handle')togglePlatformFollowerFields()
+})
+window.savePlatforms=async function(){
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const ytRaw=document.getElementById('s-yt-handle').value.trim().replace(/^@/,'')
+  const thRaw=document.getElementById('s-th-handle').value.trim().replace(/^@/,'')
+  const userPatch={
+    youtube_handle:ytRaw?'@'+ytRaw:null,
+    threads_handle:thRaw?'@'+thRaw:null,
     updated_at:new Date().toISOString()
   }
-  const [r1,r2] = await Promise.all([
-    sb.from('users').update(userPatch).eq('id',userId),
+  const mkPatch={
+    user_id:S.user.id,
+    followers_youtube:ytRaw?(parseInt(document.getElementById('s-yt-followers').value)||null):null,
+    followers_threads:thRaw?(parseInt(document.getElementById('s-th-followers').value)||null):null,
+    updated_at:new Date().toISOString()
+  }
+  const[r1,r2]=await Promise.all([
+    sb.from('users').update(userPatch).eq('id',S.user.id),
     sb.from('mediakit_viuno').upsert(mkPatch,{onConflict:'user_id'})
   ])
-  btn.disabled=false; btn.textContent='Speichern'
-  if(r1.error||r2.error){toast('Fehler beim Speichern',true);return}
-  profile={...profile,...userPatch}; mkData={...mkData,...mkPatch}
-  toggleFollowerRows()
-  toast('Gespeichert ✓')
-})
+  btn.disabled=false;btn.textContent='Speichern'
+  if(r1.error||r2.error){showToast('Fehler beim Speichern',4000);return}
+  Object.assign(S.profile,userPatch)
+  Object.assign(S.mkData,mkPatch)
+  closeSheet('platforms-sheet')
+  showToast('Plattformen gespeichert ✓')
+  renderPage()
+}
 
-// AUDIENCE
-document.getElementById('btn-edit-audience').addEventListener('click',()=>{
-  document.getElementById('inp-female').value=mkData.gender_female_pct??''
-  document.getElementById('inp-male').value=mkData.gender_male_pct??''
-  document.getElementById('inp-country1').value=mkData.top_country_1??''
-  document.getElementById('inp-country2').value=mkData.top_country_2??''
-  document.getElementById('audience-sheet').classList.remove('hidden')
-})
-document.getElementById('btn-cancel-audience').addEventListener('click',()=>document.getElementById('audience-sheet').classList.add('hidden'))
-document.getElementById('audience-sheet').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.add('hidden')})
-document.getElementById('btn-save-audience').addEventListener('click', async()=>{
-  const btn=document.getElementById('btn-save-audience')
-  btn.disabled=true; btn.innerHTML='<span class="spinner-sm"></span>'
+// ── Audience Sheet ──
+window.openAudienceSheet=function(){
+  document.getElementById('s-female').value=S.mkData.gender_female_pct??''
+  document.getElementById('s-male').value=S.mkData.gender_male_pct??''
+  document.getElementById('s-country1').value=S.mkData.top_country_1??''
+  document.getElementById('s-country2').value=S.mkData.top_country_2??''
+  openSheet('audience-sheet')
+}
+window.saveAudience=async function(){
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   const patch={
-    user_id:userId,
-    gender_female_pct:parseInt(document.getElementById('inp-female').value)||null,
-    gender_male_pct:parseInt(document.getElementById('inp-male').value)||null,
-    top_country_1:document.getElementById('inp-country1').value.trim()||null,
-    top_country_2:document.getElementById('inp-country2').value.trim()||null,
+    user_id:S.user.id,
+    gender_female_pct:parseInt(document.getElementById('s-female').value)||null,
+    gender_male_pct:parseInt(document.getElementById('s-male').value)||null,
+    top_country_1:document.getElementById('s-country1').value.trim()||null,
+    top_country_2:document.getElementById('s-country2').value.trim()||null,
     updated_at:new Date().toISOString()
   }
-  const { error } = await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
-  btn.disabled=false; btn.textContent='Speichern'
-  if(error){toast('Fehler: '+error.message,true);return}
-  mkData={...mkData,...patch}
-  document.getElementById('audience-sheet').classList.add('hidden')
-  renderAudience()
-  toast('Zielgruppe gespeichert ✓')
-})
+  const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  Object.assign(S.mkData,patch)
+  closeSheet('audience-sheet')
+  showToast('Zielgruppe gespeichert ✓')
+  renderPage()
+}
 
-// OFFERS
-document.querySelectorAll('.offer-row').forEach(row=>row.addEventListener('click', async()=>{
-  const type=row.dataset.offer
-  if(offers.has(type)){
-    await sb.from('mediakit_content_offers').delete().eq('user_id',userId).eq('offer_type',type)
-    offers.delete(type)
-  } else {
-    await sb.from('mediakit_content_offers').insert({user_id:userId,offer_type:type})
-    offers.add(type)
+// ── Offers ──
+const origOpenSheet=window.openSheet
+window.openSheet=function(id){
+  origOpenSheet(id)
+  if(id==='offers-sheet')renderOffers()
+}
+function renderOffers(){
+  ['ugc_video','instagram_reel','tiktok_post','story_package'].forEach(t=>
+    document.getElementById('chk-'+t)?.classList.toggle('checked',S.offers.has(t)))
+}
+window.toggleOffer=async function(type){
+  if(S.offers.has(type)){
+    await sb.from('mediakit_content_offers').delete().eq('user_id',S.user.id).eq('offer_type',type)
+    S.offers.delete(type)
+  }else{
+    await sb.from('mediakit_content_offers').insert({user_id:S.user.id,offer_type:type})
+    S.offers.add(type)
   }
   renderOffers()
-}))
+  renderPage()
+}
 
-// BRANDS
-document.getElementById('btn-add-brand').addEventListener('click',()=>{
+// Hook in close: re-render when offers sheet closes
+const origCloseSheet=window.closeSheet
+window.closeSheet=function(id){
+  origCloseSheet(id)
+  if(id==='offers-sheet')renderPage()
+}
+
+// ── Brands ──
+window.openBrandsSheet=function(){
+  renderBrandsList()
+  openSheet('brands-sheet')
+}
+function renderBrandsList(){
+  const list=document.getElementById('brands-list')
+  if(!list)return
+  if(S.brands.length===0){
+    list.innerHTML='<div class="empty-links">Noch keine Marken eingetragen</div>'
+  }else{
+    list.innerHTML=S.brands.map(b=>`
+      <div class="brand-row">
+        <div class="brand-row-body">
+          <div class="brand-row-name">${esc(b.name)}</div>
+          ${b.url?`<div class="brand-row-url">${esc(b.url)}</div>`:''}
+        </div>
+        <button class="brand-del" onclick="deleteBrand('${esc(b.id)}')">✕</button>
+      </div>`).join('')
+  }
+  const addBtn=document.getElementById('btn-add-brand')
+  if(addBtn)addBtn.style.display=S.brands.length>=10?'none':'flex'
+}
+window.openAddBrand=function(){
   document.getElementById('brand-name').value=''
   document.getElementById('brand-url').value=''
-  document.getElementById('brand-sheet').classList.remove('hidden')
+  document.getElementById('brand-hint').textContent=''
+  openSheet('add-brand-sheet')
   setTimeout(()=>document.getElementById('brand-name').focus(),50)
-})
-document.getElementById('btn-cancel-brand').addEventListener('click',()=>document.getElementById('brand-sheet').classList.add('hidden'))
-document.getElementById('brand-sheet').addEventListener('click',e=>{if(e.target===e.currentTarget)e.currentTarget.classList.add('hidden')})
-document.getElementById('btn-save-brand').addEventListener('click', async()=>{
+}
+window.confirmAddBrand=async function(){
   const name=document.getElementById('brand-name').value.trim()
-  if(!name){document.getElementById('brand-name').focus();return}
-  if(brands.length>=10){toast('Max. 10 Marken',true);return}
-  const btn=document.getElementById('btn-save-brand')
-  btn.disabled=true; btn.innerHTML='<span class="spinner-sm"></span>'
-  let url=document.getElementById('brand-url').value.trim()
-  if(url&&!url.startsWith('http')) url='https://'+url
-  const { data,error } = await sb.from('mediakit_brands').insert({user_id:userId,name,url:url||null,position:brands.length}).select().single()
-  btn.disabled=false; btn.textContent='Hinzufügen'
-  if(error){toast('Fehler: '+error.message,true);return}
-  brands.push(data)
-  document.getElementById('brand-sheet').classList.add('hidden')
-  renderBrands()
-  toast('Brand hinzugefügt ✓')
-})
-async function deleteBrand(idx) {
-  const b=brands[idx]; if(!b)return
-  const { error } = await sb.from('mediakit_brands').delete().eq('id',b.id)
-  if(error){toast('Fehler: '+error.message,true);return}
-  brands.splice(idx,1); renderBrands(); toast('Brand entfernt')
+  const urlRaw=document.getElementById('brand-url').value.trim()
+  const hint=document.getElementById('brand-hint')
+  if(!name){hint.textContent='Name ist Pflichtfeld';return}
+  if(S.brands.length>=10){hint.textContent='Maximal 10 Marken';return}
+  hint.textContent=''
+  const url=urlRaw?(urlRaw.startsWith('http')?urlRaw:'https://'+urlRaw):null
+  const{data,error}=await sb.from('mediakit_brands').insert({
+    user_id:S.user.id,name,url,position:S.brands.length
+  }).select().single()
+  if(error){hint.textContent='Fehler: '+error.message;return}
+  S.brands.push(data)
+  closeSheet('add-brand-sheet')
+  renderBrandsList()
+  renderPage()
+  showToast('Brand hinzugefügt ✓')
 }
-
-// COPY/OPEN
-document.getElementById('btn-copy').addEventListener('click',()=>navigator.clipboard?.writeText(`https://viuno.de/kit/${slug}`).then(()=>toast('Link kopiert ✓')))
-document.getElementById('btn-open').addEventListener('click',()=>window.open(`https://viuno.de/kit/${slug}`,'_blank'))
-
-// GENERATE
-async function doGenerate(btn, origLabel) {
-  btn.disabled=true; btn.innerHTML='<span class="spinner-sm"></span> Wird erstellt…'
-  try {
-    const { data:{ session } } = await sb.auth.getSession()
-    const res = await fetch(`${SB_URL}/functions/v1/generate-mediakit`,{
-      method:'POST', headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
-    })
-    const body = await res.json()
-    if(!res.ok||body.success===false) throw new Error(body.error||'Fehler')
-    isActive=true
-    await loadAufrufe()
-    renderAll()
-    toast('Media Kit live ✓')
-  } catch(err) { toast('Fehler: '+err.message,true) }
-  finally { btn.disabled=false; btn.textContent=origLabel }
+window.deleteBrand=async function(id){
+  await sb.from('mediakit_brands').delete().eq('id',id).eq('user_id',S.user.id)
+  S.brands=S.brands.filter(b=>b.id!==id)
+  renderBrandsList()
+  renderPage()
+  showToast('Brand entfernt')
 }
-document.getElementById('btn-update').addEventListener('click',()=>doGenerate(document.getElementById('btn-update'),'Media Kit aktualisieren'))
-document.getElementById('btn-create').addEventListener('click',()=>doGenerate(document.getElementById('btn-create'),'Media Kit erstellen'))
-
-// DELETE
-document.getElementById('btn-delete').addEventListener('click',()=>document.getElementById('delete-modal').classList.remove('hidden'))
-document.getElementById('btn-cancel-delete').addEventListener('click',()=>document.getElementById('delete-modal').classList.add('hidden'))
-document.getElementById('btn-confirm-delete').addEventListener('click', async()=>{
-  const btn=document.getElementById('btn-confirm-delete')
-  btn.disabled=true; btn.textContent='…'
-  try {
-    const { data:{ session } } = await sb.auth.getSession()
-    const res = await fetch(`${SB_URL}/functions/v1/generate-mediakit?action=delete`,{
-      method:'POST', headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
-    })
-    const body = await res.json()
-    if(!res.ok||body.success===false) throw new Error(body.error||'Fehler')
-    isActive=false
-    document.getElementById('delete-modal').classList.add('hidden')
-    renderAll()
-    toast('Media Kit gelöscht')
-  } catch(err){toast('Fehler: '+err.message,true)}
-  finally{btn.disabled=false;btn.textContent='Ja, löschen'}
-})
-
-// TOAST
-function toast(msg,isError=false){
-  const wrap=document.getElementById('toast-wrap')
-  wrap.style.display='block'
-  const t=document.createElement('div')
-  t.className='toast'; t.style.background=isError?'#c0392b':'var(--text)'; t.textContent=msg
-  wrap.innerHTML=''; wrap.appendChild(t)
-  setTimeout(()=>{wrap.style.display='none'},2800)
-}
-
-init()
 </script>
 </body>
 </html>
