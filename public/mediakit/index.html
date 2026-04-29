@@ -88,6 +88,8 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .data-row-icon{font-size:14px}
 .data-row-val{font-weight:600;color:var(--text)}
 .data-row-val.empty{color:var(--subtle);font-weight:400;font-style:italic}
+.data-subhead{font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.05em;padding:6px 0 2px;margin-top:0}
+.data-subhead.with-divider{margin-top:10px;padding-top:12px;border-top:1px solid var(--border)}
 .data-empty{font-size:12px;color:var(--subtle);text-align:center;padding:8px 0;font-style:italic}
 
 /* GENDER BARS */
@@ -265,7 +267,7 @@ input,textarea,select{font-size:16px!important}
     <div class="sheet-title">Kennzahlen</div>
     <div class="sheet-sub">Engagement Rate, durchschnittliche Likes/Views und Follower-Zahlen.</div>
     <div class="autofill-banner hidden" id="autofill-banner">
-      <div class="autofill-text">📊 Analysedaten verfügbar — automatisch übernehmen?</div>
+      <div class="autofill-text">Analysedaten verfügbar — automatisch übernehmen?</div>
       <button class="autofill-btn" onclick="doAutofill()">Übernehmen</button>
     </div>
     <div class="sheet-tabs">
@@ -375,22 +377,18 @@ input,textarea,select{font-size:16px!important}
     <div class="sheet-sub">Was möchtest du Marken anbieten? Tippe zum Auswählen.</div>
     <div class="offer-list">
       <button class="offer-row" data-offer="ugc_video" onclick="toggleOffer('ugc_video')">
-        <span class="offer-icon">🎬</span>
         <span class="offer-label">UGC Video</span>
         <span class="offer-check" id="chk-ugc_video"></span>
       </button>
       <button class="offer-row" data-offer="instagram_reel" onclick="toggleOffer('instagram_reel')">
-        <span class="offer-icon">📸</span>
         <span class="offer-label">Instagram Reel</span>
         <span class="offer-check" id="chk-instagram_reel"></span>
       </button>
       <button class="offer-row" data-offer="tiktok_post" onclick="toggleOffer('tiktok_post')">
-        <span class="offer-icon">🎵</span>
         <span class="offer-label">TikTok Post</span>
         <span class="offer-check" id="chk-tiktok_post"></span>
       </button>
       <button class="offer-row" data-offer="story_package" onclick="toggleOffer('story_package')">
-        <span class="offer-icon">📱</span>
         <span class="offer-label">Story Package</span>
         <span class="offer-check" id="chk-story_package"></span>
       </button>
@@ -602,14 +600,16 @@ function renderPage(){
       <div class="data-card-body">
         ${(hasIgStats||hasTtStats)?'':'<div class="data-empty">Keine Kennzahlen eingetragen</div>'}
         ${hasIgStats?`
-          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">📸</span>Instagram ER</span><span class="data-row-val ${mk.er_instagram==null?'empty':''}">${mk.er_instagram!=null?mk.er_instagram+'%':'–'}</span></div>
-          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">📸</span>⌀ Likes pro Post</span><span class="data-row-val ${mk.avg_likes_instagram==null?'empty':''}">${mk.avg_likes_instagram!=null?fmt(mk.avg_likes_instagram):'–'}</span></div>
-          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">📸</span>Instagram Follower</span><span class="data-row-val ${igFollowers==null?'empty':''}">${igFollowers!=null?fmt(igFollowers):'–'}</span></div>
+          <div class="data-subhead">Instagram</div>
+          <div class="data-row"><span class="data-row-label">Engagement Rate</span><span class="data-row-val ${mk.er_instagram==null?'empty':''}">${mk.er_instagram!=null?mk.er_instagram+'%':'–'}</span></div>
+          <div class="data-row"><span class="data-row-label">⌀ Likes pro Post</span><span class="data-row-val ${mk.avg_likes_instagram==null?'empty':''}">${mk.avg_likes_instagram!=null?fmt(mk.avg_likes_instagram):'–'}</span></div>
+          <div class="data-row"><span class="data-row-label">Follower</span><span class="data-row-val ${igFollowers==null?'empty':''}">${igFollowers!=null?fmt(igFollowers):'–'}</span></div>
         `:''}
         ${hasTtStats?`
-          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">🎵</span>TikTok ER</span><span class="data-row-val ${mk.er_tiktok==null?'empty':''}">${mk.er_tiktok!=null?mk.er_tiktok+'%':'–'}</span></div>
-          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">🎵</span>⌀ Views pro Video</span><span class="data-row-val ${mk.avg_views_tiktok==null?'empty':''}">${mk.avg_views_tiktok!=null?fmt(mk.avg_views_tiktok):'–'}</span></div>
-          <div class="data-row"><span class="data-row-label"><span class="data-row-icon">🎵</span>TikTok Follower</span><span class="data-row-val ${ttFollowers==null?'empty':''}">${ttFollowers!=null?fmt(ttFollowers):'–'}</span></div>
+          <div class="data-subhead${hasIgStats?' with-divider':''}">TikTok</div>
+          <div class="data-row"><span class="data-row-label">Engagement Rate</span><span class="data-row-val ${mk.er_tiktok==null?'empty':''}">${mk.er_tiktok!=null?mk.er_tiktok+'%':'–'}</span></div>
+          <div class="data-row"><span class="data-row-label">⌀ Views pro Video</span><span class="data-row-val ${mk.avg_views_tiktok==null?'empty':''}">${mk.avg_views_tiktok!=null?fmt(mk.avg_views_tiktok):'–'}</span></div>
+          <div class="data-row"><span class="data-row-label">Follower</span><span class="data-row-val ${ttFollowers==null?'empty':''}">${ttFollowers!=null?fmt(ttFollowers):'–'}</span></div>
         `:''}
       </div>
     </div>
@@ -632,8 +632,8 @@ function renderPage(){
       </div>
       <div class="data-card-body">
         ${(!hasYt&&!hasTh)?'<div class="data-empty">Keine weiteren Plattformen</div>':''}
-        ${hasYt?`<div class="data-row"><span class="data-row-label"><span class="data-row-icon">▶️</span>YouTube</span><span class="data-row-val">@${esc(ytHandle)}${mk.followers_youtube?` · ${fmt(mk.followers_youtube)}`:''}</span></div>`:''}
-        ${hasTh?`<div class="data-row"><span class="data-row-label"><span class="data-row-icon">@</span>Threads</span><span class="data-row-val">@${esc(thHandle)}${mk.followers_threads?` · ${fmt(mk.followers_threads)}`:''}</span></div>`:''}
+        ${hasYt?`<div class="data-row"><span class="data-row-label">YouTube</span><span class="data-row-val">@${esc(ytHandle)}${mk.followers_youtube?` · ${fmt(mk.followers_youtube)}`:''}</span></div>`:''}
+        ${hasTh?`<div class="data-row"><span class="data-row-label">Threads</span><span class="data-row-val">@${esc(thHandle)}${mk.followers_threads?` · ${fmt(mk.followers_threads)}`:''}</span></div>`:''}
       </div>
     </div>
   </div>`
@@ -658,14 +658,14 @@ function renderPage(){
             <div class="gender-row"><span class="gender-label">W</span><div class="gender-track"><div class="gender-fill female" style="width:${f||0}%"></div></div><span class="gender-pct">${f!=null?f+'%':'–'}</span></div>
             <div class="gender-row"><span class="gender-label">M</span><div class="gender-track"><div class="gender-fill male" style="width:${m||0}%"></div></div><span class="gender-pct">${m!=null?m+'%':'–'}</span></div>
           </div>`:''}
-          ${(c1||c2)?`<div class="data-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:10px"><span class="data-row-label"><span class="data-row-icon">📍</span>Top Länder</span><span class="data-row-val">${[c1,c2].filter(Boolean).map(esc).join(' · ')}</span></div>`:''}
+          ${(c1||c2)?`<div class="data-row" style="border-top:1px solid var(--border);margin-top:6px;padding-top:10px"><span class="data-row-label">Top Länder</span><span class="data-row-val">${[c1,c2].filter(Boolean).map(esc).join(' · ')}</span></div>`:''}
         `}
       </div>
     </div>
   </div>`
 
   // ANGEBOTE-Karte
-  const offerLabels={ugc_video:{icon:'🎬',label:'UGC Video'},instagram_reel:{icon:'📸',label:'Instagram Reel'},tiktok_post:{icon:'🎵',label:'TikTok Post'},story_package:{icon:'📱',label:'Story Package'}}
+  const offerLabels={ugc_video:'UGC Video',instagram_reel:'Instagram Reel',tiktok_post:'TikTok Post',story_package:'Story Package'}
   const selectedOffers=[...S.offers]
   const offersCardHtml=`<div class="section">
     <div class="section-label">Content Angebote</div>
@@ -679,7 +679,7 @@ function renderPage(){
       </div>
       <div class="data-card-body">
         ${selectedOffers.length===0?'<div class="data-empty">Noch keine Angebote ausgewählt</div>':
-          `<div class="pills">${selectedOffers.map(o=>`<span class="pill"><span class="pill-icon">${offerLabels[o]?.icon||''}</span>${esc(offerLabels[o]?.label||o)}</span>`).join('')}</div>`}
+          `<div class="pills">${selectedOffers.map(o=>`<span class="pill">${esc(offerLabels[o]||o)}</span>`).join('')}</div>`}
       </div>
     </div>
   </div>`
@@ -706,7 +706,7 @@ function renderPage(){
   let actionHtml=''
   if(isActive){
     actionHtml=`<div class="action-stack">
-      <button class="action-btn action-btn-primary" id="btn-update" onclick="generateMK(this,'↻ Media Kit aktualisieren')">↻ Media Kit aktualisieren</button>
+      <button class="action-btn action-btn-primary" id="btn-update" onclick="generateMK(this,'Media Kit aktualisieren')">Media Kit aktualisieren</button>
     </div>`
   }else{
     actionHtml=`<div class="section">
@@ -723,7 +723,7 @@ function renderPage(){
   // Delete (nur wenn aktiv)
   const deleteHtml=isActive
     ?`<div class="action-stack" style="padding-top:24px;padding-bottom:calc(8px + var(--safe-bottom))">
-        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">🗑 Media Kit löschen</button>
+        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">Media Kit löschen</button>
       </div>`
     :''
 
