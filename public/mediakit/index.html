@@ -174,6 +174,16 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .modal-btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
 .modal-btn-danger{background:var(--red);color:white}
 
+/* EDIT PAGE (Vollseite, slide-in von rechts) */
+.edit-page{position:fixed;top:0;left:0;right:0;bottom:0;background:var(--bg);z-index:60;transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;visibility:hidden}
+.edit-page.open{transform:translateX(0);visibility:visible}
+.edit-page-topbar{position:sticky;top:0;background:rgba(245,244,242,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 16px;height:var(--nav-h);display:flex;align-items:center;gap:12px;flex-shrink:0;z-index:1}
+.edit-page-back{width:36px;height:36px;border-radius:99px;background:var(--surface2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);flex-shrink:0;font-family:inherit;font-size:18px;line-height:1;padding:0}
+.edit-page-back:hover{background:var(--border)}
+.edit-page-title{font-size:15px;font-weight:700;letter-spacing:-.03em;flex:1}
+.edit-page-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 0 calc(40px + var(--safe-bottom))}
+.edit-page-intro{padding:0 20px 12px;font-size:13px;color:var(--muted);line-height:1.5}
+
 /* SIDEBAR */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:80;pointer-events:none;transition:background .25s}
 .sidebar-overlay.open{background:rgba(0,0,0,.35);pointer-events:auto}
@@ -272,18 +282,14 @@ input,textarea,select{font-size:16px!important}
   </div>
 </div>
 
-<!-- EDIT ACTIONS SHEET (Hauptmenü) -->
-<div class="sheet-backdrop hidden" id="edit-actions-sheet" onclick="closeSheet('edit-actions-sheet')">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-header">
-      <div class="sheet-header-text">
-        <div class="sheet-title">Bearbeiten</div>
-        <div class="sheet-sub" style="padding-bottom:0">Tippe auf einen Bereich um die Daten einzutragen oder zu ändern.</div>
-      </div>
-      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
-    </div>
-    <div style="height:16px"></div>
+<!-- EDIT PAGE (Vollseite, ersetzt das alte edit-actions-sheet) -->
+<div class="edit-page" id="edit-page">
+  <div class="edit-page-topbar">
+    <button class="edit-page-back" onclick="closeEditPage()" aria-label="Zurück">←</button>
+    <div class="edit-page-title">Bearbeiten</div>
+  </div>
+  <div class="edit-page-content">
+    <div class="edit-page-intro">Tippe auf einen Bereich um die Daten einzutragen oder zu ändern.</div>
     <div class="edit-action-list" id="edit-action-list"></div>
   </div>
 </div>
@@ -654,17 +660,31 @@ window.openSheet=function(id){document.getElementById(id).classList.remove('hidd
 window.closeSheet=function(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow=''}
 window.closeModal=function(id){document.getElementById(id).classList.add('hidden')}
 
-// Schließt alle Sheets komplett (X-Button)
-window.closeAllSheets=function(){
-  document.querySelectorAll('.sheet-backdrop').forEach(el=>el.classList.add('hidden'))
+// Edit-Page öffnen (Vollseite, slide-in von rechts)
+window.openEditPage=function(){
+  document.getElementById('edit-page').classList.add('open')
+  document.body.style.overflow='hidden'
+}
+// Edit-Page schließen (zurück zur Hauptseite)
+window.closeEditPage=function(){
+  document.getElementById('edit-page').classList.remove('open')
   document.body.style.overflow=''
 }
 
-// Schließt aktuelles Sub-Sheet und öffnet das Bearbeiten-Hauptmenü
+// Schließt alle Sheets UND die Edit-Page komplett (X-Button in Sub-Sheets)
+window.closeAllSheets=function(){
+  document.querySelectorAll('.sheet-backdrop').forEach(el=>el.classList.add('hidden'))
+  document.getElementById('edit-page').classList.remove('open')
+  document.body.style.overflow=''
+}
+
+// Schließt aktuelles Sub-Sheet, Edit-Page bleibt offen (Save/Cancel)
 window.backToEditMenu=function(currentSheetId){
   document.getElementById(currentSheetId).classList.add('hidden')
-  // Sofort öffnen damit Body-Scroll gesperrt bleibt
-  setTimeout(()=>openEditMenu(),50)
+  // Edit-Page neu rendern damit Status-Badges aktuell sind
+  setTimeout(()=>renderEditMenu(),50)
+  // Body-Scroll bleibt gesperrt weil Edit-Page noch offen ist
+  document.body.style.overflow='hidden'
 }
 
 // ── State ──
@@ -843,6 +863,12 @@ function getChecks(){
 
 // ── Edit-Menu öffnen: rendert die Liste mit Status pro Bereich ──
 window.openEditMenu=function(){
+  renderEditMenu()
+  openEditPage()
+}
+
+// Rendert nur die Liste (für Updates ohne erneutes Öffnen)
+function renderEditMenu(){
   const p=S.profile||{},mk=S.mkData||{}
   const profileOk=!!(p.profile_image_url&&p.bio&&p.bio.trim())
   const profileSub=[p.niche_category||null,p.city||null].filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Bild & Bio fehlen')
@@ -871,7 +897,7 @@ window.openEditMenu=function(){
   ]
 
   document.getElementById('edit-action-list').innerHTML=items.map(it=>`
-    <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');setTimeout(()=>openEditSubSheet('${it.id}'),50)">
+    <button class="edit-action-row" onclick="openEditSubSheet('${it.id}')">
       <span class="edit-action-icon">${it.icon}</span>
       <div class="edit-action-body">
         <div class="edit-action-label">${esc(it.label)}</div>
@@ -880,8 +906,6 @@ window.openEditMenu=function(){
       ${it.statusLabel?`<span class="edit-action-status ${it.status}">${esc(it.statusLabel)}</span>`:''}
       <span class="edit-action-arrow">›</span>
     </button>`).join('')
-
-  openSheet('edit-actions-sheet')
 }
 
 window.openEditSubSheet=function(id){
@@ -1031,10 +1055,9 @@ window.saveProfile=async function(){
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
   Object.assign(S.profile,patch)
-  closeSheet('profile-sheet')
   showToast('Profil gespeichert ✓')
   renderPage()
-  setTimeout(()=>openEditMenu(),50)
+  backToEditMenu('profile-sheet')
 }
 
 // ── Save Contact ──
@@ -1052,10 +1075,9 @@ window.saveContact=async function(){
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
   S.profile.contact_email=email||null
-  closeSheet('contact-sheet')
   showToast('Kontakt gespeichert ✓')
   renderPage()
-  setTimeout(()=>openEditMenu(),50)
+  backToEditMenu('contact-sheet')
 }
 
 // ── Stats Sheet ──
@@ -1120,10 +1142,9 @@ window.saveStats=async function(){
   if(r1.error||r2.error){showToast('Fehler beim Speichern',4000);return}
   Object.assign(S.profile,userPatch)
   S.mkData=Object.assign(S.mkData||{},mkPatch)
-  closeSheet('stats-sheet')
   showToast('Kennzahlen gespeichert ✓')
   renderPage()
-  setTimeout(()=>openEditMenu(),50)
+  backToEditMenu('stats-sheet')
 }
 
 // ── Platforms Sheet ──
@@ -1169,10 +1190,9 @@ window.savePlatforms=async function(){
   if(r1.error||r2.error){showToast('Fehler beim Speichern',4000);return}
   Object.assign(S.profile,userPatch)
   S.mkData=Object.assign(S.mkData||{},mkPatch)
-  closeSheet('platforms-sheet')
   showToast('Plattformen gespeichert ✓')
   renderPage()
-  setTimeout(()=>openEditMenu(),50)
+  backToEditMenu('platforms-sheet')
 }
 
 // ── Audience Sheet ──
@@ -1198,10 +1218,9 @@ window.saveAudience=async function(){
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
   S.mkData=Object.assign(S.mkData||{},patch)
-  closeSheet('audience-sheet')
   showToast('Zielgruppe gespeichert ✓')
   renderPage()
-  setTimeout(()=>openEditMenu(),50)
+  backToEditMenu('audience-sheet')
 }
 
 // ── Offers ──
@@ -1278,10 +1297,9 @@ window.saveImpressum=async function(){
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
   S.profile.impressum_text=text
-  closeSheet('impressum-sheet')
   showToast('Impressum gespeichert ✓')
   renderPage()
-  setTimeout(()=>openEditMenu(),50)
+  backToEditMenu('impressum-sheet')
 }
 
 // ── Sprach-Auswahl ──
@@ -1301,10 +1319,9 @@ window.saveLanguage=async function(){
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
   S.mkData=Object.assign(S.mkData||{},patch)
-  closeSheet('language-sheet')
   showToast('Sprache gespeichert ✓')
   renderPage()
-  setTimeout(()=>openEditMenu(),50)
+  backToEditMenu('language-sheet')
 }
 </script>
 </body>
