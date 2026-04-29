@@ -115,30 +115,32 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .btn-add-link:hover{background:var(--surface2);color:var(--text)}
 .empty-links{text-align:center;padding:24px;color:var(--muted);font-size:13px}
 
-/* PREVIEW PHONE — kleine Vorschau wie die Live-Seite aussieht */
-.preview-wrap{padding:14px 20px 0}
-.preview-frame{margin:0 auto;width:240px;max-width:100%;border-radius:24px;border:8px solid #1a1a1a;background:#000;overflow:hidden;box-shadow:0 6px 24px rgba(0,0,0,.12);position:relative}
-.preview-screen{aspect-ratio:9/16;display:flex;flex-direction:column;align-items:center;padding:18px 14px 12px;text-align:center;overflow:hidden;position:relative}
-.preview-screen.theme-color{background:linear-gradient(160deg,#7C5CFC 0%,#C23D8E 50%,#F59E0B 100%);color:#fff}
-.preview-screen.theme-dark{background:#0D1B2A;color:#E8F0FE}
-.preview-screen.theme-clean{background:#FAFAFA;color:#111}
-.preview-avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:16px;font-weight:600;overflow:hidden;flex-shrink:0;margin-bottom:8px}
-.theme-color .preview-avatar{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);color:#fff}
-.theme-dark .preview-avatar{background:rgba(91,138,245,.18);border:1px solid rgba(91,138,245,.3);color:#E8F0FE}
-.theme-clean .preview-avatar{background:#ECECEC;border:1px solid rgba(0,0,0,.12);color:#111}
-.preview-avatar img{width:100%;height:100%;object-fit:cover}
-.preview-name{font-size:11px;font-weight:600;letter-spacing:-.01em;margin-bottom:3px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.preview-bio{font-size:9px;line-height:1.35;opacity:.8;max-width:90%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;min-height:23px}
-.preview-btn-stack{width:100%;display:flex;flex-direction:column;gap:5px;align-items:center}
-.preview-btn{width:100%;height:18px;border-radius:5px;font-size:8px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:4px}
-.theme-color .preview-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff}
-.theme-color .preview-btn-primary{background:#fff;color:#1A1025;border:none;font-weight:600}
-.theme-dark .preview-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#E8F0FE}
-.theme-dark .preview-btn-primary{background:#3D6FD4;color:#fff;border:none;font-weight:600}
-.theme-clean .preview-btn{background:#fff;border:1px solid rgba(0,0,0,.1);color:#111}
-.theme-clean .preview-btn-primary{background:#111;color:#fff;border:none;font-weight:600}
-.preview-empty{opacity:.5;font-style:italic}
-.preview-caption{font-size:11px;color:var(--muted);text-align:center;padding:10px 20px 0;line-height:1.4}
+/* THEME CARDS — drei Theme-Vorschau-Bilder */
+.theme-cards-wrap{padding:14px 20px 0}
+.theme-cards-title{font-size:13px;font-weight:600;color:var(--text);text-align:center;margin-bottom:4px}
+.theme-cards-sub{font-size:11px;color:var(--muted);text-align:center;margin-bottom:14px;line-height:1.4}
+.theme-cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.theme-card{background:var(--surface);border:2px solid var(--border);border-radius:12px;padding:6px;cursor:pointer;transition:border-color .15s,transform .12s;display:flex;flex-direction:column;align-items:center;gap:6px}
+.theme-card:hover{border-color:var(--border-strong)}
+.theme-card.selected{border-color:var(--text)}
+.theme-card:active{transform:scale(.97)}
+.theme-card-img{width:100%;aspect-ratio:9/16;border-radius:8px;background:var(--surface2);object-fit:cover;display:block}
+.theme-card-name{font-size:11px;font-weight:600;color:var(--text)}
+.theme-card.selected .theme-card-name{color:var(--text)}
+
+/* LOADING OVERLAY — vollbild beim BioLink-Generieren */
+.loading-overlay{position:fixed;inset:0;background:rgba(245,244,242,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;animation:fadeIn .25s ease-out}
+.loading-overlay.hidden{display:none}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.loading-spinner-big{width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:24px}
+.loading-title{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:8px}
+.loading-status{font-size:14px;color:var(--muted);min-height:20px;animation:statusFade .4s ease-out}
+@keyframes statusFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.loading-dots{display:inline-flex;gap:4px;margin-left:4px}
+.loading-dots span{width:4px;height:4px;background:var(--muted);border-radius:50%;animation:dotPulse 1.2s infinite}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotPulse{0%,60%,100%{opacity:.3;transform:scale(.8)}30%{opacity:1;transform:scale(1)}}
 
 /* SHEET / MODAL */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
@@ -531,6 +533,13 @@ input,textarea,select{font-size:16px!important}
   </div>
 </div>
 
+<!-- LOADING OVERLAY — vollbild beim Erstellen -->
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="loading-spinner-big"></div>
+  <div class="loading-title">BioLink wird erstellt</div>
+  <div class="loading-status" id="loading-status">Vorbereitung<span class="loading-dots"><span></span><span></span><span></span></span></div>
+</div>
+
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
 <script type="module">
@@ -671,8 +680,8 @@ function renderPage(){
         <div><div class="status-text">Seite ist inaktiv<span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span></div></div></div>`
     :''
 
-  // Vorschau (nur im inactive Zustand — wird zusammen mit Checkliste ausgeblendet wenn live)
-  const previewHtml=!isActive?buildPreview():''
+  // Theme-Cards (nur im inactive Zustand — wird zusammen mit Checkliste ausgeblendet wenn live)
+  const themeCardsHtml=!isActive?buildThemeCards():''
 
   // Checklist (always shown if not all ok)
   const checklistHtml=!allOk?`<div class="section">
@@ -714,7 +723,7 @@ function renderPage(){
 
   page.innerHTML=`
     ${statusHtml}
-    ${previewHtml}
+    ${themeCardsHtml}
     ${checklistHtml}
     ${termsHtml}
     ${deleteHtml}`
@@ -779,49 +788,40 @@ function buildChart(aufrufe){
   </div>`
 }
 
-// ── Build BioLink-Vorschau (Mockup) ──
-function buildPreview(){
-  const p=S.profile||{}
-  const theme=S.theme||'color'
-  const name=p.display_name||p.full_name||''
-  const bio=p.bio||''
-  const hasIg=!!p.instagram_handle
-  const hasTt=!!p.tiktok_handle
-  const hasYt=!!p.youtube_handle
-  const hasTh=!!p.threads_handle
-  const hasAnySocial=hasIg||hasTt||hasYt||hasTh
-
-  const avatarHtml=p.profile_image_url
-    ?`<img src="${esc(p.profile_image_url)}" alt="">`
-    :(name?esc(name[0].toUpperCase()):'<span style="opacity:.5">?</span>')
-
-  const nameHtml=name?esc(name):'<span class="preview-empty">Dein Name</span>'
-  const bioHtml=bio?esc(bio):'<span class="preview-empty">Deine Bio erscheint hier</span>'
-
-  // Social-Buttons (nur die echten zeigen, sonst Platzhalter)
-  let btnsHtml=''
-  if(hasAnySocial){
-    if(hasIg)btnsHtml+='<div class="preview-btn">Instagram</div>'
-    if(hasTt)btnsHtml+='<div class="preview-btn">TikTok</div>'
-    if(hasYt)btnsHtml+='<div class="preview-btn">YouTube</div>'
-    if(hasTh)btnsHtml+='<div class="preview-btn">Threads</div>'
-  }else{
-    btnsHtml='<div class="preview-btn preview-empty">Dein Social-Kanal</div>'
-  }
-  // "Anfragen" Primary-Button immer dabei (gehört fest zur Live-Seite)
-  btnsHtml+='<div class="preview-btn preview-btn-primary">Anfragen</div>'
-
-  return `<div class="preview-wrap">
-    <div class="preview-frame">
-      <div class="preview-screen theme-${theme}">
-        <div class="preview-avatar">${avatarHtml}</div>
-        <div class="preview-name">${nameHtml}</div>
-        <div class="preview-bio">${bioHtml}</div>
-        <div class="preview-btn-stack">${btnsHtml}</div>
-      </div>
-    </div>
-    <div class="preview-caption">So sieht deine Seite live aus</div>
+// ── Build Theme-Cards (3 Vorschau-Bilder, klickbar zum Theme-Wechseln) ──
+const THEME_IMG_BASE='https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/Website/biolink/'
+const THEMES=[
+  {key:'color',name:'Color',img:'theme-color.jpg'},
+  {key:'dark',name:'Dark',img:'theme-dark.jpg'},
+  {key:'clean',name:'Clean',img:'theme-light.jpg'}
+]
+function buildThemeCards(){
+  const cards=THEMES.map(t=>`
+    <button class="theme-card ${S.theme===t.key?'selected':''}" data-theme-card="${t.key}" onclick="pickThemeCard('${t.key}')">
+      <img class="theme-card-img" src="${THEME_IMG_BASE}${t.img}" alt="${t.name} Theme" loading="lazy"/>
+      <span class="theme-card-name">${t.name}</span>
+    </button>`).join('')
+  return `<div class="theme-cards-wrap">
+    <div class="theme-cards-title">Erstelle deine BioLink-Seite</div>
+    <div class="theme-cards-sub">Wähle ein Design — du kannst es jederzeit ändern</div>
+    <div class="theme-cards-grid">${cards}</div>
   </div>`
+}
+
+window.pickThemeCard=async function(theme){
+  S.theme=theme
+  // UI sofort updaten (alle Karten)
+  document.querySelectorAll('[data-theme-card]').forEach(el=>{
+    el.classList.toggle('selected',el.getAttribute('data-theme-card')===theme)
+  })
+  // Auch die Theme-Anzeige im Edit-Sheet aktualisieren
+  const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
+  const langLabels={de:'Deutsch',en:'English',it:'Italiano'}
+  const lblEl=document.getElementById('current-theme-lang')
+  if(lblEl)lblEl.textContent=`${themeLabels[theme]||'Color'} · ${langLabels[S.lang]||'Deutsch'}`
+  // Im Hintergrund speichern (falls schon ein biolink_viuno-Eintrag existiert oder neu)
+  await sb.from('biolink_viuno').upsert({user_id:S.user.id,theme,default_language:S.lang,updated_at:new Date().toISOString()},{onConflict:'user_id'})
+  if(S.biolink){S.biolink.theme=theme}else{S.biolink={user_id:S.user.id,theme,default_language:S.lang}}
 }
 
 function slugify(name){
@@ -835,10 +835,46 @@ window.copyLink=function(url){
   navigator.clipboard.writeText(url).then(()=>showToast('Link kopiert ✓')).catch(()=>{showToast('Nicht kopierbar')})
 }
 
+// ── Loading Overlay ──
+const LOADING_STEPS=[
+  'BioLink wird erstellt',
+  'Layout wird generiert',
+  'Wird auf den Server geladen',
+  'Fast fertig'
+]
+function showLoadingOverlay(){
+  document.getElementById('loading-overlay').classList.remove('hidden')
+  document.body.style.overflow='hidden'
+  let i=0
+  const dotsHtml='<span class="loading-dots"><span></span><span></span><span></span></span>'
+  const setStep=(idx)=>{
+    const el=document.getElementById('loading-status')
+    if(!el)return
+    // Trick: Element neu klonen damit die CSS-Animation jedes Mal erneut triggert
+    el.style.animation='none'
+    el.offsetHeight  // Force reflow
+    el.style.animation=''
+    el.innerHTML=LOADING_STEPS[idx]+dotsHtml
+  }
+  setStep(0)
+  const t=setInterval(()=>{
+    i++
+    if(i>=LOADING_STEPS.length){clearInterval(t);return}
+    setStep(i)
+  },2500)
+  return t
+}
+function hideLoadingOverlay(timer){
+  if(timer)clearInterval(timer)
+  document.getElementById('loading-overlay').classList.add('hidden')
+  document.body.style.overflow=''
+}
+
 // ── Generate / Delete ──
 window.generatePage=async function(){
   const btn=document.getElementById('btn-generate')
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'}
+  const loadingTimer=showLoadingOverlay()
   try{
     const{data:{session}}=await sb.auth.getSession()
     const res=await fetch(`${SB_URL}/functions/v1/generate-biolink`,{
@@ -847,9 +883,11 @@ window.generatePage=async function(){
     })
     const body=await res.json()
     if(!res.ok||!body.success)throw new Error(body.error||`HTTP ${res.status}`)
+    hideLoadingOverlay(loadingTimer)
     showToast('BioLink veröffentlicht ✓')
     await loadAll()
   }catch(err){
+    hideLoadingOverlay(loadingTimer)
     showToast('Fehler: '+err.message,5000)
     if(btn){btn.disabled=false;btn.textContent=S.profile?.bio_active?'↻ Seite neu generieren':'✨ BioLink-Seite erstellen'}
   }
