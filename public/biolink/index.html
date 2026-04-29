@@ -12,176 +12,170 @@
   --bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;
   --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);
   --text:#111110;--muted:#7a7975;--subtle:#b0afa9;
-  --green:#1a7f4b;--green-bg:#edf7f1;
+  --green:#1a7f4b;--green-bg:#edf7f1;--green-border:rgba(26,127,75,.2);
   --red:#c0392b;--red-bg:#fdf0ef;
-  --orange:#b85c00;
-  --radius:16px;--radius-sm:10px;
-  --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)
+  --radius:16px;--radius-sm:10px;--nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)
 }
 html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
-
-
-
-/* APP */
 #app{display:none;min-height:100dvh;flex-direction:column;overflow:hidden}
 #app.visible{display:flex}
 
 /* TOPBAR */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .topbar-left{display:flex;align-items:center;gap:10px}
-.hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;transition:background .15s;padding:0}
-.hamburger:hover{background:var(--surface2)}
+.hamburger{width:36px;height:36px;border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:8px;padding:0}
 .hamburger span{display:block;width:20px;height:2px;background:var(--text);border-radius:2px}
 .topbar-title{font-size:15px;font-weight:700;letter-spacing:-.03em}
-.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;cursor:pointer;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:600;border:2px solid var(--border);overflow:hidden;flex-shrink:0}
 .topbar-avatar img{width:100%;height:100%;object-fit:cover}
-
-/* PAGE */
-.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(40px + var(--safe-bottom));overflow-y:auto}
-.section{padding:16px 20px 0}
+.page{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 0 calc(40px + var(--safe-bottom))}
+.section{padding:12px 20px 0}
 .section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
 
-/* UTILS */
-.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,#e8e6e2 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
-@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
-.toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap}
-@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-.hidden{display:none!important}
-
-/* PAGE HEADER */
-.page-header{padding:20px 20px 0}
-.page-title{font-size:22px;font-weight:700;letter-spacing:-.04em}
-.page-sub{font-size:13px;color:var(--muted);margin-top:3px}
-
 /* STATUS BANNER */
-.status-banner{margin:16px 20px 0;padding:14px 16px;border-radius:var(--radius);border:1px solid;display:flex;align-items:center;gap:12px}
-.status-banner.active{background:var(--green-bg);border-color:rgba(26,127,75,.2)}
-.status-banner.inactive{background:var(--surface);border-color:var(--border)}
+.status-banner{margin:12px 20px 0;padding:12px 16px;border-radius:var(--radius);display:flex;align-items:center;gap:10px;border:1px solid}
+.status-banner.active{background:var(--green-bg);border-color:var(--green-border)}
+.status-banner.inactive{background:var(--surface2);border-color:var(--border-strong)}
 .status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .status-dot.active{background:var(--green)}
 .status-dot.inactive{background:var(--subtle)}
-.status-text{flex:1;font-size:13px;font-weight:500}
-.status-text span{font-size:11px;color:var(--muted);display:block;margin-top:1px;font-weight:400}
+.status-text{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.status-text span{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:1px}
 
 /* LINK BAR */
-.link-bar{margin:12px 20px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.link-bar{margin:10px 20px 0;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:10px}
 .link-url{font-size:13px;font-weight:500;color:var(--text);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-decoration:none}
-.link-url:hover{text-decoration:underline}
-.link-action-btn{padding:6px 12px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface2);font-family:inherit;font-size:11px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
+.link-action-btn{padding:7px 14px;background:var(--surface2);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;color:var(--text);cursor:pointer;white-space:nowrap;flex-shrink:0}
 
 /* STATS */
 .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center}
-.stat-box-value{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.03em}
-.stat-box-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
-
-/* CHART */
-.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.chart-svg{width:100%;height:80px;display:block;overflow:visible}
-.chart-dates{display:flex;justify-content:space-between;margin-top:6px}
-.chart-date{font-size:10px;color:var(--subtle)}
-
-/* PREVIEW (not yet generated) */
-.preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.preview-header{padding:16px;border-bottom:1px solid var(--border)}
-.preview-header-title{font-size:14px;font-weight:600}
-.preview-header-sub{font-size:12px;color:var(--muted);margin-top:2px}
-.preview-phones{display:flex;gap:8px;padding:16px;overflow-x:auto;scrollbar-width:none}
-.preview-phones::-webkit-scrollbar{display:none}
-.preview-phone{flex-shrink:0;width:110px}
-.preview-phone-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:8px}
-.phone-mock{width:110px;height:190px;border-radius:14px;border:2px solid var(--border-strong);overflow:hidden;position:relative}
-.phone-clean{background:#ffffff}
-.phone-color{background:linear-gradient(135deg,#6c5ce7,#a29bfe)}
-.phone-dark{background:#0d0d0d}
-.phone-inner{padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:6px}
-.mock-avatar{width:32px;height:32px;border-radius:50%}
-.mock-name{height:6px;border-radius:3px;width:60px}
-.mock-bio{height:4px;border-radius:2px;width:80px;opacity:.6}
-.mock-btn{height:20px;border-radius:6px;width:90px}
-/* clean theme mocks */
-.phone-clean .mock-avatar{background:#e0e0e0}
-.phone-clean .mock-name{background:#111}
-.phone-clean .mock-bio{background:#999}
-.phone-clean .mock-btn{background:#111}
-/* color theme mocks */
-.phone-color .mock-avatar{background:rgba(255,255,255,.4)}
-.phone-color .mock-name{background:white}
-.phone-color .mock-bio{background:rgba(255,255,255,.6)}
-.phone-color .mock-btn{background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.4)}
-/* dark theme mocks */
-.phone-dark .mock-avatar{background:#333}
-.phone-dark .mock-name{background:#f0f0f0}
-.phone-dark .mock-bio{background:#666}
-.phone-dark .mock-btn{background:#2a2a2a;border:1px solid #333}
-
-/* THEME PICKER (in sheet) */
-.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-.theme-opt{border:2px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .15s}
-.theme-opt.selected{border-color:var(--text)}
-.theme-opt-label{font-size:11px;font-weight:600;text-align:center;padding:6px 4px;color:var(--muted)}
-.theme-opt.selected .theme-opt-label{color:var(--text)}
+.stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
+.stat-box-value{font-size:20px;font-weight:700;letter-spacing:-.04em;color:var(--text)}
+.stat-box-label{font-size:11px;color:var(--muted);margin-top:2px}
 
 /* ACTION BUTTONS */
-.action-btn{width:100%;padding:14px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .15s}
-.action-btn:disabled{opacity:.5;cursor:not-allowed}
-.action-btn-primary{background:var(--text);color:white}
-.action-btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border-strong)}
-.action-btn-danger{background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.2)}
-.action-stack{display:flex;flex-direction:column;gap:8px;padding:16px 20px 0}
+.action-stack{padding:12px 20px 0;display:flex;flex-direction:column;gap:8px}
+.action-btn{width:100%;padding:13px 16px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;transition:opacity .15s}
+.action-btn-primary{background:var(--text);color:white;border-color:var(--text)}
+.action-btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.action-btn-secondary{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+.action-btn-danger{background:var(--red-bg);color:var(--red);border-color:rgba(192,57,43,.2)}
 
-/* BOTTOM SHEET */
-.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;transition:opacity .25s}
+/* CHECKLIST */
+.check-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.check-card-title{font-size:13px;font-weight:600;color:var(--text);padding:14px 16px 10px}
+.check-card-sub{font-size:12px;color:var(--muted);padding:0 16px 12px;line-height:1.5}
+.check-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--border)}
+.check-dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0}
+.check-dot.ok{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
+.check-dot.miss{background:var(--surface2);border:1.5px solid var(--border-strong);color:var(--subtle)}
+.check-label{font-size:13px;flex:1}
+.check-label.ok{color:var(--muted);text-decoration:line-through}
+.check-label.miss{color:var(--text);font-weight:500}
+.terms-row{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+.terms-row input[type="checkbox"]{width:18px;height:18px;flex-shrink:0;accent-color:var(--text);margin-top:1px;cursor:pointer}
+.terms-text{font-size:12px;color:var(--muted);line-height:1.5}
+.terms-text a{color:var(--text);font-weight:600;text-decoration:underline}
+
+/* PREVIEW */
+.preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.preview-header{padding:16px;border-bottom:1px solid var(--border)}
+.preview-header-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.preview-header-sub{font-size:11px;color:var(--muted)}
+.preview-phones{display:flex;gap:10px;padding:16px;overflow-x:auto;scrollbar-width:none}
+.preview-phones::-webkit-scrollbar{display:none}
+.preview-phone{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:8px}
+.preview-phone-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.phone-mock{width:72px;height:130px;border-radius:10px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:border-color .15s}
+.phone-mock.selected{border-color:var(--text)}
+.phone-color{background:linear-gradient(135deg,#7C5CFC,#C23D8E)}
+.phone-dark{background:#1a1025}
+.phone-clean{background:#f8f8f8}
+.mock-avatar{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.3);flex-shrink:0}
+.phone-dark .mock-avatar{background:rgba(255,255,255,.2)}
+.phone-clean .mock-avatar{background:#ddd}
+.mock-name{height:5px;width:36px;background:rgba(255,255,255,.6);border-radius:3px}
+.phone-dark .mock-name{background:rgba(255,255,255,.4)}
+.phone-clean .mock-name{background:#bbb}
+.mock-btn{height:10px;width:56px;border-radius:3px;background:rgba(255,255,255,.25)}
+.phone-dark .mock-btn{background:rgba(255,255,255,.15)}
+.phone-clean .mock-btn{background:#e0e0e0}
+
+/* LINKS EDITOR */
+.links-list{display:flex;flex-direction:column;gap:8px}
+.link-row-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:10px}
+.link-drag{color:var(--subtle);cursor:grab;font-size:16px;flex-shrink:0;user-select:none}
+.link-row-body{flex:1;min-width:0}
+.link-row-title{font-size:13px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.link-row-url{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.link-paid-badge{font-size:10px;font-weight:600;background:var(--surface2);color:var(--muted);padding:1px 6px;border-radius:4px;flex-shrink:0}
+.link-del-btn{width:26px;height:26px;border-radius:var(--radius-sm);border:1px solid var(--border);background:none;display:grid;place-items:center;cursor:pointer;color:var(--muted);flex-shrink:0;font-size:14px}
+.link-del-btn:hover{color:var(--red);border-color:rgba(192,57,43,.3);background:var(--red-bg)}
+.btn-add-link{width:100%;padding:11px;background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn-add-link:hover{background:var(--surface2);color:var(--text)}
+.empty-links{text-align:center;padding:24px;color:var(--muted);font-size:13px}
+
+/* SHEET / MODAL */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
 .sheet-backdrop.hidden{display:none}
-.sheet{background:var(--surface);border-radius:22px 22px 0 0;width:100%;max-height:92dvh;overflow-y:auto;padding:0 0 calc(24px + var(--safe-bottom))}
+.sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 calc(20px + var(--safe-bottom));width:100%;max-width:540px;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .sheet-handle{width:36px;height:4px;background:var(--border-strong);border-radius:2px;margin:12px auto 0}
-.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 0}
-.sheet-sub{font-size:13px;color:var(--muted);padding:4px 20px 0;line-height:1.5}
-.sheet-body{padding:16px 20px 0}
-.sheet-actions{padding:16px 20px 0;display:flex;flex-direction:column;gap:8px}
-.sheet-divider{height:1px;background:var(--border);margin:16px 20px 0}
+.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 4px}
+.sheet-sub{font-size:13px;color:var(--muted);padding:0 20px 16px;line-height:1.5}
+.sheet-field{padding:0 20px 12px}
+.sheet-label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.sheet-input{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.sheet-input:focus{border-color:var(--text)}
+.sheet-input-wrap{display:flex;align-items:center;border:1px solid var(--border-strong);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
+.sheet-prefix{padding:12px 10px 12px 14px;font-size:14px;color:var(--subtle);background:var(--surface2);border-right:1px solid var(--border-strong);flex-shrink:0}
+.sheet-prefix-input{flex:1;padding:12px 14px;border:none;font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none}
+.sheet-textarea{width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;resize:none;min-height:90px;line-height:1.5}
+.sheet-textarea:focus{border-color:var(--text)}
+.sheet-checkbox-row{display:flex;align-items:center;gap:10px;padding:10px 20px 14px;cursor:pointer}
+.sheet-checkbox-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--text);flex-shrink:0;cursor:pointer}
+.sheet-checkbox-label{font-size:13px;color:var(--muted)}
+.sheet-hint{font-size:11px;margin-top:5px;min-height:16px}
+.sheet-hint.err{color:var(--red)}
+.sheet-hint.ok{color:var(--green)}
+.sheet-divider{height:1px;background:var(--border);margin:8px 0 12px}
+.sheet-actions{padding:8px 20px 0;display:flex;flex-direction:column;gap:8px}
+.sheet-btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.sheet-btn-primary:disabled{opacity:.4;cursor:not-allowed}
+.sheet-btn-cancel{width:100%;padding:13px;background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
 
-/* HANDLE INPUT */
-.handle-input-wrap{display:flex;align-items:center}
-.handle-prefix{padding:11px 10px 11px 14px;border:1px solid var(--border-strong);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);font-size:14px;color:var(--muted);background:var(--surface2)}
-.handle-input-wrap input{border-radius:0 var(--radius-sm) var(--radius-sm) 0!important}
+/* THEME SELECTOR */
+.theme-options{display:flex;flex-direction:column;gap:8px;padding:0 20px 8px}
+.theme-opt{display:flex;align-items:center;gap:14px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;background:var(--surface);transition:border-color .15s}
+.theme-opt.selected{border-color:var(--text);border-width:2px}
+.theme-dot{width:24px;height:24px;border-radius:50%;flex-shrink:0}
+.theme-name{font-size:13px;font-weight:500;color:var(--text);flex:1}
+.theme-check{font-size:14px;font-weight:700;color:var(--text)}
 
-/* CUSTOM LINKS */
-.custom-link-row{display:flex;gap:6px;margin-bottom:8px;align-items:center}
-.custom-link-row input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;color:var(--text);background:var(--bg);outline:none}
-.custom-link-row input:focus{border-color:var(--text)}
-.link-remove-btn{width:30px;height:30px;border-radius:var(--radius-sm);background:none;border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:16px;flex-shrink:0;display:grid;place-items:center}
-.link-add-btn{width:100%;padding:10px;border-radius:var(--radius-sm);background:none;border:1px dashed var(--border-strong);font-family:inherit;font-size:13px;color:var(--muted);cursor:pointer;margin-top:4px}
+/* LANG SELECTOR */
+.lang-options{display:flex;gap:8px;padding:0 20px 8px}
+.lang-opt{flex:1;padding:10px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--muted);text-align:center;transition:all .15s}
+.lang-opt.selected{background:var(--text);color:white;border-color:var(--text)}
 
-/* REQUIRED BADGE */
-.req-badge{display:inline-block;font-size:10px;font-weight:700;color:var(--red);margin-left:4px}
+/* EDIT ACTIONS SHEET */
+.edit-action-list{display:flex;flex-direction:column}
+.edit-action-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;text-align:left;width:100%;transition:background .15s}
+.edit-action-row:last-child{border-bottom:none}
+.edit-action-row:hover{background:var(--surface2)}
+.edit-action-icon{font-size:18px;width:20px;text-align:center;flex-shrink:0}
+.edit-action-label{font-size:14px;font-weight:500;color:var(--text);flex:1}
+.edit-action-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.edit-action-arrow{font-size:14px;color:var(--subtle)}
 
 /* MODAL */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;padding:24px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:center;justify-content:center;padding:24px}
 .modal-backdrop.hidden{display:none}
-.modal-card{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:380px;margin:0 auto}
-.modal-title{font-size:17px;font-weight:700;margin-bottom:6px}
+.modal-card{background:var(--surface);border-radius:20px;padding:24px;width:100%;max-width:400px}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:4px}
 .modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
-.modal-actions{display:flex;gap:8px}
-.modal-btn{flex:1;padding:12px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border-strong)}
-.modal-btn-cancel{background:var(--surface2);color:var(--text)}
-.modal-btn-danger{background:var(--red);color:white;border-color:var(--red)}
-
-/* GENERATE SECTION */
-.generate-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.generate-title{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
-.generate-sub{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:16px}
-.generate-checklist{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
-.check-item{display:flex;align-items:center;gap:8px;font-size:13px}
-.check-icon{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;flex-shrink:0}
-.check-ok{background:var(--green-bg);color:var(--green)}
-.check-missing{background:var(--red-bg);color:var(--red)}
-
-/* iOS zoom fix */
-input,textarea,select{font-size:16px!important}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.modal-btn{flex:1;padding:12px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.modal-btn-cancel{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
+.modal-btn-danger{background:var(--red);color:white}
 
 /* SIDEBAR */
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);z-index:80;pointer-events:none;transition:background .25s}
@@ -192,15 +186,13 @@ input,textarea,select{font-size:16px!important}
 .sidebar-logo{display:flex;align-items:center;gap:8px}
 .sidebar-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
 .sidebar-logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em}
-.sidebar-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--muted);line-height:1}
+.sidebar-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--muted)}
 .sidebar-nav{flex:1;padding:10px;overflow-y:auto}
 .sidebar-section{font-size:10px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;padding:12px 10px 4px}
 .sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;text-decoration:none;color:var(--muted);font-size:13px;font-weight:500;transition:all .15s;margin-bottom:2px}
 .sidebar-item:hover{background:var(--surface2);color:var(--text)}
 .sidebar-item.active{background:var(--text);color:white}
 .sidebar-item svg{flex-shrink:0}
-.sidebar-item-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-left:auto;background:var(--text);color:white;flex-shrink:0}
-.sidebar-item.active .sidebar-item-badge{background:rgba(255,255,255,.25);color:white}
 .sidebar-footer{padding:14px 16px;border-top:1px solid var(--border)}
 .sidebar-pro-banner{background:var(--text);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
 .sidebar-pro-banner.show{display:flex}
@@ -208,12 +200,17 @@ input,textarea,select{font-size:16px!important}
 .sidebar-pro-sub{font-size:10px;color:rgba(255,255,255,.55)}
 .sidebar-user{font-size:12px;color:var(--muted);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .btn-sidebar-logout{width:100%;padding:10px;border-radius:var(--radius-sm);background:var(--surface2);border:1px solid var(--border-strong);font-family:inherit;font-size:13px;font-weight:500;color:var(--text);cursor:pointer;margin-bottom:10px}
-.btn-sidebar-logout:hover{background:var(--border)}
 .sidebar-legal{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
 .sidebar-legal a{font-size:11px;color:var(--subtle);text-decoration:none}
-.sidebar-legal a:hover{color:var(--muted)}
 .sidebar-legal span{font-size:11px;color:var(--subtle)}
 
+/* TOAST & SPINNER */
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
+.toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.spinner{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hidden{display:none!important}
 
 /* LOGIN */
 #login-screen{min-height:100dvh;display:none;align-items:center;justify-content:center;padding:24px;flex-direction:column}
@@ -225,19 +222,18 @@ input,textarea,select{font-size:16px!important}
 .login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
 .field{margin-bottom:12px}
 .field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.field input,.field textarea,.field select{width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
-.field input:focus,.field textarea:focus{border-color:var(--text)}
-.btn-login{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.btn-login:disabled{opacity:.5}
+.field input{width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.field input:focus{border-color:var(--text)}
+.btn-login-main{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn-login-main:disabled{opacity:.5}
 .login-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
 .login-register{font-size:13px;color:var(--muted);text-align:center;margin-top:16px}
 .login-register a{color:var(--text);font-weight:600;text-decoration:none}
-
+input,textarea,select{font-size:16px!important}
 </style>
 </head>
 <body>
 
-<!-- APP -->
 <!-- LOGIN -->
 <div id="login-screen">
   <div class="login-card">
@@ -246,7 +242,7 @@ input,textarea,select{font-size:16px!important}
     <div class="login-sub">Melde dich mit deinem viuno-Account an.</div>
     <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
     <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
-    <button class="btn-login" id="btn-login">Einloggen</button>
+    <button class="btn-login-main" id="btn-login">Einloggen</button>
     <div class="login-error" id="login-error"></div>
     <div class="login-register">Noch kein Account? <a href="/register">Jetzt registrieren</a></div>
   </div>
@@ -276,99 +272,70 @@ input,textarea,select{font-size:16px!important}
     <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
     <div class="sidebar-legal">
       <a href="/legal#impressum">Impressum</a><span>·</span>
-      <a href="/legal#datenschutz">Datenschutz</a><span>·</span>
-      <a href="/legal#agb">AGB</a>
+      <a href="/legal#datenschutz">Datenschutz</a>
     </div>
   </div>
 </div>
 
 <div id="app">
-  <!-- Topbar -->
   <div class="topbar">
     <div class="topbar-left">
       <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
       <span class="topbar-title">BioLink</span>
     </div>
-    <div class="topbar-avatar" id="user-avatar">?</div>
+    <div class="topbar-avatar" id="user-avatar"></div>
   </div>
-
-  <!-- Page -->
-  <div class="page" id="page">
-    <div id="skeleton-area" style="padding:20px;display:flex;flex-direction:column;gap:12px">
-      <div class="skeleton" style="height:60px;border-radius:12px"></div>
-      <div class="skeleton" style="height:100px;border-radius:12px"></div>
-      <div class="skeleton" style="height:200px;border-radius:16px"></div>
-    </div>
-    <div id="page-content" class="hidden"></div>
+  <div class="page" id="page-content">
+    <div style="padding:60px 20px;text-align:center;color:var(--muted)">Wird geladen…</div>
   </div>
 </div>
-
-<!-- TOAST -->
-<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
 <!-- EDIT ACTIONS SHEET -->
 <div class="sheet-backdrop hidden" id="edit-actions-sheet" onclick="closeSheet('edit-actions-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">BioLink bearbeiten</div>
-    <div class="sheet-actions" style="padding-top:20px">
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet');openThemeSheet()">🎨 Design ändern · <span id="current-theme-label"></span></button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet');openProfileSheet()">👤 Profil-Infos bearbeiten</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet');openLinksSheet()">🔗 Social & Links bearbeiten</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('edit-actions-sheet')" style="margin-top:4px">Abbrechen</button>
-    </div>
-  </div>
-</div>
-
-<!-- THEME SHEET -->
-<div class="sheet-backdrop hidden" id="theme-sheet" onclick="closeSheet('theme-sheet')">
-  <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">Design wählen</div>
-    <div class="sheet-sub">Wähle das Aussehen deiner BioLink-Seite.</div>
-    <div class="sheet-body">
-      <div class="theme-grid" id="theme-grid">
-        <div class="theme-opt" data-theme="clean" onclick="selectTheme('clean')">
-          <div class="phone-mock phone-clean" style="width:100%;height:140px;border-radius:10px 10px 0 0">
-            <div class="phone-inner">
-              <div class="mock-avatar"></div>
-              <div class="mock-name"></div>
-              <div class="mock-bio"></div>
-              <div class="mock-btn"></div>
-              <div class="mock-btn" style="opacity:.5"></div>
-            </div>
-          </div>
-          <div class="theme-opt-label">Clean</div>
+    <div class="sheet-title">Bearbeiten</div>
+    <div class="edit-action-list">
+      <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('profile-sheet')">
+        <span class="edit-action-icon">👤</span>
+        <div class="edit-action-body">
+          <div class="edit-action-label">Profil</div>
+          <div class="edit-action-sub">Name, Bio, Profilbild</div>
         </div>
-        <div class="theme-opt" data-theme="color" onclick="selectTheme('color')">
-          <div class="phone-mock phone-color" style="width:100%;height:140px;border-radius:10px 10px 0 0">
-            <div class="phone-inner">
-              <div class="mock-avatar"></div>
-              <div class="mock-name"></div>
-              <div class="mock-bio"></div>
-              <div class="mock-btn"></div>
-              <div class="mock-btn" style="opacity:.5"></div>
-            </div>
-          </div>
-          <div class="theme-opt-label">Color</div>
+        <span class="edit-action-arrow">›</span>
+      </button>
+      <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('handles-sheet')">
+        <span class="edit-action-icon">🔗</span>
+        <div class="edit-action-body">
+          <div class="edit-action-label">Social Kanäle</div>
+          <div class="edit-action-sub">Instagram, TikTok, YouTube, Threads</div>
         </div>
-        <div class="theme-opt" data-theme="dark" onclick="selectTheme('dark')">
-          <div class="phone-mock phone-dark" style="width:100%;height:140px;border-radius:10px 10px 0 0">
-            <div class="phone-inner">
-              <div class="mock-avatar"></div>
-              <div class="mock-name"></div>
-              <div class="mock-bio"></div>
-              <div class="mock-btn"></div>
-              <div class="mock-btn" style="opacity:.5"></div>
-            </div>
-          </div>
-          <div class="theme-opt-label">Dark</div>
+        <span class="edit-action-arrow">›</span>
+      </button>
+      <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('links-sheet')">
+        <span class="edit-action-icon">🌐</span>
+        <div class="edit-action-body">
+          <div class="edit-action-label">Custom Links</div>
+          <div class="edit-action-sub">Bis zu 10 eigene Links</div>
         </div>
-      </div>
-    </div>
-    <div class="sheet-actions">
-      <button class="action-btn action-btn-primary" onclick="saveTheme()">Design speichern</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('theme-sheet')">Abbrechen</button>
+        <span class="edit-action-arrow">›</span>
+      </button>
+      <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('theme-sheet')">
+        <span class="edit-action-icon">🎨</span>
+        <div class="edit-action-body">
+          <div class="edit-action-label">Design & Sprache</div>
+          <div class="edit-action-sub" id="current-theme-lang">Color · Deutsch</div>
+        </div>
+        <span class="edit-action-arrow">›</span>
+      </button>
+      <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('impressum-sheet')">
+        <span class="edit-action-icon">📄</span>
+        <div class="edit-action-body">
+          <div class="edit-action-label">Impressum</div>
+          <div class="edit-action-sub">Gesetzlich vorgeschrieben</div>
+        </div>
+        <span class="edit-action-arrow">›</span>
+      </button>
     </div>
   </div>
 </div>
@@ -377,51 +344,55 @@ input,textarea,select{font-size:16px!important}
 <div class="sheet-backdrop hidden" id="profile-sheet" onclick="closeSheet('profile-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Profil-Infos</div>
-    <div class="sheet-sub">Diese Infos erscheinen auf deiner BioLink-Seite.</div>
-    <div class="sheet-body">
-      <!-- Photo upload -->
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
-        <div id="s-photo-wrap" style="position:relative;width:64px;height:64px;flex-shrink:0;cursor:pointer" onclick="document.getElementById('s-photo-input').click()">
-          <div id="s-photo-inner" style="width:64px;height:64px;border-radius:50%;background:var(--surface2);border:2px solid var(--border-strong);display:grid;place-items:center;font-size:22px;font-weight:700;color:var(--text);overflow:hidden"></div>
-          <div style="position:absolute;bottom:0;right:0;width:20px;height:20px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:10px;border:2px solid white;pointer-events:none">✎</div>
-        </div>
+    <div class="sheet-title">Profil</div>
+    <div class="sheet-sub">Dein Name und Bio erscheinen auf deiner BioLink-Seite.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Profilbild</label>
+      <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="document.getElementById('photo-input').click()">
+        <div id="profile-photo-wrap" style="width:52px;height:52px;border-radius:50%;background:var(--surface2);border:2px solid var(--border-strong);overflow:hidden;display:grid;place-items:center;font-size:18px;font-weight:700;color:var(--muted);flex-shrink:0"></div>
         <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Profilbild</div>
-          <div style="font-size:11px;color:var(--muted);margin-top:2px">Tippe um zu ändern</div>
-          <div id="s-photo-status" style="font-size:11px;color:var(--muted);margin-top:2px"></div>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Foto ändern</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px" id="photo-status">Tippen zum Hochladen</div>
         </div>
-      </div>
-      <input type="file" id="s-photo-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
-      <div class="field"><label>Bio</label><textarea id="s-bio" rows="3" placeholder="Kurze Beschreibung über dich…"></textarea></div>
-      <div class="field"><label>Nische</label>
-        <select id="s-niche">
-          <option value="lifestyle">Lifestyle</option>
-          <option value="fashion">Fashion</option>
-          <option value="beauty">Beauty</option>
-          <option value="food">Food</option>
-          <option value="fitness">Fitness</option>
-          <option value="travel">Travel</option>
-          <option value="gaming">Gaming</option>
-          <option value="music">Music</option>
-          <option value="comedy">Comedy</option>
-          <option value="education">Bildung & Wissen</option>
-          <option value="business">Business</option>
-          <option value="tech">Tech</option>
-          <option value="art">Art</option>
-          <option value="family">Family</option>
-          <option value="mental_health">Mental Health</option>
-          <option value="general">Allgemein</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Impressum <span style="color:var(--text);font-weight:700">(Pflichtfeld)</span></label>
-        <textarea id="s-impressum" rows="4" placeholder="Angaben gemäß §5 TMG: Vorname Nachname, Straße Nr., PLZ Ort…"></textarea>
       </div>
     </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Bio</label>
+      <textarea class="sheet-textarea" id="s-bio" placeholder="Kurze Beschreibung — wer du bist und was du machst"></textarea>
+    </div>
     <div class="sheet-actions">
-      <button class="action-btn action-btn-primary" onclick="saveProfileSheet()">Speichern</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('profile-sheet')">Abbrechen</button>
+      <button class="sheet-btn-primary" id="btn-save-profile" onclick="saveProfile()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('profile-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+<input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
+
+<!-- HANDLES SHEET -->
+<div class="sheet-backdrop hidden" id="handles-sheet" onclick="closeSheet('handles-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Social Kanäle</div>
+    <div class="sheet-sub">Verbinde deine Kanäle. Nur ausgefüllte werden angezeigt.</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Instagram</label>
+      <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-ig" placeholder="dein_handle"/></div>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">TikTok</label>
+      <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-tt" placeholder="dein_handle"/></div>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">YouTube</label>
+      <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-yt" placeholder="KanalName"/></div>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">Threads</label>
+      <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-threads" placeholder="dein_handle"/></div>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="saveHandles()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('handles-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
@@ -430,92 +401,153 @@ input,textarea,select{font-size:16px!important}
 <div class="sheet-backdrop hidden" id="links-sheet" onclick="closeSheet('links-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Social & Links</div>
-    <div class="sheet-sub">Deine Kanäle und eigene Links auf der BioLink-Seite.</div>
-    <div class="sheet-body">
-      <div class="section-label">Social Media</div>
-      <div class="field" style="margin-top:8px"><label>Instagram</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-ig" placeholder="deinname"/></div></div>
-      <div class="field"><label>TikTok</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-tt" placeholder="deinname"/></div></div>
-      <div class="field"><label>Threads</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-threads" placeholder="deinname"/></div></div>
-      <div class="field"><label>YouTube</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="s-yt" placeholder="deinkanal"/></div></div>
-      <div class="sheet-divider" style="margin:4px 0 16px"></div>
-      <div class="section-label">Eigene Links <span style="color:var(--subtle);font-weight:400;text-transform:none;letter-spacing:0">(max. 5)</span></div>
-      <div id="custom-links-list" style="margin-top:8px"></div>
-      <button class="link-add-btn" id="link-add-btn" onclick="addCustomLink()">+ Link hinzufügen</button>
-      <div class="sheet-divider" style="margin:16px 0 14px"></div>
-      <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding-bottom:4px">
-        <input type="checkbox" id="s-paid-content" style="width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--text);cursor:pointer"/>
-        <div>
-          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:2px">Werbung kennzeichnen</div>
-          <div style="font-size:11px;color:var(--muted);line-height:1.5">Zeigt auf deiner BioLink-Seite einen Hinweis, dass Inhalte Werbung enthalten können. Gesetzlich empfohlen bei bezahlten Kooperationen.</div>
-        </div>
-      </label>
+    <div class="sheet-title">Custom Links</div>
+    <div class="sheet-sub">Bis zu 10 Links. Ziehe zum Sortieren. Werbungs-Flag zeigt einen kleinen Hinweis.</div>
+    <div class="sheet-field">
+      <div class="links-list" id="links-list"></div>
+      <button class="btn-add-link" id="btn-add-link" onclick="openAddLink()">+ Link hinzufügen</button>
     </div>
     <div class="sheet-actions">
-      <button class="action-btn action-btn-primary" onclick="saveLinksSheet()">Speichern</button>
-      <button class="action-btn action-btn-secondary" onclick="closeSheet('links-sheet')">Abbrechen</button>
+      <button class="sheet-btn-primary" onclick="saveLinks()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('links-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
 
-<!-- DELETE MODAL step 1 -->
-<div class="modal-backdrop hidden" id="delete-modal-1">
-  <div class="modal-card">
+<!-- ADD/EDIT LINK SHEET -->
+<div class="sheet-backdrop hidden" id="add-link-sheet" onclick="closeSheet('add-link-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="add-link-title">Link hinzufügen</div>
+    <div class="sheet-field">
+      <label class="sheet-label">Titel</label>
+      <input type="text" class="sheet-input" id="link-title" placeholder="z.B. Mein Blog"/>
+    </div>
+    <div class="sheet-field">
+      <label class="sheet-label">URL</label>
+      <input type="text" class="sheet-input" id="link-url" placeholder="https://"/>
+    </div>
+    <label class="sheet-checkbox-row">
+      <input type="checkbox" id="link-paid"/>
+      <span class="sheet-checkbox-label">Werbung / bezahlte Kooperation (zeigt kleinen Hinweis)</span>
+    </label>
+    <div class="sheet-field"><div class="sheet-hint err" id="link-hint"></div></div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="confirmAddLink()">Hinzufügen</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('add-link-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- THEME SHEET -->
+<div class="sheet-backdrop hidden" id="theme-sheet" onclick="closeSheet('theme-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Design & Sprache</div>
+    <div class="sheet-sub">Design der BioLink-Seite. Sprache wird als Standard gesetzt (User kann wechseln).</div>
+    <div style="padding:0 20px 8px">
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Design</div>
+      <div class="theme-options" style="padding:0;margin-bottom:16px">
+        <div class="theme-opt" data-theme="color" onclick="selectTheme('color')">
+          <div class="theme-dot" style="background:linear-gradient(135deg,#7C5CFC,#C23D8E)"></div>
+          <span class="theme-name">Color</span>
+          <span class="theme-check" id="check-color"></span>
+        </div>
+        <div class="theme-opt" data-theme="dark" onclick="selectTheme('dark')">
+          <div class="theme-dot" style="background:#1a1025"></div>
+          <span class="theme-name">Dark</span>
+          <span class="theme-check" id="check-dark"></span>
+        </div>
+        <div class="theme-opt" data-theme="clean" onclick="selectTheme('clean')">
+          <div class="theme-dot" style="background:#f8f8f8;border:1px solid var(--border-strong)"></div>
+          <span class="theme-name">Clean</span>
+          <span class="theme-check" id="check-clean"></span>
+        </div>
+      </div>
+      <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Standard-Sprache</div>
+      <div class="lang-options">
+        <button class="lang-opt" data-lang="de" onclick="selectLang('de')">DE</button>
+        <button class="lang-opt" data-lang="en" onclick="selectLang('en')">EN</button>
+        <button class="lang-opt" data-lang="it" onclick="selectLang('it')">IT</button>
+      </div>
+    </div>
+    <div class="sheet-actions" style="margin-top:8px">
+      <button class="sheet-btn-primary" onclick="saveThemeLang()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('theme-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPRESSUM SHEET -->
+<div class="sheet-backdrop hidden" id="impressum-sheet" onclick="closeSheet('impressum-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">Impressum</div>
+    <div class="sheet-sub">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Name, Adresse, Kontakt.</div>
+    <div class="sheet-field">
+      <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
+    </div>
+    <div class="sheet-actions">
+      <button class="sheet-btn-primary" onclick="saveImpressum()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="closeSheet('impressum-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-backdrop hidden" id="delete-modal" onclick="closeModal('delete-modal')">
+  <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-title">BioLink-Seite löschen?</div>
-    <div class="modal-sub">Deine BioLink-Seite wird gelöscht. Alle Links dorthin funktionieren danach nicht mehr.</div>
+    <div class="modal-sub">Deine Seite wird aus dem Internet entfernt. Deine Einstellungen und Links bleiben gespeichert — du kannst sie jederzeit wieder aktivieren.</div>
     <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeModal(1)">Abbrechen</button>
-      <button class="modal-btn modal-btn-danger" onclick="showDeleteModal2()">Weiter</button>
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('delete-modal')">Abbrechen</button>
+      <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">Löschen</button>
     </div>
   </div>
 </div>
 
-<!-- DELETE MODAL step 2 -->
-<div class="modal-backdrop hidden" id="delete-modal-2">
-  <div class="modal-card">
-    <div class="modal-title">Wirklich unwiderruflich löschen?</div>
-    <div class="modal-sub">Diese Aktion kann nicht rückgängig gemacht werden. Deine Seite ist sofort offline.</div>
-    <div class="modal-actions">
-      <button class="modal-btn modal-btn-cancel" onclick="closeModal(2)">Abbrechen</button>
-      <button class="modal-btn modal-btn-danger" id="btn-confirm-delete" onclick="confirmDelete()">Ja, jetzt löschen</button>
-    </div>
-  </div>
-</div>
+<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
 <script type="module">
 import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
 
-const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
-window.sb = createClient(SUPABASE_URL, SUPABASE_ANON, {auth:{persistSession:true,autoRefreshToken:true}})
-const sb = window.sb
+const SB_URL='https://bzejndghppuipnedasuv.supabase.co'
+const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+window.sb=createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
+const sb=window.sb
 
-// ── utils ──
-function escHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function fmt(n){if(n==null||isNaN(+n))return'–';n=+n;if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'k';return n.toFixed(0)}
-function fmtShort(d){if(!d)return'';return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function fmt(n){if(n==null||isNaN(+n))return'–';n=+n;if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'k';return n.toString()}
 
-window.showToast=function(msg,dur=2800){
-  const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg')
-  t.textContent=msg;w.classList.remove('hidden')
-  clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)
-}
+window.showToast=function(msg,dur=2800){const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg');t.textContent=msg;w.classList.remove('hidden');clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)}
 window.openSidebar=function(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
 window.closeSidebar=function(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
-window.logout=async function(){try{if(window.sb)await window.sb.auth.signOut()}catch(_){}location.replace('https://viuno.de')}
-
+window.logout=async function(){try{await sb.auth.signOut()}catch(_){}location.replace('https://viuno.de')}
 window.openSheet=function(id){document.getElementById(id).classList.remove('hidden');document.body.style.overflow='hidden'}
 window.closeSheet=function(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow=''}
-window.closeModal=function(n){document.getElementById(`delete-modal-${n}`).classList.add('hidden')}
+window.closeModal=function(id){document.getElementById(id).classList.add('hidden')}
 
-// ── auth ──
-async function baseInit(onSession){
+// ── State ──
+const S={
+  user:null,
+  profile:null,       // users row
+  biolink:null,       // biolink_viuno row
+  customLinks:[],     // biolink_custom_links rows
+  aufrufe:[],         // biolink_aufrufe for stats
+  theme:'color',
+  lang:'de',
+  editingLinkId:null
+}
+
+// ── Auth ──
+;(async()=>{
   const{data:{session}}=await sb.auth.getSession()
-  if(session){await onSession(session);return}
+  if(session){await enter(session);return}
   document.getElementById('login-screen').style.display='flex'
   document.getElementById('btn-login').addEventListener('click',doLogin)
   document.getElementById('inp-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()})
-}
+})()
+
 async function doLogin(){
   const email=document.getElementById('inp-email').value.trim(),pw=document.getElementById('inp-pw').value
   const errEl=document.getElementById('login-error'),btn=document.getElementById('btn-login')
@@ -523,450 +555,430 @@ async function doLogin(){
   const{data,error}=await sb.auth.signInWithPassword({email,password:pw})
   btn.disabled=false;btn.textContent='Einloggen'
   if(error){errEl.textContent='Falsche E-Mail oder Passwort.';return}
-  await enterApp(data.session)
+  await enter(data.session)
 }
 
-// ── state ──
-const state={user:null,profile:null,biolink:null,views:null,selectedTheme:'clean'}
-
-async function enterApp(session){
-  state.user=session.user
+async function enter(session){
+  S.user=session.user
   document.getElementById('app').classList.add('visible')
-  await setupSidebar(session)
-  // avatar
-  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url').eq('id',state.user.id).single()
-  const name=p?.display_name||p?.full_name||session.user.email||'?'
-  const av=document.getElementById('user-avatar')
-  if(p?.profile_image_url){av.innerHTML=`<img src="${escHtml(p.profile_image_url)}" alt="">`}else{av.textContent=name[0].toUpperCase()}
   await loadAll()
 }
 
+// ── Load all data ──
 async function loadAll(){
-  const uid=state.user.id
-  const[profileRes,biolinkRes,viewsRes]=await Promise.all([
-    sb.from('users').select('display_name,full_name,bio,profile_image_url,instagram_handle,tiktok_handle,niche_category').eq('id',uid).single(),
-    sb.from('biolink_settings').select('*').eq('user_id',uid).single(),
-    sb.from('bio_page_views').select('viewed_date,view_count').eq('user_id',uid).order('viewed_date',{ascending:false}).limit(30)
+  const uid=S.user.id
+  const[profileRes,biolinkRes,linksRes,aufrufeRes]=await Promise.all([
+    sb.from('users').select('display_name,full_name,profile_image_url,bio,bio_active,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,subscription_type').eq('id',uid).single(),
+    sb.from('biolink_viuno').select('*').eq('user_id',uid).maybeSingle(),
+    sb.from('biolink_custom_links').select('*').eq('user_id',uid).order('position',{ascending:true}),
+    sb.from('biolink_aufrufe').select('viewed_at,language').eq('user_id',uid).gte('viewed_at',new Date(Date.now()-30*24*60*60*1000).toISOString())
   ])
-  state.profile=profileRes.data
-  state.biolink=biolinkRes.data
-  // Fallback: migrate old single custom_link_url to new custom_links array if needed
-  if(state.biolink){
-    const links=state.biolink.custom_links
-    const hasOldLink=state.biolink.custom_link_url?.trim()
-    const isEmpty=!links||!Array.isArray(links)||links.length===0
-    if(hasOldLink&&isEmpty){
-      state.biolink.custom_links=[{title:state.biolink.custom_link_title||state.biolink.custom_link_url,url:state.biolink.custom_link_url}]
-    }
-  }
-  state.views=viewsRes.data||[]
-  state.selectedTheme=state.biolink?.theme||'clean'
-  document.getElementById('skeleton-area').classList.add('hidden')
-  document.getElementById('page-content').classList.remove('hidden')
+  S.profile=profileRes.data
+  S.biolink=biolinkRes.data
+  S.customLinks=linksRes.data||[]
+  S.aufrufe=aufrufeRes.data||[]
+  S.theme=S.biolink?.theme||'color'
+  S.lang=S.biolink?.default_language||'de'
+
+  // Setup avatar + sidebar
+  const p=S.profile
+  const name=p?.display_name||p?.full_name||S.user.email||'?'
+  const av=document.getElementById('user-avatar')
+  if(p?.profile_image_url)av.innerHTML=`<img src="${esc(p.profile_image_url)}" alt="">`;else av.textContent=name[0].toUpperCase()
+  const em=document.getElementById('sidebar-user-email')
+  if(em)em.textContent=S.user.email||''
+  if(p?.subscription_type==='pro')document.getElementById('sidebar-pro-banner')?.classList.add('show')
+
   renderPage()
 }
 
+// ── Render Main Page ──
 function renderPage(){
-  const b=state.biolink
-  const isGenerated=b?.slug&&b?.is_active!==undefined
-  const isActive=b?.is_active===true
-  const bioUrl=b?.slug?`viuno.de/${b.slug}`:null
-  const bioFullUrl=b?.slug?`https://viuno.de/${b.slug}`:null
-  const hasImpressum=!!(b?.impressum_text?.trim())
+  const p=S.profile
+  const isActive=p?.bio_active===true
+  const slug=slugify(p?.display_name||'')
+  const bioUrl=slug?`viuno.de/${slug}`:null
+  const bioFullUrl=slug?`https://viuno.de/${slug}`:null
 
-  // views stats
-  const views=state.views||[]
-  const today=new Date().toISOString().slice(0,10)
-  const viewsToday=views.filter(v=>v.viewed_date===today).reduce((s,v)=>s+(v.view_count||0),0)
-  const views7=views.filter(v=>{const d=new Date(v.viewed_date);const diff=(Date.now()-d.getTime())/86400000;return diff<=7}).reduce((s,v)=>s+(v.view_count||0),0)
-  const viewsTotal=views.reduce((s,v)=>s+(v.view_count||0),0)
-
-  // checklist
+  // Checkliste
   const checks=[
-    {label:'Profilbild',ok:!!(state.profile?.profile_image_url||b?.profile_image_url_override)},
-    {label:'Bio',ok:!!(state.profile?.bio)},
-    {label:'Impressum',ok:hasImpressum},
-    {label:'Mindestens 1 Social-Kanal',ok:!!(state.profile?.instagram_handle||state.profile?.tiktok_handle||b?.threads_handle||b?.youtube_handle)},
+    {label:'Profilbild hochgeladen',ok:!!(p?.profile_image_url)},
+    {label:'Bio ausgefüllt',ok:!!(p?.bio?.trim())},
+    {label:'Impressum hinterlegt',ok:!!(p?.impressum_text?.trim())},
+    {label:'Mindestens 1 Social-Kanal',ok:!!(p?.instagram_handle||p?.tiktok_handle||p?.youtube_handle||p?.threads_handle)},
   ]
   const allOk=checks.every(c=>c.ok)
 
-  document.getElementById('page-content').innerHTML=`
-    <div class="page-header">
-      <div class="page-title">BioLink</div>
-      <div class="page-sub">${isGenerated?'Verwalte deine öffentliche Seite':'Erstelle deine persönliche BioLink-Seite'}</div>
-    </div>
+  // Stats aus biolink_aufrufe
+  const now=Date.now()
+  const today=new Date().toISOString().slice(0,10)
+  const aufrufe=S.aufrufe||[]
+  const viewsToday=aufrufe.filter(a=>a.viewed_at?.slice(0,10)===today).length
+  const views7=aufrufe.filter(a=>(now-new Date(a.viewed_at).getTime())<7*86400000).length
+  const views30=aufrufe.length
 
-    ${isGenerated ? `
-    <!-- Mini-Checkliste: immer ganz oben wenn BioLink existiert -->
-    ${!allOk?`<div class="section" style="padding-bottom:0;margin-top:0">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;display:flex;flex-direction:column;gap:8px">
-        <div style="font-size:10px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Noch ausstehend</div>
-        ${checks.filter(c=>!c.ok).map(c=>`<div class="check-item"><div class="check-icon check-missing">✕</div><span style="font-size:12px;color:var(--muted)">${c.label} fehlt noch</span></div>`).join('')}
-      </div>
-    </div>`:''}
+  // Theme label
+  const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
+  const langLabels={de:'Deutsch',en:'English',it:'Italiano'}
+  document.getElementById('current-theme-lang').textContent=`${themeLabels[S.theme]||'Color'} · ${langLabels[S.lang]||'Deutsch'}`
 
-    <!-- Status -->
-    <div class="status-banner ${isActive?'active':'inactive'}">
-      <div class="status-dot ${isActive?'active':'inactive'}"></div>
-      <div class="status-text">${isActive?'Seite ist live':'Seite ist inaktiv'}
-        <span>${isActive?'Deine Seite ist öffentlich erreichbar':'Seite wurde deaktiviert'}</span>
-      </div>
-    </div>
+  const page=document.getElementById('page-content')
 
-    <!-- Link Bar -->
-    <div class="link-bar">
-      <a class="link-url" href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>
-      <button class="link-action-btn" onclick="copyLink('${bioFullUrl}')">Kopieren</button>
-    </div>
-
-    ${isActive?`
-    <!-- Stats -->
-    <div class="section"><div class="section-label">Aufrufe</div>
-      <div class="stats-grid">
-        <div class="stat-box"><div class="stat-box-value">${fmt(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
-        <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
-        <div class="stat-box"><div class="stat-box-value">${fmt(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
-      </div>
-    </div>
-    ${buildViewsChart(views)}
-    `:''}
-
-    <!-- Actions -->
-    <div class="action-stack">
-      <button class="action-btn action-btn-primary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
-    </div>
-
-    ` : `
-    <!-- Not yet generated: Preview + generate -->
-    <div class="section" style="margin-top:4px">
-      <div class="preview-card">
-        <div class="preview-header">
-          <div class="preview-header-title">Vorschau · So sieht deine Seite aus</div>
-          <div class="preview-header-sub">Wähle ein Design und generiere deine persönliche Seite</div>
+  if(isActive){
+    // ── ACTIVE VIEW ──
+    page.innerHTML=`
+      <div class="status-banner active">
+        <div class="status-dot active"></div>
+        <div>
+          <div class="status-text">Seite ist live
+            <span>Deine Seite ist öffentlich erreichbar</span>
+          </div>
         </div>
-        <div class="preview-phones">
-          <div class="preview-phone">
-            <div class="preview-phone-label">Clean</div>
-            <div class="phone-mock phone-clean">
-              <div class="phone-inner">
-                <div class="mock-avatar"></div>
-                <div class="mock-name"></div>
-                <div class="mock-bio"></div>
-                <div class="mock-btn"></div>
-                <div class="mock-btn" style="opacity:.6"></div>
-                <div class="mock-btn" style="opacity:.35"></div>
+      </div>
+
+      ${bioUrl?`<div class="link-bar">
+        <a class="link-url" href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>
+        <button class="link-action-btn" onclick="copyLink('${bioFullUrl}')">Kopieren</button>
+      </div>`:''}
+
+      <div class="section">
+        <div class="section-label">Aufrufe</div>
+        <div class="stats-grid">
+          <div class="stat-box"><div class="stat-box-value">${fmt(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
+          <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
+          <div class="stat-box"><div class="stat-box-value">${fmt(views30)}</div><div class="stat-box-label">30 Tage</div></div>
+        </div>
+      </div>
+
+      <div class="action-stack">
+        <button class="action-btn action-btn-primary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
+        <button class="action-btn action-btn-primary" onclick="generatePage()" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong)">↻ Seite neu generieren</button>
+      </div>
+
+      <div class="action-stack" style="padding-bottom:calc(8px + var(--safe-bottom))">
+        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">🗑 BioLink-Seite löschen</button>
+      </div>`
+
+  } else {
+    // ── NOT ACTIVE VIEW ──
+    page.innerHTML=`
+      ${slug&&aufrufe.length===0?'':slug?`<div class="status-banner inactive">
+        <div class="status-dot inactive"></div>
+        <div>
+          <div class="status-text">Seite ist inaktiv
+            <span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span>
+          </div>
+        </div>
+      </div>`:''}
+
+      <div class="section" style="margin-top:12px">
+        <div class="preview-card">
+          <div class="preview-header">
+            <div class="preview-header-title">Wähle ein Design</div>
+            <div class="preview-header-sub">So sieht deine BioLink-Seite aus</div>
+          </div>
+          <div class="preview-phones">
+            <div class="preview-phone">
+              <div class="preview-phone-label">Color</div>
+              <div class="phone-mock phone-color ${S.theme==='color'?'selected':''}" onclick="selectThemeInline('color')">
+                <div class="mock-avatar"></div><div class="mock-name"></div>
+                <div class="mock-btn"></div><div class="mock-btn" style="opacity:.6"></div><div class="mock-btn" style="opacity:.3"></div>
               </div>
             </div>
-          </div>
-          <div class="preview-phone">
-            <div class="preview-phone-label">Color</div>
-            <div class="phone-mock phone-color">
-              <div class="phone-inner">
-                <div class="mock-avatar"></div>
-                <div class="mock-name"></div>
-                <div class="mock-bio"></div>
-                <div class="mock-btn"></div>
-                <div class="mock-btn" style="opacity:.6"></div>
-                <div class="mock-btn" style="opacity:.35"></div>
+            <div class="preview-phone">
+              <div class="preview-phone-label">Dark</div>
+              <div class="phone-mock phone-dark ${S.theme==='dark'?'selected':''}" onclick="selectThemeInline('dark')">
+                <div class="mock-avatar"></div><div class="mock-name"></div>
+                <div class="mock-btn"></div><div class="mock-btn" style="opacity:.6"></div><div class="mock-btn" style="opacity:.3"></div>
               </div>
             </div>
-          </div>
-          <div class="preview-phone">
-            <div class="preview-phone-label">Dark</div>
-            <div class="phone-mock phone-dark">
-              <div class="phone-inner">
-                <div class="mock-avatar"></div>
-                <div class="mock-name"></div>
-                <div class="mock-bio"></div>
-                <div class="mock-btn"></div>
-                <div class="mock-btn" style="opacity:.6"></div>
-                <div class="mock-btn" style="opacity:.35"></div>
+            <div class="preview-phone">
+              <div class="preview-phone-label">Clean</div>
+              <div class="phone-mock phone-clean ${S.theme==='clean'?'selected':''}" onclick="selectThemeInline('clean')">
+                <div class="mock-avatar"></div><div class="mock-name"></div>
+                <div class="mock-btn"></div><div class="mock-btn" style="opacity:.6"></div><div class="mock-btn" style="opacity:.3"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Setup buttons -->
-    <div class="action-stack">
-      <button class="action-btn action-btn-secondary" onclick="openThemeSheet()">🎨 Design wählen · ${capitalizeTheme(state.selectedTheme)}</button>
-      <button class="action-btn action-btn-secondary" onclick="openProfileSheet()">👤 Profil-Infos eingeben</button>
-      <button class="action-btn action-btn-secondary" onclick="openLinksSheet()">🔗 Social & Links hinzufügen</button>
-    </div>
+      <div class="action-stack">
+        <button class="action-btn action-btn-secondary" onclick="openSheet('handles-sheet')">🔗 Social Kanäle</button>
+        <button class="action-btn action-btn-secondary" onclick="openSheet('links-sheet')">🌐 Custom Links</button>
+        <button class="action-btn action-btn-secondary" onclick="openSheet('impressum-sheet')">📄 Impressum</button>
+      </div>
 
-    <!-- Checklist + Generate -->
-    <div class="section" style="padding-bottom:8px">
-      <div class="generate-card">
-        <div class="generate-title">Seite erstellen</div>
-        <div class="generate-sub">Prüfe ob alles vollständig ist. Das Impressum ist gesetzlich vorgeschrieben.</div>
-        <div class="generate-checklist">
-          ${checks.map(c=>`<div class="check-item"><div class="check-icon ${c.ok?'check-ok':'check-missing'}">${c.ok?'✓':'✕'}</div><span>${c.label}</span></div>`).join('')}
+      <div class="section">
+        <div class="check-card">
+          <div class="check-card-title">Checkliste</div>
+          <div class="check-card-sub">Das Impressum ist gesetzlich vorgeschrieben.</div>
+          ${checks.map(c=>`<div class="check-item">
+            <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'·'}</div>
+            <span class="check-label ${c.ok?'ok':'miss'}">${c.label}</span>
+          </div>`).join('')}
+          <label class="terms-row">
+            <input type="checkbox" id="terms-check"/>
+            <span class="terms-text">Ich akzeptiere die <a href="/legal#biopage_terms" target="_blank">Nutzungsbedingungen</a> von viuno.</span>
+          </label>
         </div>
-        <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;cursor:pointer">
-          <input type="checkbox" id="terms-check" style="width:18px;height:18px;margin-top:1px;flex-shrink:0;accent-color:var(--text);cursor:pointer"/>
-          <span style="font-size:12px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#biopage_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> von viuno.</span>
-        </label>
-        <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()" ${allOk?'':'disabled'}>
-          ${allOk?'✨ BioLink-Seite erstellen':'Bitte alle Punkte erfüllen'}
+      </div>
+
+      <div class="action-stack" style="padding-bottom:calc(8px + var(--safe-bottom))">
+        <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()">
+          ${slug?'↻ Seite reaktivieren':'✨ BioLink-Seite erstellen'}
         </button>
-      </div>
-    </div>
-    `}
+      </div>`
 
-    <!-- Delete only shown when active -->
-    ${isActive?`<div style="padding:8px 20px 8px">
-      <button class="action-btn action-btn-danger" onclick="showDeleteModal1()">🗑 BioLink-Seite löschen</button>
-    </div>`:''}
-  `
+    // Terms check enables/disables button
+    setTimeout(()=>{
+      const tc=document.getElementById('terms-check')
+      const bg=document.getElementById('btn-generate')
+      if(!tc||!bg)return
+      if(!allOk){bg.disabled=true;bg.title='Bitte alle Punkte der Checkliste erfüllen'}
+      else{bg.disabled=!tc.checked}
+      tc.addEventListener('change',()=>{bg.disabled=!tc.checked})
+    },0)
+  }
 
-  // init sheets with current data
+  // Init sheet fields
   initSheets()
-  // Update theme label in edit sheet
-  const tl=document.getElementById('current-theme-label')
-  if(tl)tl.textContent=capitalizeTheme(state.selectedTheme)
 }
 
-function buildViewsChart(views){
-  if(!views||views.length<2)return''
-  const days=[]
-  for(let i=13;i>=0;i--){
-    const d=new Date();d.setDate(d.getDate()-i)
-    const key=d.toISOString().slice(0,10)
-    const count=views.filter(v=>v.viewed_date===key).reduce((s,v)=>s+(v.view_count||0),0)
-    days.push({date:key,count})
+function slugify(name){
+  return name.toLowerCase().trim()
+    .replace(/[äÄ]/g,'ae').replace(/[öÖ]/g,'oe').replace(/[üÜ]/g,'ue').replace(/[ß]/g,'ss')
+    .replace(/[^a-z0-9\s_-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'')
+}
+
+// ── Copy link ──
+window.copyLink=function(url){
+  navigator.clipboard.writeText(url).then(()=>showToast('Link kopiert ✓')).catch(()=>{showToast('Nicht kopierbar')})
+}
+
+// ── Generate / Delete ──
+window.generatePage=async function(){
+  const btn=document.getElementById('btn-generate')
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'}
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    const res=await fetch(`${SB_URL}/functions/v1/generate-biolink`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json()
+    if(!res.ok||!body.success)throw new Error(body.error||`HTTP ${res.status}`)
+    showToast('BioLink veröffentlicht ✓')
+    await loadAll()
+  }catch(err){
+    showToast('Fehler: '+err.message,5000)
+    if(btn){btn.disabled=false;btn.textContent=S.profile?.bio_active?'↻ Seite neu generieren':'✨ BioLink-Seite erstellen'}
   }
-  const max=Math.max(...days.map(d=>d.count),1)
-  const W=300,H=80,PAD=6,YPAD=32
-  const pts=days.map((d,i)=>{
-    const x=YPAD+PAD+(i/(days.length-1))*(W-YPAD-PAD*2)
-    const y=PAD+(1-d.count/max)*(H-PAD*2)
-    return[x.toFixed(1),y.toFixed(1)]
-  })
-  const lineD='M'+pts.map(p=>p.join(',')).join(' L')
-  const areaD=`${lineD} L${pts[pts.length-1][0]},${H} L${pts[0][0]},${H} Z`
-  const last=pts[pts.length-1]
-  // Y-axis labels
-  const yTop=max
-  const yMid=Math.round(max/2)
-  const yBot=0
-  const svg=`<svg class="chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="overflow:visible">
-    <defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#111110" stop-opacity=".1"/>
-      <stop offset="100%" stop-color="#111110" stop-opacity="0"/>
-    </linearGradient></defs>
-    <!-- Y-axis labels -->
-    <text x="${YPAD-4}" y="${PAD+4}" text-anchor="end" font-size="9" fill="#b0afa9" font-family="inherit">${yTop}</text>
-    <text x="${YPAD-4}" y="${H/2+3}" text-anchor="end" font-size="9" fill="#b0afa9" font-family="inherit">${yMid}</text>
-    <text x="${YPAD-4}" y="${H-PAD+2}" text-anchor="end" font-size="9" fill="#b0afa9" font-family="inherit">${yBot}</text>
-    <!-- Y-axis line -->
-    <line x1="${YPAD-2}" y1="${PAD}" x2="${YPAD-2}" y2="${H-PAD}" stroke="#e0efed" stroke-width="1"/>
-    <path d="${areaD}" fill="url(#vg)"/>
-    <path d="${lineD}" fill="none" stroke="#111110" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="${last[0]}" cy="${last[1]}" r="4" fill="#111110" stroke="white" stroke-width="2"/>
-  </svg>`
-  const fmtShort=d=>new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})
-  return`<div class="section"><div class="chart-card">${svg}<div class="chart-dates"><span class="chart-date">${fmtShort(days[0].date)}</span><span class="chart-date">${fmtShort(days[6].date)}</span><span class="chart-date">${fmtShort(days[13].date)}</span></div></div></div>`
 }
 
-function capitalizeTheme(t){return{clean:'Clean',color:'Color',dark:'Dark'}[t]||t}
+window.confirmDelete=async function(){
+  closeModal('delete-modal')
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    const res=await fetch(`${SB_URL}/functions/v1/generate-biolink?action=delete`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json()
+    if(!res.ok||!body.success)throw new Error(body.error||'Fehler')
+    showToast('Seite gelöscht')
+    await loadAll()
+  }catch(err){showToast('Fehler: '+err.message,4000)}
+}
 
+// ── Sheet inits ──
 function initSheets(){
-  const p=state.profile,b=state.biolink
-  // profile sheet - photo
-  const photoInner=document.getElementById('s-photo-inner')
-  if(photoInner){
-    const imgUrl=p?.profile_image_url
-    if(imgUrl){photoInner.innerHTML=`<img src="${escHtml(imgUrl)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`}
-    else{photoInner.textContent=(p?.display_name||p?.full_name||'?')[0]?.toUpperCase()||'?'}
+  const p=S.profile,b=S.biolink
+  // Profile sheet
+  const bw=document.getElementById('profile-photo-wrap')
+  if(bw){
+    if(p?.profile_image_url)bw.innerHTML=`<img src="${esc(p.profile_image_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;else bw.textContent=(p?.display_name||'?')[0].toUpperCase()
   }
-  document.getElementById('s-bio').value=p?.bio||''
-  document.getElementById('s-niche').value=p?.niche_category||'general'
-  document.getElementById('s-impressum').value=b?.impressum_text||''
-  // links sheet — always load fresh from state
-  document.getElementById('s-ig').value=(p?.instagram_handle||'').replace(/^@/,'')
-  document.getElementById('s-tt').value=(p?.tiktok_handle||'').replace(/^@/,'')
-  document.getElementById('s-threads').value=b?.threads_handle||''
-  document.getElementById('s-yt').value=b?.youtube_handle||''
-  // custom links — load fresh from state.biolink
-  const rawLinks=b?.custom_links
-  const links=Array.isArray(rawLinks)?rawLinks:[]
-  renderCustomLinksList(links)
-  // paid content flag
-  const paidEl=document.getElementById('s-paid-content')
-  if(paidEl)paidEl.checked=b?.is_paid_content||false
-  // theme
-  updateThemeGrid(state.selectedTheme)
+  const bioEl=document.getElementById('s-bio')
+  if(bioEl)bioEl.value=p?.bio||''
+  // Handles
+  const strip=(h)=>h?h.replace(/^@/,''):''
+  const igEl=document.getElementById('s-ig');if(igEl)igEl.value=strip(p?.instagram_handle)
+  const ttEl=document.getElementById('s-tt');if(ttEl)ttEl.value=strip(p?.tiktok_handle)
+  const ytEl=document.getElementById('s-yt');if(ytEl)ytEl.value=strip(p?.youtube_handle)
+  const thEl=document.getElementById('s-threads');if(thEl)thEl.value=strip(p?.threads_handle)
+  // Impressum
+  const impEl=document.getElementById('s-impressum');if(impEl)impEl.value=p?.impressum_text||''
+  // Theme
+  updateThemeUI()
+  // Links
+  renderLinksSheet()
 }
 
-// ── PHOTO UPLOAD in profile sheet ──
-document.getElementById('s-photo-input').addEventListener('change',async(e)=>{
+// ── Photo upload ──
+document.getElementById('photo-input').addEventListener('change',async(e)=>{
   const file=e.target.files?.[0];if(!file)return
-  if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
-  const statusEl=document.getElementById('s-photo-status')
-  statusEl.textContent='Wird hochgeladen…'
-  // show preview immediately
+  if(file.size>5*1024*1024){showToast('Max. 5 MB');return}
+  const status=document.getElementById('photo-status')
+  if(status)status.textContent='Wird hochgeladen…'
   const reader=new FileReader()
-  reader.onload=ev=>{
-    const wrap=document.getElementById('s-photo-inner')
-    if(wrap)wrap.innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
-  }
+  reader.onload=ev=>{const bw=document.getElementById('profile-photo-wrap');if(bw)bw.innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`}
   reader.readAsDataURL(file)
-  const path=`${state.user.id}/${Date.now()}.${file.name.split('.').pop()}`
+  const path=`${S.user.id}/${Date.now()}.${file.name.split('.').pop()}`
   const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
-  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);statusEl.textContent='';return}
+  if(error){showToast('Upload fehlgeschlagen');if(status)status.textContent='Fehler';return}
   const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
-  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',state.user.id)
-  if(state.profile)state.profile.profile_image_url=publicUrl
-  statusEl.textContent='✓ Gespeichert'
-  setTimeout(()=>statusEl.textContent='',2000)
+  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',S.user.id)
+  if(S.profile)S.profile.profile_image_url=publicUrl
+  if(status)status.textContent='✓ Foto hochgeladen'
+  showToast('Profilbild gespeichert ✓')
+  // Update topbar avatar
+  const av=document.getElementById('user-avatar')
+  if(av)av.innerHTML=`<img src="${esc(publicUrl)}" alt="">`
   e.target.value=''
 })
 
-// ── THEME ──
-window.openThemeSheet=function(){openSheet('theme-sheet');updateThemeGrid(state.selectedTheme)}
-window.selectTheme=function(t){state.selectedTheme=t;updateThemeGrid(t)}
-function updateThemeGrid(t){document.querySelectorAll('.theme-opt').forEach(o=>o.classList.toggle('selected',o.dataset.theme===t))}
-window.saveTheme=async function(){
-  await sb.from('biolink_settings').update({theme:state.selectedTheme,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
-  if(state.biolink)state.biolink.theme=state.selectedTheme
-  closeSheet('theme-sheet')
-  // If BioPage is active → regenerate so theme takes effect
-  const isActive=state.biolink?.is_active===true
-  if(isActive){
-    showToast('Design wird angewendet…',4000)
-    const{data:{session}}=await sb.auth.getSession()
-    if(session){
-      await fetch(`${SUPABASE_URL}/functions/v1/generate-bio-page`,{
-        method:'POST',
-        headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
-        body:JSON.stringify({theme:state.selectedTheme})
-      })
-      showToast('Design aktualisiert ✓')
-    }
-  }else{
-    showToast('Design gespeichert ✓')
-  }
+// ── Save profile ──
+window.saveProfile=async function(){
+  const bio=document.getElementById('s-bio')?.value.trim()||null
+  const btn=document.getElementById('btn-save-profile')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  await sb.from('users').update({bio,updated_at:new Date().toISOString()}).eq('id',S.user.id)
+  if(S.profile)S.profile.bio=bio
+  btn.disabled=false;btn.textContent='Speichern'
+  closeSheet('profile-sheet')
+  showToast('Profil gespeichert ✓')
   renderPage()
 }
 
-// ── PROFILE SHEET ──
-window.openProfileSheet=function(){initSheets();openSheet('profile-sheet')}
-window.saveProfileSheet=async function(){
-  const impressum=document.getElementById('s-impressum').value.trim()
-  if(!impressum){showToast('Impressum ist (Pflichtfeld).');return}
-  const bio=document.getElementById('s-bio').value.trim()
-  const niche=document.getElementById('s-niche').value
-  await Promise.all([
-    sb.from('users').update({bio:bio||null,niche_category:niche,updated_at:new Date().toISOString()}).eq('id',state.user.id),
-    sb.from('biolink_settings').update({impressum_text:impressum,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
-  ])
-  if(state.profile){state.profile.bio=bio;state.profile.niche_category=niche}
-  if(state.biolink)state.biolink.impressum_text=impressum
-  closeSheet('profile-sheet');showToast('Gespeichert ✓');renderPage()
-}
-
-// ── LINKS SHEET ──
-window.openLinksSheet=function(){initSheets();openSheet('links-sheet')}
-let customLinks=[]
-function renderCustomLinksList(links){
-  customLinks=links.map(l=>({...l})) // deep copy
-  const el=document.getElementById('custom-links-list')
-  const addBtn=document.getElementById('link-add-btn')
-  if(!el)return
-  el.innerHTML=customLinks.map((l,i)=>`<div class="custom-link-row">
-    <input type="text" placeholder="Titel" value="${escHtml(l.title||'')}" data-idx="${i}" data-field="title" style="width:36%"/>
-    <input type="url" placeholder="https://…" value="${escHtml(l.url||'')}" data-idx="${i}" data-field="url"/>
-    <button class="link-remove-btn" data-remove="${i}">×</button>
-  </div>`).join('')
-  // Event delegation — one listener on the container
-  el.oninput=e=>{
-    const idx=+e.target.dataset.idx,field=e.target.dataset.field
-    if(!isNaN(idx)&&field&&customLinks[idx])customLinks[idx][field]=e.target.value
+// ── Save handles ──
+window.saveHandles=async function(){
+  const val=(id)=>{const v=document.getElementById(id)?.value.trim();return v?'@'+v.replace(/^@/,''):null}
+  const patch={
+    instagram_handle:val('s-ig'),tiktok_handle:val('s-tt'),
+    youtube_handle:val('s-yt'),threads_handle:val('s-threads'),
+    updated_at:new Date().toISOString()
   }
-  el.onclick=e=>{
-    const btn=e.target.closest('[data-remove]')
-    if(btn){customLinks.splice(+btn.dataset.remove,1);renderCustomLinksList(customLinks)}
+  await sb.from('users').update(patch).eq('id',S.user.id)
+  Object.assign(S.profile,patch)
+  closeSheet('handles-sheet')
+  showToast('Kanäle gespeichert ✓')
+  renderPage()
+}
+
+// ── Save impressum ──
+window.saveImpressum=async function(){
+  const text=document.getElementById('s-impressum')?.value.trim()||null
+  await sb.from('users').update({impressum_text:text,updated_at:new Date().toISOString()}).eq('id',S.user.id)
+  if(S.profile)S.profile.impressum_text=text
+  closeSheet('impressum-sheet')
+  showToast('Impressum gespeichert ✓')
+  renderPage()
+}
+
+// ── Theme ──
+window.selectTheme=function(t){S.theme=t;updateThemeUI()}
+window.selectThemeInline=function(t){
+  S.theme=t
+  document.querySelectorAll('.phone-mock').forEach(m=>m.classList.remove('selected'))
+  document.querySelectorAll(`.phone-${t}`).forEach(m=>m.classList.add('selected'))
+}
+function updateThemeUI(){
+  ['color','dark','clean'].forEach(t=>{
+    const opt=document.querySelector(`[data-theme="${t}"]`)
+    const check=document.getElementById(`check-${t}`)
+    if(opt)opt.classList.toggle('selected',S.theme===t)
+    if(check)check.textContent=S.theme===t?'✓':''
+  })
+}
+window.selectLang=function(l){
+  S.lang=l
+  document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('selected',b.dataset.lang===l))
+}
+window.saveThemeLang=async function(){
+  await sb.from('biolink_viuno').upsert({user_id:S.user.id,theme:S.theme,default_language:S.lang,updated_at:new Date().toISOString()},{onConflict:'user_id'})
+  if(S.biolink){S.biolink.theme=S.theme;S.biolink.default_language=S.lang}else{S.biolink={user_id:S.user.id,theme:S.theme,default_language:S.lang}}
+  closeSheet('theme-sheet')
+  showToast('Design gespeichert ✓')
+  document.getElementById('current-theme-lang').textContent=`${S.theme==='color'?'Color':S.theme==='dark'?'Dark':'Clean'} · ${S.lang==='de'?'Deutsch':S.lang==='en'?'English':'Italiano'}`
+  // Init lang buttons in sheet
+  document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('selected',b.dataset.lang===S.lang))
+}
+
+// ── Links Sheet ──
+function renderLinksSheet(){
+  const list=document.getElementById('links-list')
+  if(!list)return
+  if(S.customLinks.length===0){
+    list.innerHTML='<div class="empty-links">Noch keine Custom Links hinzugefügt</div>'
+  }else{
+    list.innerHTML=S.customLinks.map((l,i)=>`
+      <div class="link-row-item" data-id="${esc(l.id)}">
+        <span class="link-drag">⠿</span>
+        <div class="link-row-body">
+          <div class="link-row-title">${esc(l.title)}</div>
+          <div class="link-row-url">${esc(l.url)}</div>
+        </div>
+        ${l.is_paid?'<span class="link-paid-badge">Werbung</span>':''}
+        <button class="link-del-btn" onclick="deleteLink('${esc(l.id)}')">✕</button>
+      </div>`).join('')
   }
-  if(addBtn)addBtn.style.display=customLinks.length>=5?'none':'block'
-}
-window.addCustomLink=function(){if(customLinks.length>=5)return;customLinks.push({title:'',url:''});renderCustomLinksList(customLinks)}
-window.saveLinksSheet=async function(){
-  const ig=document.getElementById('s-ig').value.trim().replace(/^@/,'')
-  const tt=document.getElementById('s-tt').value.trim().replace(/^@/,'')
-  const threads=document.getElementById('s-threads').value.trim().replace(/^@/,'')
-  const yt=document.getElementById('s-yt').value.trim().replace(/^@/,'')
-  const validLinks=customLinks.filter(l=>l.url?.trim()).slice(0,5)
-  const isPaid=document.getElementById('s-paid-content')?.checked||false
-  await Promise.all([
-    sb.from('users').update({instagram_handle:ig||null,tiktok_handle:tt||null,updated_at:new Date().toISOString()}).eq('id',state.user.id),
-    sb.from('biolink_settings').update({threads_handle:threads||null,youtube_handle:yt||null,custom_links:validLinks,is_paid_content:isPaid,updated_at:new Date().toISOString()}).eq('user_id',state.user.id)
-  ])
-  if(state.profile){state.profile.instagram_handle=ig;state.profile.tiktok_handle=tt}
-  if(state.biolink){state.biolink.threads_handle=threads;state.biolink.youtube_handle=yt;state.biolink.custom_links=validLinks;state.biolink.is_paid_content=isPaid}
-  closeSheet('links-sheet');showToast('Links gespeichert ✓');renderPage()
+  const addBtn=document.getElementById('btn-add-link')
+  if(addBtn)addBtn.style.display=S.customLinks.length>=10?'none':'flex'
 }
 
-// ── COPY LINK ──
-window.copyLink=async function(url){
-  try{await navigator.clipboard.writeText(url);showToast('Link kopiert ✓')}
-  catch(_){showToast('Konnte nicht kopieren')}
+window.openAddLink=function(){
+  S.editingLinkId=null
+  document.getElementById('link-title').value=''
+  document.getElementById('link-url').value=''
+  document.getElementById('link-paid').checked=false
+  document.getElementById('link-hint').textContent=''
+  document.getElementById('add-link-title').textContent='Link hinzufügen'
+  openSheet('add-link-sheet')
 }
 
-// ── GENERATE ──
-window.generatePage=async function(){
-  // Check terms only on first generation (when terms checkbox exists)
-  const termsCheck=document.getElementById('terms-check')
-  if(termsCheck&&!termsCheck.checked){showToast('Bitte Nutzungsbedingungen akzeptieren.');return}
-  const btn=document.getElementById('btn-generate')
-  if(!btn)return
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'
-  try{
-    const{data:{session}}=await sb.auth.getSession()
-    if(!session){showToast('Session abgelaufen');location.reload();return}
-    const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-bio-page`,{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({theme:state.selectedTheme})
-    })
-    const body=await res.json().catch(()=>({}))
-    if(!res.ok&&body.success!==true){showToast('Fehler: '+(body.error||'Unbekannt'),4000);btn.disabled=false;btn.textContent='Erneut versuchen';return}
-    showToast('BioLink-Seite generiert ✓',4000)
-    await loadAll()
-  }catch(err){showToast('Fehler: '+err.message,4000);if(btn){btn.disabled=false;btn.textContent='Erneut versuchen'}}
+window.confirmAddLink=async function(){
+  const title=document.getElementById('link-title').value.trim()
+  const url=document.getElementById('link-url').value.trim()
+  const isPaid=document.getElementById('link-paid').checked
+  const hint=document.getElementById('link-hint')
+  if(!title||!url){hint.textContent='Titel und URL sind Pflichtfelder.';return}
+  if(!/^https?:\/\/.+/.test(url)&&!url.startsWith('www.')){hint.textContent='URL muss mit https:// beginnen.';return}
+  hint.textContent=''
+  const normalUrl=url.startsWith('http')?url:'https://'+url
+  const position=S.customLinks.length
+  const{data,error}=await sb.from('biolink_custom_links').insert({
+    user_id:S.user.id,title,url:normalUrl,is_paid:isPaid,position
+  }).select().single()
+  if(error){hint.textContent='Fehler: '+error.message;return}
+  S.customLinks.push(data)
+  closeSheet('add-link-sheet')
+  renderLinksSheet()
+  showToast('Link hinzugefügt ✓')
 }
 
-// ── DELETE ──
-window.showDeleteModal1=function(){document.getElementById('delete-modal-1').classList.remove('hidden')}
-window.showDeleteModal2=function(){document.getElementById('delete-modal-1').classList.add('hidden');document.getElementById('delete-modal-2').classList.remove('hidden')}
-window.confirmDelete=async function(){
-  const btn=document.getElementById('btn-confirm-delete')
-  btn.disabled=true;btn.textContent='Wird gelöscht…'
-  try{
-    const{data:{session}}=await sb.auth.getSession()
-    const res=await fetch(`${SUPABASE_URL}/functions/v1/cleanup-user-pages`,{
-      method:'POST',
-      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
-      body:JSON.stringify({action:'delete'})
-    })
-    document.getElementById('delete-modal-2').classList.add('hidden')
-    showToast('BioLink-Seite gelöscht')
-    await loadAll()
-  }catch(err){showToast('Fehler: '+err.message,4000);btn.disabled=false;btn.textContent='Ja, jetzt löschen'}
+window.deleteLink=async function(id){
+  await sb.from('biolink_custom_links').delete().eq('id',id).eq('user_id',S.user.id)
+  S.customLinks=S.customLinks.filter(l=>l.id!==id)
+  renderLinksSheet()
+  showToast('Link gelöscht')
 }
 
-
-async function setupSidebar(session){
-  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type').eq('id',session.user.id).single()
-  const name=p?.display_name||p?.full_name||session.user.email||'?'
-  const av=document.getElementById('user-avatar')
-  if(av){if(p?.profile_image_url){av.innerHTML=`<img src="${p.profile_image_url.replace(/"/g,'&quot;')}" alt="">`}else{av.textContent=name[0].toUpperCase()}}
-  const emailEl=document.getElementById('sidebar-user-email')
-  if(emailEl)emailEl.textContent=session.user.email||''
-  if(p?.subscription_type==='pro'){document.getElementById('sidebar-pro-banner')?.classList.add('show')}
+window.saveLinks=async function(){
+  closeSheet('links-sheet')
+  showToast('Links gespeichert ✓')
+  renderPage()
 }
 
-baseInit(enterApp)
+// ── Theme sheet lang init on open ──
+const origOpenSheet=window.openSheet
+window.openSheet=function(id){
+  origOpenSheet(id)
+  if(id==='theme-sheet'){
+    document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('selected',b.dataset.lang===S.lang))
+    updateThemeUI()
+  }
+}
 </script>
 </body>
 </html>
