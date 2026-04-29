@@ -85,7 +85,11 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sheet-backdrop.hidden{display:none}
 .sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:0 0 calc(20px + var(--safe-bottom));width:100%;max-width:540px;max-height:90dvh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .sheet-handle{width:36px;height:4px;background:var(--border-strong);border-radius:2px;margin:12px auto 0}
-.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:16px 20px 4px}
+.sheet-header{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 14px 0 20px;gap:8px}
+.sheet-header-text{flex:1;min-width:0}
+.sheet-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:grid;place-items:center;font-size:16px;color:var(--muted);flex-shrink:0;font-family:inherit;line-height:1;padding:0}
+.sheet-close:hover{background:var(--border);color:var(--text)}
+.sheet-title{font-size:17px;font-weight:700;letter-spacing:-.02em;padding:4px 0 4px}
 .sheet-sub{font-size:13px;color:var(--muted);padding:0 20px 16px;line-height:1.5}
 .sheet-field{padding:0 20px 12px}
 .sheet-label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
@@ -105,6 +109,11 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .sheet-btn-primary{width:100%;padding:13px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
 .sheet-btn-primary:disabled{opacity:.4;cursor:not-allowed}
 .sheet-btn-cancel{width:100%;padding:13px;background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:500;cursor:pointer}
+
+/* LANG SELECTOR */
+.lang-options{display:flex;gap:8px;padding:0 20px 8px}
+.lang-opt{flex:1;padding:14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;background:var(--surface);color:var(--muted);text-align:center;transition:all .15s}
+.lang-opt.selected{background:var(--text);color:white;border-color:var(--text)}
 
 /* TABS in sheet */
 .sheet-tabs{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:3px;margin:0 20px 16px}
@@ -267,18 +276,29 @@ input,textarea,select{font-size:16px!important}
 <div class="sheet-backdrop hidden" id="edit-actions-sheet" onclick="closeSheet('edit-actions-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Bearbeiten</div>
-    <div class="sheet-sub">Tippe auf einen Bereich um die Daten einzutragen oder zu ändern.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Bearbeiten</div>
+        <div class="sheet-sub" style="padding-bottom:0">Tippe auf einen Bereich um die Daten einzutragen oder zu ändern.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
+    <div style="height:16px"></div>
     <div class="edit-action-list" id="edit-action-list"></div>
   </div>
 </div>
 
 <!-- PROFIL SHEET (Name, Bio, Profilbild, Niche, Stadt) -->
-<div class="sheet-backdrop hidden" id="profile-sheet" onclick="closeSheet('profile-sheet')">
+<div class="sheet-backdrop hidden" id="profile-sheet" onclick="backToEditMenu('profile-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Profil</div>
-    <div class="sheet-sub">Diese Daten erscheinen oben auf deinem Media Kit.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Profil</div>
+        <div class="sheet-sub" style="padding-bottom:16px">Diese Daten erscheinen oben auf deinem Media Kit.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="sheet-field">
       <label class="sheet-label">Profilbild</label>
       <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="document.getElementById('photo-input').click()">
@@ -304,18 +324,23 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-actions">
       <button class="sheet-btn-primary" onclick="saveProfile()">Speichern</button>
-      <button class="sheet-btn-cancel" onclick="closeSheet('profile-sheet')">Abbrechen</button>
+      <button class="sheet-btn-cancel" onclick="backToEditMenu('profile-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
 <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
 
 <!-- KONTAKT SHEET -->
-<div class="sheet-backdrop hidden" id="contact-sheet" onclick="closeSheet('contact-sheet')">
+<div class="sheet-backdrop hidden" id="contact-sheet" onclick="backToEditMenu('contact-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Kontakt</div>
-    <div class="sheet-sub">Diese E-Mail-Adresse erscheint auf deinem Media Kit. Marken senden Anfragen direkt dorthin.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Kontakt</div>
+        <div class="sheet-sub" style="padding-bottom:16px">Diese E-Mail-Adresse erscheint auf deinem Media Kit. Marken senden Anfragen direkt dorthin.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="sheet-field">
       <label class="sheet-label">Anfrage-E-Mail</label>
       <input type="email" class="sheet-input" id="s-contact-email" placeholder="anfragen@deinedomain.de" autocomplete="email"/>
@@ -323,17 +348,22 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-actions">
       <button class="sheet-btn-primary" onclick="saveContact()">Speichern</button>
-      <button class="sheet-btn-cancel" onclick="closeSheet('contact-sheet')">Abbrechen</button>
+      <button class="sheet-btn-cancel" onclick="backToEditMenu('contact-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
 
 <!-- KENNZAHLEN SHEET (IG/TT Tabs) -->
-<div class="sheet-backdrop hidden" id="stats-sheet" onclick="closeSheet('stats-sheet')">
+<div class="sheet-backdrop hidden" id="stats-sheet" onclick="backToEditMenu('stats-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Kennzahlen</div>
-    <div class="sheet-sub">Engagement Rate, durchschnittliche Likes/Views und Follower-Zahlen.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Kennzahlen</div>
+        <div class="sheet-sub" style="padding-bottom:16px">Engagement Rate, durchschnittliche Likes/Views und Follower-Zahlen.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="autofill-banner hidden" id="autofill-banner">
       <div class="autofill-text">Analysedaten verfügbar — automatisch übernehmen?</div>
       <button class="autofill-btn" onclick="doAutofill()">Übernehmen</button>
@@ -380,17 +410,22 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-actions">
       <button class="sheet-btn-primary" onclick="saveStats()">Speichern</button>
-      <button class="sheet-btn-cancel" onclick="closeSheet('stats-sheet')">Abbrechen</button>
+      <button class="sheet-btn-cancel" onclick="backToEditMenu('stats-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
 
 <!-- WEITERE PLATTFORMEN SHEET -->
-<div class="sheet-backdrop hidden" id="platforms-sheet" onclick="closeSheet('platforms-sheet')">
+<div class="sheet-backdrop hidden" id="platforms-sheet" onclick="backToEditMenu('platforms-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Weitere Plattformen</div>
-    <div class="sheet-sub">YouTube und Threads. Trage Handle ein — Follower-Zahl erscheint dann.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Weitere Plattformen</div>
+        <div class="sheet-sub" style="padding-bottom:16px">YouTube und Threads. Trage Handle ein — Follower-Zahl erscheint dann.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="sheet-field">
       <label class="sheet-label">YouTube Handle</label>
       <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-yt-handle" placeholder="KanalName"/></div>
@@ -410,17 +445,22 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-actions">
       <button class="sheet-btn-primary" onclick="savePlatforms()">Speichern</button>
-      <button class="sheet-btn-cancel" onclick="closeSheet('platforms-sheet')">Abbrechen</button>
+      <button class="sheet-btn-cancel" onclick="backToEditMenu('platforms-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
 
 <!-- ZIELGRUPPE SHEET -->
-<div class="sheet-backdrop hidden" id="audience-sheet" onclick="closeSheet('audience-sheet')">
+<div class="sheet-backdrop hidden" id="audience-sheet" onclick="backToEditMenu('audience-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Zielgruppe</div>
-    <div class="sheet-sub">Geschlechterverteilung in % und deine zwei stärksten Länder.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Zielgruppe</div>
+        <div class="sheet-sub" style="padding-bottom:16px">Geschlechterverteilung in % und deine zwei stärksten Länder.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="sheet-field">
       <label class="sheet-label">Weiblich</label>
       <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-female" min="0" max="100" placeholder="z.B. 72" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
@@ -440,17 +480,22 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-actions">
       <button class="sheet-btn-primary" onclick="saveAudience()">Speichern</button>
-      <button class="sheet-btn-cancel" onclick="closeSheet('audience-sheet')">Abbrechen</button>
+      <button class="sheet-btn-cancel" onclick="backToEditMenu('audience-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
 
 <!-- ANGEBOTE SHEET -->
-<div class="sheet-backdrop hidden" id="offers-sheet" onclick="closeSheet('offers-sheet')">
+<div class="sheet-backdrop hidden" id="offers-sheet" onclick="backToEditMenu('offers-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Content Angebote</div>
-    <div class="sheet-sub">Was möchtest du Marken anbieten? Tippe zum Auswählen.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Content Angebote</div>
+        <div class="sheet-sub" style="padding-bottom:16px">Was möchtest du Marken anbieten? Tippe zum Auswählen.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="offer-list">
       <button class="offer-row" data-offer="ugc_video" onclick="toggleOffer('ugc_video')">
         <span class="offer-label">UGC Video</span>
@@ -470,23 +515,28 @@ input,textarea,select{font-size:16px!important}
       </button>
     </div>
     <div class="sheet-actions" style="margin-top:8px">
-      <button class="sheet-btn-primary" onclick="closeSheet('offers-sheet')">Fertig</button>
+      <button class="sheet-btn-primary" onclick="backToEditMenu('offers-sheet')">Fertig</button>
     </div>
   </div>
 </div>
 
 <!-- BRANDS SHEET -->
-<div class="sheet-backdrop hidden" id="brands-sheet" onclick="closeSheet('brands-sheet')">
+<div class="sheet-backdrop hidden" id="brands-sheet" onclick="backToEditMenu('brands-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Marken Kooperationen</div>
-    <div class="sheet-sub">Bis zu 10 Marken mit denen du gearbeitet hast. URL ist optional.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Marken Kooperationen</div>
+        <div class="sheet-sub" style="padding-bottom:16px">Bis zu 10 Marken mit denen du gearbeitet hast. URL ist optional.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="sheet-field">
       <div class="brands-list" id="brands-list"></div>
       <button class="btn-add-link" id="btn-add-brand" onclick="openAddBrand()">+ Brand hinzufügen</button>
     </div>
     <div class="sheet-actions">
-      <button class="sheet-btn-primary" onclick="closeSheet('brands-sheet')">Fertig</button>
+      <button class="sheet-btn-primary" onclick="backToEditMenu('brands-sheet')">Fertig</button>
     </div>
   </div>
 </div>
@@ -495,7 +545,13 @@ input,textarea,select{font-size:16px!important}
 <div class="sheet-backdrop hidden" id="add-brand-sheet" onclick="closeSheet('add-brand-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Brand hinzufügen</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Brand hinzufügen</div>
+      </div>
+      <button class="sheet-close" onclick="closeSheet('add-brand-sheet')" aria-label="Zurück">✕</button>
+    </div>
+    <div style="height:8px"></div>
     <div class="sheet-field">
       <label class="sheet-label">Name</label>
       <input type="text" class="sheet-input" id="brand-name" placeholder="z.B. Nike"/>
@@ -514,17 +570,45 @@ input,textarea,select{font-size:16px!important}
 </div>
 
 <!-- IMPRESSUM SHEET -->
-<div class="sheet-backdrop hidden" id="impressum-sheet" onclick="closeSheet('impressum-sheet')">
+<div class="sheet-backdrop hidden" id="impressum-sheet" onclick="backToEditMenu('impressum-sheet')">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">Impressum</div>
-    <div class="sheet-sub">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Wird über das Impressum-Sheet auf deiner Live-Seite angezeigt.</div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Impressum</div>
+        <div class="sheet-sub" style="padding-bottom:16px">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Wird über das Impressum-Sheet auf deiner Live-Seite angezeigt.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
     <div class="sheet-field">
       <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
     </div>
     <div class="sheet-actions">
       <button class="sheet-btn-primary" onclick="saveImpressum()">Speichern</button>
-      <button class="sheet-btn-cancel" onclick="closeSheet('impressum-sheet')">Abbrechen</button>
+      <button class="sheet-btn-cancel" onclick="backToEditMenu('impressum-sheet')">Abbrechen</button>
+    </div>
+  </div>
+</div>
+
+<!-- SPRACHE SHEET -->
+<div class="sheet-backdrop hidden" id="language-sheet" onclick="backToEditMenu('language-sheet')">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-header-text">
+        <div class="sheet-title">Standard-Sprache</div>
+        <div class="sheet-sub" style="padding-bottom:16px">In welcher Sprache wird dein Media Kit standardmäßig angezeigt? Besucher können später auf der Live-Seite umschalten.</div>
+      </div>
+      <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+    </div>
+    <div class="lang-options">
+      <button class="lang-opt" data-lang="de" onclick="selectLang('de')">DE</button>
+      <button class="lang-opt" data-lang="en" onclick="selectLang('en')">EN</button>
+      <button class="lang-opt" data-lang="it" onclick="selectLang('it')">IT</button>
+    </div>
+    <div class="sheet-actions" style="margin-top:8px">
+      <button class="sheet-btn-primary" onclick="saveLanguage()">Speichern</button>
+      <button class="sheet-btn-cancel" onclick="backToEditMenu('language-sheet')">Abbrechen</button>
     </div>
   </div>
 </div>
@@ -570,6 +654,19 @@ window.openSheet=function(id){document.getElementById(id).classList.remove('hidd
 window.closeSheet=function(id){document.getElementById(id).classList.add('hidden');document.body.style.overflow=''}
 window.closeModal=function(id){document.getElementById(id).classList.add('hidden')}
 
+// Schließt alle Sheets komplett (X-Button)
+window.closeAllSheets=function(){
+  document.querySelectorAll('.sheet-backdrop').forEach(el=>el.classList.add('hidden'))
+  document.body.style.overflow=''
+}
+
+// Schließt aktuelles Sub-Sheet und öffnet das Bearbeiten-Hauptmenü
+window.backToEditMenu=function(currentSheetId){
+  document.getElementById(currentSheetId).classList.add('hidden')
+  // Sofort öffnen damit Body-Scroll gesperrt bleibt
+  setTimeout(()=>openEditMenu(),50)
+}
+
 // ── State ──
 const S={
   user:null,
@@ -580,7 +677,8 @@ const S={
   analyseStats:{},    // analyse_stats by platform
   aufrufe:[],
   isActive:false,
-  slug:null
+  slug:null,
+  defaultLang:'de'    // Sprach-Auswahl (Vorauswahl beim Öffnen)
 }
 
 function slugify(name){
@@ -617,6 +715,7 @@ async function loadAll(){
   S.aufrufe=aufrufeRes.data||[]
   S.isActive=S.profile.mediakit_active===true
   S.slug=S.profile.display_name?slugify(S.profile.display_name):null
+  S.defaultLang=S.mkData?.default_language||'de'
 
   const p=S.profile
   const av=document.getElementById('user-avatar')
@@ -767,6 +866,7 @@ window.openEditMenu=function(){
     {id:'audience-sheet',icon:'👥',label:'Zielgruppe',sub:audOk?'Demografie eingetragen':'Optional',status:'',statusLabel:''},
     {id:'offers-sheet',icon:'🎬',label:'Content Angebote',sub:offersCount?`${offersCount} ausgewählt`:'Optional',status:'',statusLabel:''},
     {id:'brands-sheet',icon:'🤝',label:'Marken Kooperationen',sub:brandsCount?`${brandsCount} / 10`:'Optional',status:'',statusLabel:''},
+    {id:'language-sheet',icon:'🌐',label:'Standard-Sprache',sub:({de:'Deutsch',en:'English',it:'Italiano'}[S.defaultLang]||'Deutsch'),status:'',statusLabel:''},
     {id:'impressum-sheet',icon:'📄',label:'Impressum',sub:impOk?'Hinterlegt':'Gesetzlich vorgeschrieben',status:impOk?'ok':'miss',statusLabel:impOk?'OK':'Pflicht'}
   ]
 
@@ -808,6 +908,10 @@ window.openEditSubSheet=function(id){
     renderBrandsList()
   } else if(id==='impressum-sheet'){
     document.getElementById('s-impressum').value=S.profile?.impressum_text||''
+  } else if(id==='language-sheet'){
+    // Aktuell gespeicherte Sprache als Auswahl markieren
+    document.querySelectorAll('#language-sheet .lang-opt').forEach(b=>
+      b.classList.toggle('selected',b.dataset.lang===S.defaultLang))
   }
   openSheet(id)
 }
@@ -930,6 +1034,7 @@ window.saveProfile=async function(){
   closeSheet('profile-sheet')
   showToast('Profil gespeichert ✓')
   renderPage()
+  setTimeout(()=>openEditMenu(),50)
 }
 
 // ── Save Contact ──
@@ -950,6 +1055,7 @@ window.saveContact=async function(){
   closeSheet('contact-sheet')
   showToast('Kontakt gespeichert ✓')
   renderPage()
+  setTimeout(()=>openEditMenu(),50)
 }
 
 // ── Stats Sheet ──
@@ -1017,6 +1123,7 @@ window.saveStats=async function(){
   closeSheet('stats-sheet')
   showToast('Kennzahlen gespeichert ✓')
   renderPage()
+  setTimeout(()=>openEditMenu(),50)
 }
 
 // ── Platforms Sheet ──
@@ -1065,6 +1172,7 @@ window.savePlatforms=async function(){
   closeSheet('platforms-sheet')
   showToast('Plattformen gespeichert ✓')
   renderPage()
+  setTimeout(()=>openEditMenu(),50)
 }
 
 // ── Audience Sheet ──
@@ -1093,6 +1201,7 @@ window.saveAudience=async function(){
   closeSheet('audience-sheet')
   showToast('Zielgruppe gespeichert ✓')
   renderPage()
+  setTimeout(()=>openEditMenu(),50)
 }
 
 // ── Offers ──
@@ -1172,6 +1281,30 @@ window.saveImpressum=async function(){
   closeSheet('impressum-sheet')
   showToast('Impressum gespeichert ✓')
   renderPage()
+  setTimeout(()=>openEditMenu(),50)
+}
+
+// ── Sprach-Auswahl ──
+window.selectLang=function(l){
+  S.defaultLang=l
+  document.querySelectorAll('#language-sheet .lang-opt').forEach(b=>
+    b.classList.toggle('selected',b.dataset.lang===l))
+}
+window.saveLanguage=async function(){
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const patch={
+    user_id:S.user.id,
+    default_language:S.defaultLang,
+    updated_at:new Date().toISOString()
+  }
+  const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  S.mkData=Object.assign(S.mkData||{},patch)
+  closeSheet('language-sheet')
+  showToast('Sprache gespeichert ✓')
+  renderPage()
+  setTimeout(()=>openEditMenu(),50)
 }
 </script>
 </body>
