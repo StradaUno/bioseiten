@@ -402,7 +402,7 @@ input,textarea,select{font-size:16px!important}
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-handle"></div>
     <div class="sheet-title">Custom Links</div>
-    <div class="sheet-sub">Bis zu 10 Links. Ziehe zum Sortieren. Werbungs-Flag zeigt einen kleinen Hinweis.</div>
+    <div class="sheet-sub">Bis zu 10 Links. Werbungs-Flag zeigt einen kleinen Hinweis auf der Seite.</div>
     <div class="sheet-field">
       <div class="links-list" id="links-list"></div>
       <button class="btn-add-link" id="btn-add-link" onclick="openAddLink()">+ Link hinzufügen</button>
@@ -617,132 +617,134 @@ function renderPage(){
   const views7=aufrufe.filter(a=>(now-new Date(a.viewed_at).getTime())<7*86400000).length
   const views30=aufrufe.length
 
-  // Theme label
+  // Theme/lang label update
   const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
   const langLabels={de:'Deutsch',en:'English',it:'Italiano'}
   document.getElementById('current-theme-lang').textContent=`${themeLabels[S.theme]||'Color'} · ${langLabels[S.lang]||'Deutsch'}`
 
   const page=document.getElementById('page-content')
 
-  if(isActive){
-    // ── ACTIVE VIEW ──
-    page.innerHTML=`
-      <div class="status-banner active">
-        <div class="status-dot active"></div>
-        <div>
-          <div class="status-text">Seite ist live
-            <span>Deine Seite ist öffentlich erreichbar</span>
-          </div>
-        </div>
-      </div>
+  // ── UNIFIED VIEW — same for all users ──
+  // Status section (only when active or previously had slug)
+  const statusHtml=isActive
+    ?`<div class="status-banner active"><div class="status-dot active"></div>
+        <div><div class="status-text">Seite ist live<span>Deine Seite ist öffentlich erreichbar</span></div></div></div>
+       ${bioUrl?`<div class="link-bar">
+         <a class="link-url" href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>
+         <button class="link-action-btn" onclick="copyLink('${bioFullUrl}')">Kopieren</button>
+       </div>`:''}
+       <div class="section">
+         <div class="section-label">Aufrufe</div>
+         <div class="stats-grid">
+           <div class="stat-box"><div class="stat-box-value">${fmt(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
+           <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
+           <div class="stat-box"><div class="stat-box-value">${fmt(views30)}</div><div class="stat-box-label">30 Tage</div></div>
+         </div>
+       </div>
+       ${buildChart(aufrufe)}`
+    :slug?`<div class="status-banner inactive"><div class="status-dot inactive"></div>
+        <div><div class="status-text">Seite ist inaktiv<span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span></div></div></div>`
+    :''
 
-      ${bioUrl?`<div class="link-bar">
-        <a class="link-url" href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>
-        <button class="link-action-btn" onclick="copyLink('${bioFullUrl}')">Kopieren</button>
-      </div>`:''}
+  // Checklist (always shown if not all ok)
+  const checklistHtml=!allOk?`<div class="section">
+    <div class="check-card">
+      <div class="check-card-title">Checkliste</div>
+      <div class="check-card-sub">Das Impressum ist gesetzlich vorgeschrieben.</div>
+      ${checks.map(c=>`<div class="check-item">
+        <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'·'}</div>
+        <span class="check-label ${c.ok?'ok':'miss'}">${c.label}</span>
+      </div>`).join('')}
+    </div>
+  </div>`:''
 
-      <div class="section">
-        <div class="section-label">Aufrufe</div>
-        <div class="stats-grid">
-          <div class="stat-box"><div class="stat-box-value">${fmt(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
-          <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
-          <div class="stat-box"><div class="stat-box-value">${fmt(views30)}</div><div class="stat-box-label">30 Tage</div></div>
-        </div>
-      </div>
+  // Terms + generate button (only when not active)
+  const termsHtml=!isActive?`<div class="section">
+    <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
+      <input type="checkbox" id="terms-check" style="width:18px;height:18px;flex-shrink:0;accent-color:var(--text);margin-top:2px;cursor:pointer"/>
+      <span style="font-size:13px;color:var(--muted);line-height:1.5">Ich akzeptiere die <a href="/legal#biopage_terms" target="_blank" style="color:var(--text);font-weight:600;text-decoration:underline">Nutzungsbedingungen</a> von viuno.</span>
+    </label>
+  </div>
+  <div class="action-stack">
+    <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()" disabled>
+      BioLink erstellen
+    </button>
+  </div>`
+  :`<div class="action-stack">
+    <button class="action-btn action-btn-primary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
+  </div>`
 
-      <div class="action-stack">
-        <button class="action-btn action-btn-primary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
-        <button class="action-btn action-btn-primary" onclick="generatePage()" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong)">↻ Seite neu generieren</button>
-      </div>
-
-      <div class="action-stack" style="padding-bottom:calc(8px + var(--safe-bottom))">
+  // Delete — only when active, at bottom
+  const deleteHtml=isActive
+    ?`<div class="action-stack" style="padding-top:20px;padding-bottom:calc(8px + var(--safe-bottom))">
         <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">🗑 BioLink-Seite löschen</button>
       </div>`
+    :''
 
-  } else {
-    // ── NOT ACTIVE VIEW ──
-    page.innerHTML=`
-      ${slug&&aufrufe.length===0?'':slug?`<div class="status-banner inactive">
-        <div class="status-dot inactive"></div>
-        <div>
-          <div class="status-text">Seite ist inaktiv
-            <span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span>
-          </div>
-        </div>
-      </div>`:''}
+  page.innerHTML=`
+    ${statusHtml}
+    ${checklistHtml}
+    ${termsHtml}
+    ${deleteHtml}`
 
-      <div class="section" style="margin-top:12px">
-        <div class="preview-card">
-          <div class="preview-header">
-            <div class="preview-header-title">Wähle ein Design</div>
-            <div class="preview-header-sub">So sieht deine BioLink-Seite aus</div>
-          </div>
-          <div class="preview-phones">
-            <div class="preview-phone">
-              <div class="preview-phone-label">Color</div>
-              <div class="phone-mock phone-color ${S.theme==='color'?'selected':''}" onclick="selectThemeInline('color')">
-                <div class="mock-avatar"></div><div class="mock-name"></div>
-                <div class="mock-btn"></div><div class="mock-btn" style="opacity:.6"></div><div class="mock-btn" style="opacity:.3"></div>
-              </div>
-            </div>
-            <div class="preview-phone">
-              <div class="preview-phone-label">Dark</div>
-              <div class="phone-mock phone-dark ${S.theme==='dark'?'selected':''}" onclick="selectThemeInline('dark')">
-                <div class="mock-avatar"></div><div class="mock-name"></div>
-                <div class="mock-btn"></div><div class="mock-btn" style="opacity:.6"></div><div class="mock-btn" style="opacity:.3"></div>
-              </div>
-            </div>
-            <div class="preview-phone">
-              <div class="preview-phone-label">Clean</div>
-              <div class="phone-mock phone-clean ${S.theme==='clean'?'selected':''}" onclick="selectThemeInline('clean')">
-                <div class="mock-avatar"></div><div class="mock-name"></div>
-                <div class="mock-btn"></div><div class="mock-btn" style="opacity:.6"></div><div class="mock-btn" style="opacity:.3"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="action-stack">
-        <button class="action-btn action-btn-secondary" onclick="openSheet('handles-sheet')">🔗 Social Kanäle</button>
-        <button class="action-btn action-btn-secondary" onclick="openSheet('links-sheet')">🌐 Custom Links</button>
-        <button class="action-btn action-btn-secondary" onclick="openSheet('impressum-sheet')">📄 Impressum</button>
-      </div>
-
-      <div class="section">
-        <div class="check-card">
-          <div class="check-card-title">Checkliste</div>
-          <div class="check-card-sub">Das Impressum ist gesetzlich vorgeschrieben.</div>
-          ${checks.map(c=>`<div class="check-item">
-            <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'·'}</div>
-            <span class="check-label ${c.ok?'ok':'miss'}">${c.label}</span>
-          </div>`).join('')}
-          <label class="terms-row">
-            <input type="checkbox" id="terms-check"/>
-            <span class="terms-text">Ich akzeptiere die <a href="/legal#biopage_terms" target="_blank">Nutzungsbedingungen</a> von viuno.</span>
-          </label>
-        </div>
-      </div>
-
-      <div class="action-stack" style="padding-bottom:calc(8px + var(--safe-bottom))">
-        <button class="action-btn action-btn-primary" id="btn-generate" onclick="generatePage()">
-          ${slug?'↻ Seite reaktivieren':'✨ BioLink-Seite erstellen'}
-        </button>
-      </div>`
-
-    // Terms check enables/disables button
+  // Wire terms checkbox
+  if(!isActive){
     setTimeout(()=>{
       const tc=document.getElementById('terms-check')
       const bg=document.getElementById('btn-generate')
       if(!tc||!bg)return
-      if(!allOk){bg.disabled=true;bg.title='Bitte alle Punkte der Checkliste erfüllen'}
-      else{bg.disabled=!tc.checked}
-      tc.addEventListener('change',()=>{bg.disabled=!tc.checked})
+      // If checklist not complete, button stays disabled regardless
+      const update=()=>{bg.disabled=!tc.checked||!allOk}
+      if(!allOk){bg.title='Bitte alle Punkte der Checkliste erfüllen'}
+      tc.addEventListener('change',update)
+      update()
     },0)
   }
 
-  // Init sheet fields
   initSheets()
+}
+
+// ── Line chart from biolink_aufrufe ──
+function buildChart(aufrufe){
+  if(!aufrufe||aufrufe.length<2)return''
+  // Build daily counts for last 14 days
+  const days=14
+  const dayMap={}
+  const now=Date.now()
+  for(let i=0;i<days;i++){
+    const d=new Date(now-i*86400000).toISOString().slice(0,10)
+    dayMap[d]=0
+  }
+  aufrufe.forEach(a=>{const d=a.viewed_at?.slice(0,10);if(d&&dayMap[d]!==undefined)dayMap[d]++})
+  const labels=Object.keys(dayMap).sort()
+  const vals=labels.map(d=>dayMap[d])
+  const maxV=Math.max(...vals,1)
+  const W=300,H=60,PAD=4
+  const points=vals.map((v,i)=>{
+    const x=PAD+i*(W-PAD*2)/(vals.length-1)
+    const y=H-PAD-(v/maxV)*(H-PAD*2)
+    return`${x.toFixed(1)},${y.toFixed(1)}`
+  }).join(' ')
+  const shortDays=['So','Mo','Di','Mi','Do','Fr','Sa']
+  const firstLabel=new Date(labels[0]).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})
+  const lastLabel=new Date(labels[labels.length-1]).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})
+  return`<div class="section">
+    <div class="section-label">Verlauf · 14 Tage</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+      <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">
+        <polyline fill="none" stroke="var(--text)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="${points}"/>
+        ${vals.map((v,i)=>{
+          const x=PAD+i*(W-PAD*2)/(vals.length-1)
+          const y=H-PAD-(v/maxV)*(H-PAD*2)
+          return v>0?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5" fill="var(--text)"/>`:'';
+        }).join('')}
+      </svg>
+      <div style="display:flex;justify-content:space-between;margin-top:6px">
+        <span style="font-size:10px;color:var(--subtle)">${firstLabel}</span>
+        <span style="font-size:10px;color:var(--subtle)">${lastLabel}</span>
+      </div>
+    </div>
+  </div>`
 }
 
 function slugify(name){
@@ -896,12 +898,19 @@ window.selectLang=function(l){
   document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('selected',b.dataset.lang===l))
 }
 window.saveThemeLang=async function(){
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   await sb.from('biolink_viuno').upsert({user_id:S.user.id,theme:S.theme,default_language:S.lang,updated_at:new Date().toISOString()},{onConflict:'user_id'})
   if(S.biolink){S.biolink.theme=S.theme;S.biolink.default_language=S.lang}else{S.biolink={user_id:S.user.id,theme:S.theme,default_language:S.lang}}
   closeSheet('theme-sheet')
-  showToast('Design gespeichert ✓')
-  document.getElementById('current-theme-lang').textContent=`${S.theme==='color'?'Color':S.theme==='dark'?'Dark':'Clean'} · ${S.lang==='de'?'Deutsch':S.lang==='en'?'English':'Italiano'}`
-  // Init lang buttons in sheet
+  btn.disabled=false;btn.textContent='Speichern'
+  // Theme-Änderung erfordert Neu-Generierung (einzige Änderung die nicht live ist)
+  if(S.profile?.bio_active){
+    showToast('Design gespeichert — Seite wird neu generiert…')
+    await generatePage()
+  } else {
+    showToast('Design gespeichert ✓')
+    document.getElementById('current-theme-lang').textContent=`${S.theme==='color'?'Color':S.theme==='dark'?'Dark':'Clean'} · ${S.lang==='de'?'Deutsch':S.lang==='en'?'English':'Italiano'}`
+  }
   document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('selected',b.dataset.lang===S.lang))
 }
 
@@ -914,7 +923,6 @@ function renderLinksSheet(){
   }else{
     list.innerHTML=S.customLinks.map((l,i)=>`
       <div class="link-row-item" data-id="${esc(l.id)}">
-        <span class="link-drag">⠿</span>
         <div class="link-row-body">
           <div class="link-row-title">${esc(l.title)}</div>
           <div class="link-row-url">${esc(l.url)}</div>
