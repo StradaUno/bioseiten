@@ -52,6 +52,15 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .stat-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center}
 .stat-box-value{font-size:20px;font-weight:700;letter-spacing:-.04em;color:var(--text)}
 .stat-box-label{font-size:11px;color:var(--muted);margin-top:2px}
+.chart-wrap{margin-top:14px;padding:14px 8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.chart-row{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:96px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.chart-bar-wrap{width:100%;height:64px;display:flex;align-items:flex-end;justify-content:center}
+.chart-bar{width:70%;max-width:24px;background:var(--border-strong);border-radius:4px 4px 0 0;transition:height .3s cubic-bezier(.32,.72,0,1)}
+.chart-bar.has{background:var(--text)}
+.chart-day{font-size:10px;color:var(--muted);margin-top:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.chart-val{font-size:11px;color:var(--text);font-weight:600;margin-top:2px}
+.chart-empty{margin-top:12px;padding:18px;text-align:center;font-size:12px;color:var(--muted);background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius)}
 
 /* PREVIEW (1 Mockup-Bild) */
 .preview-wrap{padding:14px 20px 0}
@@ -710,7 +719,10 @@ const S={
   brands:[],
   offers:new Set(),
   analyseStats:{},    // analyse_stats by platform
-  aufrufe:[],
+  viewsTotal:0,
+  viewsToday:0,
+  views7Days:0,
+  viewsDaily:[],      // [{view_date, view_count}, ...] 7 Tage
   isActive:false,
   slug:null,
   defaultLang:'de'    // Sprach-Auswahl (Vorauswahl beim Öffnen)
@@ -733,13 +745,13 @@ function slugify(name){
 
 async function loadAll(){
   const uid=S.user.id
-  const[profileRes,mkRes,brandsRes,offersRes,analyseRes,aufrufeRes]=await Promise.all([
-    sb.from('users').select('display_name,full_name,profile_image_url,bio,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,mediakit_active,subscription_type,niche_category,city,contact_email').eq('id',uid).single(),
+  const[profileRes,mkRes,brandsRes,offersRes,analyseRes,viewsDailyRes]=await Promise.all([
+    sb.from('users').select('display_name,full_name,profile_image_url,bio,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,mediakit_active,subscription_type,niche_category,city,contact_email,mediakit_views_total,mediakit_views_today,mediakit_views_last_7_days').eq('id',uid).single(),
     sb.from('mediakit_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('mediakit_brands').select('*').eq('user_id',uid).order('position',{ascending:true}),
     sb.from('mediakit_content_offers').select('offer_type').eq('user_id',uid),
     sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views').eq('user_id',uid),
-    sb.from('mediakit_aufrufe').select('viewed_at').eq('user_id',uid).gte('viewed_at',new Date(Date.now()-90*86400000).toISOString())
+    sb.rpc('get_mediakit_views_last_7_days_daily',{p_user_id:uid})
   ])
   S.profile=profileRes.data||{}
   S.mkData=mkRes.data||{}
@@ -747,7 +759,10 @@ async function loadAll(){
   S.offers=new Set((offersRes.data||[]).map(r=>r.offer_type))
   S.analyseStats={}
   for(const row of(analyseRes.data||[])) S.analyseStats[row.platform]=row
-  S.aufrufe=aufrufeRes.data||[]
+  S.viewsTotal=S.profile.mediakit_views_total||0
+  S.viewsToday=S.profile.mediakit_views_today||0
+  S.views7Days=S.profile.mediakit_views_last_7_days||0
+  S.viewsDaily=viewsDailyRes.data||[]
   S.isActive=S.profile.mediakit_active===true
   S.slug=S.profile.display_name?slugify(S.profile.display_name):null
   S.defaultLang=S.mkData?.default_language||'de'
@@ -769,12 +784,26 @@ function renderPage(){
   const kitUrl=S.slug?`viuno.de/kit/${S.slug}`:null
   const kitFullUrl=S.slug?`https://viuno.de/kit/${S.slug}`:null
 
-  // Aufrufe
-  const now=Date.now()
-  const today=new Date().toISOString().slice(0,10)
-  const viewsToday=S.aufrufe.filter(a=>a.viewed_at?.slice(0,10)===today).length
-  const views7=S.aufrufe.filter(a=>(now-new Date(a.viewed_at).getTime())<7*86400000).length
-  const viewsTotal=S.aufrufe.length
+  // Aufrufe (aus den aggregierten Spalten)
+  const viewsToday=S.viewsToday
+  const views7=S.views7Days
+  const viewsTotal=S.viewsTotal
+
+  // 7-Tage-Chart-HTML
+  const maxVal=Math.max(...S.viewsDaily.map(d=>d.view_count||0),1)
+  const dayLbl=['So','Mo','Di','Mi','Do','Fr','Sa']
+  const chartBars=S.viewsDaily.map(d=>{
+    const v=d.view_count||0
+    const h=Math.max((v/maxVal)*100,v>0?8:2)
+    const dayShort=dayLbl[new Date(d.view_date+'T00:00:00').getDay()]
+    return `<div class="chart-col" title="${v} Aufrufe">
+      <div class="chart-bar-wrap"><div class="chart-bar ${v>0?'has':''}" style="height:${h}%"></div></div>
+      <div class="chart-day">${dayShort}</div>
+      <div class="chart-val">${v}</div>
+    </div>`
+  }).join('')
+  const chartHtml=viewsTotal>0?`<div class="chart-wrap"><div class="chart-row">${chartBars}</div></div>`
+    :`<div class="chart-empty">Noch keine Aufrufe in den letzten 7 Tagen.</div>`
 
   // Voraussetzungen
   const checks=getChecks()
@@ -795,6 +824,7 @@ function renderPage(){
            <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
            <div class="stat-box"><div class="stat-box-value">${fmt(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
          </div>
+         ${chartHtml}
        </div>`
     :`<div class="status-banner inactive"><div class="status-dot inactive"></div>
         <div class="status-text">Noch nicht aktiv<span>Trage deine Daten ein und erstelle dein Media Kit</span></div></div>`
