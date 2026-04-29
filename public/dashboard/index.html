@@ -378,7 +378,7 @@ async function enterApp(session){
 
 // ── DATA ──
 async function loadDashboard(uid){
-  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes,dailyTextRes] = await Promise.all([
+  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes,dailyTextRes,statsRes] = await Promise.all([
     sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count,newsletter_subscribed').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
     sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
@@ -387,6 +387,7 @@ async function loadDashboard(uid){
     sb.from('user_goals').select('goal_type,target_value,current_value,deadline,platform,is_active,achieved').eq('user_id',uid).eq('is_active',true).eq('achieved',false).limit(3),
     sb.from('mediakit_settings').select('views_last_7_days').eq('user_id',uid).single(),
     sb.rpc('get_daily_text',{p_user_id:uid}),
+    sb.from('analyse_stats').select('platform,followers,followers_change').eq('user_id',uid).order('created_at',{ascending:false}).limit(2),
   ])
 
   const p           = profileRes.data
@@ -399,11 +400,19 @@ async function loadDashboard(uid){
   const goals       = goalsRes.data || []
   const mk          = mkRes.data
   const dailyText   = dailyTextRes.data || null
+  const statsRows   = statsRes.data || []
   const isSubscribed= p?.newsletter_subscribed || false
 
   const name      = p?.display_name||p?.full_name||'Creator'
   const newReqs   = reqs.filter(r=>r.status==='new').length
-  const follDelta = an?.followers_change
+
+  // Follower: neue analyse_stats bevorzugen, Fallback auf users.total_followers
+  const igStats   = statsRows.find(r=>r.platform==='instagram')
+  const ttStats   = statsRows.find(r=>r.platform==='tiktok')
+  const totalFollowers = igStats||ttStats
+    ? (igStats?.followers||0)+(ttStats?.followers||0)
+    : p?.total_followers
+  const follDelta = igStats?.followers_change??an?.followers_change
 
   // greeting: get_daily_text result or fallback
   const greetText = dailyText || (()=>{
@@ -427,7 +436,7 @@ async function loadDashboard(uid){
       <div class="dash-grid">
         <a class="dash-card dash-card-dark" href="/analytics">
           <div class="dash-card-label">Follower</div>
-          <div class="dash-card-value">${fmt(p?.total_followers)}</div>
+          <div class="dash-card-value">${fmt(totalFollowers)}</div>
           <div class="dash-card-sub">${follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' diese Woche':'Gesamt'}</div>
         </a>
         <a class="dash-card" href="/requests">
