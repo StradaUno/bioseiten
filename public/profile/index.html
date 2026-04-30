@@ -496,20 +496,27 @@ window.checkUsernameAvailability=async function(){
   if(!/^[a-zA-Z0-9_]{3,30}$/.test(val)){status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.';return}
   status.style.color='var(--muted)';status.textContent='Wird geprüft…'
   _usernameTimer=setTimeout(async()=>{
-    // 1) Blacklist-Check (reservierte Wörter wie "admin", "api", "dashboard"…)
-    const{data:blacklisted}=await sb.from('username_blacklist').select('username').ilike('username',val).maybeSingle()
-    if(blacklisted){
-      status.style.color='var(--red)';status.textContent='❌ Dieser Username ist reserviert.'
+    // RPC umgeht RLS und prüft sicher gegen users + username_blacklist
+    const{data:result,error}=await sb.rpc('check_username_available',{p_username:val})
+    if(error){
+      status.style.color='var(--red)';status.textContent='Fehler bei Prüfung'
       btn.disabled=true;btn.style.opacity='.5';return
     }
-    // 2) Verfügbarkeit gegen users-Tabelle
-    const{data}=await sb.from('users').select('id').ilike('display_name',val).maybeSingle()
-    if(data){
+    if(result==='reserved'){
+      status.style.color='var(--red)';status.textContent='❌ Dieser Username ist reserviert.'
+      btn.disabled=true;btn.style.opacity='.5'
+    } else if(result==='taken'){
       status.style.color='var(--red)';status.textContent='❌ Leider vergeben.'
       btn.disabled=true;btn.style.opacity='.5'
-    } else {
+    } else if(result==='invalid_format'){
+      status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.'
+      btn.disabled=true;btn.style.opacity='.5'
+    } else if(result==='available'){
       status.style.color='var(--green)';status.textContent='✓ Verfügbar!'
       btn.disabled=false;btn.style.opacity='1'
+    } else {
+      status.style.color='var(--red)';status.textContent='Unbekannte Antwort'
+      btn.disabled=true;btn.style.opacity='.5'
     }
   },500)
 }
