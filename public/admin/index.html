@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>viuno · Admin</title>
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;
+  --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);
+  --text:#111110;--muted:#7a7975;--subtle:#b0afa9;
+  --green:#1a7f4b;--red:#c0392b;--orange:#b85c00;--blue:#1d4ed8;
+  --radius:16px;--radius-sm:10px;
+  --nav-h:56px;--safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+input,textarea,select{font-size:16px!important}
+
+/* LOGIN */
+#login-screen{min-height:100dvh;display:none;align-items:center;justify-content:center;padding:24px;flex-direction:column}
+#login-screen.visible{display:flex}
+.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+.login-logo-mark{width:32px;height:32px;border-radius:8px;background:var(--text);color:white;display:grid;place-items:center;font-size:14px;font-weight:700}
+.login-logo-text{font-size:17px;font-weight:700;letter-spacing:-.03em}
+.login-badge{margin-left:auto;background:var(--text);color:white;font-size:9px;font-weight:700;padding:3px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em}
+.login-title{font-size:20px;font-weight:700;letter-spacing:-.03em;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.field input{width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.field input:focus{border-color:var(--text)}
+.btn-login{width:100%;padding:12px;margin-top:8px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn-login:disabled{opacity:.5;cursor:not-allowed}
+.login-error{font-size:12px;color:var(--red);margin-top:10px;text-align:center;min-height:18px}
+
+/* APP */
+#app{display:none;min-height:100dvh;flex-direction:column}
+#app.visible{display:flex}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
+.topbar-title{font-size:15px;font-weight:700;letter-spacing:-.03em;display:flex;align-items:center;gap:8px}
+.topbar-title .badge{background:var(--text);color:white;font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;text-transform:uppercase;letter-spacing:.06em}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.btn-icon{width:36px;height:36px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:grid;place-items:center;cursor:pointer;color:var(--muted);font-size:14px}
+.btn-icon:hover{background:var(--surface2);color:var(--text)}
+.btn-icon.spinning{animation:spin 1s linear infinite}
+
+.page{flex:1;padding:0 0 calc(40px + var(--safe-bottom))}
+.section{padding:14px 20px 0}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.section-title{font-size:13px;font-weight:600;color:var(--text);letter-spacing:-.01em;text-transform:uppercase;letter-spacing:.04em}
+.section-sub{font-size:11px;color:var(--muted)}
+
+/* GREETING */
+.greeting{padding:18px 20px 0}
+.greeting-hi{font-size:22px;font-weight:700;letter-spacing:-.04em}
+.greeting-date{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* HERO KPI ROW */
+.hero-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:10px}
+.hero-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;display:flex;flex-direction:column;gap:4px;text-decoration:none}
+.hero-card.dark{background:var(--text);border-color:var(--text);color:white}
+.hero-card.dark .hero-label{color:rgba(255,255,255,.5)}
+.hero-card.dark .hero-value{color:white}
+.hero-card.dark .hero-sub{color:rgba(255,255,255,.45)}
+.hero-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.hero-value{font-size:30px;font-weight:700;letter-spacing:-.04em;line-height:1.05;margin-top:4px;color:var(--text)}
+.hero-sub{font-size:11px;color:var(--subtle);margin-top:3px}
+.hero-icon{font-size:18px;margin-bottom:4px}
+@media(max-width:640px){
+  .hero-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .hero-card.dark{grid-column:span 2}
+  .hero-value{font-size:26px}
+}
+
+/* MINI STAT SCROLL */
+.mini-scroll{display:flex;gap:8px;padding:14px 20px 0;overflow-x:auto;scrollbar-width:none}
+.mini-scroll::-webkit-scrollbar{display:none}
+.mini-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;min-width:120px;flex-shrink:0;display:flex;flex-direction:column;gap:2px}
+.mini-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.mini-value{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.02em;line-height:1.1}
+.mini-sub{font-size:10px;color:var(--subtle)}
+
+/* TABS */
+.tabs{display:flex;gap:4px;padding:18px 20px 0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;border-radius:99px;font-size:13px;font-weight:500;color:var(--muted);background:var(--surface);border:1px solid var(--border);cursor:pointer;white-space:nowrap;font-family:inherit}
+.tab.active{background:var(--text);color:white;border-color:var(--text)}
+.tab-count{display:inline-block;background:var(--surface2);color:var(--muted);font-size:10px;font-weight:600;padding:1px 6px;border-radius:99px;margin-left:5px}
+.tab.active .tab-count{background:rgba(255,255,255,.18);color:white}
+
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-header{padding:14px 16px 8px}
+.card-title{font-size:14px;font-weight:600;letter-spacing:-.01em}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.card-body{padding:0}
+
+/* LIST ROW */
+.list-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);min-width:0}
+.list-row:last-child{border-bottom:none}
+.row-rank{font-size:11px;font-weight:700;color:var(--subtle);width:18px;text-align:right;flex-shrink:0}
+.row-avatar{width:34px;height:34px;border-radius:10px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border);display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--muted)}
+.row-main{flex:1;min-width:0}
+.row-title{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-sub{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-end{text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:1px}
+.row-end-value{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap}
+.row-end-sub{font-size:11px;color:var(--muted)}
+.row-actions{display:flex;align-items:center;gap:4px;flex-shrink:0}
+.row-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:99px;text-transform:uppercase;letter-spacing:.04em}
+.pill-pro{background:var(--text);color:white}
+.pill-free{background:var(--surface2);color:var(--muted)}
+.pill-new{background:#fdf2f8;color:#9d174d}
+.pill-active{background:#f0fdf4;color:var(--green)}
+.pill-error{background:#fef2f2;color:var(--red)}
+.pill-warn{background:#fffbeb;color:var(--orange)}
+.pill-info{background:#eff6ff;color:var(--blue)}
+.pill-muted{background:var(--surface2);color:var(--muted)}
+.pill-admin{background:#fff7ed;color:#c2410c}
+
+/* ICON BUTTONS in rows */
+.icon-btn{width:28px;height:28px;border-radius:7px;background:transparent;border:1px solid transparent;cursor:pointer;display:grid;place-items:center;color:var(--subtle);font-size:13px;font-family:inherit}
+.icon-btn:hover{background:var(--surface2);color:var(--text);border-color:var(--border)}
+.icon-btn.danger:hover{color:var(--red);border-color:rgba(192,57,43,.2);background:#fef2f2}
+
+/* TABLE LIKE */
+.bar-row{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border)}
+.bar-row:last-child{border-bottom:none}
+.bar-label{font-size:12px;font-weight:600;color:var(--text);min-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{flex:1;height:6px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;background:var(--text);border-radius:99px;transition:width .3s}
+.bar-value{font-size:12px;font-weight:700;color:var(--text);min-width:60px;text-align:right;white-space:nowrap}
+
+/* MESSAGE BLOCK */
+.msg-block{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+.msg-block:last-child{border-bottom:none}
+.msg-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.msg-name{font-size:13px;font-weight:600}
+.msg-meta{font-size:11px;color:var(--muted)}
+.msg-body{font-size:13px;color:var(--text);line-height:1.5;white-space:pre-line}
+.msg-actions{display:flex;gap:6px;margin-top:4px}
+.msg-action{font-size:11px;font-weight:600;padding:5px 10px;border-radius:99px;background:var(--surface);border:1px solid var(--border-strong);cursor:pointer;color:var(--text);font-family:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:4px}
+.msg-action:hover{background:var(--surface2)}
+.msg-action.danger{color:var(--red);border-color:rgba(192,57,43,.2)}
+.msg-action.danger:hover{background:#fef2f2}
+
+/* EMPTY */
+.empty{padding:40px 20px;text-align:center;color:var(--muted);font-size:13px}
+.empty-icon{font-size:32px;margin-bottom:8px;opacity:.5}
+
+/* LOADING */
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,#e8e6e2 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.spinner{width:14px;height:14px;border:2px solid rgba(0,0,0,.1);border-top-color:var(--text);border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
+.toast-wrap{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;pointer-events:none}
+.toast-wrap.hidden{display:none}
+.toast{background:var(--text);color:white;font-size:13px;font-weight:500;padding:10px 18px;border-radius:99px;animation:toastIn .25s ease-out;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-bg.hidden{display:none}
+.modal{background:var(--surface);border-radius:18px;max-width:380px;width:100%;padding:24px;text-align:center}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:6px;letter-spacing:-.02em}
+.modal-msg{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-actions{display:flex;gap:8px}
+.modal-btn{flex:1;padding:11px;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface)}
+.modal-btn.primary{background:var(--text);color:white;border-color:var(--text)}
+.modal-btn.danger{background:var(--red);color:white;border-color:var(--red)}
+
+/* FOOTER GENERATED */
+.footer{padding:18px 20px 0;text-align:center;font-size:11px;color:var(--subtle)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-mark">v</div>
+      <div class="login-logo-text">viuno</div>
+      <span class="login-badge">Admin</span>
+    </div>
+    <div class="login-title">Admin Login</div>
+    <div class="login-sub">Nur für Admin-Accounts.</div>
+    <div class="field"><label>E-Mail</label><input type="email" id="inp-email" autocomplete="email" /></div>
+    <div class="field"><label>Passwort</label><input type="password" id="inp-pw" autocomplete="current-password" /></div>
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo-mark">v</div>
+      <span class="topbar-title">Admin <span class="badge">viuno</span></span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-icon" id="btn-refresh" title="Aktualisieren">↻</button>
+      <button class="btn-icon" id="btn-logout" title="Logout">⏻</button>
+    </div>
+  </div>
+
+  <div class="page" id="page">
+    <div id="skeleton" style="padding:18px 20px;display:flex;flex-direction:column;gap:10px">
+      <div class="skeleton" style="height:60px;width:240px"></div>
+      <div style="display:flex;gap:8px"><div class="skeleton" style="height:88px;flex:1.5"></div><div class="skeleton" style="height:88px;flex:1"></div><div class="skeleton" style="height:88px;flex:1"></div></div>
+      <div class="skeleton" style="height:60px;margin-top:8px"></div>
+      <div class="skeleton" style="height:200px;margin-top:8px"></div>
+    </div>
+    <div id="content" style="display:none"></div>
+  </div>
+</div>
+
+<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
+<div class="modal-bg hidden" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-msg" id="modal-msg"></div>
+    <div class="modal-actions">
+      <button class="modal-btn" id="modal-cancel">Abbrechen</button>
+      <button class="modal-btn primary" id="modal-ok">OK</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, autoRefreshToken: true } })
+
+const state = { activeTab: 'overview', data: null, session: null }
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+const $  = (s)=>document.querySelector(s)
+const escHtml = (s)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+const fmt = (n,d=1)=>{ if(n==null||isNaN(+n))return'–'; n=+n; if(n>=1e6)return(n/1e6).toFixed(d).replace(/\.0$/,'')+'M'; if(n>=1e3)return(n/1e3).toFixed(d).replace(/\.0$/,'')+'k'; return n.toFixed(0) }
+const fmtUsd = (n)=>{ if(n==null||isNaN(+n))return'$0.00'; return '$'+(+n).toFixed(2) }
+const fmtUsdSmall = (n)=>{ if(n==null||isNaN(+n))return'$0'; const v=+n; if(v<0.01)return'<$0.01'; return '$'+v.toFixed(v<1?3:2) }
+const fmtDateShort = (d)=>{ if(!d)return''; return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'short'}) }
+const fmtDateTime = (d)=>{ if(!d)return''; return new Date(d).toLocaleString('de-DE',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) }
+const fmtAgo = (d)=>{
+  if(!d)return''
+  const ms=Date.now()-new Date(d).getTime()
+  const m=Math.floor(ms/60000)
+  if(m<1)return'gerade eben'
+  if(m<60)return `vor ${m} Min`
+  const h=Math.floor(m/60)
+  if(h<24)return `vor ${h} Std`
+  const dy=Math.floor(h/24)
+  if(dy<7)return `vor ${dy} Tag${dy===1?'':'en'}`
+  return fmtDateShort(d)
+}
+const initial = (s)=>String(s||'?').trim().charAt(0).toUpperCase() || '?'
+
+function toast(msg, ms=2800){
+  const w=$('#toast-wrap'), t=$('#toast-msg')
+  t.textContent=msg; w.classList.remove('hidden')
+  clearTimeout(w._t); w._t=setTimeout(()=>w.classList.add('hidden'),ms)
+}
+function confirmDialog(title,msg,okLabel='OK',danger=false){
+  return new Promise(res=>{
+    $('#modal-title').textContent=title
+    $('#modal-msg').textContent=msg
+    const ok=$('#modal-ok'); ok.textContent=okLabel
+    ok.classList.toggle('danger', danger)
+    ok.classList.toggle('primary', !danger)
+    $('#modal').classList.remove('hidden')
+    const cleanup=()=>{ $('#modal').classList.add('hidden'); ok.onclick=null; $('#modal-cancel').onclick=null }
+    ok.onclick=()=>{ cleanup(); res(true) }
+    $('#modal-cancel').onclick=()=>{ cleanup(); res(false) }
+  })
+}
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+async function tryRestore(){
+  const { data:{ session } } = await sb.auth.getSession()
+  if(session){ await enterApp(session); return }
+  showLogin()
+}
+function showLogin(){
+  $('#login-screen').classList.add('visible')
+  $('#btn-login').addEventListener('click', doLogin)
+  $('#inp-pw').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin() })
+}
+async function doLogin(){
+  const email=$('#inp-email').value.trim(), pw=$('#inp-pw').value
+  const errEl=$('#login-error'), btn=$('#btn-login')
+  errEl.textContent=''; btn.disabled=true; btn.innerHTML='<span class="spinner"></span>'
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
+  btn.disabled=false; btn.textContent='Einloggen'
+  if(error){ errEl.textContent='Falsche E-Mail oder Passwort.'; return }
+  // Verify admin
+  const { data: me } = await sb.from('users').select('is_admin').eq('id', data.session.user.id).maybeSingle()
+  if(!me?.is_admin){
+    await sb.auth.signOut()
+    errEl.textContent='Kein Admin-Zugriff.'
+    return
+  }
+  await enterApp(data.session)
+}
+async function enterApp(session){
+  state.session = session
+  $('#login-screen').classList.remove('visible')
+  $('#login-screen').style.display='none'
+  $('#app').classList.add('visible')
+  await loadAll()
+}
+$('#btn-logout')?.addEventListener('click', async ()=>{
+  await sb.auth.signOut(); location.reload()
+})
+$('#btn-refresh')?.addEventListener('click', ()=> loadAll(true))
+
+// ── API ──────────────────────────────────────────────────────────────────────
+async function callApi(action, extraQuery=''){
+  const { data:{ session }, error: sessErr } = await sb.auth.getSession()
+  if(sessErr || !session){
+    toast('Session abgelaufen – bitte neu einloggen')
+    setTimeout(()=>location.reload(),1500)
+    throw new Error('no_session')
+  }
+  state.session = session
+  const url = `${SUPABASE_URL}/functions/v1/admin-dashboard?action=${action}${extraQuery}`
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${session.access_token}`, 'Content-Type': 'application/json' }
+  })
+  const body = await res.json().catch(()=>({}))
+  if(res.status === 403 && (body.error||'').includes('invalid_token')){
+    toast('Login abgelaufen')
+    setTimeout(()=>location.reload(),1500)
+    throw new Error('token_expired')
+  }
+  if(!res.ok || body.success === false) throw new Error(body.error || `HTTP ${res.status}`)
+  return body
+}
+
+async function loadAll(showSpin=false){
+  if(showSpin) $('#btn-refresh').classList.add('spinning')
+  try{
+    const data = await callApi('overview')
+    state.data = data
+    render()
+  }catch(err){
+    console.error(err)
+    if(err.message !== 'no_session' && err.message !== 'token_expired'){
+      toast('Fehler: ' + err.message, 5000)
+    }
+  }finally{
+    $('#btn-refresh').classList.remove('spinning')
+  }
+}
+
+// ── Render: Frame ────────────────────────────────────────────────────────────
+function render(){
+  $('#skeleton').style.display='none'
+  $('#content').style.display='block'
+  const k = state.data.kpis
+  const greet = (()=>{
+    const h=new Date().getHours()
+    return h<5?'Gute Nacht':h<12?'Guten Morgen':h<18?'Guten Tag':'Guten Abend'
+  })()
+  const totalViews = (k.bio_views_total||0) + (k.mk_views_total||0)
+  const views7 = (k.bio_views_7d||0) + (k.mk_views_7d||0)
+  $('#content').innerHTML = `
+    <div class="greeting">
+      <div class="greeting-hi">${greet}, Mehmet.</div>
+      <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}</div>
+    </div>
+
+    <div class="section" style="padding-top:16px">
+      <div class="hero-grid">
+        <div class="hero-card dark">
+          <div class="hero-icon">👁</div>
+          <div class="hero-label">Aufrufe gesamt</div>
+          <div class="hero-value">${fmt(totalViews,1)}</div>
+          <div class="hero-sub">${fmt(views7)} in letzten 7 Tagen</div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-label">AI-Kosten</div>
+          <div class="hero-value">${fmtUsd(k.ai_cost_month_usd)}</div>
+          <div class="hero-sub">diesen Monat · ${k.ai_calls_month||0} Calls</div>
+        </div>
+        <div class="hero-card">
+          <div class="hero-label">Offene Anfragen</div>
+          <div class="hero-value">${k.collab_requests_open||0}</div>
+          <div class="hero-sub">${k.contact_submissions_new||0} Kontaktformular neu</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mini-scroll">
+      ${miniCard('User',          fmt(k.users_active),     `${k.users_pro||0} Pro · ${k.users_new_7d||0} neu (7d)`)}
+      ${miniCard('Biolinks',      `${k.biolinks_active||0}/${k.biolinks_total||0}`, 'aktiv / gesamt')}
+      ${miniCard('Media Kits',    `${k.mediakits_active||0}/${k.mediakits_total||0}`, 'aktiv / gesamt')}
+      ${miniCard('Apify Posts',   fmt(k.apify_posts_7d),   `${fmt(k.apify_posts_month)} Monat`)}
+      ${miniCard('Analysen',      `${k.analysis_done_30d||0}`, `${k.analysis_failed_30d||0} fehlgeschlagen (30d)`)}
+      ${miniCard('Newsletter',    fmt(k.newsletter_active), 'Subscriber aktiv')}
+      ${miniCard('Errors',        k.errors_unresolved||0,  'unresolved', k.errors_unresolved>0)}
+    </div>
+
+    <div class="tabs" id="tabs">
+      ${tabBtn('overview','Übersicht')}
+      ${tabBtn('users','User', state.data.users.length)}
+      ${tabBtn('ai','AI & Apify')}
+      ${tabBtn('inbox','Inbox', (k.collab_requests_open||0) + (k.contact_submissions_new||0))}
+      ${tabBtn('content','Bio & MK')}
+      ${tabBtn('errors','Errors', k.errors_unresolved||0)}
+    </div>
+
+    <div id="tab-content" class="section" style="padding-top:14px"></div>
+
+    <div class="footer">Aktualisiert: ${fmtDateTime(state.data.generated_at)}</div>
+  `
+  document.querySelectorAll('#tabs .tab').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      state.activeTab = el.dataset.tab
+      document.querySelectorAll('#tabs .tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===state.activeTab))
+      renderTab()
+    })
+  })
+  renderTab()
+}
+
+function miniCard(label,val,sub,warn=false){
+  return `<div class="mini-card" ${warn?'style="border-color:rgba(192,57,43,.3);background:#fef2f2"':''}>
+    <div class="mini-label">${label}</div>
+    <div class="mini-value" ${warn?'style="color:var(--red)"':''}>${val}</div>
+    <div class="mini-sub">${sub}</div>
+  </div>`
+}
+function tabBtn(key,label,count){
+  const active = state.activeTab===key
+  const c = (count!=null && count>0) ? ` <span class="tab-count">${count}</span>` : ''
+  return `<button class="tab ${active?'active':''}" data-tab="${key}">${label}${c}</button>`
+}
+
+// ── Render: Tabs ─────────────────────────────────────────────────────────────
+function renderTab(){
+  const el = $('#tab-content')
+  const t = state.activeTab
+  if(t==='overview') el.innerHTML = renderOverview()
+  else if(t==='users') el.innerHTML = renderUsers()
+  else if(t==='ai') el.innerHTML = renderAi()
+  else if(t==='inbox') el.innerHTML = renderInbox()
+  else if(t==='content') el.innerHTML = renderContent()
+  else if(t==='errors') el.innerHTML = renderErrors()
+  bindTabEvents()
+}
+
+// OVERVIEW
+function renderOverview(){
+  const r = state.data.ranking || []
+  const k = state.data.kpis
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <div class="card-title">Top 10 nach Aufrufen</div>
+        <div class="card-sub">BioLink + Media Kit Views (gesamt)</div>
+      </div>
+      <div class="card-body">
+        ${r.length===0
+          ? `<div class="empty"><div class="empty-icon">📊</div>Noch keine Daten</div>`
+          : r.map((u,i)=>userRankRow(u,i+1)).join('')
+        }
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <div class="card-title">Wachstum auf einen Blick</div>
+        <div class="card-sub">letzte 7 vs. 30 Tage</div>
+      </div>
+      <div class="card-body">
+        ${growthRow('Neue User',     k.users_new_7d,     k.users_new_30d, '7d', '30d')}
+        ${growthRow('BioLink-Views', k.bio_views_7d,     k.bio_views_total, '7d', 'gesamt')}
+        ${growthRow('MK-Views',      k.mk_views_7d,      k.mk_views_total, '7d', 'gesamt')}
+        ${growthRow('Apify Posts',   k.apify_posts_7d,   k.apify_posts_month, '7d', '30d')}
+      </div>
+    </div>
+  `
+}
+function growthRow(label,a,b,la,lb){
+  const ratio = b>0 ? Math.min(100, (a/b)*100) : 0
+  return `<div class="bar-row">
+    <div class="bar-label">${label}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${ratio}%"></div></div>
+    <div class="bar-value">${fmt(a)} <span style="color:var(--muted);font-weight:500">/ ${fmt(b)}</span></div>
+  </div>`
+}
+function userRankRow(u,rank){
+  const total = (u.bio_views_total||0)+(u.mk_views_total||0)
+  return `<div class="list-row">
+    <div class="row-rank">${rank}</div>
+    <div class="row-avatar">${initial(u.display_name||u.email)}</div>
+    <div class="row-main">
+      <div class="row-title">${escHtml(u.display_name||'—')} ${u.is_admin?'<span class="row-pill pill-admin" style="margin-left:4px">Admin</span>':''}</div>
+      <div class="row-sub">${escHtml(u.email)}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-end-value">${fmt(total)}</div>
+      <div class="row-end-sub">${fmt(u.bio_views_total)} Bio · ${fmt(u.mk_views_total)} MK</div>
+    </div>
+  </div>`
+}
+
+// USERS
+function renderUsers(){
+  const users = (state.data.users||[]).slice().sort((a,b)=>{
+    const ta = (a.bio_views_total||0)+(a.mk_views_total||0)
+    const tb = (b.bio_views_total||0)+(b.mk_views_total||0)
+    return tb-ta
+  })
+  if(users.length===0) return `<div class="card"><div class="empty"><div class="empty-icon">👥</div>Noch keine User</div></div>`
+  return `<div class="card"><div class="card-body">${users.map(u=>userFullRow(u)).join('')}</div></div>`
+}
+function userFullRow(u){
+  const total = (u.bio_views_total||0)+(u.mk_views_total||0)
+  const planPill = u.plan==='pro' ? '<span class="row-pill pill-pro">Pro</span>' : '<span class="row-pill pill-free">Free</span>'
+  const adminPill = u.is_admin ? '<span class="row-pill pill-admin" style="margin-left:4px">Admin</span>' : ''
+  const deletedPill = u.deleted_at ? '<span class="row-pill pill-error" style="margin-left:4px">Gelöscht</span>' : ''
+  const niche = u.niche && u.niche!=='general' ? ` · ${escHtml(u.niche)}` : ''
+  return `<div class="list-row">
+    <div class="row-avatar">${initial(u.display_name||u.email)}</div>
+    <div class="row-main">
+      <div class="row-title">${escHtml(u.display_name||'—')} ${planPill}${adminPill}${deletedPill}</div>
+      <div class="row-sub">${escHtml(u.email)} · seit ${fmtDateShort(u.created_at)}${niche}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-end-value">${fmt(total)}</div>
+      <div class="row-end-sub">${u.bio_active?'<span style="color:var(--green)">●</span>':'<span style="color:var(--subtle)">○</span>'} Bio · ${u.mediakit_active?'<span style="color:var(--green)">●</span>':'<span style="color:var(--subtle)">○</span>'} MK</div>
+    </div>
+  </div>`
+}
+
+// AI & APIFY
+function renderAi(){
+  const ai = state.data.ai || {}
+  const k = state.data.kpis
+  const byFeature = ai.by_feature || []
+  const byModel = ai.by_model || []
+  const recent = ai.recent || []
+  const maxFeature = byFeature.length ? Math.max(...byFeature.map(f=>f.cost_usd)) : 0
+  const maxModel = byModel.length ? Math.max(...byModel.map(m=>m.cost_usd)) : 0
+
+  return `
+    <div class="hero-grid" style="margin-bottom:14px">
+      <div class="hero-card dark">
+        <div class="hero-label">Diesen Monat</div>
+        <div class="hero-value">${fmtUsd(k.ai_cost_month_usd)}</div>
+        <div class="hero-sub">${fmt(k.ai_tokens_month)} Tokens · ${k.ai_calls_month||0} Calls</div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-label">Letzten 7 Tage</div>
+        <div class="hero-value">${fmtUsd(k.ai_cost_7d_usd)}</div>
+        <div class="hero-sub">heute ${fmtUsdSmall(k.ai_cost_today_usd)}</div>
+      </div>
+      <div class="hero-card">
+        <div class="hero-label">Apify (7d)</div>
+        <div class="hero-value">${fmt(k.apify_posts_7d)}</div>
+        <div class="hero-sub">${fmt(k.apify_posts_month)} Monat · ${fmt(k.apify_posts_total)} gesamt</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <div class="card-title">AI-Kosten nach Feature</div>
+        <div class="card-sub">Monat aktuell</div>
+      </div>
+      <div class="card-body">
+        ${byFeature.length===0
+          ? `<div class="empty"><div class="empty-icon">🤖</div>Noch keine AI-Calls diesen Monat</div>`
+          : byFeature.map(f=>`
+            <div class="bar-row">
+              <div class="bar-label">${escHtml(f.feature)}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${maxFeature?(f.cost_usd/maxFeature)*100:0}%"></div></div>
+              <div class="bar-value">${fmtUsdSmall(f.cost_usd)} <span style="color:var(--muted);font-weight:500">·${f.calls}</span></div>
+            </div>`).join('')
+        }
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <div class="card-title">Nach Modell</div>
+        <div class="card-sub">welches Modell kostet wieviel</div>
+      </div>
+      <div class="card-body">
+        ${byModel.length===0
+          ? `<div class="empty">Keine Daten</div>`
+          : byModel.map(m=>`
+            <div class="bar-row">
+              <div class="bar-label" title="${escHtml(m.model)}">${escHtml(shortModel(m.model))}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${maxModel?(m.cost_usd/maxModel)*100:0}%"></div></div>
+              <div class="bar-value">${fmtUsdSmall(m.cost_usd)} <span style="color:var(--muted);font-weight:500">·${m.calls}</span></div>
+            </div>`).join('')
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Letzte AI-Calls</div>
+        <div class="card-sub">${recent.length} sichtbar</div>
+      </div>
+      <div class="card-body">
+        ${recent.length===0
+          ? `<div class="empty">Keine Calls</div>`
+          : recent.slice(0,15).map(r=>`
+            <div class="list-row">
+              <div class="row-main">
+                <div class="row-title">${escHtml(r.feature||'unknown')}</div>
+                <div class="row-sub">${escHtml(shortModel(r.model))} · ${fmt(r.tokens)} tk · ${escHtml(r.user_email||'system')}</div>
+              </div>
+              <div class="row-end">
+                <div class="row-end-value">${fmtUsdSmall(r.cost_usd)}</div>
+                <div class="row-end-sub">${fmtAgo(r.created_at)}</div>
+              </div>
+            </div>`).join('')
+        }
+      </div>
+    </div>
+  `
+}
+function shortModel(m){
+  if(!m) return '—'
+  return m.replace(/^claude-/,'').replace(/-\d{8}$/,'')
+}
+
+// INBOX (Collab + Contact)
+function renderInbox(){
+  const collabs = state.data.collab_requests || []
+  const contacts = state.data.contact_submissions || []
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <div class="card-title">Collab-Anfragen</div>
+        <div class="card-sub">externe Anfragen an User · ${collabs.length} sichtbar</div>
+      </div>
+      <div class="card-body">
+        ${collabs.length===0
+          ? `<div class="empty"><div class="empty-icon">📭</div>Keine Anfragen</div>`
+          : collabs.map(c=>collabBlock(c)).join('')
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Kontaktformular</div>
+        <div class="card-sub">Anfragen von der Landing Page · ${contacts.length} sichtbar</div>
+      </div>
+      <div class="card-body">
+        ${contacts.length===0
+          ? `<div class="empty"><div class="empty-icon">📨</div>Keine Submissions</div>`
+          : contacts.map(c=>contactBlock(c)).join('')
+        }
+      </div>
+    </div>
+  `
+}
+function collabBlock(c){
+  const statusPill = {
+    new: 'pill-new',
+    replied: 'pill-info',
+    negotiation: 'pill-warn',
+    closed: 'pill-active',
+  }[c.status] || 'pill-muted'
+  return `<div class="msg-block">
+    <div class="msg-head">
+      <span class="row-pill ${statusPill}">${escHtml(c.status||'')}</span>
+      <span class="row-pill pill-muted">${escHtml(c.request_type||'brand')}</span>
+      <span class="msg-name">${escHtml(c.sender_name||'—')}</span>
+      <span class="msg-meta">→ ${escHtml(c.creator_email||c.creator_handle||'?')}</span>
+      <span class="msg-meta" style="margin-left:auto">${fmtAgo(c.created_at)}</span>
+    </div>
+    <div class="msg-body">${escHtml(c.message||'(keine Nachricht)')}</div>
+    <div class="msg-actions">
+      ${c.budget?`<span class="msg-action" style="background:var(--surface2);border-color:var(--border)">💰 ${escHtml(c.budget)} €</span>`:''}
+      ${c.sender_email?`<a class="msg-action" href="mailto:${escHtml(c.sender_email)}">✉ Mail</a>`:''}
+      ${c.sender_website?`<a class="msg-action" href="${escHtml(c.sender_website)}" target="_blank" rel="noopener">↗ Web</a>`:''}
+      <button class="msg-action danger" data-act="del-collab" data-id="${escHtml(c.id)}">🗑 Löschen</button>
+    </div>
+  </div>`
+}
+function contactBlock(c){
+  const statusPill = c.status==='new' ? 'pill-new' : 'pill-muted'
+  return `<div class="msg-block">
+    <div class="msg-head">
+      <span class="row-pill ${statusPill}">${escHtml(c.status||'')}</span>
+      <span class="msg-name">${escHtml(c.name||'—')}</span>
+      <span class="msg-meta">${escHtml(c.email||'')}</span>
+      <span class="msg-meta" style="margin-left:auto">${fmtAgo(c.created_at)}</span>
+    </div>
+    <div class="msg-body">${escHtml(c.message||'(leer)')}</div>
+    <div class="msg-actions">
+      ${c.instagram_handle?`<span class="msg-action" style="background:var(--surface2);border-color:var(--border)">IG @${escHtml(c.instagram_handle)}</span>`:''}
+      ${c.tiktok_handle?`<span class="msg-action" style="background:var(--surface2);border-color:var(--border)">TT @${escHtml(c.tiktok_handle)}</span>`:''}
+      ${c.website_url?`<a class="msg-action" href="${escHtml(c.website_url)}" target="_blank" rel="noopener">↗ Web</a>`:''}
+      ${c.email?`<a class="msg-action" href="mailto:${escHtml(c.email)}">✉ Antworten</a>`:''}
+      <button class="msg-action danger" data-act="del-contact" data-id="${escHtml(c.id)}">🗑 Löschen</button>
+    </div>
+  </div>`
+}
+
+// CONTENT (Biolinks + Mediakits)
+function renderContent(){
+  const bls = state.data.biolinks || []
+  const mks = state.data.mediakits || []
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <div class="card-title">BioLinks</div>
+        <div class="card-sub">${bls.filter(b=>b.is_active).length} aktiv von ${bls.length}</div>
+      </div>
+      <div class="card-body">
+        ${bls.length===0
+          ? `<div class="empty"><div class="empty-icon">🔗</div>Noch keine BioLinks</div>`
+          : bls.map(b=>biolinkRow(b)).join('')
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Media Kits</div>
+        <div class="card-sub">${mks.filter(m=>m.is_active).length} aktiv von ${mks.length}</div>
+      </div>
+      <div class="card-body">
+        ${mks.length===0
+          ? `<div class="empty"><div class="empty-icon">📋</div>Noch keine Media Kits</div>`
+          : mks.map(m=>mediakitRow(m)).join('')
+        }
+      </div>
+    </div>
+  `
+}
+function biolinkRow(b){
+  const url = b.slug ? `https://biouno.de/${b.slug}` : null
+  const activePill = b.is_active ? '<span class="row-pill pill-active">Live</span>' : '<span class="row-pill pill-muted">Aus</span>'
+  return `<div class="list-row">
+    <div class="row-avatar">${initial(b.display_name||b.email)}</div>
+    <div class="row-main">
+      <div class="row-title">${escHtml(b.display_name||'—')} ${activePill} <span class="row-pill pill-muted">${escHtml(b.theme||'')}</span></div>
+      <div class="row-sub">${url?`<a href="${escHtml(url)}" target="_blank" rel="noopener" style="color:inherit">${escHtml(url)}</a>`:'kein Slug'}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-end-value">${fmt(b.bio_views_total)}</div>
+      <div class="row-end-sub">Aufrufe</div>
+    </div>
+  </div>`
+}
+function mediakitRow(m){
+  const activePill = m.is_active ? '<span class="row-pill pill-active">Live</span>' : '<span class="row-pill pill-muted">Aus</span>'
+  const followers = (m.followers_instagram||0)+(m.followers_tiktok||0)+(m.followers_youtube||0)+(m.followers_threads||0)
+  return `<div class="list-row">
+    <div class="row-avatar">${initial(m.display_name||m.email)}</div>
+    <div class="row-main">
+      <div class="row-title">${escHtml(m.display_name||'—')} ${activePill}</div>
+      <div class="row-sub">${escHtml(m.email||'')} · ${fmt(followers)} Follower gesamt</div>
+    </div>
+    <div class="row-end">
+      <div class="row-end-value">${fmt(m.mk_views_total)}</div>
+      <div class="row-end-sub">Aufrufe</div>
+    </div>
+  </div>`
+}
+
+// ERRORS
+function renderErrors(){
+  const errs = state.data.errors || []
+  const recent = (state.data.analysis?.recent || [])
+  return `
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-header">
+        <div class="card-title">Admin-Errors</div>
+        <div class="card-sub">${errs.filter(e=>!e.resolved).length} unresolved von ${errs.length}</div>
+      </div>
+      <div class="card-body">
+        ${errs.length===0
+          ? `<div class="empty"><div class="empty-icon">✅</div>Keine Fehler</div>`
+          : errs.map(e=>errorBlock(e)).join('')
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Letzte Analyse-Runs</div>
+        <div class="card-sub">letzte 30 Tage</div>
+      </div>
+      <div class="card-body">
+        ${recent.length===0
+          ? `<div class="empty">Keine Runs</div>`
+          : recent.map(a=>analysisRow(a)).join('')
+        }
+      </div>
+    </div>
+  `
+}
+function errorBlock(e){
+  const pill = e.resolved ? 'pill-active' : 'pill-error'
+  const pillTxt = e.resolved ? 'Resolved' : 'Open'
+  return `<div class="msg-block">
+    <div class="msg-head">
+      <span class="row-pill ${pill}">${pillTxt}</span>
+      <span class="msg-name">${escHtml(e.function_name||'?')}</span>
+      <span class="msg-meta" style="margin-left:auto">${fmtAgo(e.created_at)}</span>
+    </div>
+    <div class="msg-body" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--muted)">${escHtml(e.error_message||'(no message)')}</div>
+    ${!e.resolved?`<div class="msg-actions">
+      <button class="msg-action" data-act="resolve-error" data-id="${escHtml(e.id)}">✓ Als erledigt markieren</button>
+    </div>`:''}
+  </div>`
+}
+function analysisRow(a){
+  const pill = a.status==='done' ? 'pill-active' : (a.status==='failed' ? 'pill-error' : 'pill-warn')
+  return `<div class="list-row">
+    <div class="row-main">
+      <div class="row-title"><span class="row-pill ${pill}">${escHtml(a.status)}</span> ${escHtml(a.user_email||'?')}</div>
+      <div class="row-sub">${a.error?escHtml(a.error.slice(0,80)):'gestartet '+fmtAgo(a.started_at)}</div>
+    </div>
+    <div class="row-end">
+      <div class="row-end-sub">${fmtDateShort(a.started_at)}</div>
+    </div>
+  </div>`
+}
+
+// ── Tab events (delete buttons etc.) ─────────────────────────────────────────
+function bindTabEvents(){
+  document.querySelectorAll('[data-act]').forEach(el=>{
+    el.addEventListener('click', async (e)=>{
+      const act = el.dataset.act, id = el.dataset.id
+      if(act==='del-collab'){
+        if(!await confirmDialog('Collab-Anfrage löschen?', 'Wird auf "deleted" gesetzt (soft-delete, in DB noch da).', 'Ja, löschen', true)) return
+        await callAndReload('delete_collab_request', `&id=${encodeURIComponent(id)}`, 'Anfrage gelöscht')
+      } else if(act==='del-contact'){
+        if(!await confirmDialog('Submission löschen?', 'Wird auf "deleted" gesetzt (soft-delete).', 'Ja, löschen', true)) return
+        await callAndReload('delete_contact_submission', `&id=${encodeURIComponent(id)}`, 'Submission gelöscht')
+      } else if(act==='resolve-error'){
+        if(!await confirmDialog('Als erledigt markieren?', 'Der Error wird als resolved markiert.', 'Ja')) return
+        await callAndReload('mark_error_resolved', `&id=${encodeURIComponent(id)}`, 'Markiert')
+      }
+    })
+  })
+}
+async function callAndReload(action, query, successMsg){
+  try{
+    await callApi(action, query)
+    toast(successMsg)
+    await loadAll()
+  }catch(err){
+    toast('Fehler: ' + err.message, 5000)
+  }
+}
+
+// ── Boot ─────────────────────────────────────────────────────────────────────
+tryRestore()
+</script>
+</body>
+</html>
