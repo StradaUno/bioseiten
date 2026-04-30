@@ -276,8 +276,9 @@ section{padding:64px 0}
 .btn-on-dark-primary{
   display:inline-flex;align-items:center;gap:8px;
   padding:13px 22px;background:#fff;color:var(--text);
-  border-radius:99px;font-size:14px;font-weight:500;
-  font-family:inherit;
+  border:none;border-radius:99px;
+  font-size:14px;font-weight:500;
+  font-family:inherit;cursor:pointer;
   transition:transform .18s cubic-bezier(.32,.72,0,1),box-shadow .18s;
 }
 .btn-on-dark-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.35)}
@@ -374,10 +375,259 @@ footer{
   .hero h1{font-size:36px}
 }
 
+/* ─── WAS WIR MACHEN ─── */
+.services-section{
+  padding-top:32px;padding-bottom:32px;
+}
+.services-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:32px;
+  padding:48px 40px;
+}
+.services-grid{
+  display:grid;
+  grid-template-columns:1fr 1.2fr;
+  gap:48px;
+  align-items:start;
+}
+.services-intro h2{
+  font-size:clamp(24px,3.2vw,34px);
+  font-weight:700;letter-spacing:-.03em;
+  line-height:1.15;margin-bottom:14px;
+}
+.services-intro p{
+  font-size:15px;color:var(--muted);
+  line-height:1.6;
+}
+.services-list-label{
+  font-size:11px;font-weight:600;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.14em;
+  margin-bottom:18px;
+}
+.services-list{
+  list-style:none;
+  display:flex;flex-direction:column;gap:18px;
+  margin-bottom:28px;
+}
+.services-list li{
+  border-bottom:1px solid var(--border);
+  padding-bottom:18px;
+}
+.services-list li:last-child{border-bottom:none;padding-bottom:0}
+.services-list .item-title{
+  font-size:15px;font-weight:600;
+  letter-spacing:-.015em;
+  margin-bottom:4px;color:var(--text);
+}
+.services-list .item-desc{
+  font-size:14px;color:var(--muted);
+  line-height:1.55;
+}
+.services-cta{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 22px;background:var(--text);color:#fff;
+  border-radius:99px;font-size:14px;font-weight:500;
+  font-family:inherit;
+  transition:transform .18s cubic-bezier(.32,.72,0,1),box-shadow .18s;
+}
+.services-cta:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(17,17,16,.18)}
+
+@media (max-width:780px){
+  .services-box{padding:36px 24px;border-radius:24px}
+  .services-grid{grid-template-columns:1fr;gap:28px}
+}
+
+/* ─── FEATURES (3 in einer Reihe in einem großen Container) ─── */
+.features-box{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:32px;
+  padding:48px 40px;
+  overflow:hidden;
+}
+.features-box-header{
+  text-align:center;
+  margin-bottom:48px;
+}
+.features-box-title{
+  font-size:clamp(24px,3.2vw,34px);
+  font-weight:700;letter-spacing:-.03em;
+  line-height:1.15;
+}
+.features-row{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:32px;
+}
+.feature-cell{
+  display:flex;flex-direction:column;
+  gap:20px;
+  text-align:center;
+}
+.feature-cell-visual{
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:20px;
+  height:220px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+.feature-cell-text{padding:0 4px}
+.feature-cell-title{
+  font-size:17px;font-weight:600;
+  letter-spacing:-.02em;line-height:1.3;
+  margin-bottom:6px;
+}
+.feature-cell-desc{
+  font-size:14px;color:var(--muted);
+  line-height:1.55;
+}
+
+/* Mini-Mockups */
+.mock-analytics-mini{width:100%;font-size:10px}
+.mock-analytics-mini .mock-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
+.mock-analytics-mini .mock-stat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:8px 4px;text-align:center;
+}
+.mock-analytics-mini .mock-stat-val{font-size:14px;font-weight:700;letter-spacing:-.03em}
+.mock-analytics-mini .mock-stat-lbl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:1px}
+.mock-bars-mini{
+  display:flex;align-items:flex-end;gap:4px;height:50px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:8px;
+}
+.mock-bars-mini .mock-bar{flex:1;background:var(--text);border-radius:2px 2px 0 0;opacity:.85}
+.mock-bars-mini .mock-bar.faded{background:var(--border-strong)}
+
+.mock-phone-mini{
+  width:130px;height:200px;
+  background:var(--text);
+  border-radius:22px;
+  padding:8px 6px;
+}
+.mock-phone-screen-mini{
+  background:var(--bg);
+  border-radius:16px;
+  height:100%;
+  padding:12px 10px;
+  display:flex;flex-direction:column;align-items:center;
+  overflow:hidden;
+}
+.mock-avatar-mini{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:14px;
+  margin-bottom:6px;flex-shrink:0;
+}
+.mock-name-mini{font-size:11px;font-weight:600;letter-spacing:-.02em;margin-bottom:2px}
+.mock-handle-mini{font-size:8px;color:var(--muted);margin-bottom:10px}
+.mock-link-mini{
+  width:100%;height:18px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:6px;
+  margin-bottom:5px;
+}
+.mock-link-mini.muted{opacity:.55}
+
+.mock-mediakit-mini{
+  width:100%;background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+}
+.mk-head-mini{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.mk-avatar-mini{
+  width:30px;height:30px;border-radius:50%;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:12px;
+  flex-shrink:0;
+}
+.mk-name-mini{font-size:11px;font-weight:700;letter-spacing:-.02em;text-align:left}
+.mk-positioning-mini{font-size:9px;color:var(--muted);margin-top:1px;text-align:left}
+.mk-grid-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}
+.mk-stat-mini{background:var(--bg);border-radius:6px;padding:8px 4px;text-align:center}
+.mk-stat-val-mini{font-size:13px;font-weight:700;letter-spacing:-.02em}
+.mk-stat-lbl-mini{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:1px}
+.mk-bar-row-mini{display:flex;align-items:center;gap:6px;font-size:9px;margin-bottom:3px}
+.mk-bar-label-mini{width:22px;flex-shrink:0;color:var(--text);font-weight:500}
+.mk-bar-track-mini{flex:1;height:4px;background:var(--bg);border-radius:99px;overflow:hidden}
+.mk-bar-fill-mini{height:100%;background:var(--text);border-radius:99px}
+
+@media (max-width:780px){
+  .features-box{padding:36px 24px;border-radius:24px}
+  .features-row{grid-template-columns:1fr;gap:36px}
+  .feature-cell-visual{height:200px}
+}
+
 /* ─── REDUCE MOTION ─── */
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
   html{scroll-behavior:auto}
+}
+
+/* ─── NEWSLETTER MODAL ─── */
+.modal-backdrop{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(17,17,16,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+  animation:fadeIn .2s ease-out;
+}
+.modal-backdrop.open{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-card{
+  background:var(--surface);border-radius:24px;
+  padding:36px 32px;
+  width:100%;max-width:440px;
+  position:relative;
+  animation:modalIn .25s cubic-bezier(.32,.72,0,1);
+}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  width:32px;height:32px;border-radius:50%;
+  border:none;background:var(--surface2);color:var(--muted);
+  display:grid;place-items:center;cursor:pointer;font-size:18px;
+  transition:background .15s,color .15s;
+}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-eyebrow{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px}
+.modal-title{font-size:24px;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin-bottom:8px}
+.modal-sub{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:22px}
+.modal-input{
+  width:100%;padding:13px 16px;
+  border:1px solid var(--border-strong);border-radius:12px;
+  font-family:inherit;font-size:15px;color:var(--text);
+  background:var(--bg);outline:none;transition:border-color .15s;
+  margin-bottom:10px;
+}
+.modal-input:focus{border-color:var(--text)}
+.modal-honeypot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.modal-btn{
+  width:100%;padding:13px;background:var(--text);color:#fff;
+  border:none;border-radius:12px;
+  font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;
+  transition:opacity .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.modal-btn:hover{opacity:.85}
+.modal-btn:disabled{opacity:.5;cursor:not-allowed}
+.modal-msg{font-size:12px;margin-top:10px;min-height:16px;text-align:center}
+.modal-msg.err{color:var(--green)} /* wir reusen kein rot, nutzen subtle text */
+.modal-msg.err{color:#c0392b}
+.modal-msg.ok{color:var(--green)}
+.modal-foot{font-size:11px;color:var(--subtle);margin-top:14px;text-align:center;line-height:1.5}
+.modal-foot a{color:var(--muted);text-decoration:underline}
+.modal-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.modal-success-icon{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--green-bg);color:var(--green);
+  display:grid;place-items:center;margin:0 auto 16px;
+  font-size:22px;font-weight:700;
 }
 </style>
 </head>
@@ -398,24 +648,13 @@ footer{
 <header class="hero">
   <div class="container">
     <h1 class="reveal">
-      Wachstum für Creator,<br/>
-      <span class="accent">ohne den ganzen Coach-Lärm.</span>
+      viuno <span class="accent">— Creator Place</span>
     </h1>
-    <p class="hero-sub reveal">
-      viuno ist die Plattform für deutschsprachige Creator unter 50.000 Followern.
-      Ehrliche Analyse deiner Posts, ein eigener BioLink, ein Media Kit für Brands.
-      Datenfundiert. Klar. Auf Deutsch.
-    </p>
     <div class="hero-cta-row reveal">
       <a href="/login" class="btn-primary">
         Zum Login
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
-    </div>
-    <div class="hero-meta reveal">
-      <span><span class="dot"></span>Komplett kostenlos</span>
-      <span><span class="dot"></span>Server in Frankfurt</span>
-      <span><span class="dot"></span>Für Instagram &amp; TikTok</span>
     </div>
   </div>
 </header>
@@ -436,9 +675,9 @@ footer{
             <li>Kuratiert aus deutschsprachigen und internationalen Quellen</li>
           </ul>
           <div class="digest-cta-row">
-            <a href="/login" class="btn-on-dark-primary">
+            <button type="button" onclick="openNewsletterModal()" class="btn-on-dark-primary">
               Newsletter abonnieren
-            </a>
+            </button>
             <a href="/digest" class="btn-on-dark-secondary">
               Aktuelle News lesen
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -470,44 +709,64 @@ footer{
   </div>
 </section>
 
-<!-- ─── FEATURES ─── -->
+<!-- ─── WAS WIR MACHEN ─── -->
+<section class="services-section">
+  <div class="container">
+    <div class="services-box reveal">
+      <div class="services-grid">
+        <div class="services-intro">
+          <div class="section-eyebrow">Was wir machen</div>
+          <h2>viuno arbeitet mit kleinen Creators aus dem deutschsprachigen Raum.</h2>
+          <p>
+            Die App ist der Anfang. Daneben begleiten wir Creator persönlich — direkt, einzeln, mit Außensicht.
+          </p>
+        </div>
+        <div>
+          <div class="services-list-label">Persönliche Begleitung</div>
+          <ul class="services-list">
+            <li>
+              <div class="item-title">Account-Analysen</div>
+              <div class="item-desc">Eine Außensicht auf das, was deine Daten zeigen — und das, was sie nicht zeigen.</div>
+            </li>
+            <li>
+              <div class="item-title">Strategie-Pläne</div>
+              <div class="item-desc">Was die nächsten 90 Tage Sinn macht. Konkret.</div>
+            </li>
+            <li>
+              <div class="item-title">Managed Creator</div>
+              <div class="item-desc">Laufende Zusammenarbeit mit ausgewählten Accounts.</div>
+            </li>
+          </ul>
+          <a href="mailto:kontakt@viuno.de?subject=Beratungsanfrage" class="services-cta">
+            Kontakt aufnehmen
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES (3 in einer Reihe in einem großen Container) ─── -->
 <section id="features">
   <div class="container">
-    <div class="reveal" style="margin-bottom:48px">
-      <div class="section-eyebrow">Was du bekommst</div>
-      <h2 class="section-h2">Drei Werkzeuge.<br/>Mehr brauchst du nicht.</h2>
-      <p class="section-lead">Keine 47 Features die du nie nutzt. Drei Dinge, die für Creator unter 50k wirklich zählen — sauber gemacht.</p>
-    </div>
+    <div class="features-box reveal">
+      <div class="features-box-header">
+        <div class="section-eyebrow">Du willst nur schnuppern?</div>
+        <h2 class="features-box-title">Drei kostenlose Werkzeuge für dich.</h2>
+      </div>
+      <div class="features-row">
 
-    <div class="features">
-
-      <!-- FEATURE 1: ANALYTICS -->
-      <div class="feature-card reveal">
-        <div class="feature-text">
-          <span class="feature-num">01 · ANALYTICS</span>
-          <h3 class="feature-title">Sieh, was wirklich funktioniert.</h3>
-          <p class="feature-desc">
-            viuno analysiert deine letzten Posts auf Instagram und TikTok und zeigt dir, welche Inhalte performen — und welche nicht. Keine eitlen Vanity-Metriken, sondern was du fürs nächste Posting wissen musst.
-          </p>
-          <ul class="feature-list">
-            <li>Top- &amp; Flop-Posts der letzten Wochen</li>
-            <li>Welche Caption-Muster bei deiner Audience funktionieren</li>
-            <li>Verbesserungs-Vorschläge, KI-gestützt aber konkret</li>
-          </ul>
-        </div>
-        <div class="feature-visual">
-          <div class="mock-analytics" aria-hidden="true">
-            <div class="mock-stats">
-              <div class="mock-stat"><div class="mock-stat-val">12.4k</div><div class="mock-stat-lbl">Follower</div></div>
-              <div class="mock-stat"><div class="mock-stat-val">5,8%</div><div class="mock-stat-lbl">Engagement</div></div>
-              <div class="mock-stat"><div class="mock-stat-val">38k</div><div class="mock-stat-lbl">Avg Views</div></div>
-            </div>
-            <div class="mock-row">
-              <div class="mock-row-head">
-                <span>Top-Posts</span>
-                <span class="pill">+18% vs Schnitt</span>
+        <!-- ANALYTICS -->
+        <div class="feature-cell">
+          <div class="feature-cell-visual">
+            <div class="mock-analytics-mini" aria-hidden="true">
+              <div class="mock-stats">
+                <div class="mock-stat"><div class="mock-stat-val">12,4k</div><div class="mock-stat-lbl">Follower</div></div>
+                <div class="mock-stat"><div class="mock-stat-val">5,8%</div><div class="mock-stat-lbl">Eng.</div></div>
+                <div class="mock-stat"><div class="mock-stat-val">38k</div><div class="mock-stat-lbl">Views</div></div>
               </div>
-              <div class="mock-bars">
+              <div class="mock-bars-mini">
                 <div class="mock-bar" style="height:78%"></div>
                 <div class="mock-bar" style="height:64%"></div>
                 <div class="mock-bar" style="height:88%"></div>
@@ -517,123 +776,65 @@ footer{
                 <div class="mock-bar" style="height:55%"></div>
               </div>
             </div>
-            <div class="mock-row" style="margin-bottom:0">
-              <div class="mock-row-head"><span>Letzte Posts</span><span></span></div>
-              <div class="mock-line">
-                <div class="mock-thumb"></div>
-                <div class="mock-line-text">
-                  <div class="mock-line-l1"></div>
-                  <div class="mock-line-l2"></div>
-                </div>
-                <div class="mock-line-num">42k</div>
-              </div>
-              <div class="mock-line">
-                <div class="mock-thumb"></div>
-                <div class="mock-line-text">
-                  <div class="mock-line-l1" style="width:65%"></div>
-                  <div class="mock-line-l2"></div>
-                </div>
-                <div class="mock-line-num">28k</div>
-              </div>
-              <div class="mock-line">
-                <div class="mock-thumb"></div>
-                <div class="mock-line-text">
-                  <div class="mock-line-l1" style="width:72%"></div>
-                  <div class="mock-line-l2" style="width:40%"></div>
-                </div>
-                <div class="mock-line-num">11k</div>
+          </div>
+          <div class="feature-cell-text">
+            <div class="feature-cell-title">Analyse deiner Profile</div>
+            <p class="feature-cell-desc">Sieh welche Posts performen und welche nicht. Konkrete Tipps statt Vanity-Metriken.</p>
+          </div>
+        </div>
+
+        <!-- BIOLINK -->
+        <div class="feature-cell">
+          <div class="feature-cell-visual">
+            <div class="mock-phone-mini" aria-hidden="true">
+              <div class="mock-phone-screen-mini">
+                <div class="mock-avatar-mini">L</div>
+                <div class="mock-name-mini">Lina Becker</div>
+                <div class="mock-handle-mini">viuno.de/lina</div>
+                <div class="mock-link-mini"></div>
+                <div class="mock-link-mini"></div>
+                <div class="mock-link-mini muted"></div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- FEATURE 2: BIOLINK -->
-      <div class="feature-card reverse reveal">
-        <div class="feature-text">
-          <span class="feature-num">02 · BIOLINK</span>
-          <h3 class="feature-title">Eine Seite. Alle deine Links.</h3>
-          <p class="feature-desc">
-            Dein Profil unter <b>viuno.de/dein-name</b>. Schickst du in deine Instagram- oder TikTok-Bio. Du bestimmst was sichtbar ist, was nicht.
-          </p>
-          <ul class="feature-list">
-            <li>Custom Links — Kooperationen, eigene Produkte, Newsletter</li>
-            <li>Drei klare Designs, eines davon wird deins</li>
-            <li>Kontaktformular für Brand-Anfragen direkt im Profil</li>
-            <li>Anonymes View-Tracking, keine Tracker-Cookies</li>
-          </ul>
-        </div>
-        <div class="feature-visual">
-          <div class="mock-phone" aria-hidden="true">
-            <div class="mock-phone-screen">
-              <div class="mock-avatar">L</div>
-              <div class="mock-name">Lina Becker</div>
-              <div class="mock-handle">viuno.de/lina</div>
-              <div class="mock-link">Mein Newsletter</div>
-              <div class="mock-link">Brand-Anfrage senden</div>
-              <div class="mock-link muted">Aktuelle Kooperation</div>
-              <div class="mock-link muted">Über mich</div>
-            </div>
+          <div class="feature-cell-text">
+            <div class="feature-cell-title">BioLink unter viuno.de/dein-name</div>
+            <p class="feature-cell-desc">Eine Seite mit allen deinen Links. Schickst du in deine Instagram- oder TikTok-Bio.</p>
           </div>
         </div>
-      </div>
 
-      <!-- FEATURE 3: MEDIA KIT -->
-      <div class="feature-card reveal">
-        <div class="feature-text">
-          <span class="feature-num">03 · MEDIA KIT</span>
-          <h3 class="feature-title">Dein Pitch an Brands —<br/>in einem Link.</h3>
-          <p class="feature-desc">
-            Statt PDF-Anhang: <b>viuno.de/kit/dein-name</b>. Reichweite, Engagement, Audience-Demografie, Beispiele. Aktualisiert sich automatisch wenn deine Zahlen sich ändern.
-          </p>
-          <ul class="feature-list">
-            <li>Live-Stats statt einmal manuell zusammenkopiert</li>
-            <li>Brand-Logos und Beispiel-Kooperationen</li>
-            <li>Audience-Angaben die du selbst ergänzt</li>
-            <li>Ein Link für alle Anfragen</li>
-          </ul>
-        </div>
-        <div class="feature-visual">
-          <div class="mock-mediakit" aria-hidden="true">
-            <div class="mk-head">
-              <div class="mk-avatar">L</div>
-              <div>
-                <div class="mk-name">Lina Becker</div>
-                <div class="mk-positioning">Lifestyle &amp; Wohnen — Berlin</div>
+        <!-- MEDIA KIT -->
+        <div class="feature-cell">
+          <div class="feature-cell-visual">
+            <div class="mock-mediakit-mini" aria-hidden="true">
+              <div class="mk-head-mini">
+                <div class="mk-avatar-mini">L</div>
+                <div>
+                  <div class="mk-name-mini">Lina Becker</div>
+                  <div class="mk-positioning-mini">Lifestyle · Berlin</div>
+                </div>
+              </div>
+              <div class="mk-grid-mini">
+                <div class="mk-stat-mini"><div class="mk-stat-val-mini">12,4k</div><div class="mk-stat-lbl-mini">IG</div></div>
+                <div class="mk-stat-mini"><div class="mk-stat-val-mini">28,1k</div><div class="mk-stat-lbl-mini">TT</div></div>
+              </div>
+              <div class="mk-bar-row-mini">
+                <span class="mk-bar-label-mini">DE</span>
+                <div class="mk-bar-track-mini"><div class="mk-bar-fill-mini" style="width:74%"></div></div>
+              </div>
+              <div class="mk-bar-row-mini">
+                <span class="mk-bar-label-mini">AT</span>
+                <div class="mk-bar-track-mini"><div class="mk-bar-fill-mini" style="width:14%"></div></div>
               </div>
             </div>
-            <div class="mk-grid">
-              <div class="mk-stat"><div class="mk-stat-val">12,4k</div><div class="mk-stat-lbl">Instagram</div></div>
-              <div class="mk-stat"><div class="mk-stat-val">28,1k</div><div class="mk-stat-lbl">TikTok</div></div>
-              <div class="mk-stat"><div class="mk-stat-val">5,8%</div><div class="mk-stat-lbl">Engagement</div></div>
-              <div class="mk-stat"><div class="mk-stat-val">38k</div><div class="mk-stat-lbl">Avg Views</div></div>
-            </div>
-            <div class="mk-section-title">Audience</div>
-            <div class="mk-bar-row">
-              <span class="mk-bar-label">Frauen</span>
-              <div class="mk-bar-track"><div class="mk-bar-fill" style="width:68%"></div></div>
-              <span class="mk-bar-val">68%</span>
-            </div>
-            <div class="mk-bar-row">
-              <span class="mk-bar-label">Männer</span>
-              <div class="mk-bar-track"><div class="mk-bar-fill" style="width:32%"></div></div>
-              <span class="mk-bar-val">32%</span>
-            </div>
-            <div class="mk-section-title">Top-Länder</div>
-            <div class="mk-bar-row">
-              <span class="mk-bar-label">DE</span>
-              <div class="mk-bar-track"><div class="mk-bar-fill" style="width:74%"></div></div>
-              <span class="mk-bar-val">74%</span>
-            </div>
-            <div class="mk-bar-row">
-              <span class="mk-bar-label">AT</span>
-              <div class="mk-bar-track"><div class="mk-bar-fill" style="width:14%"></div></div>
-              <span class="mk-bar-val">14%</span>
-            </div>
+          </div>
+          <div class="feature-cell-text">
+            <div class="feature-cell-title">Media Kit für Brands</div>
+            <p class="feature-cell-desc">Live-Stats, Audience-Daten, ein Link statt PDF-Anhang. Aktualisiert sich automatisch.</p>
           </div>
         </div>
-      </div>
 
+      </div>
     </div>
   </div>
 </section>
@@ -700,6 +901,121 @@ footer{
   setTimeout(()=>{
     document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('in'));
   },50);
+})();
+</script>
+
+<!-- ─── NEWSLETTER MODAL ─── -->
+<div class="modal-backdrop" id="newsletter-modal" onclick="closeNewsletterModal()" role="dialog" aria-labelledby="modal-title-id" aria-modal="true">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeNewsletterModal()" aria-label="Schließen">×</button>
+    <div id="newsletter-form-state">
+      <div class="modal-eyebrow">Daily Digest</div>
+      <div class="modal-title" id="modal-title-id">Newsletter abonnieren</div>
+      <div class="modal-sub">Trag deine E-Mail ein. Sobald der Newsletter startet, schicken wir dir eine Bestätigungs-Mail — erst dann bist du angemeldet.</div>
+      <input type="email" id="newsletter-email" class="modal-input" placeholder="deine@email.de" autocomplete="email" inputmode="email"/>
+      <input type="text" id="newsletter-website" class="modal-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true"/>
+      <button type="button" class="modal-btn" id="newsletter-submit" onclick="submitNewsletter()">Eintragen</button>
+      <div class="modal-msg" id="newsletter-msg"></div>
+      <div class="modal-foot">
+        Mit dem Eintragen akzeptierst du unsere <a href="/legal#datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>. Abmelden jederzeit möglich.
+      </div>
+    </div>
+    <div id="newsletter-success-state" style="display:none">
+      <div class="modal-success-icon">✓</div>
+      <div class="modal-title" style="text-align:center">Eingetragen!</div>
+      <div class="modal-sub" style="text-align:center">Wir haben dich auf der Liste. Sobald der Newsletter startet, bekommst du eine Bestätigungs-Mail von uns.</div>
+      <button type="button" class="modal-btn" onclick="closeNewsletterModal()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SB_URL = 'https://bzejndghppuipnedasuv.supabase.co';
+  const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo';
+
+  window.openNewsletterModal = function(){
+    document.getElementById('newsletter-form-state').style.display = '';
+    document.getElementById('newsletter-success-state').style.display = 'none';
+    document.getElementById('newsletter-email').value = '';
+    document.getElementById('newsletter-website').value = '';
+    document.getElementById('newsletter-msg').textContent = '';
+    const btn = document.getElementById('newsletter-submit');
+    btn.disabled = false;
+    btn.textContent = 'Eintragen';
+    document.getElementById('newsletter-modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(()=>document.getElementById('newsletter-email').focus(), 100);
+  };
+
+  window.closeNewsletterModal = function(){
+    document.getElementById('newsletter-modal').classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  // ESC zum Schließen
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && document.getElementById('newsletter-modal').classList.contains('open')){
+      closeNewsletterModal();
+    }
+  });
+
+  // Enter im Email-Feld submitted
+  document.getElementById('newsletter-email').addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') submitNewsletter();
+  });
+
+  window.submitNewsletter = async function(){
+    const email = document.getElementById('newsletter-email').value.trim();
+    const website = document.getElementById('newsletter-website').value;
+    const msg = document.getElementById('newsletter-msg');
+    const btn = document.getElementById('newsletter-submit');
+
+    msg.className = 'modal-msg';
+    msg.textContent = '';
+
+    if(!email){
+      msg.className = 'modal-msg err';
+      msg.textContent = 'Bitte gib eine E-Mail-Adresse ein.';
+      return;
+    }
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      msg.className = 'modal-msg err';
+      msg.textContent = 'Diese E-Mail-Adresse sieht nicht gültig aus.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="modal-spinner"></span>';
+
+    try {
+      const res = await fetch(`${SB_URL}/functions/v1/newsletter-signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SB_ANON
+        },
+        body: JSON.stringify({ email, website, source: 'landing' })
+      });
+      const data = await res.json().catch(()=>({}));
+
+      if(res.ok && data.success){
+        // Success state
+        document.getElementById('newsletter-form-state').style.display = 'none';
+        document.getElementById('newsletter-success-state').style.display = '';
+      } else {
+        msg.className = 'modal-msg err';
+        msg.textContent = data.error || 'Etwas ist schiefgelaufen. Bitte später erneut versuchen.';
+        btn.disabled = false;
+        btn.textContent = 'Eintragen';
+      }
+    } catch (err) {
+      msg.className = 'modal-msg err';
+      msg.textContent = 'Verbindungsfehler. Bitte später erneut versuchen.';
+      btn.disabled = false;
+      btn.textContent = 'Eintragen';
+    }
+  };
 })();
 </script>
 
