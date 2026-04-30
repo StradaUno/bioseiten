@@ -53,6 +53,17 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .stat-box-value{font-size:20px;font-weight:700;letter-spacing:-.04em;color:var(--text)}
 .stat-box-label{font-size:11px;color:var(--muted);margin-top:2px}
 
+/* CHART (7-Tage Bar-Chart wie bei MediaKit) */
+.chart-wrap{margin-top:14px;padding:14px 8px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.chart-row{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:96px}
+.chart-col{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
+.chart-bar-wrap{width:100%;height:64px;display:flex;align-items:flex-end;justify-content:center}
+.chart-bar{width:70%;max-width:24px;background:var(--border-strong);border-radius:4px 4px 0 0;transition:height .3s cubic-bezier(.32,.72,0,1)}
+.chart-bar.has{background:var(--text)}
+.chart-day{font-size:10px;color:var(--muted);margin-top:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.chart-val{font-size:11px;color:var(--text);font-weight:600;margin-top:2px}
+.chart-empty{margin-top:12px;padding:18px;text-align:center;font-size:12px;color:var(--muted);background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--radius)}
+
 /* ACTION BUTTONS */
 .action-stack{padding:12px 20px 0;display:flex;flex-direction:column;gap:8px}
 .action-btn{width:100%;padding:13px 16px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;transition:opacity .15s}
@@ -452,7 +463,7 @@ input,textarea,select{font-size:16px!important}
     </div>
     <div class="sheet-field">
       <label class="sheet-label">URL</label>
-      <input type="text" class="sheet-input" id="link-url" placeholder="https://"/>
+      <input type="text" class="sheet-input" id="link-url" placeholder="z.B. nike.de"/>
     </div>
     <label class="sheet-checkbox-row">
       <input type="checkbox" id="link-paid"/>
@@ -553,6 +564,24 @@ const sb=window.sb
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function fmt(n){if(n==null||isNaN(+n))return'–';n=+n;if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'k';return n.toString()}
 
+// URL-Normalisierung: akzeptiert Nike.de, www.nike.de, https://Nike.de/ → gibt https://nike.de zurück
+function normalizeBrandUrl(raw){
+  if(!raw)return null
+  let s=raw.trim()
+  if(!s)return null
+  s=s.replace(/^https?:\/\//i,'')
+  s=s.replace(/\/+$/,'')
+  s=s.replace(/^www\./i,'')
+  const slashIdx=s.indexOf('/')
+  if(slashIdx>=0){
+    s=s.substring(0,slashIdx).toLowerCase()+s.substring(slashIdx)
+  }else{
+    s=s.toLowerCase()
+  }
+  if(!/^[a-z0-9-]+\.[a-z0-9.-]+/i.test(s))return null
+  return 'https://'+s
+}
+
 window.showToast=function(msg,dur=2800){const w=document.getElementById('toast-wrap'),t=document.getElementById('toast-msg');t.textContent=msg;w.classList.remove('hidden');clearTimeout(w._t);w._t=setTimeout(()=>w.classList.add('hidden'),dur)}
 window.openSidebar=function(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden'}
 window.closeSidebar=function(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow=''}
@@ -567,7 +596,10 @@ const S={
   profile:null,       // users row
   biolink:null,       // biolink_viuno row
   customLinks:[],     // biolink_custom_links rows
-  aufrufe:[],         // biolink_aufrufe for stats
+  viewsTotal:0,
+  viewsToday:0,
+  views7Days:0,
+  viewsDaily:[],      // 7 Tage Bar-Chart Daten
   theme:'color',
   lang:'de',
   editingLinkId:null
@@ -601,16 +633,19 @@ async function enter(session){
 // ── Load all data ──
 async function loadAll(){
   const uid=S.user.id
-  const[profileRes,biolinkRes,linksRes,aufrufeRes]=await Promise.all([
-    sb.from('users').select('display_name,full_name,profile_image_url,bio,bio_active,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,subscription_type').eq('id',uid).single(),
+  const[profileRes,biolinkRes,linksRes,viewsDailyRes]=await Promise.all([
+    sb.from('users').select('display_name,full_name,profile_image_url,bio,bio_active,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,subscription_type,bio_views_total,bio_views_today,bio_views_last_7_days').eq('id',uid).single(),
     sb.from('biolink_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('biolink_custom_links').select('*').eq('user_id',uid).order('position',{ascending:true}),
-    sb.from('biolink_aufrufe').select('viewed_at,language').eq('user_id',uid).gte('viewed_at',new Date(Date.now()-30*24*60*60*1000).toISOString())
+    sb.rpc('get_biolink_views_last_7_days_daily',{p_user_id:uid})
   ])
   S.profile=profileRes.data
   S.biolink=biolinkRes.data
   S.customLinks=linksRes.data||[]
-  S.aufrufe=aufrufeRes.data||[]
+  S.viewsTotal=S.profile?.bio_views_total||0
+  S.viewsToday=S.profile?.bio_views_today||0
+  S.views7Days=S.profile?.bio_views_last_7_days||0
+  S.viewsDaily=viewsDailyRes.data||[]
   S.theme=S.biolink?.theme||'color'
   S.lang=S.biolink?.default_language||'de'
 
@@ -643,13 +678,26 @@ function renderPage(){
   ]
   const allOk=checks.every(c=>c.ok)
 
-  // Stats aus biolink_aufrufe
-  const now=Date.now()
-  const today=new Date().toISOString().slice(0,10)
-  const aufrufe=S.aufrufe||[]
-  const viewsToday=aufrufe.filter(a=>a.viewed_at?.slice(0,10)===today).length
-  const views7=aufrufe.filter(a=>(now-new Date(a.viewed_at).getTime())<7*86400000).length
-  const views30=aufrufe.length
+  // Stats aus aggregierten users-Spalten
+  const viewsToday=S.viewsToday
+  const views7=S.views7Days
+  const viewsTotal=S.viewsTotal
+
+  // 7-Tage Bar-Chart-HTML
+  const maxVal=Math.max(...S.viewsDaily.map(d=>d.view_count||0),1)
+  const dayLbl=['So','Mo','Di','Mi','Do','Fr','Sa']
+  const chartBars=S.viewsDaily.map(d=>{
+    const v=d.view_count||0
+    const h=Math.max((v/maxVal)*100,v>0?8:2)
+    const dayShort=dayLbl[new Date(d.view_date+'T00:00:00').getDay()]
+    return `<div class="chart-col" title="${v} Aufrufe">
+      <div class="chart-bar-wrap"><div class="chart-bar ${v>0?'has':''}" style="height:${h}%"></div></div>
+      <div class="chart-day">${dayShort}</div>
+      <div class="chart-val">${v}</div>
+    </div>`
+  }).join('')
+  const chartHtml=viewsTotal>0?`<div class="chart-wrap"><div class="chart-row">${chartBars}</div></div>`
+    :`<div class="chart-empty">Noch keine Aufrufe in den letzten 7 Tagen.</div>`
 
   // Theme/lang label update
   const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
@@ -672,10 +720,10 @@ function renderPage(){
          <div class="stats-grid">
            <div class="stat-box"><div class="stat-box-value">${fmt(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
            <div class="stat-box"><div class="stat-box-value">${fmt(views7)}</div><div class="stat-box-label">7 Tage</div></div>
-           <div class="stat-box"><div class="stat-box-value">${fmt(views30)}</div><div class="stat-box-label">30 Tage</div></div>
+           <div class="stat-box"><div class="stat-box-value">${fmt(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
          </div>
-       </div>
-       ${buildChart(aufrufe)}`
+         ${chartHtml}
+       </div>`
     :slug?`<div class="status-banner inactive"><div class="status-dot inactive"></div>
         <div><div class="status-text">Seite ist inaktiv<span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span></div></div></div>`
     :''
@@ -743,49 +791,6 @@ function renderPage(){
   }
 
   initSheets()
-}
-
-// ── Line chart from biolink_aufrufe ──
-function buildChart(aufrufe){
-  if(!aufrufe||aufrufe.length<2)return''
-  // Build daily counts for last 14 days
-  const days=14
-  const dayMap={}
-  const now=Date.now()
-  for(let i=0;i<days;i++){
-    const d=new Date(now-i*86400000).toISOString().slice(0,10)
-    dayMap[d]=0
-  }
-  aufrufe.forEach(a=>{const d=a.viewed_at?.slice(0,10);if(d&&dayMap[d]!==undefined)dayMap[d]++})
-  const labels=Object.keys(dayMap).sort()
-  const vals=labels.map(d=>dayMap[d])
-  const maxV=Math.max(...vals,1)
-  const W=300,H=60,PAD=4
-  const points=vals.map((v,i)=>{
-    const x=PAD+i*(W-PAD*2)/(vals.length-1)
-    const y=H-PAD-(v/maxV)*(H-PAD*2)
-    return`${x.toFixed(1)},${y.toFixed(1)}`
-  }).join(' ')
-  const shortDays=['So','Mo','Di','Mi','Do','Fr','Sa']
-  const firstLabel=new Date(labels[0]).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})
-  const lastLabel=new Date(labels[labels.length-1]).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})
-  return`<div class="section">
-    <div class="section-label">Verlauf · 14 Tage</div>
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
-      <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">
-        <polyline fill="none" stroke="var(--text)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" points="${points}"/>
-        ${vals.map((v,i)=>{
-          const x=PAD+i*(W-PAD*2)/(vals.length-1)
-          const y=H-PAD-(v/maxV)*(H-PAD*2)
-          return v>0?`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2.5" fill="var(--text)"/>`:'';
-        }).join('')}
-      </svg>
-      <div style="display:flex;justify-content:space-between;margin-top:6px">
-        <span style="font-size:10px;color:var(--subtle)">${firstLabel}</span>
-        <span style="font-size:10px;color:var(--subtle)">${lastLabel}</span>
-      </div>
-    </div>
-  </div>`
 }
 
 // ── Build Theme-Cards (3 Vorschau-Bilder, klickbar zum Theme-Wechseln) ──
@@ -1064,13 +1069,13 @@ window.openAddLink=function(){
 
 window.confirmAddLink=async function(){
   const title=document.getElementById('link-title').value.trim()
-  const url=document.getElementById('link-url').value.trim()
+  const urlRaw=document.getElementById('link-url').value.trim()
   const isPaid=document.getElementById('link-paid').checked
   const hint=document.getElementById('link-hint')
-  if(!title||!url){hint.textContent='Titel und URL sind Pflichtfelder.';return}
-  if(!/^https?:\/\/.+/.test(url)&&!url.startsWith('www.')){hint.textContent='URL muss mit https:// beginnen.';return}
+  if(!title||!urlRaw){hint.textContent='Titel und URL sind Pflichtfelder.';return}
+  const normalUrl=normalizeBrandUrl(urlRaw)
+  if(!normalUrl){hint.textContent='Ungültige URL. Beispiel: nike.de';return}
   hint.textContent=''
-  const normalUrl=url.startsWith('http')?url:'https://'+url
   const position=S.customLinks.length
   const{data,error}=await sb.from('biolink_custom_links').insert({
     user_id:S.user.id,title,url:normalUrl,is_paid:isPaid,position
