@@ -265,7 +265,7 @@ input,textarea,select{font-size:16px!important}
 <div class="modal-backdrop centered hidden" id="username-modal" onclick="closeUsernameModal()">
   <div class="modal-card" onclick="event.stopPropagation()">
     <div class="modal-title">Username ändern</div>
-    <div class="modal-sub">Dein BioLink und Media Kit werden automatisch aktualisiert. Alte Links funktionieren danach nicht mehr.</div>
+    <div class="modal-sub">Dein BioLink und Media Kit werden deaktiviert. Du musst sie danach mit dem neuen Username neu erstellen.</div>
     <div style="margin-bottom:6px">
       <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neuer Username</label>
       <input type="text" id="sheet-new-username" placeholder="Neuer Username"
@@ -492,10 +492,17 @@ window.checkUsernameAvailability=async function(){
   clearTimeout(_usernameTimer)
   btn.disabled=true;btn.style.opacity='.5'
   if(!val){status.textContent='';return}
-  if(val===state.profile?.display_name){status.style.color='var(--muted)';status.textContent='Das ist bereits dein Username.';return}
+  if(val.toLowerCase()===state.profile?.display_name?.toLowerCase()){status.style.color='var(--muted)';status.textContent='Das ist bereits dein Username.';return}
   if(!/^[a-zA-Z0-9_]{3,30}$/.test(val)){status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.';return}
   status.style.color='var(--muted)';status.textContent='Wird geprüft…'
   _usernameTimer=setTimeout(async()=>{
+    // 1) Blacklist-Check (reservierte Wörter wie "admin", "api", "dashboard"…)
+    const{data:blacklisted}=await sb.from('username_blacklist').select('username').ilike('username',val).maybeSingle()
+    if(blacklisted){
+      status.style.color='var(--red)';status.textContent='❌ Dieser Username ist reserviert.'
+      btn.disabled=true;btn.style.opacity='.5';return
+    }
+    // 2) Verfügbarkeit gegen users-Tabelle
     const{data}=await sb.from('users').select('id').ilike('display_name',val).maybeSingle()
     if(data){
       status.style.color='var(--red)';status.textContent='❌ Leider vergeben.'
@@ -515,7 +522,7 @@ window.confirmUsernameChange=function(){
     null,
     'Ja, Username ändern',
     ()=>commitUsername(newName),
-    'Dein BioLink und Media Kit werden automatisch auf den neuen Username aktualisiert. Alte Links funktionieren danach nicht mehr.'
+    'Dein BioLink und Media Kit werden deaktiviert. Die alten URLs (' + (state.profile?.display_name?'viuno.de/'+state.profile.display_name.toLowerCase():'alte URL') + ') funktionieren danach nicht mehr. Du musst BioLink und Media Kit mit dem neuen Username neu erstellen.'
   )
 }
 async function commitUsername(newName){
@@ -523,14 +530,22 @@ async function commitUsername(newName){
   showToast('Username wird geändert…',5000)
   const{data:{session}}=await sb.auth.getSession()
   if(!session){showToast('Session abgelaufen');location.reload();return}
-  const res=await fetch(`${SUPABASE_URL}/functions/v1/cleanup-user-pages`,{method:'POST',headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},body:JSON.stringify({new_display_name:newName})})
-  const body=await res.json().catch(()=>({}))
-  if(!res.ok&&body.success!==true){showToast('Fehler: '+(body.error||'Unbekannt'),4000);return}
-  state.profile.display_name=newName
-  const du=document.getElementById('display-username')
-  if(du)du.textContent=newName
-  showToast('Username geändert ✓')
-  await loadProfile()
+  try{
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/change-username`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({new_username:newName})
+    })
+    const body=await res.json().catch(()=>({}))
+    if(!res.ok||body.success!==true){
+      showToast('Fehler: '+(body.error||'Unbekannt'),5000)
+      return
+    }
+    showToast('Username geändert ✓ — bitte BioLink & Media Kit neu erstellen',5000)
+    await loadProfile()
+  }catch(err){
+    showToast('Fehler: '+err.message,5000)
+  }
 }
 
 // ── Modal Helper ──
