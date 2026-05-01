@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>viuno · Antonietta Top Konkurrenz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0d0f;
+    --surface: #17151a;
+    --surface-2: #1f1c24;
+    --surface-3: #27232e;
+    --border: rgba(255,255,255,.07);
+    --border-strong: rgba(255,255,255,.12);
+    --text: #f0eef5;
+    --text-muted: #8b8594;
+    --text-subtle: #554f61;
+    --accent: #c084fc;
+    --accent-2: #e879f9;
+    --accent-glow: rgba(192,132,252,.18);
+    --success: #4ade80;
+    --danger: #f87171;
+    --gold: #f59e0b;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100dvh;
+  }
+
+  /* ── Grain overlay ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: .5;
+  }
+
+  /* ── Ambient glow ── */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 700px;
+    height: 400px;
+    background: radial-gradient(ellipse at center, rgba(192,132,252,.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 48px 20px 80px;
+  }
+
+  /* ── Header ── */
+  header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+
+  .header-left {}
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(26px, 5vw, 38px);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -.5px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-sub {
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 300;
+    max-width: 360px;
+  }
+
+  /* ── Trigger Button ── */
+  .trigger-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+
+  .btn-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    color: #0e0d0f;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s, opacity .2s;
+    box-shadow: 0 0 24px rgba(192,132,252,.35), 0 2px 8px rgba(0,0,0,.4);
+    white-space: nowrap;
+  }
+
+  .btn-trigger:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 0 36px rgba(192,132,252,.5), 0 4px 16px rgba(0,0,0,.4);
+  }
+
+  .btn-trigger:active:not(:disabled) { transform: translateY(0); }
+
+  .btn-trigger:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+
+  .btn-force {
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .15s;
+  }
+
+  .btn-force:hover { background: var(--surface-2); color: var(--text); }
+
+  /* ── Status Banner ── */
+  .status-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    animation: fadeIn .3s ease;
+  }
+
+  .status-banner.loading { border-color: rgba(192,132,252,.3); }
+  .status-banner.success { border-color: rgba(74,222,128,.25); background: rgba(74,222,128,.05); color: var(--success); }
+  .status-banner.error { border-color: rgba(248,113,113,.25); background: rgba(248,113,113,.05); color: var(--danger); }
+  .status-banner.info { border-color: rgba(192,132,252,.25); }
+
+  .hidden { display: none !important; }
+
+  /* ── Spinner ── */
+  .spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(192,132,252,.25);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Last fetched ── */
+  .meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 12px;
+    color: var(--text-subtle);
+  }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  /* ── Account Card ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+    animation: cardIn .4s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+  }
+
+  .card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(0,0,0,.3);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Staggered delays */
+  .card:nth-child(1) { animation-delay: .05s; }
+  .card:nth-child(2) { animation-delay: .10s; }
+  .card:nth-child(3) { animation-delay: .15s; }
+  .card:nth-child(4) { animation-delay: .20s; }
+  .card:nth-child(5) { animation-delay: .25s; }
+  .card:nth-child(6) { animation-delay: .30s; }
+  .card:nth-child(7) { animation-delay: .35s; }
+  .card:nth-child(8) { animation-delay: .40s; }
+  .card:nth-child(9) { animation-delay: .45s; }
+  .card:nth-child(10) { animation-delay: .50s; }
+
+  .rank-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    font-family: 'Playfair Display', serif;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--text-subtle);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+  .avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-strong);
+    flex-shrink: 0;
+    background: var(--surface-3);
+  }
+
+  .avatar-fallback {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--surface-3), var(--surface-2));
+    border: 2px solid var(--border-strong);
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    color: var(--text-subtle);
+  }
+
+  .card-identity {}
+
+  .username {
+    font-weight: 500;
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .verified {
+    color: var(--accent);
+    font-size: 12px;
+  }
+
+  .fullname {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 160px;
+  }
+
+  .bio {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 300;
+    margin-bottom: 14px;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* ── Stats ── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+
+  .stat {
+    background: var(--surface-2);
+    padding: 10px 6px;
+    text-align: center;
+  }
+
+  .stat-val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+    display: block;
+    letter-spacing: -.3px;
+  }
+
+  .stat-lbl {
+    font-size: 10px;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* ── ER pill ── */
+  .er-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .er-label {
+    font-size: 11px;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: .8px;
+  }
+
+  .er-pill {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .er-pill.good { background: rgba(74,222,128,.1); color: var(--success); }
+  .er-pill.ok { background: rgba(251,191,36,.1); color: var(--gold); }
+  .er-pill.low { background: rgba(248,113,113,.1); color: var(--danger); }
+
+  /* ── Recent posts thumbnails ── */
+  .thumbs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .thumb-img {
+    aspect-ratio: 1;
+    object-fit: cover;
+    background: var(--surface-3);
+    width: 100%;
+    display: block;
+  }
+
+  .thumb-placeholder {
+    aspect-ratio: 1;
+    background: var(--surface-3);
+    display: grid;
+    place-items: center;
+    font-size: 16px;
+    color: var(--text-subtle);
+  }
+
+  /* ── Card footer ── */
+  .card-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+  }
+
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: var(--accent);
+    text-decoration: none;
+    padding: 5px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(192,132,252,.2);
+    transition: all .15s;
+  }
+
+  .link-btn:hover {
+    background: rgba(192,132,252,.1);
+    border-color: rgba(192,132,252,.4);
+  }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: .5;
+  }
+
+  .empty h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+
+  .empty p {
+    font-size: 13px;
+    font-weight: 300;
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  /* ── Polling notice ── */
+  .polling-notice {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(192,132,252,.06);
+    border: 1px solid rgba(192,132,252,.2);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    animation: fadeIn .3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    header { flex-direction: column; }
+    .trigger-area { align-items: flex-start; flex-direction: row; flex-wrap: wrap; }
+    .grid { grid-template-columns: 1fr; }
+    .wrap { padding: 28px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <div class="header-left">
+      <div class="eyebrow">viuno · Antonietta</div>
+      <h1>Top <em>Konkurrenz</em><br>IT Fashion</h1>
+      <p class="header-sub">Trending Italian Lifestyle &amp; Fashion Accounts auf Instagram — automatisch ermittelt.</p>
+    </div>
+    <div class="trigger-area">
+      <button class="btn-trigger" id="btn-fetch" onclick="startFetch(false)">
+        <span id="btn-icon">✦</span>
+        <span id="btn-label">Accounts laden</span>
+      </button>
+      <button class="btn-force" id="btn-force" onclick="startFetch(true)" title="7-Tage Lock ignorieren">
+        ↺ Neu scrapen
+      </button>
+    </div>
+  </header>
+
+  <div id="status-banner" class="status-banner hidden"></div>
+
+  <div id="polling-notice" class="polling-notice hidden">
+    <div class="spinner"></div>
+    <span id="polling-text">Scraping läuft… wird automatisch aktualisiert.</span>
+  </div>
+
+  <div id="meta-row" class="meta-row hidden">
+    <span id="meta-count"></span>
+    <span id="meta-fetched"></span>
+  </div>
+
+  <div id="grid" class="grid"></div>
+
+  <div id="empty-state" class="empty hidden">
+    <div class="empty-icon">🇮🇹</div>
+    <h3>Noch keine Daten</h3>
+    <p>Klicke auf „Accounts laden" um die Top IT Fashion Konkurrenz zu scrapen.</p>
+  </div>
+
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+// Antonietta's User-ID und Email — kein Passwortschutz, direkt eingeloggt
+const ANTONIETTA_EMAIL = 'antonietta@viuno.de'
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: true, autoRefreshToken: true }
+})
+
+let session = null
+let pollingInterval = null
+
+// ── Auth: Session sicherstellen ──
+async function ensureSession() {
+  const { data: { session: existing } } = await supabase.auth.getSession()
+  if (existing) { session = existing; return true }
+  return false
+}
+
+// ── UI Helpers ──
+const $ = id => document.getElementById(id)
+
+function showStatus(msg, type = 'info') {
+  const el = $('status-banner')
+  el.className = `status-banner ${type}`
+  el.innerHTML = type === 'loading'
+    ? `<div class="spinner"></div><span>${msg}</span>`
+    : `<span>${msg}</span>`
+  el.classList.remove('hidden')
+  if (type !== 'loading') setTimeout(() => el.classList.add('hidden'), 5000)
+}
+
+function hideStatus() { $('status-banner').classList.add('hidden') }
+
+function setBtn(loading) {
+  $('btn-fetch').disabled = loading
+  $('btn-force').disabled = loading
+  $('btn-icon').textContent = loading ? '' : '✦'
+  if (loading) {
+    const spinner = document.createElement('div')
+    spinner.className = 'spinner'
+    spinner.style.cssText = 'width:14px;height:14px;border-color:rgba(0,0,0,.2);border-top-color:#0e0d0f'
+    $('btn-icon').replaceWith(spinner)
+  }
+  $('btn-label').textContent = loading ? 'Startet…' : 'Accounts laden'
+}
+
+function formatNum(n) {
+  if (n == null) return '–'
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M'
+  if (n >= 1_000) return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'k'
+  return n.toLocaleString('de-DE')
+}
+
+function erClass(er) {
+  if (er >= 4) return 'good'
+  if (er >= 2) return 'ok'
+  return 'low'
+}
+
+function erLabel(er) {
+  if (er >= 4) return '↑ Stark'
+  if (er >= 2) return '~ Okay'
+  return '↓ Schwach'
+}
+
+// ── Render ──
+function renderGrid(accounts) {
+  const grid = $('grid')
+  $('empty-state').classList.add('hidden')
+  $('meta-row').classList.remove('hidden')
+  $('meta-count').textContent = `${accounts.length} Accounts`
+  if (accounts[0]?.fetched_at) {
+    const d = new Date(accounts[0].fetched_at)
+    $('meta-fetched').textContent = `Stand: ${d.toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })} Uhr`
+  }
+
+  grid.innerHTML = accounts.map((a, i) => {
+    const thumbs = (a.recent_posts || []).slice(0, 3)
+    const thumbHtml = thumbs.length
+      ? thumbs.map(p => p.thumbnail
+          ? `<img class="thumb-img" src="${escHtml(p.thumbnail)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=\\"thumb-placeholder\\">📸</div>'">`
+          : `<div class="thumb-placeholder">📸</div>`
+        ).join('')
+      : '<div class="thumb-placeholder">📸</div><div class="thumb-placeholder">📸</div><div class="thumb-placeholder">📸</div>'
+
+    const erVal = a.engagement_rate ?? 0
+    const profileUrl = a.profile_url || `https://instagram.com/${a.username}`
+
+    return `
+    <div class="card">
+      <div class="rank-badge">#${i + 1}</div>
+      <div class="card-top">
+        ${a.avatar_url
+          ? `<img class="avatar" src="${escHtml(a.avatar_url)}" alt="" onerror="this.outerHTML='<div class=\\"avatar-fallback\\">👤</div>'">`
+          : `<div class="avatar-fallback">👤</div>`}
+        <div class="card-identity">
+          <div class="username">
+            @${escHtml(a.username)}
+            ${a.is_verified ? '<span class="verified">✦</span>' : ''}
+          </div>
+          ${a.full_name ? `<div class="fullname">${escHtml(a.full_name)}</div>` : ''}
+        </div>
+      </div>
+      ${a.biography ? `<div class="bio">${escHtml(a.biography)}</div>` : ''}
+      <div class="stats">
+        <div class="stat">
+          <span class="stat-val">${formatNum(a.followers)}</span>
+          <span class="stat-lbl">Follower</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val">${formatNum(a.avg_likes)}</span>
+          <span class="stat-lbl">⌀ Likes</span>
+        </div>
+        <div class="stat">
+          <span class="stat-val">${formatNum(a.posts_count)}</span>
+          <span class="stat-lbl">Posts</span>
+        </div>
+      </div>
+      <div class="er-row">
+        <span class="er-label">Engagement Rate</span>
+        <span class="er-pill ${erClass(erVal)}">${erVal.toFixed(1)}% · ${erLabel(erVal)}</span>
+      </div>
+      <div class="thumbs">${thumbHtml}</div>
+      <div class="card-footer">
+        <a class="link-btn" href="${escHtml(profileUrl)}" target="_blank" rel="noopener">
+          Instagram ↗
+        </a>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+
+function showEmpty() {
+  $('grid').innerHTML = ''
+  $('meta-row').classList.add('hidden')
+  $('empty-state').classList.remove('hidden')
+}
+
+// ── Daten laden ──
+async function loadExisting() {
+  if (!session) return
+
+  const { data, error } = await supabase
+    .from('competitor_accounts')
+    .select('*')
+    .eq('owner_user_id', session.user.id)
+    .order('followers', { ascending: false })
+
+  if (error) { console.error(error); return }
+  if (data && data.length > 0) renderGrid(data)
+  else showEmpty()
+}
+
+// ── Polling: warten bis Webhook Daten schreibt ──
+let pollCount = 0
+async function startPolling() {
+  $('polling-notice').classList.remove('hidden')
+  pollCount = 0
+  clearInterval(pollingInterval)
+
+  pollingInterval = setInterval(async () => {
+    pollCount++
+    $('polling-text').textContent = `Scraping läuft… (${pollCount * 8}s) Wird automatisch aktualisiert.`
+
+    const { data } = await supabase
+      .from('competitor_accounts')
+      .select('id, fetched_at')
+      .eq('owner_user_id', session.user.id)
+      .order('fetched_at', { ascending: false })
+      .limit(1)
+
+    if (data && data.length > 0) {
+      const fetchedAt = new Date(data[0].fetched_at).getTime()
+      const startedAt = Date.now() - pollCount * 8000
+      // Wenn fetched_at neuer als unser Fetch-Start → neue Daten
+      if (fetchedAt > startedAt - 30000) {
+        clearInterval(pollingInterval)
+        $('polling-notice').classList.add('hidden')
+        await loadExisting()
+        showStatus('✓ Konkurrenz-Accounts aktualisiert!', 'success')
+        setBtn(false)
+        return
+      }
+    }
+
+    // Timeout nach 3 Minuten
+    if (pollCount >= 22) {
+      clearInterval(pollingInterval)
+      $('polling-notice').classList.add('hidden')
+      showStatus('Timeout — bitte Seite neu laden und prüfen.', 'error')
+      setBtn(false)
+    }
+  }, 8000)
+}
+
+// ── Fetch triggern ──
+window.startFetch = async function(force = false) {
+  if (!session) {
+    showStatus('Keine Session. Bitte Seite neu laden.', 'error')
+    return
+  }
+
+  setBtn(true)
+  showStatus('Scraping wird gestartet…', 'loading')
+
+  try {
+    const url = `${SUPABASE_URL}/functions/v1/fetch-competitor-accounts${force ? '?force=true' : ''}`
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    const body = await res.json()
+
+    if (!res.ok || body.success === false) {
+      // Lock-Fehler → trotzdem bestehende Daten zeigen
+      if (body.error?.includes('Naechste Aktualisierung') || body.error?.includes('Nächste Aktualisierung')) {
+        hideStatus()
+        showStatus(`ℹ ${body.error}`, 'info')
+        setBtn(false)
+        await loadExisting()
+        return
+      }
+      throw new Error(body.error || `HTTP ${res.status}`)
+    }
+
+    showStatus('Scraping gestartet — Daten kommen in ~2 Min…', 'info')
+    startPolling()
+
+  } catch (err) {
+    showStatus('Fehler: ' + err.message, 'error')
+    setBtn(false)
+  }
+}
+
+// ── Init ──
+async function init() {
+  const ok = await ensureSession()
+  if (!ok) {
+    showStatus('Keine aktive Session gefunden. Bitte in viuno eingeloggt sein.', 'error')
+    showEmpty()
+    return
+  }
+  await loadExisting()
+}
+
+init()
+</script>
+</body>
+</html>
