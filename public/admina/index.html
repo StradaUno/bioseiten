@@ -571,8 +571,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
 
-// Antonietta's User-ID und Email — kein Passwortschutz, direkt eingeloggt
+// Antonietta fest verdrahtet — kein Login nötig
+const ANTONIETTA_USER_ID = '5620b0b6-3050-46d2-8853-5ef0f9a123c2'
 const ANTONIETTA_EMAIL = 'antonietta@viuno.de'
+
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: { persistSession: true, autoRefreshToken: true }
@@ -581,11 +583,32 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 let session = null
 let pollingInterval = null
 
-// ── Auth: Session sicherstellen ──
+// ── Auth: Login mit Antoniettas Credentials ──
+// Passwort wird per Prompt einmalig abgefragt und im Memory gehalten
+let _pw = null
 async function ensureSession() {
+  // Schon eingeloggt?
   const { data: { session: existing } } = await supabase.auth.getSession()
-  if (existing) { session = existing; return true }
-  return false
+  if (existing?.user?.id === ANTONIETTA_USER_ID) {
+    session = existing
+    return true
+  }
+  // Passwort einmalig abfragen
+  if (!_pw) {
+    _pw = window.prompt('Passwort für antonietta@viuno.de:')
+    if (!_pw) return false
+  }
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: ANTONIETTA_EMAIL,
+    password: _pw
+  })
+  if (error || !data.session) {
+    _pw = null
+    showStatus('Login fehlgeschlagen: ' + (error?.message || 'Unbekannt'), 'error')
+    return false
+  }
+  session = data.session
+  return true
 }
 
 // ── UI Helpers ──
@@ -813,12 +836,14 @@ window.startFetch = async function(force = false) {
 
 // ── Init ──
 async function init() {
+  showStatus('Verbinde…', 'loading')
   const ok = await ensureSession()
   if (!ok) {
-    showStatus('Keine aktive Session gefunden. Bitte in viuno eingeloggt sein.', 'error')
+    showStatus('Login fehlgeschlagen oder abgebrochen.', 'error')
     showEmpty()
     return
   }
+  hideStatus()
   await loadExisting()
 }
 
