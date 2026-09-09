@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>viuno · Deine Creator-Toolbox</title>
+<meta name="description" content="viuno ist die Creator-Toolbox für den deutschsprachigen Raum. BioLink, Analyse, News und Media Kit — an einem Ort."/>
+<meta name="theme-color" content="#f5f4f2"/>
+<link rel="icon" href="data:,"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f4f2;
+  --surface:#fff;
+  --surface2:#f0efed;
+  --border:rgba(0,0,0,.08);
+  --border-strong:rgba(0,0,0,.13);
+  --text:#111110;
+  --muted:#7a7975;
+  --subtle:#b0afa9;
+  --safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html,body{
+  background:var(--bg);
+  font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:var(--text);
+  font-size:16px;
+  line-height:1.55;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:1000px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+nav.top{
+  position:sticky;top:0;z-index:50;
+  background:rgba(245,244,242,.85);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  max-width:1000px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px;letter-spacing:-.04em}
+.logo-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-size:14px;font-weight:700;
+}
+.nav-cta{
+  padding:8px 18px;background:var(--text);color:#fff;
+  border-radius:99px;font-size:14px;font-weight:500;
+  transition:transform .15s,opacity .15s;
+}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px)}
+
+/* HERO */
+.hero{padding:72px 0 48px;text-align:center}
+.hero h1{
+  font-size:clamp(32px,5.5vw,52px);
+  font-weight:700;letter-spacing:-.04em;
+  line-height:1.1;margin-bottom:16px;
+}
+.hero-sub{
+  font-size:clamp(15px,2vw,17px);
+  color:var(--muted);max-width:480px;margin:0 auto;
+  line-height:1.6;
+}
+
+/* TILES */
+.tiles-section{padding:24px 0 56px}
+.tiles-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  max-width:640px;
+  margin:0 auto;
+}
+.tile{
+  display:flex;flex-direction:column;gap:14px;
+  padding:28px 24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  transition:transform .18s cubic-bezier(.32,.72,0,1),border-color .18s,box-shadow .18s;
+}
+.tile:hover{
+  transform:translateY(-3px);
+  border-color:var(--border-strong);
+  box-shadow:0 12px 28px rgba(17,17,16,.08);
+}
+.tile-icon{
+  width:44px;height:44px;
+  border-radius:12px;
+  background:var(--surface2);
+  display:grid;place-items:center;
+}
+.tile-title{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.tile-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:2px}
+
+/* MANAGED SERVICE STRIP */
+.strip{
+  text-align:center;
+  padding:8px 0 56px;
+  font-size:14px;
+  color:var(--muted);
+}
+.strip a{
+  color:var(--text);
+  font-weight:500;
+  text-decoration:underline;
+  text-decoration-color:var(--border-strong);
+}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:32px 0 calc(32px + var(--safe-bottom));
+  font-size:13px;color:var(--muted);
+}
+.footer-inner{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--text)}
+.footer-brand .logo-mark{width:24px;height:24px;font-size:11px;border-radius:6px}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+.footer-links a{color:var(--muted);transition:color .15s}
+.footer-links a:hover{color:var(--text)}
+
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease-out,transform .5s ease-out}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+@media (max-width:560px){
+  .hero{padding:48px 0 36px}
+  .tiles-grid{grid-template-columns:1fr}
+  .tile{padding:22px 20px}
+  .footer-inner{flex-direction:column;align-items:flex-start;text-align:left}
+}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <span class="logo-mark">v</span>
+      <span>viuno</span>
+    </a>
+    <a href="/login" class="nav-cta">Login</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <h1 class="reveal">Deine Creator-Toolbox.<br>Ohne Schnickschnack.</h1>
+    <p class="hero-sub reveal">BioLink, Analyse, News und Media Kit — wähl, womit du starten willst.</p>
+  </div>
+</header>
+
+<section class="tiles-section">
+  <div class="container">
+    <div class="tiles-grid reveal">
+
+      <a href="/biolink" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">BioLink erstellen</div>
+          <div class="tile-desc">Eine Seite für alle deine Links</div>
+        </div>
+      </a>
+
+      <a href="/analytics" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Analyse starten</div>
+          <div class="tile-desc">Sieh, was wirklich performt</div>
+        </div>
+      </a>
+
+      <a href="/digest" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Creator News</div>
+          <div class="tile-desc">Wöchentlich das Wichtigste</div>
+        </div>
+      </a>
+
+      <a href="/mediakit" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Media Kit</div>
+          <div class="tile-desc">Für Anfragen von Marken</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<div class="strip reveal">
+  Du willst mehr als die Tools? Wir arbeiten auch persönlich mit ausgewählten Creators.
+  <a href="mailto:kontakt@viuno.de?subject=Beratungsanfrage">Kontakt aufnehmen →</a>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark">v</span>
+        <span>viuno · gemacht in Deutschland</span>
+      </div>
+      <div class="footer-links">
+        <a href="/legal#impressum">Impressum</a>
+        <a href="/legal#datenschutz">Datenschutz</a>
+        <a href="/legal#agb">AGB</a>
+        <a href="/login">Login</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  if(!('IntersectionObserver' in window)){
+    document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
+    return;
+  }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  },{rootMargin:'-20px 0px',threshold:0.05});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  setTimeout(()=>{
+    document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('in'));
+  },50);
+})();
+</script>
+
+</body>
+</html>
