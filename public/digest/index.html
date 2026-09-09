@@ -106,7 +106,7 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .card-share:hover{color:var(--text);border-color:var(--border-strong)}
 
 
-/* E-MAIL-CHECKBOX (ersetzt das alte Newsletter-Formular) */
+/* E-MAIL-CHECKBOX */
 .nl-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin:12px 20px 0;display:flex;align-items:flex-start;gap:12px}
 .nl-checkbox-input{width:20px;height:20px;flex-shrink:0;accent-color:var(--text);cursor:pointer;margin-top:1px}
 .nl-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
@@ -279,6 +279,10 @@ window.logout=async function(){try{if(window.sb)await window.sb.auth.signOut()}c
 const state={digests:[],activeDate:null,activeFilter:'alle',uid:null,isSubscribed:false,userEmail:''}
 const MONTHS_SHORT=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez']
 const MONTHS_FULL=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+// Ab diesem Datum sind daily_digest-Eintraege echte Wochen-Ausgaben. Aeltere (taegliche) Eintraege
+// aus der Zeit vor der Umstellung werden hier bewusst ausgeblendet, damit keine "Fake-Wochen" auftauchen.
+// Die alten Daten bleiben in der DB unangetastet.
+const WEEKLY_SWITCH_DATE='2026-09-07'
 
 // Montag der aktuellen ISO-Woche (lokale Zeit), als YYYY-MM-DD — identische Logik wie im Backend
 function getWeekStartLocal(d){
@@ -329,28 +333,39 @@ async function enterApp(session){
   await loadDigests()
 }
 
+// Bei abonniert: nur Haken + kurze Bestaetigung. Bei nicht abonniert: Haken + Titel + Erklaertext.
 function renderDigestEmailBox(){
   const wrap=document.getElementById('nl-box-wrap')
   if(!wrap)return
-  wrap.innerHTML=`<div class="nl-box">
-    <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" ${state.isSubscribed?'checked':''} onchange="toggleDigestEmail()"/>
-    <label for="nl-checkbox" style="cursor:pointer;flex:1">
-      <div class="nl-title">📬 Wöchentlich per Mail</div>
-      <div class="nl-sub">Schick mir die Creator News jede Woche an ${escHtml(state.userEmail||'meine Account-E-Mail')}.</div>
-    </label>
-  </div>`
+  if(state.isSubscribed){
+    wrap.innerHTML=`<div class="nl-box" style="align-items:center">
+      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" checked onchange="toggleDigestEmail()"/>
+      <label for="nl-checkbox" style="cursor:pointer;flex:1">
+        <div class="nl-title" style="margin-bottom:0">📬 Creator News wöchentlich abonniert</div>
+      </label>
+    </div>`
+  } else {
+    wrap.innerHTML=`<div class="nl-box">
+      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" onchange="toggleDigestEmail()"/>
+      <label for="nl-checkbox" style="cursor:pointer;flex:1">
+        <div class="nl-title">📬 Creator News wöchentlich abonnieren</div>
+        <div class="nl-sub">Schick mir die Creator News jede Woche an ${escHtml(state.userEmail||'meine Account-E-Mail')}.</div>
+      </label>
+    </div>`
+  }
 }
 
 window.toggleDigestEmail=async function(){
   const checked=document.getElementById('nl-checkbox').checked
   const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',state.uid)
-  if(error){showToast('Fehler beim Speichern');document.getElementById('nl-checkbox').checked=!checked;return}
+  if(error){showToast('Fehler beim Speichern');return}
   state.isSubscribed=checked
-  showToast(checked?'Per Mail abonniert ✓':'Mail-Versand deaktiviert')
+  renderDigestEmailBox()
+  showToast(checked?'Abonniert ✓':'Abo beendet')
 }
 
 async function loadDigests(){
-  const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at').order('date',{ascending:false}).limit(10)
+  const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at').gte('date',WEEKLY_SWITCH_DATE).order('date',{ascending:false}).limit(10)
   document.getElementById('skeleton-area').classList.add('hidden')
   if(!data?.length){document.getElementById('empty-state').classList.remove('hidden');return}
   state.digests=data;state.activeDate=data[0].date;renderDatePicker();renderDigest()
