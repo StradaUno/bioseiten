@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>viuno · Daily Digest</title>
+<title>viuno · Creator News</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -62,9 +62,9 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 
 .date-scroll{display:flex;gap:8px;padding:16px 20px 0;overflow-x:auto;scrollbar-width:none}
 .date-scroll::-webkit-scrollbar{display:none}
-.date-pill{display:flex;flex-direction:column;align-items:center;padding:8px 14px;border-radius:12px;cursor:pointer;flex-shrink:0;border:1px solid var(--border);background:var(--surface);transition:all .15s}
+.date-pill{display:flex;flex-direction:column;align-items:center;padding:8px 14px;border-radius:12px;cursor:pointer;flex-shrink:0;border:1px solid var(--border);background:var(--surface);transition:all .15s;min-width:56px}
 .date-pill.active{background:var(--text);border-color:var(--text)}
-.date-pill-day{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.date-pill-day{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
 .date-pill.active .date-pill-day{color:rgba(255,255,255,.6)}
 .date-pill-num{font-size:17px;font-weight:700;color:var(--text);letter-spacing:-.02em;margin-top:1px}
 .date-pill.active .date-pill-num{color:white}
@@ -106,18 +106,11 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .card-share:hover{color:var(--text);border-color:var(--border-strong)}
 
 
-/* NEWSLETTER */
-.nl-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:12px 20px 0}
-.nl-subscribed{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin:12px 20px 0;display:flex;align-items:center;gap:10px}
-.nl-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
-.nl-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.nl-row{display:flex;gap:8px}
-.nl-input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
-.nl-input:focus{border-color:var(--text)}
-.nl-btn{padding:10px 16px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.nl-btn:disabled{opacity:.5;cursor:not-allowed}
-.nl-success{font-size:12px;color:var(--green);margin-top:8px;display:none}
-.nl-unsub-btn{font-size:12px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:inherit;text-decoration:underline;padding:0;margin-left:auto}
+/* E-MAIL-CHECKBOX (ersetzt das alte Newsletter-Formular) */
+.nl-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin:12px 20px 0;display:flex;align-items:flex-start;gap:12px}
+.nl-checkbox-input{width:20px;height:20px;flex-shrink:0;accent-color:var(--text);cursor:pointer;margin-top:1px}
+.nl-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px}
+.nl-sub{font-size:12px;color:var(--muted);line-height:1.5}
 
 /* iOS zoom fix */
 input,textarea,select{font-size:16px!important}
@@ -223,19 +216,18 @@ input,textarea,select{font-size:16px!important}
   <div class="topbar">
     <div class="topbar-left">
       <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
-      <span class="topbar-title">Daily Digest</span>
+      <span class="topbar-title">Creator News</span>
     </div>
     <div class="topbar-avatar" id="user-avatar">?</div>
   </div>
   <div class="page">
-    <div class="page-header"><div class="page-title">Daily Digest</div><div class="page-sub" id="digest-sub">Was heute in der Creator-Welt passiert.</div></div>
-    <div id="nl-top"></div>
+    <div class="page-header"><div class="page-title">Creator News</div><div class="page-sub" id="digest-sub">Was diese Woche in der Creator-Welt passiert.</div></div>
+    <div id="nl-box-wrap"></div>
     <div class="date-scroll" id="date-scroll"></div>
     <div class="filter-row" id="filter-row"><button class="f-pill active" data-filter="alle">Alle</button></div>
     <div id="skeleton-area" style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div class="skeleton" style="height:180px;border-radius:16px"></div><div class="skeleton" style="height:140px;border-radius:16px"></div></div>
     <div class="cards-list hidden" id="cards-list"></div>
-    <div id="nl-bottom"></div>
-    <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">📭</div><div class="empty-title">Kein Digest</div><div class="empty-sub">Wird täglich um 7:00 Uhr generiert.</div></div>
+    <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">📭</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Wird jeden Montag aktualisiert.</div></div>
   </div>
 </div>
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
@@ -285,85 +277,86 @@ window.logout=async function(){try{if(window.sb)await window.sb.auth.signOut()}c
 
 
 const state={digests:[],activeDate:null,activeFilter:'alle',uid:null,isSubscribed:false,userEmail:''}
-function fmtDate(d){if(!d)return'';return new Date(d+'T12:00:00').toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long',year:'numeric'})}
-function fmtDayNum(d){return new Date(d+'T12:00:00').toLocaleDateString('de-DE',{day:'2-digit'})}
-function fmtDayName(d){return['So','Mo','Di','Mi','Do','Fr','Sa'][new Date(d+'T12:00:00').getDay()]}
+const MONTHS_SHORT=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez']
+const MONTHS_FULL=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+
+// Montag der aktuellen ISO-Woche (lokale Zeit), als YYYY-MM-DD — identische Logik wie im Backend
+function getWeekStartLocal(d){
+  const day=d.getDay()
+  const diff=day===0?-6:1-day
+  const monday=new Date(d)
+  monday.setDate(d.getDate()+diff)
+  monday.setHours(0,0,0,0)
+  return monday
+}
+function toIso(d){return d.toISOString().split('T')[0]}
+function weekEnd(dateStr){const d=new Date(dateStr+'T12:00:00');d.setDate(d.getDate()+6);return d}
+function isThisWeek(dateStr){return dateStr===toIso(getWeekStartLocal(new Date()))}
+function isLastWeek(dateStr){const lw=getWeekStartLocal(new Date());lw.setDate(lw.getDate()-7);return dateStr===toIso(lw)}
+
+// Pill-Label: oben kurzer Hinweis, unten der Start-Tag der Woche
+function pillTopLabel(dateStr){
+  if(isThisWeek(dateStr))return'Aktuell'
+  if(isLastWeek(dateStr))return'Letzte'
+  const d=new Date(dateStr+'T12:00:00')
+  return MONTHS_SHORT[d.getMonth()]
+}
+function pillNum(dateStr){const d=new Date(dateStr+'T12:00:00');return String(d.getDate()).padStart(2,'0')}
+
+// Vollständiges Label für die Überschrift, z.B. "Diese Woche (07.–13. September)" oder "24.–30. August 2026"
+function fmtWeekFull(dateStr){
+  const start=new Date(dateStr+'T12:00:00')
+  const end=weekEnd(dateStr)
+  const sameMonth=start.getMonth()===end.getMonth()
+  const startStr=sameMonth?String(start.getDate()).padStart(2,'0'):`${String(start.getDate()).padStart(2,'0')}. ${MONTHS_SHORT[start.getMonth()]}`
+  const endStr=`${String(end.getDate()).padStart(2,'0')}. ${MONTHS_FULL[end.getMonth()]} ${end.getFullYear()}`
+  const range=`${startStr}.–${endStr}`
+  if(isThisWeek(dateStr))return`Diese Woche (${range})`
+  if(isLastWeek(dateStr))return`Letzte Woche (${range})`
+  return`Woche vom ${range}`
+}
+
 async function enterApp(session){
   document.getElementById('app').classList.add('visible')
   state.uid=session.user.id
   state.userEmail=session.user.email||''
   await setupSidebar(session)
   await setupAvatar(session)
-  const{data:p}=await sb.from('users').select('newsletter_subscribed,email').eq('id',state.uid).single()
+  const{data:p}=await sb.from('users').select('newsletter_subscribed,email,contact_email').eq('id',state.uid).single()
   state.isSubscribed=p?.newsletter_subscribed||false
-  state.userEmail=p?.email||state.userEmail
-  renderNewsletterBoxes()
+  state.userEmail=p?.contact_email||p?.email||state.userEmail
+  renderDigestEmailBox()
   await loadDigests()
 }
 
-function renderNewsletterBoxes(){
-  const topEl=document.getElementById('nl-top')
-  const botEl=document.getElementById('nl-bottom')
-  if(!topEl||!botEl)return
-  if(state.isSubscribed){
-    topEl.innerHTML=`<div class="nl-subscribed">
-      <span style="font-size:18px">📬</span>
-      <div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--text)">Newsletter aktiv</div><div style="font-size:11px;color:var(--muted);margin-top:1px">Du erhältst täglich Creator News per Mail.</div></div>
-      <button class="nl-unsub-btn" onclick="unsubscribeNewsletter()">Abmelden</button>
-    </div>`
-    botEl.innerHTML=''
-  } else {
-    topEl.innerHTML=`<div style="margin:8px 20px 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;display:flex;align-items:center;gap:10px">
-      <span style="font-size:16px;flex-shrink:0">📬</span>
-      <span style="font-size:12px;color:var(--muted);flex:1">Creator News auch per Mail?</span>
-      <input type="email" id="nl-email-top" value="${escHtml(state.userEmail)}" placeholder="E-Mail" style="width:130px;padding:7px 10px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none;flex-shrink:0"/>
-      <button onclick="digestSubscribe('top')" style="padding:7px 12px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;flex-shrink:0;white-space:nowrap">Ja!</button>
-    </div>`
-    botEl.innerHTML=`<div class="nl-box" id="nl-box-bottom" style="margin:12px 20px 24px">
-      <div class="nl-title">📬 Nie wieder was verpassen</div>
-      <div class="nl-sub">Melde dich für den viuno Newsletter an und bekomme die wichtigsten Creator-News täglich.</div>
-      <div class="nl-row">
-        <input type="email" class="nl-input" id="nl-email-bottom" placeholder="${escHtml(state.userEmail||'deine@email.de')}"/>
-        <button class="nl-btn" onclick="digestSubscribe('bottom')">Anmelden</button>
-      </div>
-      <div class="nl-success" id="nl-success-bottom">✓ Erfolgreich angemeldet!</div>
-    </div>`
-  }
+function renderDigestEmailBox(){
+  const wrap=document.getElementById('nl-box-wrap')
+  if(!wrap)return
+  wrap.innerHTML=`<div class="nl-box">
+    <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" ${state.isSubscribed?'checked':''} onchange="toggleDigestEmail()"/>
+    <label for="nl-checkbox" style="cursor:pointer;flex:1">
+      <div class="nl-title">📬 Wöchentlich per Mail</div>
+      <div class="nl-sub">Schick mir die Creator News jede Woche an ${escHtml(state.userEmail||'meine Account-E-Mail')}.</div>
+    </label>
+  </div>`
 }
 
-window.digestSubscribe=async function(pos){
-  const inputId=pos==='top'?'nl-email-top':'nl-email-bottom'
-  const successId=pos==='top'?'nl-success-top':'nl-success-bottom'
-  const email=document.getElementById(inputId)?.value?.trim()
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Bitte gültige E-Mail eingeben.');return}
-  const btn=event.target;btn.disabled=true;btn.textContent='…'
-  await sb.from('newsletter_subscribers').upsert({
-    email,user_id:state.uid||null,source:'digest_'+pos,status:'active',subscribed_at:new Date().toISOString()
-  },{onConflict:'email'})
-  if(state.uid)await sb.from('users').update({newsletter_subscribed:true}).eq('id',state.uid)
-  state.isSubscribed=true
-  btn.disabled=false;btn.textContent='Anmelden'
-  document.getElementById(successId).style.display='block'
-  setTimeout(()=>renderNewsletterBoxes(),1500)
-  showToast('Newsletter abonniert ✓')
+window.toggleDigestEmail=async function(){
+  const checked=document.getElementById('nl-checkbox').checked
+  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',state.uid)
+  if(error){showToast('Fehler beim Speichern');document.getElementById('nl-checkbox').checked=!checked;return}
+  state.isSubscribed=checked
+  showToast(checked?'Per Mail abonniert ✓':'Mail-Versand deaktiviert')
 }
 
-window.unsubscribeNewsletter=async function(){
-  if(!state.uid)return
-  await sb.from('newsletter_subscribers').update({status:'unsubscribed',unsubscribed_at:new Date().toISOString()}).eq('user_id',state.uid)
-  await sb.from('users').update({newsletter_subscribed:false}).eq('id',state.uid)
-  state.isSubscribed=false
-  renderNewsletterBoxes()
-  showToast('Newsletter abgemeldet')
-}
 async function loadDigests(){
-  const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at').order('date',{ascending:false}).limit(14)
+  const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at').order('date',{ascending:false}).limit(10)
   document.getElementById('skeleton-area').classList.add('hidden')
   if(!data?.length){document.getElementById('empty-state').classList.remove('hidden');return}
   state.digests=data;state.activeDate=data[0].date;renderDatePicker();renderDigest()
 }
 function renderDatePicker(){
-  document.getElementById('date-scroll').innerHTML=state.digests.map(d=>`<div class="date-pill ${d.date===state.activeDate?'active':''}" onclick="selectDate('${d.date}')"><div class="date-pill-day">${fmtDayName(d.date)}</div><div class="date-pill-num">${fmtDayNum(d.date)}</div><div class="date-pill-dot"></div></div>`).join('')
+  document.getElementById('date-scroll').innerHTML=state.digests.map(d=>`<div class="date-pill ${d.date===state.activeDate?'active':''}" onclick="selectDate('${d.date}')"><div class="date-pill-day">${pillTopLabel(d.date)}</div><div class="date-pill-num">${pillNum(d.date)}</div><div class="date-pill-dot"></div></div>`).join('')
 }
 window.selectDate=function(date){state.activeDate=date;state.activeFilter='alle';renderDatePicker();renderDigest();setTimeout(()=>document.querySelector('.date-pill.active')?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),50)}
 function buildFilters(cards){
@@ -375,7 +368,7 @@ window.setFilter=function(f){state.activeFilter=f;document.querySelectorAll('.f-
 function currentCards(){const digest=state.digests.find(d=>d.date===state.activeDate);if(!digest)return[];let cards=digest.cards||[];if(state.activeFilter!=='alle')cards=cards.filter(c=>c.platform===state.activeFilter);return cards}
 function renderDigest(){
   const digest=state.digests.find(d=>d.date===state.activeDate);if(!digest){document.getElementById('cards-list').classList.add('hidden');document.getElementById('empty-state').classList.remove('hidden');return}
-  document.getElementById('digest-sub').textContent=fmtDate(digest.date)
+  document.getElementById('digest-sub').textContent=fmtWeekFull(digest.date)
   buildFilters(digest.cards||[]);document.getElementById('empty-state').classList.add('hidden');document.getElementById('cards-list').classList.remove('hidden');renderCards(currentCards())
 }
 function renderCards(cards){
