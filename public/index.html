@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>viuno · Wachstum für Creator unter 50k</title>
-<meta name="description" content="viuno ist die kostenlose Wachstums-Plattform für deutschsprachige Creator. Ehrliche Analyse, BioLink, Media Kit. Ohne Coach-Sprüche."/>
+<title>viuno · Deine Creator-Toolbox</title>
+<meta name="description" content="viuno ist die Creator-Toolbox für den deutschsprachigen Raum. BioLink, Analyse, News und Media Kit — an einem Ort."/>
 <meta name="theme-color" content="#f5f4f2"/>
 <link rel="icon" href="data:,"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,14 +16,11 @@
   --bg:#f5f4f2;
   --surface:#fff;
   --surface2:#f0efed;
-  --sand:#ebe8e1;
   --border:rgba(0,0,0,.08);
   --border-strong:rgba(0,0,0,.13);
   --text:#111110;
   --muted:#7a7975;
   --subtle:#b0afa9;
-  --green:#1a7f4b;
-  --green-bg:#edf7f1;
   --safe-bottom:env(safe-area-inset-bottom,0px)
 }
 html,body{
@@ -33,14 +30,12 @@ html,body{
   color:var(--text);
   font-size:16px;
   line-height:1.55;
-  scroll-behavior:smooth;
-  overflow-x:hidden;
 }
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
-.container{max-width:1100px;margin:0 auto;padding:0 24px}
+.container{max-width:1000px;margin:0 auto;padding:0 24px}
 
-/* ─── NAV ─── */
+/* NAV */
 nav.top{
   position:sticky;top:0;z-index:50;
   background:rgba(245,244,242,.85);
@@ -48,7 +43,7 @@ nav.top{
   border-bottom:1px solid var(--border);
 }
 .nav-inner{
-  max-width:1100px;margin:0 auto;padding:14px 24px;
+  max-width:1000px;margin:0 auto;padding:14px 24px;
   display:flex;align-items:center;justify-content:space-between;
 }
 .logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px;letter-spacing:-.04em}
@@ -64,381 +59,26 @@ nav.top{
 }
 .nav-cta:hover{opacity:.85;transform:translateY(-1px)}
 
-/* ─── HERO ─── */
-.hero{padding:64px 0 80px;text-align:center}
+/* HERO */
+.hero{padding:72px 0 40px;text-align:center}
 .hero h1{
-  font-size:clamp(38px,6.5vw,68px);
-  font-weight:700;letter-spacing:-.045em;
-  line-height:1.04;margin-bottom:20px;
-}
-.hero h1 .accent{
-  font-style:italic;font-weight:500;color:var(--muted);
+  font-size:clamp(32px,5.5vw,52px);
+  font-weight:700;letter-spacing:-.04em;
+  line-height:1.1;margin-bottom:16px;
 }
 .hero-sub{
-  font-size:clamp(15px,2vw,18px);
-  color:var(--muted);max-width:560px;margin:0 auto 32px;
+  font-size:clamp(15px,2vw,17px);
+  color:var(--muted);max-width:480px;margin:0 auto;
   line-height:1.6;
 }
-.hero-cta-row{display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
-.btn-primary{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:14px 26px;background:var(--text);color:#fff;
-  border-radius:99px;font-size:15px;font-weight:500;
-  transition:transform .18s cubic-bezier(.32,.72,0,1),box-shadow .18s;
-}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(17,17,16,.18)}
-.btn-secondary{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:14px 22px;background:transparent;color:var(--text);
-  border:1px solid var(--border-strong);border-radius:99px;
-  font-size:15px;font-weight:500;
-  transition:background .15s;
-}
-.btn-secondary:hover{background:var(--surface)}
-.hero-meta{
-  margin-top:22px;font-size:13px;color:var(--subtle);
-  display:flex;justify-content:center;gap:18px;flex-wrap:wrap;
-}
-.hero-meta span{display:inline-flex;align-items:center;gap:6px}
-.hero-meta .dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
 
-/* ─── SECTIONS ─── */
-section{padding:64px 0}
+/* FEATURES BOX */
+.features-section{padding:24px 0 8px}
 .section-eyebrow{
   font-size:11px;font-weight:600;color:var(--muted);
   text-transform:uppercase;letter-spacing:.14em;
   margin-bottom:14px;
 }
-.section-h2{
-  font-size:clamp(28px,4vw,42px);
-  font-weight:700;letter-spacing:-.035em;
-  line-height:1.1;margin-bottom:14px;
-}
-.section-lead{
-  font-size:17px;color:var(--muted);
-  max-width:580px;line-height:1.6;margin-bottom:48px;
-}
-.center-text{text-align:center}
-.center-text .section-lead{margin-left:auto;margin-right:auto}
-
-/* ─── FEATURES (3 große Karten) ─── */
-.features{display:flex;flex-direction:column;gap:24px}
-.feature-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:24px;
-  padding:36px;
-  display:grid;
-  grid-template-columns:1.1fr 1fr;
-  gap:40px;
-  align-items:center;
-  overflow:hidden;
-}
-.feature-card.reverse{direction:rtl}
-.feature-card.reverse > *{direction:ltr}
-.feature-text{min-width:0}
-.feature-num{
-  display:inline-block;font-size:11px;font-weight:600;
-  color:var(--muted);letter-spacing:.14em;
-  margin-bottom:12px;
-}
-.feature-title{
-  font-size:clamp(22px,3vw,30px);font-weight:700;
-  letter-spacing:-.025em;line-height:1.15;margin-bottom:14px;
-}
-.feature-desc{
-  font-size:15px;color:var(--muted);
-  line-height:1.65;margin-bottom:18px;
-}
-.feature-list{list-style:none;display:flex;flex-direction:column;gap:9px;font-size:14px;color:var(--text)}
-.feature-list li{display:flex;align-items:flex-start;gap:9px}
-.feature-list li::before{
-  content:"";width:5px;height:5px;border-radius:50%;
-  background:var(--text);margin-top:9px;flex-shrink:0;
-}
-
-/* Visual rechts in der Karte */
-.feature-visual{
-  background:var(--bg);
-  border-radius:18px;
-  padding:22px;
-  height:100%;
-  min-height:320px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border:1px solid var(--border);
-}
-
-/* Analytics Mockup */
-.mock-analytics{width:100%;font-size:11px}
-.mock-row{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:8px;
-}
-.mock-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px}
-.mock-stat{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:11px 9px;
-  text-align:center;
-}
-.mock-stat-val{font-size:18px;font-weight:700;letter-spacing:-.03em}
-.mock-stat-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
-.mock-bars{display:flex;align-items:flex-end;gap:5px;height:64px;margin:6px 0 10px}
-.mock-bar{flex:1;background:var(--text);border-radius:3px 3px 0 0;opacity:.85}
-.mock-bar.faded{background:var(--border-strong)}
-.mock-row-head{
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;
-  margin-bottom:8px;
-}
-.mock-row-head .pill{
-  background:var(--green-bg);color:var(--green);
-  padding:2px 8px;border-radius:99px;font-size:9px;font-weight:600;
-  text-transform:none;letter-spacing:0;
-}
-.mock-line{display:flex;align-items:center;gap:10px;padding:6px 0}
-.mock-line:not(:last-child){border-bottom:1px solid var(--border)}
-.mock-thumb{width:22px;height:22px;background:var(--surface2);border-radius:5px;flex-shrink:0}
-.mock-line-text{flex:1;min-width:0}
-.mock-line-l1{font-size:10px;font-weight:500;height:7px;background:var(--text);border-radius:2px;width:80%;margin-bottom:3px;opacity:.9}
-.mock-line-l2{font-size:9px;height:5px;background:var(--border-strong);border-radius:2px;width:55%}
-.mock-line-num{font-size:10px;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums}
-
-/* BioLink Mockup */
-.mock-phone{
-  width:200px;height:380px;
-  background:var(--text);
-  border-radius:32px;
-  padding:14px 10px;
-  margin:0 auto;
-  position:relative;
-}
-.mock-phone-screen{
-  background:var(--bg);
-  border-radius:22px;
-  height:100%;
-  padding:18px 14px;
-  display:flex;flex-direction:column;align-items:center;
-  overflow:hidden;
-}
-.mock-avatar{width:54px;height:54px;border-radius:50%;background:var(--text);margin-bottom:10px;flex-shrink:0;
-  display:grid;place-items:center;color:#fff;font-weight:700;font-size:20px;letter-spacing:-.03em}
-.mock-name{font-size:13px;font-weight:600;letter-spacing:-.02em;margin-bottom:3px}
-.mock-handle{font-size:10px;color:var(--muted);margin-bottom:14px}
-.mock-link{
-  width:100%;background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:10px;padding:9px 12px;margin-bottom:6px;
-  font-size:11px;font-weight:500;display:flex;align-items:center;gap:8px;
-}
-.mock-link::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--text)}
-.mock-link.muted{color:var(--muted)}
-.mock-link.muted::before{background:var(--subtle)}
-
-/* MediaKit Mockup */
-.mock-mediakit{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px;font-size:11px}
-.mk-head{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)}
-.mk-avatar{width:36px;height:36px;border-radius:50%;background:var(--text);flex-shrink:0;
-  display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px}
-.mk-name{font-size:13px;font-weight:700;letter-spacing:-.02em}
-.mk-positioning{font-size:10px;color:var(--muted);margin-top:1px}
-.mk-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:12px}
-.mk-stat{background:var(--bg);border-radius:8px;padding:9px;text-align:center}
-.mk-stat-val{font-size:14px;font-weight:700;letter-spacing:-.02em}
-.mk-stat-lbl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
-.mk-section-title{font-size:9px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin:10px 0 6px}
-.mk-bar-row{display:flex;align-items:center;gap:8px;font-size:10px;margin-bottom:4px}
-.mk-bar-label{width:50px;flex-shrink:0;color:var(--text)}
-.mk-bar-track{flex:1;height:5px;background:var(--bg);border-radius:99px;overflow:hidden}
-.mk-bar-fill{height:100%;background:var(--text);border-radius:99px}
-.mk-bar-val{font-size:9px;color:var(--muted);width:30px;text-align:right;font-variant-numeric:tabular-nums}
-
-/* ─── DAILY DIGEST HIGHLIGHT ─── */
-.digest{background:var(--text);color:#fff;border-radius:32px;padding:64px 48px;margin:24px 0}
-.digest-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
-.digest .section-eyebrow{color:rgba(255,255,255,.5)}
-.digest h2{
-  font-size:clamp(28px,4vw,42px);font-weight:700;
-  letter-spacing:-.035em;line-height:1.1;margin-bottom:16px;
-}
-.digest p{font-size:16px;color:rgba(255,255,255,.7);line-height:1.65;margin-bottom:18px}
-.digest-points{list-style:none;display:flex;flex-direction:column;gap:8px;font-size:14px;color:rgba(255,255,255,.85)}
-.digest-points li{display:flex;align-items:flex-start;gap:10px}
-.digest-points li::before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;margin-top:8px;flex-shrink:0;opacity:.6}
-
-.digest-cta-row{display:flex;gap:10px;margin-top:26px;flex-wrap:wrap}
-.btn-on-dark-primary{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:13px 22px;background:#fff;color:var(--text);
-  border:none;border-radius:99px;
-  font-size:14px;font-weight:500;
-  font-family:inherit;cursor:pointer;
-  transition:transform .18s cubic-bezier(.32,.72,0,1),box-shadow .18s;
-}
-.btn-on-dark-primary:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,0,0,.35)}
-.btn-on-dark-secondary{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:13px 20px;background:transparent;color:#fff;
-  border:1px solid rgba(255,255,255,.25);border-radius:99px;
-  font-size:14px;font-weight:500;
-  font-family:inherit;
-  transition:background .15s,border-color .15s;
-}
-.btn-on-dark-secondary:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4)}
-
-.digest-card{
-  background:rgba(255,255,255,.05);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:18px;padding:20px;
-}
-.digest-card-meta{
-  font-size:10px;font-weight:600;color:rgba(255,255,255,.45);
-  text-transform:uppercase;letter-spacing:.14em;margin-bottom:10px;
-}
-.digest-news{display:flex;flex-direction:column;gap:14px}
-.digest-news-item{padding:12px 0;border-top:1px solid rgba(255,255,255,.08)}
-.digest-news-item:first-child{border-top:none;padding-top:0}
-.digest-news-tag{
-  display:inline-block;font-size:9px;font-weight:600;
-  background:rgba(255,255,255,.1);color:rgba(255,255,255,.7);
-  padding:2px 8px;border-radius:99px;margin-bottom:6px;
-  text-transform:uppercase;letter-spacing:.08em;
-}
-.digest-news-title{font-size:13px;font-weight:600;line-height:1.35;color:#fff;margin-bottom:3px}
-.digest-news-desc{font-size:11px;color:rgba(255,255,255,.55);line-height:1.45}
-
-/* ─── CONTACT ─── */
-.contact{
-  text-align:center;
-  padding:80px 0 96px;
-}
-.contact-card{
-  background:var(--sand);
-  border-radius:24px;
-  padding:56px 32px;
-  max-width:680px;
-  margin:0 auto;
-}
-.contact h2{
-  font-size:clamp(26px,3.5vw,38px);font-weight:700;
-  letter-spacing:-.035em;line-height:1.15;margin-bottom:14px;
-}
-.contact p{font-size:16px;color:var(--muted);max-width:480px;margin:0 auto 28px;line-height:1.6}
-.contact-buttons{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.contact-meta{margin-top:28px;font-size:13px;color:var(--subtle)}
-
-/* ─── FOOTER ─── */
-footer{
-  border-top:1px solid var(--border);
-  padding:40px 0 calc(40px + var(--safe-bottom));
-  font-size:13px;color:var(--muted);
-}
-.footer-inner{
-  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
-}
-.footer-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--text)}
-.footer-brand .logo-mark{width:24px;height:24px;font-size:11px;border-radius:6px}
-.footer-links{display:flex;gap:18px;flex-wrap:wrap}
-.footer-links a{color:var(--muted);transition:color .15s}
-.footer-links a:hover{color:var(--text)}
-
-/* ─── REVEAL ANIMATIONS ─── */
-.reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease-out,transform .6s ease-out}
-.reveal.in{opacity:1;transform:translateY(0)}
-
-/* ─── MOBILE ─── */
-@media (max-width:780px){
-  .container{padding:0 18px}
-  .hero{padding:48px 0 56px}
-  section{padding:48px 0}
-  .feature-card{
-    grid-template-columns:1fr;
-    padding:28px;
-    gap:28px;
-  }
-  .feature-card.reverse{direction:ltr}
-  .feature-visual{min-height:280px;padding:18px}
-  .digest{padding:44px 28px;border-radius:24px}
-  .digest-grid{grid-template-columns:1fr;gap:32px}
-  .contact-card{padding:40px 24px}
-  .nav-cta{padding:7px 14px;font-size:13px}
-  .footer-inner{flex-direction:column;align-items:flex-start;text-align:left}
-  .mock-phone{width:180px;height:340px}
-}
-@media (max-width:420px){
-  .hero h1{font-size:36px}
-}
-
-/* ─── WAS WIR MACHEN ─── */
-.services-section{
-  padding-top:32px;padding-bottom:32px;
-}
-.services-box{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:32px;
-  padding:48px 40px;
-}
-.services-grid{
-  display:grid;
-  grid-template-columns:1fr 1.2fr;
-  gap:48px;
-  align-items:start;
-}
-.services-intro h2{
-  font-size:clamp(24px,3.2vw,34px);
-  font-weight:700;letter-spacing:-.03em;
-  line-height:1.15;margin-bottom:14px;
-}
-.services-intro p{
-  font-size:15px;color:var(--muted);
-  line-height:1.6;
-}
-.services-list-label{
-  font-size:11px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.14em;
-  margin-bottom:18px;
-}
-.services-list{
-  list-style:none;
-  display:flex;flex-direction:column;gap:18px;
-  margin-bottom:28px;
-}
-.services-list li{
-  border-bottom:1px solid var(--border);
-  padding-bottom:18px;
-}
-.services-list li:last-child{border-bottom:none;padding-bottom:0}
-.services-list .item-title{
-  font-size:15px;font-weight:600;
-  letter-spacing:-.015em;
-  margin-bottom:4px;color:var(--text);
-}
-.services-list .item-desc{
-  font-size:14px;color:var(--muted);
-  line-height:1.55;
-}
-.services-cta{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:13px 22px;background:var(--text);color:#fff;
-  border-radius:99px;font-size:14px;font-weight:500;
-  font-family:inherit;
-  transition:transform .18s cubic-bezier(.32,.72,0,1),box-shadow .18s;
-}
-.services-cta:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(17,17,16,.18)}
-
-@media (max-width:780px){
-  .services-box{padding:36px 24px;border-radius:24px}
-  .services-grid{grid-template-columns:1fr;gap:28px}
-}
-
-/* ─── FEATURES (3 in einer Reihe in einem großen Container) ─── */
 .features-box{
   background:var(--surface);
   border:1px solid var(--border);
@@ -448,7 +88,7 @@ footer{
 }
 .features-box-header{
   text-align:center;
-  margin-bottom:48px;
+  margin-bottom:44px;
 }
 .features-box-title{
   font-size:clamp(24px,3.2vw,34px);
@@ -457,31 +97,35 @@ footer{
 }
 .features-row{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  gap:32px;
+  grid-template-columns:repeat(4, 1fr);
+  gap:0;
 }
 .feature-cell{
   display:flex;flex-direction:column;
-  gap:20px;
+  gap:18px;
   text-align:center;
+  padding:0 22px;
+}
+.feature-cell:not(:first-child){
+  border-left:1px solid var(--border);
 }
 .feature-cell-visual{
   background:var(--bg);
   border:1px solid var(--border);
   border-radius:18px;
-  padding:20px;
+  padding:18px;
   height:220px;
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;
 }
-.feature-cell-text{padding:0 4px}
+.feature-cell-text{padding:0 2px}
 .feature-cell-title{
-  font-size:17px;font-weight:600;
+  font-size:16px;font-weight:600;
   letter-spacing:-.02em;line-height:1.3;
   margin-bottom:6px;
 }
 .feature-cell-desc{
-  font-size:14px;color:var(--muted);
+  font-size:13.5px;color:var(--muted);
   line-height:1.55;
 }
 
@@ -503,7 +147,7 @@ footer{
 .mock-bars-mini .mock-bar.faded{background:var(--border-strong)}
 
 .mock-phone-mini{
-  width:130px;height:200px;
+  width:120px;height:200px;
   background:var(--text);
   border-radius:22px;
   padding:8px 6px;
@@ -557,83 +201,118 @@ footer{
 .mk-bar-track-mini{flex:1;height:4px;background:var(--bg);border-radius:99px;overflow:hidden}
 .mk-bar-fill-mini{height:100%;background:var(--text);border-radius:99px}
 
+/* News-Mini-Mockup */
+.mock-news-mini{width:100%;display:flex;flex-direction:column;gap:8px}
+.mock-news-mini .n-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:11px;text-align:left;
+}
+.mock-news-mini .n-badge{
+  display:inline-block;font-size:8px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:2px 8px;border-radius:99px;margin-bottom:7px;
+}
+.mock-news-mini .n-badge.ig{background:#fce4ec;color:#880e4f}
+.mock-news-mini .n-badge.tt{background:#f0f0f0;color:#111110}
+.mock-news-mini .n-title{font-size:11px;font-weight:600;letter-spacing:-.01em;line-height:1.35;margin-bottom:4px}
+.mock-news-mini .n-desc{font-size:9px;color:var(--muted);line-height:1.45}
+
+/* TILES */
+.tiles-section{padding:48px 0 8px}
+.tiles-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  max-width:640px;
+  margin:0 auto;
+}
+.tile{
+  display:flex;flex-direction:column;gap:14px;
+  padding:28px 24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  transition:transform .18s cubic-bezier(.32,.72,0,1),border-color .18s,box-shadow .18s;
+}
+.tile:hover{
+  transform:translateY(-3px);
+  border-color:var(--border-strong);
+  box-shadow:0 12px 28px rgba(17,17,16,.08);
+}
+.tile-icon{
+  width:44px;height:44px;
+  border-radius:12px;
+  background:var(--surface2);
+  display:grid;place-items:center;
+}
+.tile-title{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.tile-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:2px}
+
+/* MANAGED SERVICE STRIP */
+.strip{
+  text-align:center;
+  padding:32px 0 8px;
+  font-size:14px;
+  color:var(--muted);
+}
+.strip a{
+  color:var(--text);
+  font-weight:500;
+  text-decoration:underline;
+  text-decoration-color:var(--border-strong);
+}
+
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:32px 0 calc(32px + var(--safe-bottom));
+  font-size:13px;color:var(--muted);
+  margin-top:40px;
+}
+.footer-inner{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--text)}
+.footer-brand .logo-mark{width:24px;height:24px;font-size:11px;border-radius:6px}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+.footer-links a{color:var(--muted);transition:color .15s}
+.footer-links a:hover{color:var(--text)}
+
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease-out,transform .5s ease-out}
+.reveal.in{opacity:1;transform:translateY(0)}
+
 @media (max-width:780px){
   .features-box{padding:36px 24px;border-radius:24px}
-  .features-row{grid-template-columns:1fr;gap:36px}
+  .features-row{grid-template-columns:1fr 1fr;row-gap:32px}
+  .feature-cell{padding:0 16px}
+  .feature-cell:nth-child(odd){border-left:none}
+  .feature-cell:nth-child(even){border-left:1px solid var(--border)}
+  .feature-cell:nth-child(3),.feature-cell:nth-child(4){
+    border-top:1px solid var(--border);
+    padding-top:32px;
+  }
   .feature-cell-visual{height:200px}
 }
-
-/* ─── REDUCE MOTION ─── */
+@media (max-width:560px){
+  .hero{padding:48px 0 32px}
+  .features-row{grid-template-columns:1fr;row-gap:28px}
+  .feature-cell{padding:0}
+  .feature-cell:not(:first-child){
+    border-left:none;
+    border-top:1px solid var(--border);
+    padding-top:28px;
+  }
+  .tiles-grid{grid-template-columns:1fr}
+  .tile{padding:22px 20px}
+  .footer-inner{flex-direction:column;align-items:flex-start;text-align:left}
+}
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
-  html{scroll-behavior:auto}
-}
-
-/* ─── NEWSLETTER MODAL ─── */
-.modal-backdrop{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(17,17,16,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-  display:none;align-items:center;justify-content:center;padding:20px;
-  animation:fadeIn .2s ease-out;
-}
-.modal-backdrop.open{display:flex}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.modal-card{
-  background:var(--surface);border-radius:24px;
-  padding:36px 32px;
-  width:100%;max-width:440px;
-  position:relative;
-  animation:modalIn .25s cubic-bezier(.32,.72,0,1);
-}
-@keyframes modalIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
-.modal-close{
-  position:absolute;top:14px;right:14px;
-  width:32px;height:32px;border-radius:50%;
-  border:none;background:var(--surface2);color:var(--muted);
-  display:grid;place-items:center;cursor:pointer;font-size:18px;
-  transition:background .15s,color .15s;
-}
-.modal-close:hover{background:var(--border);color:var(--text)}
-.modal-eyebrow{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px}
-.modal-title{font-size:24px;font-weight:700;letter-spacing:-.025em;line-height:1.2;margin-bottom:8px}
-.modal-sub{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:22px}
-.modal-input{
-  width:100%;padding:13px 16px;
-  border:1px solid var(--border-strong);border-radius:12px;
-  font-family:inherit;font-size:15px;color:var(--text);
-  background:var(--bg);outline:none;transition:border-color .15s;
-  margin-bottom:10px;
-}
-.modal-input:focus{border-color:var(--text)}
-.modal-honeypot{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
-.modal-btn{
-  width:100%;padding:13px;background:var(--text);color:#fff;
-  border:none;border-radius:12px;
-  font-family:inherit;font-size:15px;font-weight:500;cursor:pointer;
-  transition:opacity .15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.modal-btn:hover{opacity:.85}
-.modal-btn:disabled{opacity:.5;cursor:not-allowed}
-.modal-msg{font-size:12px;margin-top:10px;min-height:16px;text-align:center}
-.modal-msg.err{color:var(--green)} /* wir reusen kein rot, nutzen subtle text */
-.modal-msg.err{color:#c0392b}
-.modal-msg.ok{color:var(--green)}
-.modal-foot{font-size:11px;color:var(--subtle);margin-top:14px;text-align:center;line-height:1.5}
-.modal-foot a{color:var(--muted);text-decoration:underline}
-.modal-spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-.modal-success-icon{
-  width:48px;height:48px;border-radius:50%;
-  background:var(--green-bg);color:var(--green);
-  display:grid;place-items:center;margin:0 auto 16px;
-  font-size:22px;font-weight:700;
 }
 </style>
 </head>
 <body>
 
-<!-- ─── NAV ─── -->
 <nav class="top">
   <div class="nav-inner">
     <a href="/" class="logo">
@@ -644,116 +323,20 @@ footer{
   </div>
 </nav>
 
-<!-- ─── HERO ─── -->
 <header class="hero">
   <div class="container">
-    <h1 class="reveal">
-      viuno <span class="accent">— Creator Place</span>
-    </h1>
-    <div class="hero-cta-row reveal">
-      <a href="/login" class="btn-primary">
-        Zum Login
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
-    </div>
+    <h1 class="reveal">Deine Creator-Toolbox.<br>Ohne Schnickschnack.</h1>
+    <p class="hero-sub reveal">BioLink, Analyse, News und Media Kit — wähl, womit du starten willst.</p>
   </div>
 </header>
 
-<!-- ─── DAILY DIGEST (HERO POSITION) ─── -->
-<section style="padding-top:32px;padding-bottom:32px">
-  <div class="container">
-    <div class="digest reveal">
-      <div class="digest-grid">
-        <div>
-          <div class="section-eyebrow">Daily Digest</div>
-          <h2>Creator-News, jeden Morgen.</h2>
-          <p>
-            Während du frühstückst, hat viuno schon das wichtigste der Creator-Welt zusammengefasst — Algorithmus-Updates, neue Plattform-Features, Trends, Markt-Verschiebungen. Auf Deutsch. In zwei Minuten gelesen.
-          </p>
-          <ul class="digest-points">
-            <li>Täglich um 7 Uhr morgens</li>
-            <li>Kuratiert aus deutschsprachigen und internationalen Quellen</li>
-          </ul>
-          <div class="digest-cta-row">
-            <button type="button" onclick="openNewsletterModal()" class="btn-on-dark-primary">
-              Newsletter abonnieren
-            </button>
-            <a href="/digest" class="btn-on-dark-secondary">
-              Aktuelle News lesen
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </a>
-          </div>
-        </div>
-        <div class="digest-card">
-          <div class="digest-card-meta">Ausgabe · heute</div>
-          <div class="digest-news">
-            <div class="digest-news-item">
-              <span class="digest-news-tag">Instagram</span>
-              <div class="digest-news-title">Reels-Bonus läuft in DE wieder an — wer profitiert</div>
-              <div class="digest-news-desc">Meta zahlt erneut für Reels-Views. Welche Creator-Größen jetzt Geld bekommen.</div>
-            </div>
-            <div class="digest-news-item">
-              <span class="digest-news-tag">TikTok</span>
-              <div class="digest-news-title">Neuer Algorithmus testet längere Videos in DE-Feeds</div>
-              <div class="digest-news-desc">Watch-Time wichtiger als je zuvor. Was das für deine Hooks bedeutet.</div>
-            </div>
-            <div class="digest-news-item">
-              <span class="digest-news-tag">Markt</span>
-              <div class="digest-news-title">Brand-Budgets für Micro-Influencer steigen 2026</div>
-              <div class="digest-news-desc">Neue Studie: Marken zahlen mehr an Creator unter 50k. Warum.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ─── WAS WIR MACHEN ─── -->
-<section class="services-section">
-  <div class="container">
-    <div class="services-box reveal">
-      <div class="services-grid">
-        <div class="services-intro">
-          <div class="section-eyebrow">Was wir machen</div>
-          <h2>viuno arbeitet mit kleinen Creators aus dem deutschsprachigen Raum.</h2>
-          <p>
-            Die App ist der Anfang. Daneben begleiten wir Creator persönlich — direkt, einzeln, mit Außensicht.
-          </p>
-        </div>
-        <div>
-          <div class="services-list-label">Persönliche Begleitung</div>
-          <ul class="services-list">
-            <li>
-              <div class="item-title">Account-Analysen</div>
-              <div class="item-desc">Eine Außensicht auf das, was deine Daten zeigen — und das, was sie nicht zeigen.</div>
-            </li>
-            <li>
-              <div class="item-title">Strategie-Pläne</div>
-              <div class="item-desc">Was die nächsten 90 Tage Sinn macht. Konkret.</div>
-            </li>
-            <li>
-              <div class="item-title">Managed Creator</div>
-              <div class="item-desc">Laufende Zusammenarbeit mit ausgewählten Accounts.</div>
-            </li>
-          </ul>
-          <a href="mailto:kontakt@viuno.de?subject=Beratungsanfrage" class="services-cta">
-            Kontakt aufnehmen
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ─── FEATURES (3 in einer Reihe in einem großen Container) ─── -->
-<section id="features">
+<!-- ─── DEINE WERKZEUGE IM ÜBERBLICK ─── -->
+<section class="features-section">
   <div class="container">
     <div class="features-box reveal">
       <div class="features-box-header">
-        <div class="section-eyebrow">Du willst nur schnuppern?</div>
-        <h2 class="features-box-title">Drei kostenlose Werkzeuge für dich.</h2>
+        <div class="section-eyebrow">So sieht's aus</div>
+        <h2 class="features-box-title">Deine Werkzeuge im Überblick.</h2>
       </div>
       <div class="features-row">
 
@@ -803,6 +386,28 @@ footer{
           </div>
         </div>
 
+        <!-- NEWS -->
+        <div class="feature-cell">
+          <div class="feature-cell-visual">
+            <div class="mock-news-mini" aria-hidden="true">
+              <div class="n-card">
+                <span class="n-badge ig">Instagram</span>
+                <div class="n-title">Your Algorithm jetzt im Hauptfeed</div>
+                <div class="n-desc">Themen-Kontrolle gilt ab jetzt für den ganzen Feed.</div>
+              </div>
+              <div class="n-card">
+                <span class="n-badge tt">TikTok</span>
+                <div class="n-title">Keyword-Kontrolle für Videos</div>
+                <div class="n-desc">Bessere Auffindbarkeit über Suchbegriffe.</div>
+              </div>
+            </div>
+          </div>
+          <div class="feature-cell-text">
+            <div class="feature-cell-title">Creator News, wöchentlich</div>
+            <p class="feature-cell-desc">Algorithmus-Updates und Plattform-News, kompakt zusammengefasst. Auf Wunsch auch per Mail.</p>
+          </div>
+        </div>
+
         <!-- MEDIA KIT -->
         <div class="feature-cell">
           <div class="feature-cell-visual">
@@ -839,31 +444,60 @@ footer{
   </div>
 </section>
 
-<!-- ─── CONTACT ─── -->
-<section class="contact" id="kontakt">
+<!-- ─── KACHELN ─── -->
+<section class="tiles-section">
   <div class="container">
-    <div class="contact-card reveal">
-      <div class="section-eyebrow">Kontakt</div>
-      <h2>Du willst mit uns reden?</h2>
-      <p>
-        Egal ob du als Creator Fragen hast, Feedback geben willst oder als Brand mit uns sprechen möchtest — schreib direkt.
-      </p>
-      <div class="contact-buttons">
-        <a href="mailto:kontakt@viuno.de?subject=Anfrage%20Creator" class="btn-primary">
-          Als Creator schreiben
-        </a>
-        <a href="mailto:kontakt@viuno.de?subject=Anfrage%20Brand" class="btn-secondary">
-          Als Brand schreiben
-        </a>
-      </div>
-      <div class="contact-meta">
-        kontakt@viuno.de · Antwort in der Regel innerhalb von 48 Stunden
-      </div>
+    <div class="tiles-grid reveal">
+
+      <a href="/biolink" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">BioLink erstellen</div>
+          <div class="tile-desc">Eine Seite für alle deine Links</div>
+        </div>
+      </a>
+
+      <a href="/analytics" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Analyse starten</div>
+          <div class="tile-desc">Sieh, was wirklich performt</div>
+        </div>
+      </a>
+
+      <a href="/digest" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Creator News</div>
+          <div class="tile-desc">Wöchentlich das Wichtigste</div>
+        </div>
+      </a>
+
+      <a href="/mediakit" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Media Kit</div>
+          <div class="tile-desc">Für Anfragen von Marken</div>
+        </div>
+      </a>
+
     </div>
   </div>
 </section>
 
-<!-- ─── FOOTER ─── -->
+<div class="strip reveal">
+  Du willst mehr als die Tools? Wir arbeiten auch persönlich mit ausgewählten Creators.
+  <a href="mailto:kontakt@viuno.de?subject=Beratungsanfrage">Kontakt aufnehmen →</a>
+</div>
+
 <footer>
   <div class="container">
     <div class="footer-inner">
@@ -882,7 +516,6 @@ footer{
 </footer>
 
 <script>
-// Reveal-on-scroll, sehr leichtgewichtig
 (function(){
   if(!('IntersectionObserver' in window)){
     document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
@@ -895,127 +528,11 @@ footer{
         io.unobserve(e.target);
       }
     });
-  },{rootMargin:'-40px 0px',threshold:0.05});
+  },{rootMargin:'-20px 0px',threshold:0.05});
   document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  // Hero direkt zeigen
   setTimeout(()=>{
     document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('in'));
   },50);
-})();
-</script>
-
-<!-- ─── NEWSLETTER MODAL ─── -->
-<div class="modal-backdrop" id="newsletter-modal" onclick="closeNewsletterModal()" role="dialog" aria-labelledby="modal-title-id" aria-modal="true">
-  <div class="modal-card" onclick="event.stopPropagation()">
-    <button class="modal-close" onclick="closeNewsletterModal()" aria-label="Schließen">×</button>
-    <div id="newsletter-form-state">
-      <div class="modal-eyebrow">Daily Digest</div>
-      <div class="modal-title" id="modal-title-id">Newsletter abonnieren</div>
-      <div class="modal-sub">Trag deine E-Mail ein. Sobald der Newsletter startet, schicken wir dir eine Bestätigungs-Mail — erst dann bist du angemeldet.</div>
-      <input type="email" id="newsletter-email" class="modal-input" placeholder="deine@email.de" autocomplete="email" inputmode="email"/>
-      <input type="text" id="newsletter-website" class="modal-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true"/>
-      <button type="button" class="modal-btn" id="newsletter-submit" onclick="submitNewsletter()">Eintragen</button>
-      <div class="modal-msg" id="newsletter-msg"></div>
-      <div class="modal-foot">
-        Mit dem Eintragen akzeptierst du unsere <a href="/legal#datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a>. Abmelden jederzeit möglich.
-      </div>
-    </div>
-    <div id="newsletter-success-state" style="display:none">
-      <div class="modal-success-icon">✓</div>
-      <div class="modal-title" style="text-align:center">Eingetragen!</div>
-      <div class="modal-sub" style="text-align:center">Wir haben dich auf der Liste. Sobald der Newsletter startet, bekommst du eine Bestätigungs-Mail von uns.</div>
-      <button type="button" class="modal-btn" onclick="closeNewsletterModal()">Schließen</button>
-    </div>
-  </div>
-</div>
-
-<script>
-(function(){
-  const SB_URL = 'https://bzejndghppuipnedasuv.supabase.co';
-  const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo';
-
-  window.openNewsletterModal = function(){
-    document.getElementById('newsletter-form-state').style.display = '';
-    document.getElementById('newsletter-success-state').style.display = 'none';
-    document.getElementById('newsletter-email').value = '';
-    document.getElementById('newsletter-website').value = '';
-    document.getElementById('newsletter-msg').textContent = '';
-    const btn = document.getElementById('newsletter-submit');
-    btn.disabled = false;
-    btn.textContent = 'Eintragen';
-    document.getElementById('newsletter-modal').classList.add('open');
-    document.body.style.overflow = 'hidden';
-    setTimeout(()=>document.getElementById('newsletter-email').focus(), 100);
-  };
-
-  window.closeNewsletterModal = function(){
-    document.getElementById('newsletter-modal').classList.remove('open');
-    document.body.style.overflow = '';
-  };
-
-  // ESC zum Schließen
-  document.addEventListener('keydown', (e) => {
-    if(e.key === 'Escape' && document.getElementById('newsletter-modal').classList.contains('open')){
-      closeNewsletterModal();
-    }
-  });
-
-  // Enter im Email-Feld submitted
-  document.getElementById('newsletter-email').addEventListener('keydown', (e) => {
-    if(e.key === 'Enter') submitNewsletter();
-  });
-
-  window.submitNewsletter = async function(){
-    const email = document.getElementById('newsletter-email').value.trim();
-    const website = document.getElementById('newsletter-website').value;
-    const msg = document.getElementById('newsletter-msg');
-    const btn = document.getElementById('newsletter-submit');
-
-    msg.className = 'modal-msg';
-    msg.textContent = '';
-
-    if(!email){
-      msg.className = 'modal-msg err';
-      msg.textContent = 'Bitte gib eine E-Mail-Adresse ein.';
-      return;
-    }
-    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-      msg.className = 'modal-msg err';
-      msg.textContent = 'Diese E-Mail-Adresse sieht nicht gültig aus.';
-      return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="modal-spinner"></span>';
-
-    try {
-      const res = await fetch(`${SB_URL}/functions/v1/newsletter-signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': SB_ANON
-        },
-        body: JSON.stringify({ email, website, source: 'landing' })
-      });
-      const data = await res.json().catch(()=>({}));
-
-      if(res.ok && data.success){
-        // Success state
-        document.getElementById('newsletter-form-state').style.display = 'none';
-        document.getElementById('newsletter-success-state').style.display = '';
-      } else {
-        msg.className = 'modal-msg err';
-        msg.textContent = data.error || 'Etwas ist schiefgelaufen. Bitte später erneut versuchen.';
-        btn.disabled = false;
-        btn.textContent = 'Eintragen';
-      }
-    } catch (err) {
-      msg.className = 'modal-msg err';
-      msg.textContent = 'Verbindungsfehler. Bitte später erneut versuchen.';
-      btn.disabled = false;
-      btn.textContent = 'Eintragen';
-    }
-  };
 })();
 </script>
 
