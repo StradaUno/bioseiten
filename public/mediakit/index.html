@@ -19,7 +19,6 @@
 html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
 #app{display:none;min-height:100dvh;flex-direction:column;overflow:hidden}
 #app.visible{display:flex}
-
 /* TOPBAR */
 .topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .topbar-left{display:flex;align-items:center;gap:10px}
@@ -750,7 +749,7 @@ async function loadAll(){
     sb.from('mediakit_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('mediakit_brands').select('*').eq('user_id',uid).order('position',{ascending:true}),
     sb.from('mediakit_content_offers').select('offer_type').eq('user_id',uid),
-    sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views').eq('user_id',uid),
+    sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views,created_at').eq('user_id',uid).order('created_at',{ascending:true}),
     sb.rpc('get_mediakit_views_last_7_days_daily',{p_user_id:uid})
   ])
   S.profile=profileRes.data||{}
@@ -775,6 +774,23 @@ async function loadAll(){
   if(p.subscription_type==='managed'||p.subscription_type==='pro')document.getElementById('sidebar-pro-banner')?.classList.add('show')
 
   renderPage()
+}
+
+// ── Analyse-Drift-Check: neue Analyse vorhanden & weicht stark von Media Kit ab? ──
+function getAnalysisDrift(){
+  if(!S.isActive)return null
+  const mk=S.mkData||{}
+  const mkUpdated=mk.updated_at?new Date(mk.updated_at).getTime():0
+  const flags=[]
+  const ig=S.analyseStats.instagram
+  if(ig&&ig.created_at&&new Date(ig.created_at).getTime()>mkUpdated&&ig.followers!=null&&mk.followers_instagram!=null&&mk.followers_instagram>0){
+    if(Math.abs(ig.followers-mk.followers_instagram)/mk.followers_instagram>0.2)flags.push('Instagram')
+  }
+  const tt=S.analyseStats.tiktok
+  if(tt&&tt.created_at&&new Date(tt.created_at).getTime()>mkUpdated&&tt.followers!=null&&mk.followers_tiktok!=null&&mk.followers_tiktok>0){
+    if(Math.abs(tt.followers-mk.followers_tiktok)/mk.followers_tiktok>0.2)flags.push('TikTok')
+  }
+  return flags.length?flags.join(' & '):null
 }
 
 // ── Render Main ──
@@ -829,6 +845,12 @@ function renderPage(){
     :`<div class="status-banner inactive"><div class="status-dot inactive"></div>
         <div class="status-text">Noch nicht aktiv<span>Trage deine Daten ein und erstelle dein Media Kit</span></div></div>`
 
+  // ANALYSE-DRIFT-HINWEIS (nur wenn aktiv & neue Analyse stark abweicht)
+  const drift=getAnalysisDrift()
+  const driftHtml=drift?`<div class="link-bar" style="border-color:rgba(184,92,0,.3);background:#fdf3e7;cursor:pointer" onclick="openStatsSheet()">
+     <span style="flex:1;font-size:13px;font-weight:600;color:#b85c00">⚡ Neue Analyse verfügbar (${esc(drift)}) — Zahlen aktualisieren?</span>
+   </div>`:''
+
   // PREVIEW (1 Mockup-Bild) — nur im inactive Zustand
   const previewHtml=!isActive?`<div class="preview-wrap">
     <div class="preview-title">Erstelle dein Media Kit</div>
@@ -874,6 +896,7 @@ function renderPage(){
 
   document.getElementById('page-content').innerHTML=`
     ${statusHtml}
+    ${driftHtml}
     ${previewHtml}
     ${checklistHtml}
     ${editAndCreateHtml}
