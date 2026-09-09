@@ -60,7 +60,7 @@ nav.top{
 .nav-cta:hover{opacity:.85;transform:translateY(-1px)}
 
 /* HERO */
-.hero{padding:72px 0 48px;text-align:center}
+.hero{padding:72px 0 40px;text-align:center}
 .hero h1{
   font-size:clamp(32px,5.5vw,52px);
   font-weight:700;letter-spacing:-.04em;
@@ -72,53 +72,8 @@ nav.top{
   line-height:1.6;
 }
 
-/* TILES */
-.tiles-section{padding:24px 0 56px}
-.tiles-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:14px;
-  max-width:640px;
-  margin:0 auto;
-}
-.tile{
-  display:flex;flex-direction:column;gap:14px;
-  padding:28px 24px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:20px;
-  transition:transform .18s cubic-bezier(.32,.72,0,1),border-color .18s,box-shadow .18s;
-}
-.tile:hover{
-  transform:translateY(-3px);
-  border-color:var(--border-strong);
-  box-shadow:0 12px 28px rgba(17,17,16,.08);
-}
-.tile-icon{
-  width:44px;height:44px;
-  border-radius:12px;
-  background:var(--surface2);
-  display:grid;place-items:center;
-}
-.tile-title{font-size:17px;font-weight:600;letter-spacing:-.02em}
-.tile-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:2px}
-
-/* MANAGED SERVICE STRIP */
-.strip{
-  text-align:center;
-  padding:8px 0 8px;
-  font-size:14px;
-  color:var(--muted);
-}
-.strip a{
-  color:var(--text);
-  font-weight:500;
-  text-decoration:underline;
-  text-decoration-color:var(--border-strong);
-}
-
 /* FEATURES BOX */
-.features-section{padding:56px 0 8px}
+.features-section{padding:24px 0 8px}
 .section-eyebrow{
   font-size:11px;font-weight:600;color:var(--muted);
   text-transform:uppercase;letter-spacing:.14em;
@@ -133,7 +88,7 @@ nav.top{
 }
 .features-box-header{
   text-align:center;
-  margin-bottom:48px;
+  margin-bottom:44px;
 }
 .features-box-title{
   font-size:clamp(24px,3.2vw,34px);
@@ -142,31 +97,31 @@ nav.top{
 }
 .features-row{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  gap:32px;
+  grid-template-columns:repeat(4, 1fr);
+  gap:24px;
 }
 .feature-cell{
   display:flex;flex-direction:column;
-  gap:20px;
+  gap:18px;
   text-align:center;
 }
 .feature-cell-visual{
   background:var(--bg);
   border:1px solid var(--border);
   border-radius:18px;
-  padding:20px;
+  padding:18px;
   height:220px;
   display:flex;align-items:center;justify-content:center;
   overflow:hidden;
 }
-.feature-cell-text{padding:0 4px}
+.feature-cell-text{padding:0 2px}
 .feature-cell-title{
-  font-size:17px;font-weight:600;
+  font-size:16px;font-weight:600;
   letter-spacing:-.02em;line-height:1.3;
   margin-bottom:6px;
 }
 .feature-cell-desc{
-  font-size:14px;color:var(--muted);
+  font-size:13.5px;color:var(--muted);
   line-height:1.55;
 }
 
@@ -188,7 +143,7 @@ nav.top{
 .mock-bars-mini .mock-bar.faded{background:var(--border-strong)}
 
 .mock-phone-mini{
-  width:130px;height:200px;
+  width:120px;height:200px;
   background:var(--text);
   border-radius:22px;
   padding:8px 6px;
@@ -242,12 +197,73 @@ nav.top{
 .mk-bar-track-mini{flex:1;height:4px;background:var(--bg);border-radius:99px;overflow:hidden}
 .mk-bar-fill-mini{height:100%;background:var(--text);border-radius:99px}
 
+/* News-Mini-Mockup */
+.mock-news-mini{width:100%;display:flex;flex-direction:column;gap:8px}
+.mock-news-mini .n-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:11px;text-align:left;
+}
+.mock-news-mini .n-badge{
+  display:inline-block;font-size:8px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:2px 8px;border-radius:99px;margin-bottom:7px;
+}
+.mock-news-mini .n-badge.ig{background:#fce4ec;color:#880e4f}
+.mock-news-mini .n-badge.tt{background:#f0f0f0;color:#111110}
+.mock-news-mini .n-title{font-size:11px;font-weight:600;letter-spacing:-.01em;line-height:1.35;margin-bottom:4px}
+.mock-news-mini .n-desc{font-size:9px;color:var(--muted);line-height:1.45}
+
+/* TILES */
+.tiles-section{padding:48px 0 8px}
+.tiles-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  max-width:640px;
+  margin:0 auto;
+}
+.tile{
+  display:flex;flex-direction:column;gap:14px;
+  padding:28px 24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  transition:transform .18s cubic-bezier(.32,.72,0,1),border-color .18s,box-shadow .18s;
+}
+.tile:hover{
+  transform:translateY(-3px);
+  border-color:var(--border-strong);
+  box-shadow:0 12px 28px rgba(17,17,16,.08);
+}
+.tile-icon{
+  width:44px;height:44px;
+  border-radius:12px;
+  background:var(--surface2);
+  display:grid;place-items:center;
+}
+.tile-title{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.tile-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:2px}
+
+/* MANAGED SERVICE STRIP */
+.strip{
+  text-align:center;
+  padding:32px 0 8px;
+  font-size:14px;
+  color:var(--muted);
+}
+.strip a{
+  color:var(--text);
+  font-weight:500;
+  text-decoration:underline;
+  text-decoration-color:var(--border-strong);
+}
+
 /* FOOTER */
 footer{
   border-top:1px solid var(--border);
   padding:32px 0 calc(32px + var(--safe-bottom));
   font-size:13px;color:var(--muted);
-  margin-top:56px;
+  margin-top:40px;
 }
 .footer-inner{
   display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
@@ -263,11 +279,12 @@ footer{
 
 @media (max-width:780px){
   .features-box{padding:36px 24px;border-radius:24px}
-  .features-row{grid-template-columns:1fr;gap:36px}
+  .features-row{grid-template-columns:1fr 1fr;gap:28px}
   .feature-cell-visual{height:200px}
 }
 @media (max-width:560px){
-  .hero{padding:48px 0 36px}
+  .hero{padding:48px 0 32px}
+  .features-row{grid-template-columns:1fr}
   .tiles-grid{grid-template-columns:1fr}
   .tile{padding:22px 20px}
   .footer-inner{flex-direction:column;align-items:flex-start;text-align:left}
@@ -295,59 +312,6 @@ footer{
     <p class="hero-sub reveal">BioLink, Analyse, News und Media Kit — wähl, womit du starten willst.</p>
   </div>
 </header>
-
-<section class="tiles-section">
-  <div class="container">
-    <div class="tiles-grid reveal">
-
-      <a href="/biolink" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        </div>
-        <div>
-          <div class="tile-title">BioLink erstellen</div>
-          <div class="tile-desc">Eine Seite für alle deine Links</div>
-        </div>
-      </a>
-
-      <a href="/analytics" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-        <div>
-          <div class="tile-title">Analyse starten</div>
-          <div class="tile-desc">Sieh, was wirklich performt</div>
-        </div>
-      </a>
-
-      <a href="/digest" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        </div>
-        <div>
-          <div class="tile-title">Creator News</div>
-          <div class="tile-desc">Wöchentlich das Wichtigste</div>
-        </div>
-      </a>
-
-      <a href="/mediakit" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </div>
-        <div>
-          <div class="tile-title">Media Kit</div>
-          <div class="tile-desc">Für Anfragen von Marken</div>
-        </div>
-      </a>
-
-    </div>
-  </div>
-</section>
-
-<div class="strip reveal">
-  Du willst mehr als die Tools? Wir arbeiten auch persönlich mit ausgewählten Creators.
-  <a href="mailto:kontakt@viuno.de?subject=Beratungsanfrage">Kontakt aufnehmen →</a>
-</div>
 
 <!-- ─── DEINE WERKZEUGE IM ÜBERBLICK ─── -->
 <section class="features-section">
@@ -405,6 +369,28 @@ footer{
           </div>
         </div>
 
+        <!-- NEWS -->
+        <div class="feature-cell">
+          <div class="feature-cell-visual">
+            <div class="mock-news-mini" aria-hidden="true">
+              <div class="n-card">
+                <span class="n-badge ig">Instagram</span>
+                <div class="n-title">Your Algorithm jetzt im Hauptfeed</div>
+                <div class="n-desc">Themen-Kontrolle gilt ab jetzt für den ganzen Feed.</div>
+              </div>
+              <div class="n-card">
+                <span class="n-badge tt">TikTok</span>
+                <div class="n-title">Keyword-Kontrolle für Videos</div>
+                <div class="n-desc">Bessere Auffindbarkeit über Suchbegriffe.</div>
+              </div>
+            </div>
+          </div>
+          <div class="feature-cell-text">
+            <div class="feature-cell-title">Creator News, wöchentlich</div>
+            <p class="feature-cell-desc">Algorithmus-Updates und Plattform-News, kompakt zusammengefasst. Auf Wunsch auch per Mail.</p>
+          </div>
+        </div>
+
         <!-- MEDIA KIT -->
         <div class="feature-cell">
           <div class="feature-cell-visual">
@@ -440,6 +426,60 @@ footer{
     </div>
   </div>
 </section>
+
+<!-- ─── KACHELN ─── -->
+<section class="tiles-section">
+  <div class="container">
+    <div class="tiles-grid reveal">
+
+      <a href="/biolink" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">BioLink erstellen</div>
+          <div class="tile-desc">Eine Seite für alle deine Links</div>
+        </div>
+      </a>
+
+      <a href="/analytics" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Analyse starten</div>
+          <div class="tile-desc">Sieh, was wirklich performt</div>
+        </div>
+      </a>
+
+      <a href="/digest" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Creator News</div>
+          <div class="tile-desc">Wöchentlich das Wichtigste</div>
+        </div>
+      </a>
+
+      <a href="/mediakit" class="tile">
+        <div class="tile-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Media Kit</div>
+          <div class="tile-desc">Für Anfragen von Marken</div>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<div class="strip reveal">
+  Du willst mehr als die Tools? Wir arbeiten auch persönlich mit ausgewählten Creators.
+  <a href="mailto:kontakt@viuno.de?subject=Beratungsanfrage">Kontakt aufnehmen →</a>
+</div>
 
 <footer>
   <div class="container">
