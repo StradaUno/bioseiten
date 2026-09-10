@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#fafafa" />
+<title>viuno · Karussell</title>
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #fafafa; --surface: #fff; --surface-alt: #f4f4f5;
+    --border: #e4e4e7; --border-strong: #d4d4d8;
+    --text: #18181b; --text-muted: #71717a;
+    --primary: #7c5cfc; --primary-hover: #6b4ae6;
+    --success: #22c55e; --success-bg: #f0fdf4; --success-border: #bbf7d0;
+    --danger-bg: #fef2f2; --danger-border: #fecaca;
+    --radius: 10px; --radius-sm: 6px;
+    --shadow-lg: 0 4px 12px -2px rgba(0,0,0,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, textarea, select { font: inherit; color: var(--text); }
+  .hidden { display: none !important; }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: var(--primary); color: #fff; border-radius: var(--radius-sm); font-weight: 600; }
+  .btn:hover { background: var(--primary-hover); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); }
+  .btn-secondary:hover { background: var(--surface-alt); }
+  .btn-full { width: 100%; }
+
+  .login-wrap { min-height: 100dvh; display: grid; place-items: center; padding: 20px; }
+  .login-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-lg); }
+  .login-card h1 { font-size: 20px; margin-bottom: 20px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+  .field input, .field textarea, .field select { width: 100%; padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); }
+  .field textarea { resize: vertical; min-height: 90px; }
+  .error-msg { background: var(--danger-bg); border: 1px solid var(--danger-border); color: #991b1b; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 13px; margin-top: 12px; }
+
+  header.top { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); display: flex; align-items: center; justify-content: space-between; gap: 12px; position: sticky; top: 0; z-index: 10; }
+  .brand { font-weight: 700; font-size: 16px; }
+  header select { padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); max-width: 60vw; }
+
+  main { max-width: 720px; margin: 0 auto; padding: 16px 0 140px; }
+  .meta { padding: 0 16px 12px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .meta h2 { font-size: 17px; }
+  .status { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--surface-alt); color: var(--text-muted); border: 1px solid var(--border); }
+  .status.posted { background: var(--success-bg); color: #166534; border-color: var(--success-border); }
+
+  /* Slide-Strip: horizontal wischen wie auf Instagram */
+  .strip { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 16px 8px; scroll-padding: 16px; -webkit-overflow-scrolling: touch; }
+  .strip figure { flex: 0 0 82%; max-width: 420px; scroll-snap-align: start; position: relative; }
+  .strip img { width: 100%; aspect-ratio: 4 / 5; display: block; border-radius: 8px; background: #000; }
+  .strip figcaption { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted); padding: 6px 2px 0; }
+  .strip figcaption button { color: var(--primary); font-weight: 600; padding: 4px 6px; }
+  .hint { font-size: 13px; color: var(--text-muted); padding: 4px 16px 0; }
+
+  .panel { margin: 20px 16px 0; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+  .panel h3 { font-size: 15px; margin-bottom: 10px; }
+  .panel textarea { width: 100%; min-height: 150px; padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); resize: vertical; }
+  .row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .row .btn { flex: 1; }
+
+  .actionbar { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(250,250,250,.94); backdrop-filter: blur(8px); border-top: 1px solid var(--border); padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); display: flex; gap: 8px; z-index: 20; }
+  .actionbar .btn { flex: 1; }
+  .actionbar .btn:first-child { flex: 2; }
+
+  .empty { text-align: center; padding: 60px 24px; color: var(--text-muted); }
+
+  .sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { background: var(--surface); width: 100%; max-width: 560px; border-radius: 14px 14px 0 0; padding: 20px 16px; padding-bottom: max(20px, env(safe-area-inset-bottom)); max-height: 90dvh; overflow-y: auto; }
+  .sheet h3 { font-size: 16px; margin-bottom: 14px; }
+
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 96px; background: var(--text); color: #fff; padding: 10px 16px; border-radius: 999px; font-size: 14px; z-index: 200; box-shadow: var(--shadow-lg); }
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+  @media (min-width: 900px) { .strip figure { flex-basis: 360px; } }
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-wrap">
+  <div class="login-card">
+    <h1>viuno · Karussell</h1>
+    <form id="login-form">
+      <div class="field"><label for="email">E-Mail</label><input type="email" id="email" required autocomplete="email" /></div>
+      <div class="field"><label for="password">Passwort</label><input type="password" id="password" required autocomplete="current-password" /></div>
+      <button type="submit" class="btn btn-full" id="login-btn">Einloggen</button>
+      <div id="login-error" class="error-msg hidden"></div>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header class="top">
+    <div class="brand">Karussell</div>
+    <select id="picker" aria-label="Karussell auswählen"></select>
+  </header>
+
+  <main id="main">
+    <div class="empty">Lade Karussells …</div>
+  </main>
+
+  <div class="actionbar" id="actionbar">
+    <button class="btn" id="btn-save">Bilder speichern</button>
+    <button class="btn btn-secondary" id="btn-copy">Caption kopieren</button>
+  </div>
+</div>
+
+<div class="sheet-backdrop hidden" id="edit-sheet">
+  <div class="sheet">
+    <h3 id="edit-title">Slide bearbeiten</h3>
+    <div class="field"><label for="f-kicker">Thema</label><input id="f-kicker" type="text" /></div>
+    <div class="field"><label for="f-headline">Überschrift</label><textarea id="f-headline" rows="2" style="min-height:70px"></textarea></div>
+    <div class="field"><label for="f-body">Text</label><textarea id="f-body" rows="4"></textarea></div>
+    <div class="field"><label for="f-source">Quelle</label><input id="f-source" type="text" /></div>
+    <div class="row">
+      <button class="btn btn-secondary" id="edit-cancel">Abbrechen</button>
+      <button class="btn" id="edit-save">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true } })
+
+const $ = (s) => document.querySelector(s)
+const state = { list: [], current: null, files: [], urls: [], editIndex: null }
+
+function toast(msg, ms = 2200) {
+  const t = document.createElement('div')
+  t.className = 'toast'; t.textContent = msg
+  document.body.appendChild(t)
+  setTimeout(() => t.remove(), ms)
+}
+const fmtDate = (d) => new Date(d + 'T12:00:00').toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' })
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]))
+
+/* ---------- Auth (gleiches Muster wie Trends Admin) ---------- */
+async function enter(session) {
+  const { data: profile, error } = await supabase.from('users').select('is_admin').eq('id', session.user.id).single()
+  if (error || !profile?.is_admin) {
+    await supabase.auth.signOut()
+    showLoginError('Dieser Account hat keinen Admin-Zugriff.')
+    return
+  }
+  $('#login-screen').classList.add('hidden')
+  $('#app').classList.remove('hidden')
+  await loadList()
+}
+function showLoginError(msg) { const el = $('#login-error'); el.textContent = msg; el.classList.remove('hidden') }
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const btn = $('#login-btn'); btn.disabled = true
+  const { data, error } = await supabase.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value })
+  btn.disabled = false
+  if (error) return showLoginError(error.message)
+  await enter(data.session)
+})
+
+/* ---------- Daten ---------- */
+async function loadList(selectId) {
+  const { data, error } = await supabase.from('ig_carousels').select('*').order('post_date', { ascending: false }).order('created_at', { ascending: false }).limit(30)
+  if (error) { $('#main').innerHTML = `<div class="empty">Laden fehlgeschlagen: ${esc(error.message)}</div>`; return }
+  state.list = data || []
+  if (!state.list.length) {
+    $('#main').innerHTML = '<div class="empty">Noch kein Karussell angelegt. Sobald Claude die Texte eingetragen hat, erscheinen sie hier.</div>'
+    $('#actionbar').classList.add('hidden'); $('#picker').classList.add('hidden')
+    return
+  }
+  $('#picker').innerHTML = state.list.map(c => `<option value="${c.id}">${fmtDate(c.post_date)} · ${esc(c.title || 'Ohne Titel')}${c.status === 'posted' ? ' ✓' : ''}</option>`).join('')
+  const id = selectId || state.list[0].id
+  $('#picker').value = id
+  await show(id)
+}
+$('#picker').addEventListener('change', (e) => show(e.target.value))
+
+async function show(id) {
+  state.current = state.list.find(c => c.id === id)
+  const c = state.current
+  $('#main').innerHTML = `
+    <div class="meta">
+      <h2>${esc(c.title || 'Karussell')} (${c.slides.length} Slides)</h2>
+      <span class="status ${c.status === 'posted' ? 'posted' : ''}">${c.status === 'posted' ? 'Gepostet' : 'Entwurf'}</span>
+    </div>
+    <div class="strip" id="strip"></div>
+    <p class="hint">Wischen zum Durchblättern. Tippe auf „Bearbeiten“, um Text zu ändern.</p>
+    <section class="panel">
+      <h3>Caption</h3>
+      <textarea id="caption">${esc(c.caption || '')}</textarea>
+      <div class="row">
+        <button class="btn btn-secondary" id="btn-caption-save">Caption speichern</button>
+        <button class="btn btn-secondary" id="btn-status">${c.status === 'posted' ? 'Als Entwurf markieren' : 'Als gepostet markieren'}</button>
+      </div>
+    </section>`
+  $('#btn-caption-save').onclick = saveCaption
+  $('#btn-status').onclick = toggleStatus
+  $('#actionbar').classList.remove('hidden')
+  await renderAll()
+}
+
+async function persistSlides() {
+  const { error } = await supabase.from('ig_carousels').update({ slides: state.current.slides }).eq('id', state.current.id)
+  if (error) { toast('Speichern fehlgeschlagen: ' + error.message, 4000); return false }
+  return true
+}
+async function saveCaption() {
+  const caption = $('#caption').value
+  const { error } = await supabase.from('ig_carousels').update({ caption }).eq('id', state.current.id)
+  if (error) return toast('Speichern fehlgeschlagen: ' + error.message, 4000)
+  state.current.caption = caption
+  toast('Caption gespeichert')
+}
+async function toggleStatus() {
+  const status = state.current.status === 'posted' ? 'draft' : 'posted'
+  const { error } = await supabase.from('ig_carousels').update({ status }).eq('id', state.current.id)
+  if (error) return toast('Speichern fehlgeschlagen: ' + error.message, 4000)
+  await loadList(state.current.id)
+  toast(status === 'posted' ? 'Als gepostet markiert' : 'Als Entwurf markiert')
+}
+
+/* ---------- Slide-Rendering (1080×1350, schwarz/weiß) ---------- */
+const W = 1080, H = 1350, P = 96
+const FONT = "Archivo, 'Helvetica Neue', Arial, sans-serif"
+const C = { bg: '#000000', text: '#ffffff', body: '#d4d4d4', muted: '#8f8f8f' }
+
+let fontsReady = null
+function ensureFonts() {
+  if (!fontsReady) fontsReady = Promise.all([
+    document.fonts.load('800 100px Archivo'),
+    document.fonts.load('600 40px Archivo'),
+    document.fonts.load('400 40px Archivo')
+  ]).catch(() => {})
+  return fontsReady
+}
+
+function wrap(ctx, text, maxW) {
+  const out = []
+  for (const para of String(text || '').split('\n')) {
+    const words = para.split(/\s+/).filter(Boolean)
+    let line = ''
+    for (const w of words) {
+      const test = line ? line + ' ' + w : w
+      if (ctx.measureText(test).width <= maxW || !line) line = test
+      else { out.push(line); line = w }
+    }
+    out.push(line)
+  }
+  return out
+}
+// Größte Schriftgröße finden, bei der der Text in maxLines Zeilen passt
+function fit(ctx, text, weight, maxSize, minSize, maxW, maxLines) {
+  for (let s = maxSize; s >= minSize; s -= 2) {
+    ctx.font = `${weight} ${s}px ${FONT}`
+    const lines = wrap(ctx, text, maxW)
+    const tooWide = lines.some(l => ctx.measureText(l).width > maxW)
+    if (lines.length <= maxLines && !tooWide) return { size: s, lines }
+  }
+  ctx.font = `${weight} ${minSize}px ${FONT}`
+  return { size: minSize, lines: wrap(ctx, text, maxW) }
+}
+function drawLines(ctx, lines, x, y, lh) { lines.forEach((l, i) => ctx.fillText(l, x, y + i * lh)); return y + lines.length * lh }
+
+function renderSlide(slide, i, total, dateStr) {
+  const cv = document.createElement('canvas')
+  cv.width = W; cv.height = H
+  const ctx = cv.getContext('2d')
+  ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H)
+  ctx.textBaseline = 'top'
+  const maxW = W - P * 2
+
+  // Kopfzeile: Marke links, Seitenzahl rechts
+  ctx.fillStyle = C.text; ctx.font = `800 36px ${FONT}`; ctx.textAlign = 'left'
+  ctx.fillText('viuno', P, P - 10)
+  ctx.fillStyle = C.muted; ctx.font = `600 30px ${FONT}`; ctx.textAlign = 'right'
+  ctx.fillText(`${i + 1} / ${total}`, W - P, P - 6)
+  ctx.textAlign = 'left'
+
+  const type = slide.type || 'news'
+
+  if (type === 'cover') {
+    const h = fit(ctx, slide.headline, 800, 132, 84, maxW, 5)
+    const lh = Math.round(h.size * 1.04)
+    const blockH = h.lines.length * lh
+    let y = Math.max(320, (H - blockH) / 2 - 40)
+    if (slide.kicker) { ctx.fillStyle = C.muted; ctx.font = `600 40px ${FONT}`; ctx.fillText(slide.kicker, P, y - 72) }
+    ctx.fillStyle = C.text; ctx.font = `800 ${h.size}px ${FONT}`
+    drawLines(ctx, h.lines, P, y, lh)
+    ctx.fillStyle = C.muted; ctx.font = `400 34px ${FONT}`
+    ctx.fillText(slide.body || dateStr, P, H - P - 34)
+    ctx.textAlign = 'right'; ctx.fillText('Wischen', W - P, H - P - 34); ctx.textAlign = 'left'
+    return cv
+  }
+
+  if (type === 'cta') {
+    const h = fit(ctx, slide.headline, 800, 104, 64, maxW, 4)
+    const lh = Math.round(h.size * 1.06)
+    ctx.font = `400 44px ${FONT}`
+    const bodyLines = wrap(ctx, slide.body, maxW)
+    const blockH = h.lines.length * lh + 48 + bodyLines.length * 62
+    let y = (H - blockH) / 2
+    ctx.fillStyle = C.text; ctx.font = `800 ${h.size}px ${FONT}`
+    y = drawLines(ctx, h.lines, P, y, lh) + 48
+    ctx.fillStyle = C.body; ctx.font = `400 44px ${FONT}`
+    drawLines(ctx, bodyLines, P, y, 62)
+    return cv
+  }
+
+  // news
+  let y = 330
+  if (slide.kicker) {
+    ctx.fillStyle = C.muted; ctx.font = `600 40px ${FONT}`
+    ctx.fillText(slide.kicker, P, y); y += 76
+  }
+  const h = fit(ctx, slide.headline, 800, 100, 60, maxW, 4)
+  const lh = Math.round(h.size * 1.06)
+  ctx.fillStyle = C.text; ctx.font = `800 ${h.size}px ${FONT}`
+  y = drawLines(ctx, h.lines, P, y, lh) + 44
+  const room = H - P - 90 - y
+  let bodySize = 46, bodyLines
+  do {
+    ctx.font = `400 ${bodySize}px ${FONT}`
+    bodyLines = wrap(ctx, slide.body, maxW)
+    if (bodyLines.length * bodySize * 1.42 <= room) break
+    bodySize -= 2
+  } while (bodySize > 32)
+  ctx.fillStyle = C.body
+  drawLines(ctx, bodyLines, P, y, Math.round(bodySize * 1.42))
+  if (slide.source) {
+    ctx.fillStyle = C.muted; ctx.font = `400 30px ${FONT}`
+    ctx.fillText('Quelle: ' + slide.source, P, H - P - 30)
+  }
+  return cv
+}
+
+async function renderAll() {
+  await ensureFonts()
+  state.urls.forEach(u => URL.revokeObjectURL(u))
+  state.files = []; state.urls = []
+  const c = state.current
+  const dateStr = new Date(c.post_date + 'T12:00:00').toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
+  const strip = $('#strip')
+  strip.innerHTML = ''
+  for (let i = 0; i < c.slides.length; i++) {
+    const cv = renderSlide(c.slides[i], i, c.slides.length, dateStr)
+    const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.94))
+    const name = `viuno-${c.post_date}-${String(i + 1).padStart(2, '0')}.jpg`
+    state.files.push(new File([blob], name, { type: 'image/jpeg' }))
+    const url = URL.createObjectURL(blob)
+    state.urls.push(url)
+    const fig = document.createElement('figure')
+    fig.innerHTML = `<img src="${url}" alt="Slide ${i + 1}: ${esc(c.slides[i].headline)}" /><figcaption><span>Slide ${i + 1}</span><button data-i="${i}">Bearbeiten</button></figcaption>`
+    fig.querySelector('button').onclick = () => openEdit(i)
+    strip.appendChild(fig)
+  }
+}
+
+/* ---------- Speichern & Teilen ---------- */
+// Dateien werden beim Rendern vorbereitet, damit navigator.share direkt im Klick läuft (Pflicht auf iOS)
+$('#btn-save').addEventListener('click', async () => {
+  if (!state.files.length) return
+  if (navigator.canShare && navigator.canShare({ files: state.files })) {
+    try {
+      await navigator.share({ files: state.files })
+    } catch (err) {
+      if (err.name !== 'AbortError') toast('Teilen fehlgeschlagen: ' + err.message, 4000)
+    }
+    return
+  }
+  // Fallback Desktop: einzeln herunterladen
+  for (let i = 0; i < state.files.length; i++) {
+    const a = document.createElement('a')
+    a.href = state.urls[i]; a.download = state.files[i].name
+    document.body.appendChild(a); a.click(); a.remove()
+    await new Promise(r => setTimeout(r, 350))
+  }
+  toast(`${state.files.length} Bilder heruntergeladen`)
+})
+
+$('#btn-copy').addEventListener('click', async () => {
+  const text = $('#caption')?.value ?? state.current?.caption ?? ''
+  try { await navigator.clipboard.writeText(text); toast('Caption kopiert') }
+  catch { toast('Kopieren nicht möglich – bitte Text markieren', 3500) }
+})
+
+/* ---------- Bearbeiten ---------- */
+function openEdit(i) {
+  const s = state.current.slides[i]
+  state.editIndex = i
+  $('#edit-title').textContent = `Slide ${i + 1} bearbeiten`
+  $('#f-kicker').value = s.kicker || ''
+  $('#f-headline').value = s.headline || ''
+  $('#f-body').value = s.body || ''
+  $('#f-source').value = s.source || ''
+  $('#f-source').closest('.field').classList.toggle('hidden', (s.type || 'news') !== 'news')
+  $('#edit-sheet').classList.remove('hidden')
+}
+$('#edit-cancel').onclick = () => $('#edit-sheet').classList.add('hidden')
+$('#edit-sheet').addEventListener('click', (e) => { if (e.target.id === 'edit-sheet') $('#edit-sheet').classList.add('hidden') })
+$('#edit-save').onclick = async () => {
+  const i = state.editIndex
+  const s = state.current.slides[i]
+  Object.assign(s, {
+    kicker: $('#f-kicker').value.trim(),
+    headline: $('#f-headline').value.trim(),
+    body: $('#f-body').value.trim(),
+    source: $('#f-source').value.trim() || undefined
+  })
+  const btn = $('#edit-save'); btn.disabled = true
+  const ok = await persistSlides()
+  btn.disabled = false
+  if (!ok) return
+  $('#edit-sheet').classList.add('hidden')
+  await renderAll()
+  $('#strip').children[i]?.scrollIntoView({ inline: 'start', block: 'nearest' })
+  toast('Slide gespeichert')
+}
+
+/* ---------- Start ---------- */
+const { data: { session } } = await supabase.auth.getSession()
+if (session) await enter(session)
+</script>
+</body>
+</html>
