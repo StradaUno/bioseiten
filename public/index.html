@@ -72,163 +72,18 @@ nav.top{
   line-height:1.6;
 }
 
-/* FEATURES BOX */
-.features-section{padding:24px 0 8px}
-.section-eyebrow{
-  font-size:11px;font-weight:600;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.14em;
-  margin-bottom:14px;
-}
-.features-box{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:32px;
-  padding:48px 40px;
-  overflow:hidden;
-}
-.features-box-header{
-  text-align:center;
-  margin-bottom:44px;
-}
-.features-box-title{
-  font-size:clamp(24px,3.2vw,34px);
-  font-weight:700;letter-spacing:-.03em;
-  line-height:1.15;
-}
-.features-row{
-  display:grid;
-  grid-template-columns:repeat(4, 1fr);
-  gap:0;
-}
-.feature-cell{
-  display:flex;flex-direction:column;
-  gap:18px;
-  text-align:center;
-  padding:0 22px;
-}
-.feature-cell:not(:first-child){
-  border-left:1px solid var(--border);
-}
-.feature-cell-visual{
-  background:var(--bg);
-  border:1px solid var(--border);
-  border-radius:18px;
-  padding:18px;
-  height:220px;
-  display:flex;align-items:center;justify-content:center;
-  overflow:hidden;
-}
-.feature-cell-text{padding:0 2px}
-.feature-cell-title{
-  font-size:16px;font-weight:600;
-  letter-spacing:-.02em;line-height:1.3;
-  margin-bottom:6px;
-}
-.feature-cell-desc{
-  font-size:13.5px;color:var(--muted);
-  line-height:1.55;
-}
-
-/* Mini-Mockups */
-.mock-analytics-mini{width:100%;font-size:10px}
-.mock-analytics-mini .mock-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px}
-.mock-analytics-mini .mock-stat{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;padding:8px 4px;text-align:center;
-}
-.mock-analytics-mini .mock-stat-val{font-size:14px;font-weight:700;letter-spacing:-.03em}
-.mock-analytics-mini .mock-stat-lbl{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:1px}
-.mock-bars-mini{
-  display:flex;align-items:flex-end;gap:4px;height:50px;
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;padding:8px;
-}
-.mock-bars-mini .mock-bar{flex:1;background:var(--text);border-radius:2px 2px 0 0;opacity:.85}
-.mock-bars-mini .mock-bar.faded{background:var(--border-strong)}
-
-.mock-phone-mini{
-  width:120px;height:200px;
-  background:var(--text);
-  border-radius:22px;
-  padding:8px 6px;
-}
-.mock-phone-screen-mini{
-  background:var(--bg);
-  border-radius:16px;
-  height:100%;
-  padding:12px 10px;
-  display:flex;flex-direction:column;align-items:center;
-  overflow:hidden;
-}
-.mock-avatar-mini{
-  width:36px;height:36px;border-radius:50%;
-  background:var(--text);color:#fff;
-  display:grid;place-items:center;font-weight:700;font-size:14px;
-  margin-bottom:6px;flex-shrink:0;
-}
-.mock-name-mini{font-size:11px;font-weight:600;letter-spacing:-.02em;margin-bottom:2px}
-.mock-handle-mini{font-size:8px;color:var(--muted);margin-bottom:10px}
-.mock-link-mini{
-  width:100%;height:18px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:6px;
-  margin-bottom:5px;
-}
-.mock-link-mini.muted{opacity:.55}
-
-.mock-mediakit-mini{
-  width:100%;background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:14px;
-}
-.mk-head-mini{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border)}
-.mk-avatar-mini{
-  width:30px;height:30px;border-radius:50%;
-  background:var(--text);color:#fff;
-  display:grid;place-items:center;font-weight:700;font-size:12px;
-  flex-shrink:0;
-}
-.mk-name-mini{font-size:11px;font-weight:700;letter-spacing:-.02em;text-align:left}
-.mk-positioning-mini{font-size:9px;color:var(--muted);margin-top:1px;text-align:left}
-.mk-grid-mini{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:10px}
-.mk-stat-mini{background:var(--bg);border-radius:6px;padding:8px 4px;text-align:center}
-.mk-stat-val-mini{font-size:13px;font-weight:700;letter-spacing:-.02em}
-.mk-stat-lbl-mini{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:1px}
-.mk-bar-row-mini{display:flex;align-items:center;gap:6px;font-size:9px;margin-bottom:3px}
-.mk-bar-label-mini{width:22px;flex-shrink:0;color:var(--text);font-weight:500}
-.mk-bar-track-mini{flex:1;height:4px;background:var(--bg);border-radius:99px;overflow:hidden}
-.mk-bar-fill-mini{height:100%;background:var(--text);border-radius:99px}
-
-/* News-Mini-Mockup */
-.mock-news-mini{width:100%;display:flex;flex-direction:column;gap:8px}
-.mock-news-mini .n-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:10px;padding:11px;text-align:left;
-}
-.mock-news-mini .n-badge{
-  display:inline-block;font-size:8px;font-weight:700;
-  text-transform:uppercase;letter-spacing:.05em;
-  padding:2px 8px;border-radius:99px;margin-bottom:7px;
-}
-.mock-news-mini .n-badge.ig{background:#fce4ec;color:#880e4f}
-.mock-news-mini .n-badge.tt{background:#f0f0f0;color:#111110}
-.mock-news-mini .n-title{font-size:11px;font-weight:600;letter-spacing:-.01em;line-height:1.35;margin-bottom:4px}
-.mock-news-mini .n-desc{font-size:9px;color:var(--muted);line-height:1.45}
-
 /* TILES */
-.tiles-section{padding:48px 0 8px}
+.tiles-section{padding:16px 0 8px}
 .tiles-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:14px;
-  max-width:640px;
+  max-width:760px;
   margin:0 auto;
 }
 .tile{
-  display:flex;flex-direction:column;gap:14px;
-  padding:28px 24px;
+  display:flex;align-items:center;gap:18px;
+  padding:22px 22px 22px 24px;
   background:var(--surface);
   border:1px solid var(--border);
   border-radius:20px;
@@ -239,14 +94,101 @@ nav.top{
   border-color:var(--border-strong);
   box-shadow:0 12px 28px rgba(17,17,16,.08);
 }
+.tile:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+.tile-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
 .tile-icon{
-  width:44px;height:44px;
-  border-radius:12px;
+  width:40px;height:40px;
+  border-radius:11px;
   background:var(--surface2);
   display:grid;place-items:center;
 }
 .tile-title{font-size:17px;font-weight:600;letter-spacing:-.02em}
 .tile-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:2px}
+
+/* Einheitliche Grafik-Fläche rechts */
+.tile-visual{
+  flex-shrink:0;
+  width:124px;height:124px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:10px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* Analytics */
+.v-analytics{width:100%}
+.v-analytics .v-stat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:7px;padding:5px 6px;text-align:center;margin-bottom:6px;
+}
+.v-analytics .v-stat b{display:block;font-size:13px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.v-analytics .v-stat span{font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.v-analytics .v-bars{
+  display:flex;align-items:flex-end;gap:3px;height:46px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:7px;padding:6px;
+}
+.v-analytics .v-bar{flex:1;background:var(--text);border-radius:2px 2px 0 0;opacity:.85}
+.v-analytics .v-bar.faded{background:var(--border-strong)}
+
+/* BioLink */
+.v-phone{
+  width:66px;height:104px;
+  background:var(--text);border-radius:14px;padding:5px 4px;
+}
+.v-phone-screen{
+  background:var(--bg);border-radius:10px;height:100%;
+  padding:8px 6px;display:flex;flex-direction:column;align-items:center;overflow:hidden;
+}
+.v-avatar{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:9px;
+  margin-bottom:4px;flex-shrink:0;
+}
+.v-name{width:30px;height:4px;background:var(--text);border-radius:2px;margin-bottom:3px;opacity:.8}
+.v-handle{width:22px;height:3px;background:var(--subtle);border-radius:2px;margin-bottom:8px}
+.v-link{width:100%;height:11px;background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:4px}
+.v-link.muted{opacity:.55}
+
+/* News */
+.v-news{width:100%;display:flex;flex-direction:column;gap:6px}
+.v-news .n-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:7px 8px;
+}
+.v-news .n-badge{
+  display:inline-block;font-size:6.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:1px 6px;border-radius:99px;margin-bottom:4px;
+}
+.v-news .n-badge.ig{background:#fce4ec;color:#880e4f}
+.v-news .n-badge.tt{background:#f0f0f0;color:#111110}
+.v-news .n-title{font-size:8.5px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
+
+/* Media Kit */
+.v-mk{
+  width:100%;background:var(--surface);
+  border:1px solid var(--border);border-radius:9px;padding:8px;
+}
+.v-mk .mk-head{display:flex;align-items:center;gap:5px;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.v-mk .mk-avatar{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:8px;flex-shrink:0;
+}
+.v-mk .mk-name{font-size:8.5px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.v-mk .mk-pos{font-size:6.5px;color:var(--muted);margin-top:1px}
+.v-mk .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px}
+.v-mk .mk-stat{background:var(--bg);border-radius:5px;padding:4px 2px;text-align:center}
+.v-mk .mk-val{font-size:10px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.v-mk .mk-lbl{font-size:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.v-mk .mk-row{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.v-mk .mk-row span{width:12px;font-size:6.5px;font-weight:500;flex-shrink:0}
+.v-mk .mk-track{flex:1;height:3px;background:var(--bg);border-radius:99px;overflow:hidden}
+.v-mk .mk-fill{height:100%;background:var(--text);border-radius:99px}
 
 /* MANAGED SERVICE STRIP */
 .strip{
@@ -281,33 +223,16 @@ footer{
 .reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease-out,transform .5s ease-out}
 .reveal.in{opacity:1;transform:translateY(0)}
 
-@media (max-width:780px){
-  .features-box{padding:36px 24px;border-radius:24px}
-  .features-row{grid-template-columns:1fr 1fr;row-gap:32px}
-  .feature-cell{padding:0 16px}
-  .feature-cell:nth-child(odd){border-left:none}
-  .feature-cell:nth-child(even){border-left:1px solid var(--border)}
-  .feature-cell:nth-child(3),.feature-cell:nth-child(4){
-    border-top:1px solid var(--border);
-    padding-top:32px;
-  }
-  .feature-cell-visual{height:200px}
-}
-@media (max-width:560px){
-  .hero{padding:48px 0 32px}
-  .features-row{grid-template-columns:1fr;row-gap:28px}
-  .feature-cell{padding:0}
-  .feature-cell:not(:first-child){
-    border-left:none;
-    border-top:1px solid var(--border);
-    padding-top:28px;
-  }
+@media (max-width:640px){
+  .hero{padding:48px 0 28px}
   .tiles-grid{grid-template-columns:1fr}
-  .tile{padding:22px 20px}
+  .tile{padding:18px 18px 18px 20px;gap:14px}
+  .tile-visual{width:108px;height:108px;padding:8px}
   .footer-inner{flex-direction:column;align-items:flex-start;text-align:left}
 }
 @media (prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
+  .tile{transition:none}
 }
 </style>
 </head>
@@ -330,162 +255,111 @@ footer{
   </div>
 </header>
 
-<!-- ─── DEINE WERKZEUGE IM ÜBERBLICK ─── -->
-<section class="features-section">
-  <div class="container">
-    <div class="features-box reveal">
-      <div class="features-box-header">
-        <div class="section-eyebrow">So sieht's aus</div>
-        <h2 class="features-box-title">Deine Werkzeuge im Überblick.</h2>
-      </div>
-      <div class="features-row">
-
-        <!-- ANALYTICS -->
-        <div class="feature-cell">
-          <div class="feature-cell-visual">
-            <div class="mock-analytics-mini" aria-hidden="true">
-              <div class="mock-stats">
-                <div class="mock-stat"><div class="mock-stat-val">12,4k</div><div class="mock-stat-lbl">Follower</div></div>
-                <div class="mock-stat"><div class="mock-stat-val">5,8%</div><div class="mock-stat-lbl">Eng.</div></div>
-                <div class="mock-stat"><div class="mock-stat-val">38k</div><div class="mock-stat-lbl">Views</div></div>
-              </div>
-              <div class="mock-bars-mini">
-                <div class="mock-bar" style="height:78%"></div>
-                <div class="mock-bar" style="height:64%"></div>
-                <div class="mock-bar" style="height:88%"></div>
-                <div class="mock-bar faded" style="height:42%"></div>
-                <div class="mock-bar" style="height:71%"></div>
-                <div class="mock-bar faded" style="height:38%"></div>
-                <div class="mock-bar" style="height:55%"></div>
-              </div>
-            </div>
-          </div>
-          <div class="feature-cell-text">
-            <div class="feature-cell-title">Analyse deiner Profile</div>
-            <p class="feature-cell-desc">Sieh welche Posts performen und welche nicht. Konkrete Tipps statt Vanity-Metriken.</p>
-          </div>
-        </div>
-
-        <!-- BIOLINK -->
-        <div class="feature-cell">
-          <div class="feature-cell-visual">
-            <div class="mock-phone-mini" aria-hidden="true">
-              <div class="mock-phone-screen-mini">
-                <div class="mock-avatar-mini">L</div>
-                <div class="mock-name-mini">Lina Becker</div>
-                <div class="mock-handle-mini">viuno.de/lina</div>
-                <div class="mock-link-mini"></div>
-                <div class="mock-link-mini"></div>
-                <div class="mock-link-mini muted"></div>
-              </div>
-            </div>
-          </div>
-          <div class="feature-cell-text">
-            <div class="feature-cell-title">BioLink unter viuno.de/dein-name</div>
-            <p class="feature-cell-desc">Eine Seite mit allen deinen Links. Schickst du in deine Instagram- oder TikTok-Bio.</p>
-          </div>
-        </div>
-
-        <!-- NEWS -->
-        <div class="feature-cell">
-          <div class="feature-cell-visual">
-            <div class="mock-news-mini" aria-hidden="true">
-              <div class="n-card">
-                <span class="n-badge ig">Instagram</span>
-                <div class="n-title">Your Algorithm jetzt im Hauptfeed</div>
-                <div class="n-desc">Themen-Kontrolle gilt ab jetzt für den ganzen Feed.</div>
-              </div>
-              <div class="n-card">
-                <span class="n-badge tt">TikTok</span>
-                <div class="n-title">Keyword-Kontrolle für Videos</div>
-                <div class="n-desc">Bessere Auffindbarkeit über Suchbegriffe.</div>
-              </div>
-            </div>
-          </div>
-          <div class="feature-cell-text">
-            <div class="feature-cell-title">Creator News, wöchentlich</div>
-            <p class="feature-cell-desc">Algorithmus-Updates und Plattform-News, kompakt zusammengefasst. Auf Wunsch auch per Mail.</p>
-          </div>
-        </div>
-
-        <!-- MEDIA KIT -->
-        <div class="feature-cell">
-          <div class="feature-cell-visual">
-            <div class="mock-mediakit-mini" aria-hidden="true">
-              <div class="mk-head-mini">
-                <div class="mk-avatar-mini">L</div>
-                <div>
-                  <div class="mk-name-mini">Lina Becker</div>
-                  <div class="mk-positioning-mini">Lifestyle · Berlin</div>
-                </div>
-              </div>
-              <div class="mk-grid-mini">
-                <div class="mk-stat-mini"><div class="mk-stat-val-mini">12,4k</div><div class="mk-stat-lbl-mini">IG</div></div>
-                <div class="mk-stat-mini"><div class="mk-stat-val-mini">28,1k</div><div class="mk-stat-lbl-mini">TT</div></div>
-              </div>
-              <div class="mk-bar-row-mini">
-                <span class="mk-bar-label-mini">DE</span>
-                <div class="mk-bar-track-mini"><div class="mk-bar-fill-mini" style="width:74%"></div></div>
-              </div>
-              <div class="mk-bar-row-mini">
-                <span class="mk-bar-label-mini">AT</span>
-                <div class="mk-bar-track-mini"><div class="mk-bar-fill-mini" style="width:14%"></div></div>
-              </div>
-            </div>
-          </div>
-          <div class="feature-cell-text">
-            <div class="feature-cell-title">Media Kit für Brands</div>
-            <p class="feature-cell-desc">Live-Stats, Audience-Daten, ein Link statt PDF-Anhang. Aktualisiert sich automatisch.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ─── KACHELN ─── -->
 <section class="tiles-section">
   <div class="container">
     <div class="tiles-grid reveal">
 
       <a href="/biolink" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">BioLink erstellen</div>
+            <div class="tile-desc">Eine Seite für alle deine Links unter viuno.de/dein-name</div>
+          </div>
         </div>
-        <div>
-          <div class="tile-title">BioLink erstellen</div>
-          <div class="tile-desc">Eine Seite für alle deine Links</div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-phone">
+            <div class="v-phone-screen">
+              <div class="v-avatar">L</div>
+              <div class="v-name"></div>
+              <div class="v-handle"></div>
+              <div class="v-link"></div>
+              <div class="v-link"></div>
+              <div class="v-link muted"></div>
+            </div>
+          </div>
         </div>
       </a>
 
       <a href="/analytics" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">Analyse starten</div>
+            <div class="tile-desc">Sieh, welche Posts wirklich performen</div>
+          </div>
         </div>
-        <div>
-          <div class="tile-title">Analyse starten</div>
-          <div class="tile-desc">Sieh, was wirklich performt</div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-analytics">
+            <div class="v-stat"><b>12,4k</b><span>Follower</span></div>
+            <div class="v-bars">
+              <div class="v-bar" style="height:78%"></div>
+              <div class="v-bar" style="height:64%"></div>
+              <div class="v-bar" style="height:88%"></div>
+              <div class="v-bar faded" style="height:42%"></div>
+              <div class="v-bar" style="height:71%"></div>
+              <div class="v-bar faded" style="height:38%"></div>
+              <div class="v-bar" style="height:55%"></div>
+            </div>
+          </div>
         </div>
       </a>
 
       <a href="/digest" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">Creator News</div>
+            <div class="tile-desc">Wöchentlich das Wichtigste, auf Wunsch per Mail</div>
+          </div>
         </div>
-        <div>
-          <div class="tile-title">Creator News</div>
-          <div class="tile-desc">Wöchentlich das Wichtigste</div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-news">
+            <div class="n-card">
+              <span class="n-badge ig">Instagram</span>
+              <div class="n-title">Your Algorithm im Hauptfeed</div>
+            </div>
+            <div class="n-card">
+              <span class="n-badge tt">TikTok</span>
+              <div class="n-title">Keyword-Kontrolle für Videos</div>
+            </div>
+          </div>
         </div>
       </a>
 
       <a href="/mediakit" class="tile">
-        <div class="tile-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">Media Kit</div>
+            <div class="tile-desc">Live-Stats für Anfragen von Marken, ein Link statt PDF</div>
+          </div>
         </div>
-        <div>
-          <div class="tile-title">Media Kit</div>
-          <div class="tile-desc">Für Anfragen von Marken</div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-mk">
+            <div class="mk-head">
+              <div class="mk-avatar">L</div>
+              <div>
+                <div class="mk-name">Lina Becker</div>
+                <div class="mk-pos">Lifestyle · Berlin</div>
+              </div>
+            </div>
+            <div class="mk-grid">
+              <div class="mk-stat"><div class="mk-val">12,4k</div><div class="mk-lbl">IG</div></div>
+              <div class="mk-stat"><div class="mk-val">28,1k</div><div class="mk-lbl">TT</div></div>
+            </div>
+            <div class="mk-row"><span>DE</span><div class="mk-track"><div class="mk-fill" style="width:74%"></div></div></div>
+            <div class="mk-row"><span>AT</span><div class="mk-track"><div class="mk-fill" style="width:14%"></div></div></div>
+          </div>
         </div>
       </a>
 
