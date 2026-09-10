@@ -1,6 +1,6 @@
-# viuno — Netlify redirects
+# viuno — Cloudflare Pages redirects
 # Publish-Verzeichnis ist `public/`, deshalb liegt diese Datei hier
-# (Netlify liest `_redirects` nur aus dem Publish-Root).
+# (Cloudflare Pages liest `_redirects` nur aus dem Build-Output-Root).
 
 # ── SPA unter /app/ ─────────────────────────────────────────────
 # Der Router ist hash-basiert, die Regel fängt nur Deep-Links wie
