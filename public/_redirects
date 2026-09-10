@@ -1,0 +1,16 @@
+# viuno — Netlify redirects
+# Publish-Verzeichnis ist `public/`, deshalb liegt diese Datei hier
+# (Netlify liest `_redirects` nur aus dem Publish-Root).
+
+# ── SPA unter /app/ ─────────────────────────────────────────────
+# Der Router ist hash-basiert, die Regel fängt nur Deep-Links wie
+# /app/irgendwas ab, damit dort kein 404 entsteht.
+/app/*        /app/index.html        200
+
+# ── Legal-Seiten: .html-Pfade auf die bestehenden Ordner mappen ──
+# Die Seiten liegen als /impressum/index.html usw. im Repo,
+# der App-Footer verlinkt sie als /impressum.html.
+/impressum.html     /impressum/       301
+/datenschutz.html   /datenschutz/     301
+/agb.html           /agb/             301
+/widerruf.html      /widerruf/        301
