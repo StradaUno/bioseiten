@@ -50,7 +50,11 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .btn-start-wrap{padding:16px 20px 0}
 .btn-start{width:100%;padding:14px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn-start:disabled{opacity:.4;cursor:not-allowed}
+.btn-start.pay{background:#111110}
 .btn-start-sub{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;min-height:16px}
+
+/* ── PAYMENT-CONFIRM BANNER (nach Rueckkehr von Stripe) ── */
+.pay-confirm{margin:12px 20px 0;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 
 /* ── STATUS FLOW ── */
 .status-flow{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:12px 20px 0;overflow:hidden}
@@ -234,13 +238,19 @@ input,textarea,select{font-size:16px!important}
   </div>
   <div class="page">
 
-    <!-- ANALYSE STARTEN — ganz oben -->
+    <!-- ANALYSE STARTEN / FREISCHALTEN — ganz oben -->
     <div class="btn-start-wrap">
-      <button class="btn-start" id="btn-start" onclick="startAnalysis()">
+      <button class="btn-start" id="btn-start" onclick="handleStartClick()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
         Neue Analyse starten
       </button>
       <div class="btn-start-sub" id="btn-start-sub"></div>
+    </div>
+
+    <!-- Banner nach Rueckkehr von Stripe, waehrend auf Webhook gewartet wird -->
+    <div class="pay-confirm hidden" id="pay-confirm">
+      <span class="spinner-dark"></span>
+      <span>Zahlung wird bestätigt…</span>
     </div>
 
     <!-- STATUS FLOW (aufklappbar während Analyse läuft) -->
@@ -303,6 +313,7 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
 
 const SB_URL='https://bzejndghppuipnedasuv.supabase.co'
 const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const STRIPE_PAYMENT_LINK='https://buy.stripe.com/6oUcN61Id8rf7ov9jc4ow0g'
 window.sb=createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
 const sb=window.sb
 
@@ -321,7 +332,8 @@ const S={
   ki:{instagram:null,tiktok:null},
   stats:{instagram:null,tiktok:null},
   platform:'instagram',
-  runId:null, pollTimer:null
+  runId:null, pollTimer:null,
+  hasPurchase:false
 }
 
 // ── Auth ──
@@ -346,7 +358,7 @@ async function doLogin(){
 async function enter(session){
   S.user=session.user
   document.getElementById('app').classList.add('visible')
-  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type,instagram_handle,tiktok_handle,analyse_moeglich').eq('id',session.user.id).single()
+  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type,instagram_handle,tiktok_handle').eq('id',session.user.id).single()
   S.profile=p
   const name=p?.display_name||p?.full_name||session.user.email||'?'
   const av=document.getElementById('user-avatar')
@@ -354,9 +366,47 @@ async function enter(session){
   const em=document.getElementById('sidebar-user-email')
   if(em)em.textContent=session.user.email||''
   if(p?.subscription_type==='pro')document.getElementById('sidebar-pro-banner')?.classList.add('show')
-  renderBtn()
+
+  // ── E: Rueckkehr von Stripe? URL-Param pruefen und kurz auf Webhook warten ──
+  const params=new URLSearchParams(location.search)
+  if(params.get('paid')==='1'){
+    history.replaceState({},'',location.pathname) // Param aus der URL entfernen
+    await waitForPurchaseAfterPayment()
+  } else {
+    await refreshPurchaseState()
+  }
+
   await checkActiveRun()
   await loadKi()
+}
+
+// ── Freischaltungs-Status laden ──
+async function refreshPurchaseState(){
+  const{data}=await sb.from('analysis_purchases').select('id').eq('user_id',S.user.id).is('consumed_at',null).limit(1).maybeSingle()
+  S.hasPurchase=!!data
+  renderBtn()
+}
+
+// ── E: nach Stripe-Rueckkehr kurz pollen, bis der Webhook die Freischaltung eingetragen hat ──
+async function waitForPurchaseAfterPayment(){
+  const banner=document.getElementById('pay-confirm')
+  banner.classList.remove('hidden')
+  document.getElementById('btn-start').disabled=true
+  for(let i=0;i<8;i++){
+    const{data}=await sb.from('analysis_purchases').select('id').eq('user_id',S.user.id).is('consumed_at',null).limit(1).maybeSingle()
+    if(data){
+      S.hasPurchase=true
+      banner.classList.add('hidden')
+      renderBtn()
+      showToast('Freigeschaltet ✓')
+      return
+    }
+    await new Promise(r=>setTimeout(r,2000))
+  }
+  // Nach ~16 Sek. immer noch nichts -- Webhook braucht laenger als erwartet
+  banner.innerHTML='<span>Zahlung wird noch verarbeitet. Lade die Seite gleich nochmal neu.</span>'
+  document.getElementById('btn-start').disabled=false
+  renderBtn()
 }
 
 // ── Button state ──
@@ -365,17 +415,26 @@ function renderBtn(){
   const btn=document.getElementById('btn-start')
   const sub=document.getElementById('btn-start-sub')
   if(!p)return
-  const today=new Date().toISOString().slice(0,10)
-  const block=p.analyse_moeglich?String(p.analyse_moeglich).slice(0,10):null
-  const locked=block&&block>today
-  if(locked){
-    btn.disabled=true
-    const d=new Date(block).toLocaleDateString('de-DE',{day:'2-digit',month:'long'})
-    sub.textContent=`Nächste Analyse ab ${d} möglich`
-  }else{
+  if(!S.hasPurchase){
     btn.disabled=false
-    sub.textContent=p.instagram_handle||p.tiktok_handle?'':'Bitte zuerst einen Kanal verknüpfen'
+    btn.classList.add('pay')
+    btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Analyse freischalten – 9,99€`
+    sub.textContent='Einmalige Freischaltung pro Analyse'
+    return
   }
+  btn.classList.remove('pay')
+  btn.disabled=false
+  btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Neue Analyse starten`
+  sub.textContent=p.instagram_handle||p.tiktok_handle?'':'Bitte zuerst einen Kanal verknüpfen'
+}
+
+// ── C: Klick auf den Hauptbutton -- je nach Zustand freischalten oder starten ──
+window.handleStartClick=function(){
+  if(!S.hasPurchase){goToPayment();return}
+  startAnalysis()
+}
+window.goToPayment=function(){
+  location.href=`${STRIPE_PAYMENT_LINK}?client_reference_id=${S.user.id}`
 }
 
 // ── Platform switch ──
@@ -414,7 +473,7 @@ function showFlow(run){
   document.getElementById('status-flow').classList.remove('hidden')
   const btn=document.getElementById('btn-start')
   btn.disabled=true
-  // Text zurücksetzen — kein Spinner wenn Analyse bereits läuft
+  btn.classList.remove('pay')
   btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Analyse läuft…`
   renderFlow(run)
 }
@@ -427,7 +486,6 @@ function renderFlow(run){
   const ttDone=run.tiktok_done_at||run.tiktok_skipped
   const s=run.status
 
-  // Steps
   const steps=[]
   steps.push({label:'Analyse gestartet',state:'done'})
   if(hasIg)steps.push({label:'Instagram-Beiträge werden abgerufen',state:igDone?'done':(s==='scraping'&&!igDone?'active':'wait')})
@@ -460,18 +518,16 @@ function poll(runId){
     if(run.status==='done'||run.status==='failed'){
       clearInterval(S.pollTimer);S.pollTimer=null
       if(run.status==='done'){
-        const{data:p}=await sb.from('users').select('instagram_handle,tiktok_handle,analyse_moeglich,subscription_type').eq('id',S.user.id).single()
+        const{data:p}=await sb.from('users').select('instagram_handle,tiktok_handle,subscription_type').eq('id',S.user.id).single()
         if(p)S.profile={...S.profile,...p}
-        renderBtn()
+        // Freischaltung wurde vom Backend verbraucht -- Status neu laden
+        await refreshPurchaseState()
         await loadKi()
         showToast('Analyse fertig ✓')
         setTimeout(()=>{document.getElementById('status-flow').classList.add('hidden')},4000)
       } else {
-        const btn=document.getElementById('btn-start')
-        btn.disabled=false
-        btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Neue Analyse starten`
         renderBtn()
-        showToast('Analyse fehlgeschlagen',4000)
+        showToast('Analyse fehlgeschlagen — deine Freischaltung bleibt erhalten',4500)
       }
     }
   },5000)
@@ -488,16 +544,20 @@ window.startAnalysis=async function(){
     if(!session){showToast('Session abgelaufen');location.reload();return}
     const res=await fetch(`${SB_URL}/functions/v1/start-analysis`,{method:'POST',headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}})
     const body=await res.json()
-    if(res.status===429){showToast(body.message||'Noch nicht möglich',4000);btn.disabled=false;btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Neue Analyse starten`;renderBtn();return}
+    // A: 402 statt 429 -- Freischaltung fehlt (z.B. Zustand war stale)
+    if(res.status===402||body.error==='payment_required'){
+      S.hasPurchase=false
+      renderBtn()
+      showToast(body.message||'Für eine neue Analyse ist eine Freischaltung nötig.',4000)
+      return
+    }
     if(!res.ok||!body.success)throw new Error(body.error||'Unbekannter Fehler')
     S.runId=body.analysis_run_id
     const fakeRun={id:body.analysis_run_id,status:'scraping',instagram_done_at:null,instagram_skipped:!p.instagram_handle,tiktok_done_at:null,tiktok_skipped:!p.tiktok_handle,error:null,started_at:new Date().toISOString()}
     showFlow(fakeRun);poll(body.analysis_run_id)
   }catch(err){
     showToast('Fehler: '+err.message,4000)
-    btn.disabled=false
-  }finally{
-    if(!S.pollTimer)btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Neue Analyse starten`
+    renderBtn()
   }
 }
 
@@ -568,7 +628,6 @@ function renderContent(){
   const date=fmtDate(ki.created_at)
   const st=S.stats[pl]
 
-  // ── KPI-Kacheln aus analyse_stats ──
   if(st){
     const follDelta=st.followers_change
     const erDelta=st.engagement_rate_change
@@ -600,7 +659,6 @@ function renderContent(){
         <div class="kpi-delta flat">Pro Beitrag</div>
       </div>`}
     </div></div>`
-    // Timing-Kacheln wenn vorhanden
     if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null){
       h+=`<div class="section"><div class="timing-grid">`
       if(st.best_posting_day||st.best_posting_hour!=null){
@@ -708,7 +766,7 @@ window.shareAnalytics=function(){
   }
 
   lines.push('')
-  lines.push('Analysiert mit viuno — dem kostenlosen Tool für Creator-Wachstum.')
+  lines.push('Analysiert mit viuno.')
   lines.push('👉 viuno.de')
 
   const text=lines.filter(l=>l!=null).join('\n')
