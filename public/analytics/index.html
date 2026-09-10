@@ -53,6 +53,12 @@ html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemF
 .btn-start.pay{background:#111110}
 .btn-start-sub{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;min-height:16px}
 
+/* ── WIDERRUFS-ZUSTIMMUNG (nur wenn noch keine Freischaltung) ── */
+.consent-wrap{padding:0 20px}
+.consent-box{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:10px}
+.consent-checkbox{width:18px;height:18px;flex-shrink:0;accent-color:var(--text);cursor:pointer;margin-top:1px}
+.consent-label{font-size:12px;color:var(--muted);line-height:1.5;cursor:pointer}
+
 /* ── PAYMENT-CONFIRM BANNER (nach Rueckkehr von Stripe) ── */
 .pay-confirm{margin:12px 20px 0;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 
@@ -247,6 +253,14 @@ input,textarea,select{font-size:16px!important}
       <div class="btn-start-sub" id="btn-start-sub"></div>
     </div>
 
+    <!-- Widerrufs-Zustimmung — nur sichtbar solange keine Freischaltung vorliegt -->
+    <div class="consent-wrap hidden" id="consent-wrap">
+      <div class="consent-box">
+        <input type="checkbox" class="consent-checkbox" id="consent-checkbox"/>
+        <label class="consent-label" for="consent-checkbox">Ich stimme zu, dass die Analyse sofort nach Zahlung beginnt, und verliere damit mein 14-tägiges Widerrufsrecht.</label>
+      </div>
+    </div>
+
     <!-- Banner nach Rueckkehr von Stripe, waehrend auf Webhook gewartet wird -->
     <div class="pay-confirm hidden" id="pay-confirm">
       <span class="spinner-dark"></span>
@@ -314,6 +328,7 @@ import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
 const SB_URL='https://bzejndghppuipnedasuv.supabase.co'
 const SB_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
 const STRIPE_PAYMENT_LINK='https://buy.stripe.com/6oUcN61Id8rf7ov9jc4ow0g'
+const WITHDRAWAL_CONSENT_TEXT='Ich stimme zu, dass die Analyse sofort nach Zahlung beginnt, und verliere damit mein 14-tägiges Widerrufsrecht.'
 window.sb=createClient(SB_URL,SB_ANON,{auth:{persistSession:true,autoRefreshToken:true}})
 const sb=window.sb
 
@@ -367,10 +382,10 @@ async function enter(session){
   if(em)em.textContent=session.user.email||''
   if(p?.subscription_type==='pro')document.getElementById('sidebar-pro-banner')?.classList.add('show')
 
-  // ── E: Rueckkehr von Stripe? URL-Param pruefen und kurz auf Webhook warten ──
+  // ── Rueckkehr von Stripe? URL-Param pruefen und kurz auf Webhook warten ──
   const params=new URLSearchParams(location.search)
   if(params.get('paid')==='1'){
-    history.replaceState({},'',location.pathname) // Param aus der URL entfernen
+    history.replaceState({},'',location.pathname)
     await waitForPurchaseAfterPayment()
   } else {
     await refreshPurchaseState()
@@ -387,7 +402,7 @@ async function refreshPurchaseState(){
   renderBtn()
 }
 
-// ── E: nach Stripe-Rueckkehr kurz pollen, bis der Webhook die Freischaltung eingetragen hat ──
+// ── nach Stripe-Rueckkehr kurz pollen, bis der Webhook die Freischaltung eingetragen hat ──
 async function waitForPurchaseAfterPayment(){
   const banner=document.getElementById('pay-confirm')
   banner.classList.remove('hidden')
@@ -403,7 +418,6 @@ async function waitForPurchaseAfterPayment(){
     }
     await new Promise(r=>setTimeout(r,2000))
   }
-  // Nach ~16 Sek. immer noch nichts -- Webhook braucht laenger als erwartet
   banner.innerHTML='<span>Zahlung wird noch verarbeitet. Lade die Seite gleich nochmal neu.</span>'
   document.getElementById('btn-start').disabled=false
   renderBtn()
@@ -414,26 +428,49 @@ function renderBtn(){
   const p=S.profile
   const btn=document.getElementById('btn-start')
   const sub=document.getElementById('btn-start-sub')
+  const consentWrap=document.getElementById('consent-wrap')
   if(!p)return
   if(!S.hasPurchase){
     btn.disabled=false
     btn.classList.add('pay')
-   btn.innerHTML=`Analyse freischalten – 9,99€`
+    btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Analyse freischalten – 9,99€`
     sub.textContent='Einmalige Freischaltung pro Analyse'
+    consentWrap.classList.remove('hidden')
+    document.getElementById('consent-checkbox').checked=false
     return
   }
   btn.classList.remove('pay')
   btn.disabled=false
   btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Neue Analyse starten`
   sub.textContent=p.instagram_handle||p.tiktok_handle?'':'Bitte zuerst einen Kanal verknüpfen'
+  consentWrap.classList.add('hidden')
 }
 
-// ── C: Klick auf den Hauptbutton -- je nach Zustand freischalten oder starten ──
+// ── Klick auf den Hauptbutton -- je nach Zustand freischalten oder starten ──
 window.handleStartClick=function(){
   if(!S.hasPurchase){goToPayment();return}
   startAnalysis()
 }
-window.goToPayment=function(){
+
+// ── Erst Zustimmung pruefen + protokollieren, DANN zu Stripe weiterleiten ──
+window.goToPayment=async function(){
+  const checkbox=document.getElementById('consent-checkbox')
+  if(!checkbox.checked){
+    showToast('Bitte zuerst der sofortigen Leistung zustimmen.',3500)
+    return
+  }
+  const btn=document.getElementById('btn-start')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Einen Moment…'
+  const{error}=await sb.from('withdrawal_consents').insert({
+    user_id:S.user.id,
+    consent_text:WITHDRAWAL_CONSENT_TEXT
+  })
+  if(error){
+    showToast('Fehler beim Speichern der Zustimmung. Bitte erneut versuchen.',4000)
+    btn.disabled=false
+    renderBtn()
+    return
+  }
   location.href=`${STRIPE_PAYMENT_LINK}?client_reference_id=${S.user.id}`
 }
 
@@ -471,6 +508,7 @@ async function checkActiveRun(){
 // ── Status Flow ──
 function showFlow(run){
   document.getElementById('status-flow').classList.remove('hidden')
+  document.getElementById('consent-wrap').classList.add('hidden')
   const btn=document.getElementById('btn-start')
   btn.disabled=true
   btn.classList.remove('pay')
@@ -520,7 +558,6 @@ function poll(runId){
       if(run.status==='done'){
         const{data:p}=await sb.from('users').select('instagram_handle,tiktok_handle,subscription_type').eq('id',S.user.id).single()
         if(p)S.profile={...S.profile,...p}
-        // Freischaltung wurde vom Backend verbraucht -- Status neu laden
         await refreshPurchaseState()
         await loadKi()
         showToast('Analyse fertig ✓')
@@ -544,7 +581,6 @@ window.startAnalysis=async function(){
     if(!session){showToast('Session abgelaufen');location.reload();return}
     const res=await fetch(`${SB_URL}/functions/v1/start-analysis`,{method:'POST',headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}})
     const body=await res.json()
-    // A: 402 statt 429 -- Freischaltung fehlt (z.B. Zustand war stale)
     if(res.status===402||body.error==='payment_required'){
       S.hasPurchase=false
       renderBtn()
