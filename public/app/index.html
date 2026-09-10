@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>viuno · App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f5f4f2;
+  --surface: #ffffff;
+  --surface2: #f0efed;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.13);
+  --text: #111110;
+  --muted: #7a7975;
+  --subtle: #b0afa9;
+  --green: #1a7f4b;
+  --green-bg: #edf7f1;
+  --red: #c0392b;
+  --orange: #b85c00;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --nav-h: 56px;
+  --sidebar-w: 272px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+html, body {
+  background: var(--bg);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  color: var(--text);
+  font-size: 14px;
+}
+
+/* ─── BOOT ─── */
+#boot { min-height: 100dvh; display: grid; place-items: center; }
+.boot-spinner { width: 22px; height: 22px; border: 2px solid var(--border-strong); border-top-color: var(--text); border-radius: 50%; animation: spin .6s linear infinite; }
+
+/* ─── SHELL ─── */
+#shell { display: none; min-height: 100dvh; }
+#shell.visible { display: block; }
+
+/* ─── MENU (one definition — sidebar on desktop, drawer on mobile) ─── */
+.sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 80; pointer-events: none; transition: background .25s; }
+.sidebar-overlay.open { background: rgba(0,0,0,.35); pointer-events: auto; }
+
+.sidebar {
+  position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
+  background: var(--surface); z-index: 90;
+  transform: translateX(-100%);
+  transition: transform .28s cubic-bezier(.32,.72,0,1);
+  display: flex; flex-direction: column;
+  box-shadow: 4px 0 24px rgba(0,0,0,.08);
+}
+.sidebar.open { transform: translateX(0); }
+.sidebar-header { padding: 20px 20px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+.sidebar-logo { display: flex; align-items: center; gap: 8px; }
+.sidebar-logo-mark { width: 28px; height: 28px; border-radius: 7px; background: var(--text); color: white; display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -.03em; }
+.sidebar-close { width: 32px; height: 32px; border-radius: 99px; background: var(--surface2); border: none; cursor: pointer; display: grid; place-items: center; font-size: 18px; color: var(--muted); line-height: 1; }
+.sidebar-nav { flex: 1; padding: 10px; overflow-y: auto; }
+.sidebar-section { font-size: 10px; font-weight: 700; color: var(--subtle); text-transform: uppercase; letter-spacing: .08em; padding: 12px 10px 4px; }
+.sidebar-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; text-decoration: none; color: var(--muted); font-size: 13px; font-weight: 500; transition: all .15s; margin-bottom: 2px; }
+.sidebar-item:hover { background: var(--surface2); color: var(--text); }
+.sidebar-item.active { background: var(--text); color: white; }
+.sidebar-item svg { flex-shrink: 0; }
+.sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+.sidebar-user { font-size: 12px; color: var(--muted); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.btn-sidebar-logout { width: 100%; padding: 10px; border-radius: var(--radius-sm); background: var(--surface2); border: 1px solid var(--border-strong); font-family: inherit; font-size: 13px; font-weight: 500; color: var(--text); cursor: pointer; }
+.btn-sidebar-logout:hover { background: var(--border); }
+
+/* ─── TOPBAR ─── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(245,244,242,.92); backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px; height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topbar-left { display: flex; align-items: center; gap: 10px; }
+.hamburger { width: 36px; height: 36px; border: none; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border-radius: 8px; transition: background .15s; padding: 0; }
+.hamburger:hover { background: var(--surface2); }
+.hamburger span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
+.topbar-title { font-size: 15px; font-weight: 700; letter-spacing: -.03em; }
+.topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text); color: white; display: grid; place-items: center; font-size: 12px; font-weight: 600; cursor: pointer; border: 2px solid var(--border); overflow: hidden; flex-shrink: 0; }
+.topbar-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ─── MAIN ─── */
+.main { display: flex; flex-direction: column; min-height: 100dvh; }
+.page { flex: 1; padding-bottom: 24px; }
+#content-area { min-height: 40dvh; }
+
+/* ─── FOOTER ─── */
+.app-footer { border-top: 1px solid var(--border); padding: 18px 20px calc(20px + var(--safe-bottom)); }
+.footer-links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+.footer-links a { font-size: 12px; color: var(--muted); text-decoration: none; }
+.footer-links a:hover { color: var(--text); text-decoration: underline; }
+.footer-copy { font-size: 11px; color: var(--subtle); margin-top: 10px; }
+
+/* ─── AUTH MODE (login / register: no menu, no topbar) ─── */
+#shell.auth-mode .sidebar,
+#shell.auth-mode .sidebar-overlay,
+#shell.auth-mode .topbar { display: none !important; }
+#shell.auth-mode .main { padding-left: 0 !important; }
+#shell.auth-mode .page { display: flex; align-items: center; justify-content: center; padding: 24px; }
+#shell.auth-mode #content-area { width: 100%; }
+
+/* ─── DESKTOP: sidebar permanently visible ─── */
+@media (min-width: 900px) {
+  .hamburger { display: none; }
+  .sidebar-close { display: none; }
+  .sidebar { transform: translateX(0); box-shadow: none; border-right: 1px solid var(--border); }
+  .sidebar-overlay { display: none; }
+  .main { padding-left: var(--sidebar-w); }
+  .topbar { padding-left: 24px; }
+}
+
+/* ─── LOGIN / REGISTER CARD ─── */
+.login-card { width: 100%; max-width: 360px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; }
+.login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.login-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--text); color: white; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
+.login-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
+.login-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+.login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.field { margin-bottom: 12px; }
+.field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+.field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border-color .15s; }
+.field input:focus { border-color: var(--text); }
+.btn-login { width: 100%; padding: 12px; margin-top: 8px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
+.btn-login:disabled { opacity: .5; cursor: not-allowed; }
+.login-error { font-size: 12px; color: var(--red); margin-top: 10px; text-align: center; min-height: 18px; }
+.login-note { font-size: 12px; color: var(--green); margin-top: 10px; text-align: center; line-height: 1.5; }
+.login-switch { font-size: 12px; color: var(--muted); margin-top: 18px; text-align: center; }
+.login-switch a { color: var(--text); font-weight: 600; text-decoration: none; }
+.login-switch a:hover { text-decoration: underline; }
+
+/* ─── PAGE HEADER / PLACEHOLDER ─── */
+.page-header { padding: 22px 20px 0; }
+.page-title { font-size: 22px; font-weight: 700; letter-spacing: -.04em; }
+.page-sub { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.section { padding: 16px 20px 0; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.section-title { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.02em; }
+.placeholder-card {
+  background: var(--surface); border: 1px dashed var(--border-strong);
+  border-radius: var(--radius); padding: 40px 24px; text-align: center;
+}
+.placeholder-icon { font-size: 30px; margin-bottom: 10px; }
+.placeholder-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.placeholder-sub { font-size: 13px; color: var(--muted); line-height: 1.55; }
+.placeholder-route { display: inline-block; margin-top: 12px; font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--subtle); background: var(--surface2); border-radius: 99px; padding: 4px 10px; }
+
+/* ─── MODAL (overlay + slide-up sheet) ─── */
+.modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0); pointer-events: none; transition: background .25s; }
+.modal-overlay.open { background: rgba(0,0,0,0.35); pointer-events: auto; }
+.modal-panel {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 101;
+  background: var(--surface);
+  border-radius: 22px 22px 0 0;
+  max-height: 92dvh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform .3s cubic-bezier(.32,.72,0,1);
+  padding-bottom: calc(24px + var(--safe-bottom));
+}
+.modal-panel.open { transform: translateY(0); }
+.modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 12px auto 0; }
+.modal-header { padding: 14px 20px 0; display: flex; align-items: flex-start; gap: 14px; }
+.modal-title { font-size: 18px; font-weight: 700; letter-spacing: -.02em; color: var(--text); }
+.modal-close { margin-left: auto; width: 32px; height: 32px; border-radius: 99px; background: var(--surface2); border: none; cursor: pointer; flex-shrink: 0; display: grid; place-items: center; font-size: 16px; color: var(--muted); }
+.modal-body { padding: 16px 20px 0; font-size: 13px; color: var(--text); line-height: 1.6; }
+@media (min-width: 900px) {
+  .modal-panel { left: 50%; right: auto; bottom: auto; top: 50%; width: 440px; max-width: calc(100vw - 48px); border-radius: 20px; transform: translate(-50%, -46%) scale(.98); opacity: 0; transition: opacity .2s, transform .2s; }
+  .modal-panel.open { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  .modal-handle { display: none; }
+  .modal-header { padding-top: 20px; }
+}
+
+/* ─── TOAST ─── */
+.toast-wrap { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
+.toast { background: var(--text); color: white; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 99px; animation: toastIn .25s ease-out; white-space: nowrap; }
+@keyframes toastIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ─── UTILS ─── */
+.skeleton { background: linear-gradient(90deg, var(--surface2) 25%, #e8e6e2 50%, var(--surface2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- BOOT (bis die Session geprüft ist) -->
+<div id="boot"><div class="boot-spinner"></div></div>
+
+<!-- SHELL -->
+<div id="shell">
+
+  <!-- MENÜ — genau einmal definiert, Router setzt .active -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav">
+      <div class="sidebar-section">Übersicht</div>
+      <a class="sidebar-item" data-route="dashboard" href="#/dashboard">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-item" data-route="digest" href="#/digest">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Daily Digest
+      </a>
+
+      <div class="sidebar-section">Creator</div>
+      <a class="sidebar-item" data-route="analytics" href="#/analytics">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Analytics
+      </a>
+      <a class="sidebar-item" data-route="trends" href="#/trends">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        Trends
+      </a>
+      <a class="sidebar-item" data-route="biolink" href="#/biolink">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        BioLink
+      </a>
+      <a class="sidebar-item" data-route="mediakit" href="#/mediakit">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Media Kit
+      </a>
+
+      <div class="sidebar-section">Business</div>
+      <a class="sidebar-item" data-route="requests" href="#/requests">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Anfragen
+      </a>
+      <a class="sidebar-item" data-route="deals" href="#/deals">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Deals
+      </a>
+      <a class="sidebar-item" data-route="profile" href="#/profile">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profil
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user" id="sidebar-user-email"></div>
+      <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
+        <span class="topbar-title" id="topbar-title">Dashboard</span>
+      </div>
+      <div class="topbar-avatar" id="user-avatar">?</div>
+    </div>
+
+    <!-- PAGE -->
+    <div class="page">
+      <div id="content-area"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <div class="footer-links">
+        <a href="/impressum.html">Impressum</a>
+        <a href="/datenschutz.html">Datenschutz</a>
+        <a href="/agb.html">AGB</a>
+        <a href="/widerruf.html">Widerruf</a>
+        <a href="/legal.html">Legal</a>
+      </div>
+      <div class="footer-copy">© <span id="footer-year"></span> viuno</div>
+    </footer>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
+<div class="modal-panel" id="modal-panel" role="dialog" aria-modal="true">
+  <div class="modal-handle"></div>
+  <div class="modal-header">
+    <div class="modal-title" id="modal-title"></div>
+    <button class="modal-close" onclick="closeModal()">✕</button>
+  </div>
+  <div class="modal-body" id="modal-body"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+/* ─────────────────────────────────────────────
+   Supabase — identisch zu /trends/, /dashboard/ …
+   ───────────────────────────────────────────── */
+const SUPABASE_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, autoRefreshToken: true } })
+
+/* ─── State ─── */
+const state = {
+  session: null,
+  profile: null,        // { display_name, full_name, profile_image_url, onboarding_completed }
+  route: null,
+  booted: false
+}
+
+/* ─── Utils (aus /trends/) ─── */
+function escHtml(s) {
+  return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))
+}
+function fmt(n) {
+  if (n == null || isNaN(Number(n))) return '–'
+  n = Number(n)
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M'
+  if (n >= 1_000)     return (n/1_000).toFixed(1).replace(/\.0$/,'') + 'k'
+  return n.toLocaleString('de-DE')
+}
+
+/* ─── Toast (aus /trends/) ─── */
+window.showToast = function(msg, dur = 2500) {
+  const w = document.getElementById('toast-wrap')
+  document.getElementById('toast-msg').textContent = msg
+  w.classList.remove('hidden')
+  clearTimeout(w._t)
+  w._t = setTimeout(() => w.classList.add('hidden'), dur)
+}
+
+/* ─── Modal (Overlay + Sheet, Muster aus /Requests/) ─── */
+window.openModal = function(title, html) {
+  document.getElementById('modal-title').textContent = title || ''
+  document.getElementById('modal-body').innerHTML = html || ''
+  document.getElementById('modal-overlay').classList.add('open')
+  document.getElementById('modal-panel').classList.add('open')
+  document.body.style.overflow = 'hidden'
+}
+window.closeModal = function() {
+  document.getElementById('modal-overlay').classList.remove('open')
+  document.getElementById('modal-panel').classList.remove('open')
+  document.body.style.overflow = ''
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
+
+/* ─── Sidebar (aus /dashboard/) ─── */
+window.openSidebar  = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('open'); document.body.style.overflow = 'hidden' }
+window.closeSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); document.body.style.overflow = '' }
+
+window.logout = async function() {
+  await sb.auth.signOut()
+  state.session = null
+  state.profile = null
+  closeSidebar()
+  navigate('#/login')
+}
+
+window.navigate = function(hash) {
+  if (location.hash === hash) { router() } else { location.hash = hash }
+}
+
+/* ─────────────────────────────────────────────
+   ROUTES
+   ───────────────────────────────────────────── */
+const ROUTES = {
+  login:      { title: 'Login',        render: renderLogin,      public: true },
+  register:   { title: 'Registrieren', render: renderRegister,   public: true },
+  onboarding: { title: 'Setup',        render: renderOnboarding, chromeless: true },
+  dashboard:  { title: 'Dashboard',    render: renderDashboard },
+  analytics:  { title: 'Analytics',    render: renderAnalytics },
+  trends:     { title: 'Trends',       render: renderTrends },
+  biolink:    { title: 'BioLink',      render: renderBiolink },
+  mediakit:   { title: 'Media Kit',    render: renderMediakit },
+  digest:     { title: 'Daily Digest', render: renderDigest },
+  requests:   { title: 'Anfragen',     render: renderRequests },
+  deals:      { title: 'Deals',        render: renderDeals },
+  profile:    { title: 'Profil',       render: renderProfile }
+}
+
+const DEFAULT_ROUTE = 'dashboard'
+
+function currentRoute() {
+  const raw = (location.hash || '').replace(/^#\/?/, '').split('?')[0].split('/')[0].trim().toLowerCase()
+  return ROUTES[raw] ? raw : null
+}
+
+/* ─────────────────────────────────────────────
+   ROUTER + Session-Guard
+   Regeln (aus /dashboard/ übernommen):
+     - keine Session            → #/login
+     - Session + onboarding_completed === false → #/onboarding
+     - Session + Default        → #/dashboard
+   ───────────────────────────────────────────── */
+async function router() {
+  let name = currentRoute()
+
+  // Ohne Session: nur öffentliche Routen
+  if (!state.session) {
+    if (!name || !ROUTES[name].public) { navigate('#/login'); return }
+  } else {
+    // Mit Session: Login/Register überspringen
+    if (!name || ROUTES[name].public) { navigate('#/' + DEFAULT_ROUTE); return }
+    // Profil unvollständig → Onboarding erzwingen
+    if (needsOnboarding() && name !== 'onboarding') { navigate('#/onboarding'); return }
+  }
+
+  state.route = name
+  const route = ROUTES[name]
+  const chromeless = route.public || route.chromeless
+
+  document.getElementById('shell').classList.toggle('auth-mode', !!chromeless)
+  document.getElementById('topbar-title').textContent = route.title
+  document.title = 'viuno · ' + route.title
+  setActiveMenuItem(name)
+  closeSidebar()
+  closeModal()
+
+  const area = document.getElementById('content-area')
+  area.innerHTML = ''
+  window.scrollTo(0, 0)
+  await route.render(area)
+}
+
+function setActiveMenuItem(name) {
+  document.querySelectorAll('.sidebar-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.route === name)
+  })
+}
+
+/* Wie in /dashboard/: nur ein explizites false erzwingt Onboarding. */
+function needsOnboarding() {
+  return state.profile ? state.profile.onboarding_completed === false : false
+}
+
+/* ─────────────────────────────────────────────
+   Session laden
+   ───────────────────────────────────────────── */
+async function loadSession() {
+  const { data: { session } } = await sb.auth.getSession()
+  state.session = session || null
+  state.profile = null
+  if (session) await loadProfile(session.user.id)
+  paintUser()
+}
+
+async function loadProfile(uid) {
+  const { data } = await sb.from('users')
+    .select('display_name, full_name, profile_image_url, onboarding_completed')
+    .eq('id', uid).single()
+  state.profile = data || null
+}
+
+function paintUser() {
+  const av = document.getElementById('user-avatar')
+  const mail = document.getElementById('sidebar-user-email')
+  if (!state.session) { av.textContent = '?'; mail.textContent = ''; return }
+  const p = state.profile
+  const name = p?.display_name || p?.full_name || state.session.user.email || '?'
+  if (p?.profile_image_url) av.innerHTML = `<img src="${escHtml(p.profile_image_url)}" alt="">`
+  else av.textContent = name[0].toUpperCase()
+  av.title = name
+  mail.textContent = state.session.user.email || ''
+}
+
+/* ─────────────────────────────────────────────
+   VIEWS
+   ───────────────────────────────────────────── */
+
+/* Platzhalter für alle noch nicht gebauten Seiten */
+function placeholder(area, title, sub, icon, route) {
+  area.innerHTML = `
+    <div class="page-header">
+      <div class="page-title">${escHtml(title)}</div>
+      <div class="page-sub">${escHtml(sub)}</div>
+    </div>
+    <div class="section">
+      <div class="placeholder-card">
+        <div class="placeholder-icon">${icon}</div>
+        <div class="placeholder-title">${escHtml(title)}</div>
+        <div class="placeholder-sub">Diese Ansicht ist noch ein Platzhalter.<br>Inhalte folgen im nächsten Schritt.</div>
+        <div class="placeholder-route">#/${escHtml(route)}</div>
+      </div>
+    </div>`
+}
+
+/* ── LOGIN (Logik aus /dashboard/, /trends/, /onboarding/) ── */
+function renderLogin(area) {
+  area.innerHTML = `
+    <div class="login-card">
+      <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
+      <div class="login-title">Willkommen zurück.</div>
+      <div class="login-sub">Melde dich mit deinem viuno-Account an.</div>
+      <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
+      <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
+      <button class="btn-login" id="btn-login">Einloggen</button>
+      <div class="login-error" id="login-error"></div>
+      <div class="login-switch">Noch keinen Account? <a href="#/register">Jetzt registrieren</a></div>
+    </div>`
+
+  const btn = document.getElementById('btn-login')
+  btn.addEventListener('click', doLogin)
+  document.getElementById('inp-pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
+}
+
+async function doLogin() {
+  const email = document.getElementById('inp-email').value.trim()
+  const pw    = document.getElementById('inp-pw').value
+  const errEl = document.getElementById('login-error')
+  const btn   = document.getElementById('btn-login')
+  errEl.textContent = ''
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
+  btn.disabled = false; btn.textContent = 'Einloggen'
+  if (error) { errEl.textContent = 'Falsche E-Mail oder Passwort.'; return }
+
+  state.session = data.session
+  await loadProfile(data.session.user.id)
+  paintUser()
+  navigate(needsOnboarding() ? '#/onboarding' : '#/' + DEFAULT_ROUTE)
+}
+
+/* ── REGISTER ──
+   Hinweis: im Repo existiert keine register.html — dieser Flow ist neu
+   aufgebaut, aber im Stil/Ton der bestehenden Login-Karte.            */
+function renderRegister(area) {
+  area.innerHTML = `
+    <div class="login-card">
+      <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
+      <div class="login-title">Account erstellen.</div>
+      <div class="login-sub">Starte in wenigen Sekunden mit viuno.</div>
+      <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
+      <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="Mind. 8 Zeichen" autocomplete="new-password"/></div>
+      <div class="field"><label>Passwort wiederholen</label><input type="password" id="inp-pw2" placeholder="••••••••" autocomplete="new-password"/></div>
+      <button class="btn-login" id="btn-register">Registrieren</button>
+      <div class="login-error" id="login-error"></div>
+      <div class="login-note hidden" id="register-note"></div>
+      <div class="login-switch">Schon registriert? <a href="#/login">Zum Login</a></div>
+    </div>`
+
+  const btn = document.getElementById('btn-register')
+  btn.addEventListener('click', doRegister)
+  document.getElementById('inp-pw2').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister() })
+}
+
+async function doRegister() {
+  const email = document.getElementById('inp-email').value.trim()
+  const pw    = document.getElementById('inp-pw').value
+  const pw2   = document.getElementById('inp-pw2').value
+  const errEl = document.getElementById('login-error')
+  const noteEl= document.getElementById('register-note')
+  const btn   = document.getElementById('btn-register')
+
+  errEl.textContent = ''; noteEl.classList.add('hidden')
+  if (!email)            { errEl.textContent = 'Bitte E-Mail eingeben.'; return }
+  if (pw.length < 8)     { errEl.textContent = 'Passwort muss mindestens 8 Zeichen haben.'; return }
+  if (pw !== pw2)        { errEl.textContent = 'Passwörter stimmen nicht überein.'; return }
+
+  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+  const { data, error } = await sb.auth.signUp({ email, password: pw })
+  btn.disabled = false; btn.textContent = 'Registrieren'
+
+  if (error) { errEl.textContent = error.message || 'Registrierung fehlgeschlagen.'; return }
+
+  if (data.session) {
+    // Direkt eingeloggt → ins Onboarding
+    state.session = data.session
+    await loadProfile(data.session.user.id)
+    paintUser()
+    navigate('#/onboarding')
+    return
+  }
+
+  // Supabase verlangt E-Mail-Bestätigung
+  noteEl.textContent = 'Fast geschafft: Wir haben dir eine Bestätigungs-Mail geschickt. Bestätige deine Adresse und melde dich anschließend an.'
+  noteEl.classList.remove('hidden')
+  showToast('Bestätigungs-Mail verschickt.')
+}
+
+/* ── ONBOARDING (Platzhalter — der 5-Schritt-Wizard liegt noch in /onboarding/) ── */
+function renderOnboarding(area) {
+  area.innerHTML = `
+    <div class="login-card">
+      <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
+      <div class="login-title">Profil einrichten.</div>
+      <div class="login-sub">Dein Profil ist noch nicht vollständig.</div>
+      <div class="placeholder-card" style="border-radius:var(--radius);padding:24px 16px">
+        <div class="placeholder-icon">🚀</div>
+        <div class="placeholder-sub">Der Onboarding-Wizard wird in einem späteren Schritt hierher übernommen.</div>
+        <div class="placeholder-route">#/onboarding</div>
+      </div>
+      <button class="btn-login" style="margin-top:16px" onclick="window.location='/onboarding/'">Zum bestehenden Onboarding →</button>
+      <div class="login-switch"><a href="#" onclick="event.preventDefault();logout()">Abmelden</a></div>
+    </div>`
+}
+
+/* ── App-Views (Platzhalter) ── */
+function renderDashboard(area) { placeholder(area, 'Dashboard',    'Deine Übersicht auf einen Blick.',        '🏠', 'dashboard') }
+function renderAnalytics(area) { placeholder(area, 'Analytics',    'Instagram & TikTok Kennzahlen.',          '📊', 'analytics') }
+function renderTrends(area)    { placeholder(area, 'Trends',       'Hashtags, Sounds und Creator der Woche.', '🔥', 'trends') }
+function renderBiolink(area)   { placeholder(area, 'BioLink',      'Deine öffentliche Bio-Seite.',            '🔗', 'biolink') }
+function renderMediakit(area)  { placeholder(area, 'Media Kit',    'Dein Media Kit für Marken.',              '📄', 'mediakit') }
+function renderDigest(area)    { placeholder(area, 'Daily Digest', 'Creator-News, täglich kuratiert.',        '📰', 'digest') }
+function renderRequests(area)  { placeholder(area, 'Anfragen',     'Kooperationsanfragen von Marken.',        '✉️', 'requests') }
+function renderDeals(area)     { placeholder(area, 'Deals',        'Deine laufenden Kooperationen.',          '⭐', 'deals') }
+function renderProfile(area)   { placeholder(area, 'Profil',       'Deine Account- und Profildaten.',         '👤', 'profile') }
+
+/* ─────────────────────────────────────────────
+   BOOT
+   ───────────────────────────────────────────── */
+window.addEventListener('hashchange', router)
+
+;(async function init() {
+  document.getElementById('footer-year').textContent = new Date().getFullYear()
+  await loadSession()
+
+  // Default-Route setzen, wenn kein (gültiger) Hash da ist
+  if (!currentRoute()) {
+    location.replace(location.pathname + (state.session ? '#/' + DEFAULT_ROUTE : '#/login'))
+  }
+
+  document.getElementById('boot').classList.add('hidden')
+  document.getElementById('shell').classList.add('visible')
+  state.booted = true
+  await router()
+})()
+
+/* Session-Wechsel in einem anderen Tab spiegeln */
+sb.auth.onAuthStateChange(async (event) => {
+  if (!state.booted) return
+  if (event === 'SIGNED_OUT') { state.session = null; state.profile = null; paintUser(); router() }
+})
+</script>
+</body>
+</html>
