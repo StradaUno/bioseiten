@@ -21,7 +21,9 @@
   --green: #1a7f4b;
   --green-bg: #edf7f1;
   --red: #c0392b;
+  --red-bg: #fdf0ef;
   --orange: #b85c00;
+  --orange-bg: #fdf3e7;
   --radius: 16px;
   --radius-sm: 10px;
   --nav-h: 56px;
@@ -130,8 +132,9 @@ html, body {
 .login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
-.field input { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border-color .15s; }
-.field input:focus { border-color: var(--text); }
+.field input, .field textarea, .field select { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border-color .15s; }
+.field input:focus, .field textarea:focus, .field select:focus { border-color: var(--text); }
+.field textarea { resize: none; line-height: 1.5; }
 .btn-login { width: 100%; padding: 12px; margin-top: 8px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
 .btn-login:disabled { opacity: .5; cursor: not-allowed; }
 .login-error { font-size: 12px; color: var(--red); margin-top: 10px; text-align: center; min-height: 18px; }
@@ -262,6 +265,66 @@ html, body {
 .quick-link-icon{font-size:20px}
 .quick-link-label{font-size:13px;font-weight:600;color:var(--text)}
 .quick-link-sub{font-size:11px;color:var(--muted)}
+
+/* ═══ VIEW: PROFIL (aus /profile/) ═══
+   .section und .section-label sind hier auf .view-profile begrenzt,
+   weil /profile/ 20px Padding nutzt, die Shell aber 16px. */
+.view-profile .section { padding: 20px 20px 0; }
+.view-profile .section-label { font-size: 10px; font-weight: 600; color: var(--subtle); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
+
+.profile-hero { padding: 24px 20px 0; display: flex; align-items: flex-start; gap: 16px; }
+.profile-photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-strong); background: var(--surface2); }
+.profile-photo-fallback { width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0; background: var(--text); color: white; display: grid; place-items: center; font-size: 26px; font-weight: 700; border: 2px solid var(--border-strong); }
+.photo-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; cursor: pointer; }
+.photo-edit-btn { position: absolute; bottom: 0; right: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--text); color: white; display: grid; place-items: center; font-size: 11px; border: 2px solid var(--surface); pointer-events: none; }
+.photo-upload-status { font-size: 11px; color: var(--muted); margin-top: 4px; min-height: 16px; }
+.profile-info { flex: 1; min-width: 0; }
+.profile-name { font-size: 20px; font-weight: 700; letter-spacing: -.03em; color: var(--text); }
+.profile-handle { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.profile-plan { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
+.plan-free { background: var(--surface2); color: var(--muted); border: 1px solid var(--border-strong); }
+.plan-pro { background: #111110; color: white; }
+
+.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 16px 20px 0; }
+.stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
+.stat-box-value { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.03em; }
+.stat-box-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+.biolink-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.biolink-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+.biolink-url { font-size: 13px; font-weight: 500; color: var(--text); }
+.biolink-url a { color: var(--text); text-decoration: none; }
+.biolink-url a:hover { text-decoration: underline; }
+.status-indicator { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; }
+.si-active { background: var(--green-bg); color: var(--green); }
+.si-inactive { background: var(--surface2); color: var(--subtle); border: 1px solid var(--border-strong); }
+.biolink-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+.biolink-stat { text-align: center; }
+.biolink-stat-val { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
+.biolink-stat-label { font-size: 10px; color: var(--muted); margin-top: 1px; }
+.biolink-sources { display: flex; gap: 6px; flex-wrap: wrap; }
+.source-pill { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 99px; background: var(--surface2); color: var(--muted); }
+
+.edit-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.edit-card .field { margin-bottom: 10px; }
+.edit-card .field:last-child { margin-bottom: 0; }
+.edit-card .field label { font-size: 11px; }
+.handle-input-wrap { display: flex; align-items: center; }
+.handle-prefix { padding: 11px 10px 11px 14px; border: 1px solid var(--border-strong); border-right: none; border-radius: var(--radius-sm) 0 0 var(--radius-sm); font-size: 14px; color: var(--muted); background: var(--surface2); }
+.handle-input-wrap input { border-radius: 0 var(--radius-sm) var(--radius-sm) 0 !important; }
+.niche-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.niche-btn { padding: 8px 4px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 500; font-family: inherit; cursor: pointer; text-align: center; transition: all .15s; }
+.niche-btn.active { background: var(--text); color: white; border-color: var(--text); }
+
+.btn-save { width: 100%; padding: 13px; margin-top: 14px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
+.btn-save:disabled { opacity: .5; cursor: not-allowed; }
+.save-success { font-size: 12px; color: var(--green); text-align: center; margin-top: 8px; min-height: 18px; }
+
+.danger-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
+.danger-row { display: flex; align-items: center; justify-content: space-between; }
+.danger-info .danger-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.danger-info .danger-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.btn-danger { padding: 8px 16px; border-radius: var(--radius-sm); background: var(--red-bg); color: var(--red); border: 1px solid rgba(192,57,43,.2); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
 
 /* ─── TOAST ─── */
 .toast-wrap { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
@@ -421,6 +484,17 @@ function fmt(n, digits = 1) {
   if (n >= 1_000_000) return (n/1_000_000).toFixed(digits).replace(/\.0$/,'') + 'M'
   if (n >= 1_000)     return (n/1_000).toFixed(digits).replace(/\.0$/,'') + 'k'
   return n.toFixed(0)
+}
+
+/* aus /profile/: eigene fmt-Variante — Fallback '0' statt '–' und
+   unter 1000 lokalisiert statt gerundet. Bewusst getrennt gehalten,
+   damit die Profil-Zahlen exakt wie vorher aussehen. */
+function fmtCount(n) {
+  if (n == null || isNaN(Number(n))) return '0'
+  n = Number(n)
+  if (n >= 1_000_000) return (n/1_000_000).toFixed(1).replace(/\.0$/,'') + 'M'
+  if (n >= 1_000)     return (n/1_000).toFixed(1).replace(/\.0$/,'') + 'k'
+  return n.toLocaleString('de-DE')
 }
 
 /* aus /dashboard/ */
@@ -986,7 +1060,323 @@ function renderMediakit(area)  { placeholder(area, 'Media Kit',    'Dein Media K
 function renderDigest(area)    { placeholder(area, 'Daily Digest', 'Creator-News, täglich kuratiert.',        '📰', 'digest') }
 function renderRequests(area)  { placeholder(area, 'Anfragen',     'Kooperationsanfragen von Marken.',        '✉️', 'requests') }
 function renderDeals(area)     { placeholder(area, 'Deals',        'Deine laufenden Kooperationen.',          '⭐', 'deals') }
-function renderProfile(area)   { placeholder(area, 'Profil',       'Deine Account- und Profildaten.',         '👤', 'profile') }
+/* ═══════════════════════════════════════════════════════════════
+   VIEW: PROFIL — übernommen aus public/profile/index.html
+   Queries, Merge-Reihenfolge, Save-Patch, Foto-Upload und Markup
+   unverändert. Der Datei-Input lebt jetzt in der View und wird beim
+   Verlassen mitsamt Listener abgeräumt.
+   ═══════════════════════════════════════════════════════════════ */
+const NICHES_PROFILE = [
+  { key: 'lifestyle',     label: '🌿 Lifestyle' },
+  { key: 'fashion',       label: '👗 Fashion' },
+  { key: 'beauty',        label: '💄 Beauty' },
+  { key: 'food',          label: '🍕 Food' },
+  { key: 'fitness',       label: '💪 Fitness' },
+  { key: 'travel',        label: '✈️ Travel' },
+  { key: 'gaming',        label: '🎮 Gaming' },
+  { key: 'music',         label: '🎵 Music' },
+  { key: 'comedy',        label: '😂 Comedy' },
+  { key: 'education',     label: '📚 Edu' },
+  { key: 'business',      label: '💼 Business' },
+  { key: 'tech',          label: '💻 Tech' },
+  { key: 'art',           label: '🎨 Art' },
+  { key: 'family',        label: '👨‍👩‍👧 Family' },
+  { key: 'mental_health', label: '🧠 Mental' },
+  { key: 'general',       label: '🌐 Allgemein' },
+]
+
+/* View-lokaler Zustand, entspricht dem `state` der alten Seite */
+let pv = null
+
+async function renderProfile(area, ctx) {
+  const uid = state.session.user.id
+
+  area.innerHTML = `
+    <div class="view-profile">
+      <div id="skeleton-area" style="padding:20px">
+        <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
+          <div class="skeleton" style="width:72px;height:72px;border-radius:50%;flex-shrink:0"></div>
+          <div style="flex:1"><div class="skeleton" style="height:22px;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:60%"></div></div>
+        </div>
+        <div class="skeleton" style="height:80px;margin-bottom:12px"></div>
+        <div class="skeleton" style="height:120px;margin-bottom:12px"></div>
+        <div class="skeleton" style="height:200px"></div>
+      </div>
+      <div id="profile-content" class="hidden"></div>
+      <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
+    </div>`
+
+  const [profileRes, bioRes, bioStatsRes] = await Promise.all([
+    sb.from('users').select('*').eq('id', uid).single(),
+    sb.from('biolink_settings').select('*').eq('user_id', uid).single(),
+    sb.from('bio_stats').select('*').eq('user_id', uid).single(),
+  ])
+
+  if (ctx.stale) return
+
+  pv = {
+    uid,
+    profile:  { ...profileRes.data, ...bioRes.data },
+    bioStats: bioStatsRes.data,
+    niche:    profileRes.data?.niche_category || 'general'
+  }
+  ctx.onCleanup(() => { pv = null })
+
+  document.getElementById('skeleton-area').classList.add('hidden')
+  document.getElementById('profile-content').classList.remove('hidden')
+
+  paintProfile()
+
+  /* Foto-Upload — Listener hängt an dem Input dieser View und geht
+     beim Routenwechsel mit ihm weg. */
+  ctx.on(document.getElementById('photo-input'), 'change', onPhotoPicked)
+}
+
+function paintProfile() {
+  const p  = pv.profile
+  const bs = pv.bioStats
+  const bioUrl = p.slug ? `biouno.de/${p.slug}` : '—'
+  const bioFullUrl = p.slug ? `https://biouno.de/${p.slug}` : null
+
+  const initial = (p.display_name || p.full_name || '?')[0].toUpperCase()
+  const photoInner = p.profile_image_url
+    ? `<img class="profile-photo" src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;profile-photo-fallback&quot;>${initial}</div>'">`
+    : `<div class="profile-photo-fallback">${initial}</div>`
+  const photoHtml = `
+    <div class="photo-wrap" onclick="document.getElementById('photo-input').click()" title="Foto ändern">
+      ${photoInner}
+      <div class="photo-edit-btn">✎</div>
+    </div>`
+
+  document.getElementById('profile-content').innerHTML = `
+
+    <!-- ── Hero ── -->
+    <div class="profile-hero">
+      ${photoHtml}
+      <div class="profile-info">
+        <div class="profile-name">${escHtml(p.display_name || p.full_name || '–')}</div>
+        <div class="profile-handle">${p.email ? escHtml(p.email) : ''}</div>
+        <div class="profile-plan ${p.subscription_type === 'pro' ? 'plan-pro' : 'plan-free'}">
+          ${p.subscription_type === 'pro' ? '⭐ Pro' : 'Free Plan'}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Stats ── -->
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-box-value">${fmtCount(p.total_followers)}</div>
+        <div class="stat-box-label">Follower</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${fmtCount(bs?.views_total)}</div>
+        <div class="stat-box-label">Bio-Aufrufe</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">${fmtCount(p.new_requests_count)}</div>
+        <div class="stat-box-label">Anfragen</div>
+      </div>
+    </div>
+
+    <!-- ── BioLink ── -->
+    <div class="section">
+      <div class="section-label">BioLink</div>
+      <div class="biolink-card">
+        <div class="biolink-top">
+          <div class="biolink-url">
+            ${bioFullUrl
+              ? `<a href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>`
+              : `<span style="color:var(--subtle)">Noch kein Slug gesetzt</span>`}
+          </div>
+          <span class="status-indicator ${p.is_active ? 'si-active' : 'si-inactive'}">
+            ${p.is_active ? '● Aktiv' : '○ Inaktiv'}
+          </span>
+        </div>
+        <div class="biolink-stats">
+          <div class="biolink-stat">
+            <div class="biolink-stat-val">${fmtCount(bs?.views_today)}</div>
+            <div class="biolink-stat-label">Heute</div>
+          </div>
+          <div class="biolink-stat">
+            <div class="biolink-stat-val">${fmtCount(bs?.views_last_7_days)}</div>
+            <div class="biolink-stat-label">7 Tage</div>
+          </div>
+          <div class="biolink-stat">
+            <div class="biolink-stat-val">${fmtCount(bs?.views_total)}</div>
+            <div class="biolink-stat-label">Gesamt</div>
+          </div>
+        </div>
+        <div class="biolink-sources">
+          ${bs?.instagram_pct > 0 ? `<span class="source-pill">📸 Instagram ${bs.instagram_pct}%</span>` : ''}
+          ${bs?.tiktok_pct > 0   ? `<span class="source-pill">🎵 TikTok ${bs.tiktok_pct}%</span>` : ''}
+          ${bs?.direct_pct > 0   ? `<span class="source-pill">🔗 Direkt ${bs.direct_pct}%</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Profil bearbeiten ── -->
+    <div class="section">
+      <div class="section-label">Profil bearbeiten</div>
+      <div class="edit-card">
+
+        <div class="field">
+          <label>Name</label>
+          <input type="text" id="edit-fullname" value="${escHtml(p.full_name || '')}" placeholder="Dein Name"/>
+        </div>
+
+        <div class="field">
+          <label>Bio</label>
+          <textarea id="edit-bio" rows="3" placeholder="Kurze Beschreibung von dir…">${escHtml(p.bio || '')}</textarea>
+        </div>
+
+        <div class="field">
+          <label>Kontakt-E-Mail</label>
+          <input type="email" id="edit-contact-email" value="${escHtml(p.contact_email || '')}" placeholder="fuer@brands.de"/>
+        </div>
+
+        <div class="field">
+          <label>Instagram</label>
+          <div class="handle-input-wrap">
+            <span class="handle-prefix">@</span>
+            <input type="text" id="edit-ig" value="${escHtml((p.instagram_handle||'').replace(/^@/,''))}" placeholder="deinhandle"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>TikTok</label>
+          <div class="handle-input-wrap">
+            <span class="handle-prefix">@</span>
+            <input type="text" id="edit-tt" value="${escHtml((p.tiktok_handle||'').replace(/^@/,''))}" placeholder="deinhandle"/>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Stadt</label>
+          <input type="text" id="edit-city" value="${escHtml(p.city || '')}" placeholder="z.B. München"/>
+        </div>
+
+        <div class="field">
+          <label>Nische</label>
+          <div class="niche-grid" id="niche-grid">
+            ${NICHES_PROFILE.map(n => `
+              <button class="niche-btn ${pv.niche === n.key ? 'active' : ''}"
+                data-niche="${n.key}" onclick="selectNiche('${n.key}')">
+                ${n.label}
+              </button>`).join('')}
+          </div>
+        </div>
+
+        <button class="btn-save" id="btn-save" onclick="saveProfile()">Speichern</button>
+        <div class="save-success hidden" id="save-success">✓ Gespeichert</div>
+      </div>
+    </div>
+
+    <!-- ── Account ── -->
+    <div class="section" style="padding-bottom:8px">
+      <div class="section-label">Account</div>
+      <div class="danger-card">
+        <div class="danger-row" style="margin-bottom:12px">
+          <div class="danger-info">
+            <div class="danger-title">E-Mail Adresse</div>
+            <div class="danger-sub">${escHtml(p.email || '–')}</div>
+          </div>
+        </div>
+        <div class="danger-row">
+          <div class="danger-info">
+            <div class="danger-title">Account löschen</div>
+            <div class="danger-sub">Alle Daten werden unwiderruflich gelöscht.</div>
+          </div>
+          <button class="btn-danger" onclick="showToast('Bitte wende dich an den Support.')">Löschen</button>
+        </div>
+      </div>
+    </div>
+  `
+}
+
+window.selectNiche = function(key) {
+  if (!pv) return
+  pv.niche = key
+  document.querySelectorAll('.niche-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.niche === key)
+  })
+}
+
+window.saveProfile = async function() {
+  if (!pv) return
+  const btn = document.getElementById('btn-save')
+  const successEl = document.getElementById('save-success')
+  btn.disabled = true
+  btn.innerHTML = '<span class="spinner"></span> Speichern…'
+  successEl.classList.add('hidden')
+
+  const ig = document.getElementById('edit-ig').value.trim().replace(/^@/, '')
+  const tt = document.getElementById('edit-tt').value.trim().replace(/^@/, '')
+
+  const patch = {
+    full_name:        document.getElementById('edit-fullname').value.trim() || null,
+    bio:              document.getElementById('edit-bio').value.trim() || null,
+    contact_email:    document.getElementById('edit-contact-email').value.trim() || null,
+    instagram_handle: ig || null,
+    tiktok_handle:    tt || null,
+    city:             document.getElementById('edit-city').value.trim() || null,
+    niche_category:   pv.niche,
+    updated_at:       new Date().toISOString(),
+  }
+
+  const { error } = await sb.from('users').update(patch).eq('id', pv.uid)
+
+  /* View inzwischen verlassen → nichts mehr anfassen */
+  if (!pv || !document.getElementById('btn-save')) return
+
+  btn.disabled = false
+  btn.textContent = 'Speichern'
+
+  if (error) {
+    showToast('Fehler beim Speichern: ' + error.message, 4000)
+    return
+  }
+
+  // update local state
+  Object.assign(pv.profile, patch)
+  successEl.classList.remove('hidden')
+  setTimeout(() => { const el = document.getElementById('save-success'); if (el) el.classList.add('hidden') }, 3000)
+  showToast('Profil gespeichert ✓')
+}
+
+async function onPhotoPicked(e) {
+  const file = e.target.files?.[0]
+  if (!file) return
+  if (file.size > 5 * 1024 * 1024) { showToast('Bild zu groß. Max. 5 MB.'); return }
+
+  // Sofort Preview anzeigen
+  const reader = new FileReader()
+  reader.onload = (ev) => {
+    const wrap = document.querySelector('.photo-wrap')
+    if (!wrap) return
+    const existing = wrap.querySelector('img, .profile-photo-fallback')
+    if (existing) existing.remove()
+    const img = document.createElement('img')
+    img.className = 'profile-photo'
+    img.src = ev.target.result
+    wrap.insertBefore(img, wrap.querySelector('.photo-edit-btn'))
+  }
+  reader.readAsDataURL(file)
+
+  // Upload zu Supabase Storage
+  showToast('Wird hochgeladen…', 8000)
+  const uid = pv ? pv.uid : state.session.user.id
+  const path = `${uid}/${Date.now()}.${file.name.split('.').pop()}`
+  const { error } = await sb.storage.from('profile-images').upload(path, file, { upsert: true })
+  if (error) { showToast('Upload fehlgeschlagen: ' + error.message, 4000); return }
+
+  const { data: { publicUrl } } = sb.storage.from('profile-images').getPublicUrl(path)
+  await sb.from('users').update({ profile_image_url: publicUrl }).eq('id', uid)
+  if (pv) pv.profile.profile_image_url = publicUrl
+  /* Avatar in der Topbar mitziehen — in der alten Seite gab es den nicht */
+  if (state.profile) { state.profile.profile_image_url = publicUrl; paintUser() }
+  showToast('Profilbild gespeichert ✓')
+  e.target.value = ''
+}
 
 /* ─────────────────────────────────────────────
    BOOT
