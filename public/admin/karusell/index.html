@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#fafafa" />
+<title>viuno · Karussell</title>
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400&family=Jost:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #fafafa; --surface: #fff; --surface-alt: #f4f4f5;
+    --border: #e4e4e7; --border-strong: #d4d4d8;
+    --text: #18181b; --text-muted: #71717a;
+    --primary: #7c5cfc; --primary-hover: #6b4ae6; --primary-bg: #f3f0ff;
+    --success: #16a34a; --success-bg: #f0fdf4; --success-border: #bbf7d0;
+    --warning-bg: #fffbeb; --warning-border: #fde68a; --warning-text: #92400e;
+    --danger-bg: #fef2f2; --danger-border: #fecaca; --danger-text: #991b1b;
+    --radius: 12px; --radius-sm: 8px;
+    --shadow: 0 1px 2px rgba(0,0,0,.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, textarea, select { font: inherit; color: var(--text); }
+  a { color: var(--primary); }
+  .hidden { display: none !important; }
+  :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 12px 16px; background: var(--primary); color: #fff; border-radius: var(--radius-sm); font-weight: 600; }
+  .btn:hover { background: var(--primary-hover); }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border-strong); }
+  .btn-secondary:hover { background: var(--surface-alt); }
+  .btn-danger-text { color: var(--danger-text); }
+  .btn-full { width: 100%; }
+
+  /* Login */
+  .login-wrap { min-height: 100dvh; display: grid; place-items: center; padding: 20px; }
+  .login-card { width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; }
+  .login-card h1 { font-size: 20px; margin-bottom: 20px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+  .field input, .field textarea, .field select { width: 100%; padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); }
+  .field textarea { resize: vertical; min-height: 110px; }
+  .error-msg { background: var(--danger-bg); border: 1px solid var(--danger-border); color: var(--danger-text); padding: 10px 12px; border-radius: var(--radius-sm); font-size: 13px; margin-top: 12px; }
+
+  /* Header */
+  header.top { background: var(--surface); border-bottom: 1px solid var(--border); padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 10; min-height: 56px; }
+  header h1 { font-size: 17px; font-weight: 700; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .back { font-weight: 600; color: var(--primary); padding: 6px 8px 6px 0; }
+
+  main { max-width: 680px; margin: 0 auto; padding: 16px 16px 40px; }
+  main.with-bar { padding-bottom: 130px; }
+
+  /* Liste */
+  .group { margin-bottom: 26px; }
+  .group h2 { font-size: 14px; font-weight: 600; color: var(--text-muted); margin: 0 2px 10px; }
+  .tile { width: 100%; text-align: left; display: grid; grid-template-columns: 58px 1fr; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 10px; box-shadow: var(--shadow); }
+  .tile:hover { border-color: var(--border-strong); }
+  .tile.done { opacity: .55; }
+  .tile.recommended { border-color: var(--primary); }
+  .score { display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 10px; background: var(--surface-alt); height: 58px; }
+  .score b { font-size: 21px; line-height: 1; }
+  .score small { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+  .tile.recommended .score { background: var(--primary-bg); color: var(--primary); }
+  .tile h3 { font-size: 15px; line-height: 1.3; margin-bottom: 4px; }
+  .tile p { font-size: 13px; color: var(--text-muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .chip { font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-alt); color: var(--text-muted); white-space: nowrap; }
+  .chip.good { background: var(--success-bg); border-color: var(--success-border); color: #166534; }
+  .chip.warn { background: var(--warning-bg); border-color: var(--warning-border); color: var(--warning-text); }
+  .chip.bad { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); }
+  .chip.accent { background: var(--primary); border-color: var(--primary); color: #fff; }
+  .crit { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+  .crit div { font-size: 11px; color: var(--text-muted); }
+  .crit div b { display: block; font-size: 14px; color: var(--text); }
+  .bar { height: 3px; border-radius: 2px; background: var(--border); margin-top: 3px; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--text); }
+
+  /* Detail */
+  .info { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; margin-bottom: 16px; }
+  .info p { font-size: 14px; }
+  .sources { margin-top: 10px; font-size: 13px; }
+  .sources a { display: block; padding: 3px 0; word-break: break-word; }
+  .strip { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x mandatory; margin: 0 -16px; padding: 0 16px 6px; scroll-padding: 16px; -webkit-overflow-scrolling: touch; }
+  .strip figure { flex: 0 0 82%; max-width: 400px; scroll-snap-align: start; }
+  .strip img { width: 100%; aspect-ratio: 4 / 5; display: block; border-radius: 8px; background: #000; }
+  .strip figcaption { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted); padding: 6px 2px 0; }
+  .strip figcaption button { color: var(--primary); font-weight: 600; padding: 4px 6px; }
+  .panel { margin-top: 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+  .panel h3 { font-size: 15px; margin-bottom: 10px; }
+  .panel textarea { width: 100%; min-height: 160px; padding: 10px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); resize: vertical; }
+  .row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .row .btn { flex: 1; }
+  .metrics { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .metrics .field { margin: 0; }
+
+  .actionbar { position: fixed; left: 0; right: 0; bottom: 0; background: rgba(250,250,250,.95); backdrop-filter: blur(8px); border-top: 1px solid var(--border); padding: 12px 16px; padding-bottom: max(12px, env(safe-area-inset-bottom)); display: flex; gap: 8px; z-index: 20; }
+  .actionbar .btn { flex: 1; }
+  .actionbar .btn:first-child { flex: 1.6; }
+
+  .empty { text-align: center; padding: 60px 24px; color: var(--text-muted); }
+
+  .sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 100; display: flex; align-items: flex-end; justify-content: center; }
+  .sheet { background: var(--surface); width: 100%; max-width: 560px; border-radius: 14px 14px 0 0; padding: 20px 16px; padding-bottom: max(20px, env(safe-area-inset-bottom)); max-height: 90dvh; overflow-y: auto; }
+  .sheet h3 { font-size: 16px; margin-bottom: 14px; }
+  .count { font-size: 12px; color: var(--text-muted); text-align: right; margin-top: 4px; }
+  .count.over { color: var(--danger-text); font-weight: 600; }
+
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 100px; background: var(--text); color: #fff; padding: 10px 16px; border-radius: 999px; font-size: 14px; z-index: 200; }
+</style>
+</head>
+<body>
+
+<div id="login-screen" class="login-wrap">
+  <div class="login-card">
+    <h1>viuno · Karussell</h1>
+    <form id="login-form">
+      <div class="field"><label for="email">E-Mail</label><input type="email" id="email" required autocomplete="email" /></div>
+      <div class="field"><label for="password">Passwort</label><input type="password" id="password" required autocomplete="current-password" /></div>
+      <button type="submit" class="btn btn-full" id="login-btn">Einloggen</button>
+      <div id="login-error" class="error-msg hidden"></div>
+    </form>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <header class="top">
+    <button class="back hidden" id="back">‹ Themen</button>
+    <h1 id="title">Themen</h1>
+  </header>
+  <main id="main"><div class="empty">Lade Themen …</div></main>
+  <div class="actionbar hidden" id="actionbar">
+    <button class="btn" id="btn-save">Bilder speichern</button>
+    <button class="btn btn-secondary" id="btn-copy">Caption kopieren</button>
+  </div>
+</div>
+
+<div class="sheet-backdrop hidden" id="edit-sheet">
+  <div class="sheet">
+    <h3 id="edit-title">Slide bearbeiten</h3>
+    <div class="field">
+      <label for="f-role">Art</label>
+      <select id="f-role">
+        <option value="hook">Hook (Serif, groß)</option>
+        <option value="text">Text</option>
+        <option value="question">Frage</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="f-text">Text</label>
+      <textarea id="f-text"></textarea>
+      <div class="count" id="f-count"></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-secondary" id="edit-cancel">Abbrechen</button>
+      <button class="btn" id="edit-save">Speichern</button>
+    </div>
+    <div class="row">
+      <button class="btn btn-secondary" id="edit-add">Slide danach einfügen</button>
+      <button class="btn btn-secondary btn-danger-text" id="edit-delete">Slide löschen</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true } })
+
+const $ = (s) => document.querySelector(s)
+const state = { list: [], current: null, files: [], urls: [], editIndex: null }
+const MAX_WORDS = 35
+const CRITERIA = [
+  ['relevanz', 'Relevanz'], ['diskussion', 'Diskussion'], ['nutzwert', 'Nutzwert'], ['aktualitaet', 'Aktualität']
+]
+
+function toast(msg, ms = 2200) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg
+  document.body.appendChild(t); setTimeout(() => t.remove(), ms)
+}
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]))
+const words = (t) => String(t || '').trim().split(/\s+/).filter(Boolean).length
+function dayLabel(d) {
+  const date = new Date(d + 'T12:00:00'), today = new Date(); today.setHours(12, 0, 0, 0)
+  const diff = Math.round((date - today) / 86400000)
+  const f = date.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: '2-digit' })
+  return diff === 0 ? `Heute, ${f}` : diff === -1 ? `Gestern, ${f}` : f
+}
+
+/* ---------- Auth ---------- */
+async function enter(session) {
+  const { data: profile, error } = await supabase.from('users').select('is_admin').eq('id', session.user.id).single()
+  if (error || !profile?.is_admin) {
+    await supabase.auth.signOut(); showLoginError('Dieser Account hat keinen Admin-Zugriff.'); return
+  }
+  $('#login-screen').classList.add('hidden'); $('#app').classList.remove('hidden')
+  await loadList(); route()
+}
+function showLoginError(msg) { const el = $('#login-error'); el.textContent = msg; el.classList.remove('hidden') }
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const btn = $('#login-btn'); btn.disabled = true
+  const { data, error } = await supabase.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value })
+  btn.disabled = false
+  if (error) return showLoginError(error.message)
+  await enter(data.session)
+})
+
+/* ---------- Routing (Zurück-Geste funktioniert) ---------- */
+window.addEventListener('hashchange', route)
+function route() {
+  const id = new URLSearchParams(location.hash.slice(1)).get('c')
+  if (id && state.list.find(c => c.id === id)) showDetail(id)
+  else showList()
+}
+$('#back').onclick = () => { if (history.length > 1 && location.hash) history.back(); else location.hash = '' }
+
+async function loadList() {
+  const { data, error } = await supabase.from('ig_carousels').select('*')
+    .order('post_date', { ascending: false }).order('total_score', { ascending: false }).limit(80)
+  if (error) { $('#main').innerHTML = `<div class="empty">Laden fehlgeschlagen: ${esc(error.message)}</div>`; return }
+  state.list = data || []
+}
+
+/* ---------- Liste: Kacheln nach Score ---------- */
+function showList() {
+  state.current = null
+  $('#title').textContent = 'Themen'; $('#back').classList.add('hidden')
+  $('#actionbar').classList.add('hidden'); $('#main').classList.remove('with-bar')
+  if (!state.list.length) {
+    $('#main').innerHTML = '<div class="empty">Noch keine Themen. Sobald Claude die News recherchiert hat, erscheinen sie hier als Kacheln.</div>'
+    return
+  }
+  const roundups = state.list.filter(c => c.kind === 'roundup').slice(0, 2)
+  const topics = state.list.filter(c => c.kind === 'topic')
+  const days = [...new Set(topics.map(c => c.post_date))]
+  let html = ''
+  for (const d of days) {
+    const items = topics.filter(c => c.post_date === d).sort((a, b) => b.total_score - a.total_score)
+    const recommended = items.filter(c => c.status !== 'skipped').slice(0, 2).map(c => c.id)
+    html += `<section class="group"><h2>${dayLabel(d)}</h2>${items.map(c => tile(c, recommended.includes(c.id))).join('')}</section>`
+  }
+  if (roundups.length) html += `<section class="group"><h2>Wochenrückblick</h2>${roundups.map(c => tile(c, false)).join('')}</section>`
+  $('#main').innerHTML = html
+  document.querySelectorAll('.tile').forEach(t => t.onclick = () => { location.hash = 'c=' + t.dataset.id })
+}
+
+function deChip(c) {
+  if (c.de_status === 'gilt') return '<span class="chip good">Gilt in DE</span>'
+  if (c.de_status === 'teilweise') return '<span class="chip warn">Teilweise in DE</span>'
+  if (c.de_status === 'nicht') return '<span class="chip bad">Nicht in DE</span>'
+  return ''
+}
+function statusChip(c) {
+  if (c.status === 'posted') return '<span class="chip good">Gepostet</span>'
+  if (c.status === 'skipped') return '<span class="chip">Übersprungen</span>'
+  return ''
+}
+
+function tile(c, recommended) {
+  const isRoundup = c.kind === 'roundup'
+  const s = c.scores || {}
+  const crit = isRoundup ? '' : `<div class="crit">${CRITERIA.map(([k, l]) =>
+    `<div>${l}<b>${s[k] ?? '–'}</b><div class="bar"><i style="width:${(s[k] || 0) * 10}%"></i></div></div>`).join('')}</div>`
+  return `
+    <button class="tile ${recommended ? 'recommended' : ''} ${c.status !== 'draft' ? 'done' : ''}" data-id="${c.id}">
+      <div class="score">${isRoundup ? `<b>${c.slides.length}</b><small>Slides</small>` : `<b>${Number(c.total_score).toFixed(1)}</b><small>Score</small>`}</div>
+      <div>
+        <h3>${esc(c.title)}</h3>
+        ${c.reason ? `<p>${esc(c.reason)}</p>` : ''}
+        <div class="chips">
+          ${recommended ? '<span class="chip accent">Heute posten</span>' : ''}
+          ${deChip(c)}
+          ${c.unconfirmed ? '<span class="chip warn">Nur Test / unbestätigt</span>' : ''}
+          ${statusChip(c)}
+        </div>
+        ${crit}
+      </div>
+    </button>`
+}
+
+/* ---------- Detail ---------- */
+async function showDetail(id) {
+  const c = state.list.find(x => x.id === id)
+  state.current = c
+  $('#title').textContent = c.title; $('#back').classList.remove('hidden')
+  $('#actionbar').classList.remove('hidden'); $('#main').classList.add('with-bar')
+  const sources = (c.sources || []).map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join('')
+  const m = c.metrics || {}
+  $('#main').innerHTML = `
+    <div class="info">
+      ${c.reason ? `<p>${esc(c.reason)}</p>` : ''}
+      <div class="chips">${deChip(c)}${c.unconfirmed ? '<span class="chip warn">Nur Test / unbestätigt</span>' : ''}${statusChip(c)}</div>
+      ${sources ? `<div class="sources"><b>Quellen zum Prüfen</b>${sources}</div>` : ''}
+    </div>
+    <div class="strip" id="strip"></div>
+    <section class="panel">
+      <h3>Caption</h3>
+      <textarea id="caption">${esc(c.caption || '')}</textarea>
+      <div class="row"><button class="btn btn-secondary" id="btn-caption-save">Caption speichern</button></div>
+    </section>
+    <section class="panel">
+      <h3>Status</h3>
+      <div class="row">
+        ${c.status !== 'posted' ? '<button class="btn btn-secondary" data-status="posted">Als gepostet markieren</button>' : ''}
+        ${c.status !== 'skipped' ? '<button class="btn btn-secondary" data-status="skipped">Überspringen</button>' : ''}
+        ${c.status !== 'draft' ? '<button class="btn btn-secondary" data-status="draft">Zurück auf Entwurf</button>' : ''}
+      </div>
+    </section>
+    ${c.status === 'posted' ? `
+    <section class="panel">
+      <h3>Ergebnis nach ein paar Tagen</h3>
+      <div class="metrics">
+        <div class="field"><label for="m-reach">Reichweite</label><input id="m-reach" type="number" inputmode="numeric" value="${m.reach ?? ''}" /></div>
+        <div class="field"><label for="m-saves">Gespeichert</label><input id="m-saves" type="number" inputmode="numeric" value="${m.saves ?? ''}" /></div>
+        <div class="field"><label for="m-shares">Geteilt</label><input id="m-shares" type="number" inputmode="numeric" value="${m.shares ?? ''}" /></div>
+        <div class="field"><label for="m-comments">Kommentare</label><input id="m-comments" type="number" inputmode="numeric" value="${m.comments ?? ''}" /></div>
+      </div>
+      <div class="row"><button class="btn btn-secondary" id="btn-metrics">Ergebnis speichern</button></div>
+    </section>` : ''}`
+  $('#btn-caption-save').onclick = saveCaption
+  document.querySelectorAll('[data-status]').forEach(b => b.onclick = () => setStatus(b.dataset.status))
+  $('#btn-metrics')?.addEventListener('click', saveMetrics)
+  window.scrollTo(0, 0)
+  await renderAll()
+}
+
+async function update(patch) {
+  const { error } = await supabase.from('ig_carousels').update(patch).eq('id', state.current.id)
+  if (error) { toast('Speichern fehlgeschlagen: ' + error.message, 4000); return false }
+  Object.assign(state.current, patch); return true
+}
+async function saveCaption() { if (await update({ caption: $('#caption').value })) toast('Caption gespeichert') }
+async function setStatus(status) {
+  if (!(await update({ status }))) return
+  toast({ posted: 'Als gepostet markiert', skipped: 'Übersprungen', draft: 'Zurück auf Entwurf' }[status])
+  showDetail(state.current.id)
+}
+async function saveMetrics() {
+  const n = (id) => { const v = $(id).value; return v === '' ? null : Number(v) }
+  const metrics = { reach: n('#m-reach'), saves: n('#m-saves'), shares: n('#m-shares'), comments: n('#m-comments') }
+  if (await update({ metrics })) toast('Ergebnis gespeichert')
+}
+
+/* ---------- Slide-Rendering ---------- */
+// Layout nach deinem Beispiel: schwarz, Text mittig, VIUNO immer an derselben Stelle
+const W = 1080, H = 1350
+const SERIF = "Alegreya, Georgia, 'Times New Roman', serif"
+const SANS = "Jost, 'Futura', 'Helvetica Neue', Arial, sans-serif"
+const TEXT_CENTER_Y = 640     // optische Mitte des Textblocks
+const BRAND_Y = 1150          // feste Position von VIUNO
+const STYLE = {
+  hook:     { font: SERIF, weight: 400, max: 90, min: 62, width: 800, lh: 1.18, lines: 5 },
+  text:     { font: SANS,  weight: 400, max: 66, min: 46, width: 720, lh: 1.25, lines: 9 },
+  question: { font: SANS,  weight: 400, max: 66, min: 48, width: 760, lh: 1.25, lines: 5 }
+}
+
+let fontsReady = null
+function ensureFonts() {
+  if (!fontsReady) fontsReady = Promise.all([
+    document.fonts.load('400 80px Alegreya'), document.fonts.load('400 60px Jost'), document.fonts.load('500 30px Jost')
+  ]).catch(() => {})
+  return fontsReady
+}
+function wrap(ctx, text, maxW) {
+  const out = []
+  for (const para of String(text || '').split('\n')) {
+    let line = ''
+    for (const w of para.split(/\s+/).filter(Boolean)) {
+      const test = line ? line + ' ' + w : w
+      if (ctx.measureText(test).width <= maxW || !line) line = test
+      else { out.push(line); line = w }
+    }
+    out.push(line)
+  }
+  return out
+}
+function fit(ctx, text, st) {
+  for (let s = st.max; s >= st.min; s -= 2) {
+    ctx.font = `${st.weight} ${s}px ${st.font}`
+    const lines = wrap(ctx, text, st.width)
+    if (lines.length <= st.lines && lines.every(l => ctx.measureText(l).width <= st.width)) return { size: s, lines }
+  }
+  ctx.font = `${st.weight} ${st.min}px ${st.font}`
+  return { size: st.min, lines: wrap(ctx, text, st.width) }
+}
+function drawSpaced(ctx, text, cx, y, spacing) {
+  const widths = [...text].map(ch => ctx.measureText(ch).width)
+  const total = widths.reduce((a, b) => a + b, 0) + spacing * (text.length - 1)
+  let x = cx - total / 2
+  ctx.textAlign = 'left'
+  ;[...text].forEach((ch, i) => { ctx.fillText(ch, x, y); x += widths[i] + spacing })
+  ctx.textAlign = 'center'
+}
+
+function renderSlide(slide) {
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H
+  const ctx = cv.getContext('2d')
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H)
+  ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'
+
+  const st = STYLE[slide.role] || STYLE.text
+  const { size, lines } = fit(ctx, slide.text, st)
+  const lh = Math.round(size * st.lh)
+  ctx.font = `${st.weight} ${size}px ${st.font}`
+  const top = TEXT_CENTER_Y - ((lines.length - 1) * lh) / 2
+  lines.forEach((l, i) => ctx.fillText(l, W / 2, top + i * lh))
+
+  ctx.font = `500 30px ${SANS}`
+  drawSpaced(ctx, 'VIUNO', W / 2, BRAND_Y, 7)
+  return cv
+}
+
+async function renderAll() {
+  await ensureFonts()
+  state.urls.forEach(u => URL.revokeObjectURL(u)); state.files = []; state.urls = []
+  const c = state.current, strip = $('#strip'); strip.innerHTML = ''
+  const slug = c.title.toLowerCase().replace(/[äöüß]/g, m => ({ ä: 'ae', ö: 'oe', ü: 'ue', ß: 'ss' }[m])).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)
+  for (let i = 0; i < c.slides.length; i++) {
+    const cv = renderSlide(c.slides[i])
+    const blob = await new Promise(r => cv.toBlob(r, 'image/jpeg', 0.94))
+    const file = new File([blob], `viuno-${c.post_date}-${slug}-${i + 1}.jpg`, { type: 'image/jpeg' })
+    const url = URL.createObjectURL(blob)
+    state.files.push(file); state.urls.push(url)
+    const w = words(c.slides[i].text)
+    const fig = document.createElement('figure')
+    fig.innerHTML = `<img src="${url}" alt="Slide ${i + 1}: ${esc(c.slides[i].text)}" />
+      <figcaption><span>Slide ${i + 1}${w > MAX_WORDS ? ` · ${w} Wörter, zu lang` : ''}</span><button>Bearbeiten</button></figcaption>`
+    fig.querySelector('button').onclick = () => openEdit(i)
+    strip.appendChild(fig)
+  }
+}
+
+/* ---------- Speichern & Teilen ---------- */
+// Dateien sind vorab erzeugt, damit das Teilen-Menü direkt im Tipp öffnet (Pflicht auf iOS)
+$('#btn-save').addEventListener('click', async () => {
+  if (!state.files.length) return
+  if (navigator.canShare && navigator.canShare({ files: state.files })) {
+    try { await navigator.share({ files: state.files }) }
+    catch (err) { if (err.name !== 'AbortError') toast('Teilen fehlgeschlagen: ' + err.message, 4000) }
+    return
+  }
+  for (let i = 0; i < state.files.length; i++) {
+    const a = document.createElement('a'); a.href = state.urls[i]; a.download = state.files[i].name
+    document.body.appendChild(a); a.click(); a.remove()
+    await new Promise(r => setTimeout(r, 350))
+  }
+  toast(`${state.files.length} Bilder heruntergeladen`)
+})
+$('#btn-copy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText($('#caption')?.value ?? ''); toast('Caption kopiert') }
+  catch { toast('Kopieren nicht möglich, bitte Text markieren', 3500) }
+})
+
+/* ---------- Slide bearbeiten ---------- */
+function updateCount() {
+  const w = words($('#f-text').value), el = $('#f-count')
+  el.textContent = `${w} / ${MAX_WORDS} Wörter`; el.classList.toggle('over', w > MAX_WORDS)
+}
+$('#f-text').addEventListener('input', updateCount)
+function openEdit(i) {
+  const s = state.current.slides[i]; state.editIndex = i
+  $('#edit-title').textContent = `Slide ${i + 1} bearbeiten`
+  $('#f-role').value = s.role || 'text'; $('#f-text').value = s.text || ''
+  $('#edit-delete').disabled = state.current.slides.length <= 1
+  updateCount(); $('#edit-sheet').classList.remove('hidden')
+}
+const closeEdit = () => $('#edit-sheet').classList.add('hidden')
+$('#edit-cancel').onclick = closeEdit
+$('#edit-sheet').addEventListener('click', (e) => { if (e.target.id === 'edit-sheet') closeEdit() })
+async function saveSlides(slides, msg, focus) {
+  if (!(await update({ slides }))) return
+  closeEdit(); await renderAll()
+  $('#strip').children[focus]?.scrollIntoView({ inline: 'start', block: 'nearest' })
+  toast(msg)
+}
+$('#edit-save').onclick = () => {
+  const slides = state.current.slides.map((s, i) => i === state.editIndex ? { role: $('#f-role').value, text: $('#f-text').value.trim() } : s)
+  saveSlides(slides, 'Slide gespeichert', state.editIndex)
+}
+$('#edit-add').onclick = () => {
+  const slides = [...state.current.slides]; slides.splice(state.editIndex + 1, 0, { role: 'text', text: 'Neuer Text' })
+  saveSlides(slides, 'Slide eingefügt', state.editIndex + 1).then(() => openEdit(state.editIndex + 1))
+}
+$('#edit-delete').onclick = () => {
+  if (!confirm('Diese Slide löschen?')) return
+  const slides = state.current.slides.filter((_, i) => i !== state.editIndex)
+  saveSlides(slides, 'Slide gelöscht', Math.max(0, state.editIndex - 1))
+}
+
+/* ---------- Start ---------- */
+const { data: { session } } = await supabase.auth.getSession()
+if (session) await enter(session)
+</script>
+</body>
+</html>

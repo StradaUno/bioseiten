@@ -1,1068 +1,413 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8" />
-<script>
-  // Auto-Redirect zu /it/ wenn Browser-Sprache Italienisch ist.
-  // Läuft so früh wie möglich, um Flackern zu minimieren.
-  // sessionStorage-Flag verhindert Endlosschleife wenn User manuell zurück auf DE will.
-  (function() {
-    try {
-      if (sessionStorage.getItem('viuno-lang-redirected')) return;
-      var langs = navigator.languages || [navigator.language || ''];
-      var primary = (langs[0] || '').toLowerCase();
-      if (primary.indexOf('it') === 0) {
-        sessionStorage.setItem('viuno-lang-redirected', '1');
-        window.location.replace('/it/');
-      }
-    } catch (e) { /* ignore */ }
-  })();
-</script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>viuno · Tools für Creator. Management, wenn es ernst wird.</title>
-<meta name="description" content="Tools für Creator. Management, wenn es ernst wird. Für Creator, Brands und Unternehmen im DACH Raum." />
-<meta name="theme-color" content="#14171f" />
-
-<meta property="og:type" content="website" />
-<meta property="og:title" content="viuno · Tools für Creator" />
-<meta property="og:description" content="Tools für Creator. Management, wenn es ernst wird." />
-
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E" />
-
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>viuno · Deine Creator-Toolbox</title>
+<meta name="description" content="viuno ist die Creator-Toolbox für den deutschsprachigen Raum. BioLink, Analyse, News und Media Kit — an einem Ort."/>
+<meta name="theme-color" content="#f5f4f2"/>
+<link rel="icon" href="data:,"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #14171f;
-    --surface: #1e2230;
-    --surface-elevated: #242a3a;
-    --border: #2a2f40;
-    --border-strong: #3a4058;
-    --text: #f0f2f8;
-    --text-muted: #a8b0c4;
-    --text-subtle: #7a8096;
-    --text-faint: #4a5068;
-    --primary: #c4b5f5;
-    --primary-hover: #d4c8f8;
-    --primary-text: #14171f;
-    --success: #86efac;
-    --success-bg: rgba(134, 239, 172, 0.15);
-    --error: #ff9a9a;
-    --radius-card: 16px;
-    --radius-btn: 12px;
-  }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f4f2;
+  --surface:#fff;
+  --surface2:#f0efed;
+  --border:rgba(0,0,0,.08);
+  --border-strong:rgba(0,0,0,.13);
+  --text:#111110;
+  --muted:#7a7975;
+  --subtle:#b0afa9;
+  --safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html,body{
+  background:var(--bg);
+  font-family:'Outfit',-apple-system,BlinkMacSystemFont,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  color:var(--text);
+  font-size:16px;
+  line-height:1.55;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+.container{max-width:1000px;margin:0 auto;padding:0 24px}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* NAV */
+nav.top{
+  position:sticky;top:0;z-index:50;
+  background:rgba(245,244,242,.85);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{
+  max-width:1000px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{display:flex;align-items:center;gap:9px;font-weight:700;font-size:18px;letter-spacing:-.04em}
+.logo-mark{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-size:14px;font-weight:700;
+}
+.nav-cta{
+  padding:8px 18px;background:var(--text);color:#fff;
+  border-radius:99px;font-size:14px;font-weight:500;
+  transition:transform .15s,opacity .15s;
+}
+.nav-cta:hover{opacity:.85;transform:translateY(-1px)}
 
-  html { scroll-behavior: smooth; }
+/* HERO */
+.hero{padding:72px 0 40px;text-align:center}
+.hero h1{
+  font-size:clamp(32px,5.5vw,52px);
+  font-weight:700;letter-spacing:-.04em;
+  line-height:1.1;margin-bottom:16px;
+}
+.hero-sub{
+  font-size:clamp(15px,2vw,17px);
+  color:var(--muted);max-width:480px;margin:0 auto;
+  line-height:1.6;
+}
 
-  html, body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    line-height: 1.5;
-    overflow-x: hidden;
-  }
+/* TILES */
+.tiles-section{padding:16px 0 8px}
+.tiles-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  max-width:760px;
+  margin:0 auto;
+}
+.tile{
+  display:flex;align-items:center;gap:18px;
+  padding:22px 22px 22px 24px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:20px;
+  transition:transform .18s cubic-bezier(.32,.72,0,1),border-color .18s,box-shadow .18s;
+}
+.tile:hover{
+  transform:translateY(-3px);
+  border-color:var(--border-strong);
+  box-shadow:0 12px 28px rgba(17,17,16,.08);
+}
+.tile:focus-visible{outline:2px solid var(--text);outline-offset:3px}
+.tile-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}
+.tile-icon{
+  width:40px;height:40px;
+  border-radius:11px;
+  background:var(--surface2);
+  display:grid;place-items:center;
+}
+.tile-title{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.tile-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:2px}
 
-  body { min-height: 100dvh; }
+/* Einheitliche Grafik-Fläche rechts */
+.tile-visual{
+  flex-shrink:0;
+  width:124px;height:124px;
+  background:var(--bg);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:10px;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
 
-  /* ============ NAV ============ */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    padding: 14px 24px;
-    display: flex; align-items: center; justify-content: space-between;
-    background: rgba(20, 23, 31, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
-  }
-  .nav-logo {
-    display: flex; align-items: center; gap: 10px;
-    text-decoration: none;
-  }
-  .nav-logo-mark {
-    width: 30px; height: 30px;
-    border-radius: 8px;
-    background: var(--primary);
-    color: var(--primary-text);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.82rem; font-weight: 700;
-    letter-spacing: -0.02em;
-  }
-  .nav-logo-text {
-    font-size: 1.05rem; font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.03em;
-  }
-  .nav-right {
-    display: flex; align-items: center; gap: 12px;
-  }
-  .lang-switcher {
-    display: inline-flex; align-items: center;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 2px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-  .lang-switcher a {
-    padding: 6px 10px;
-    color: var(--text-subtle);
-    text-decoration: none;
-    border-radius: 6px;
-    transition: background .15s ease, color .15s ease;
-    line-height: 1;
-  }
-  .lang-switcher a.active {
-    background: var(--bg);
-    color: var(--text);
-  }
-  .lang-switcher a:not(.active):hover { color: var(--text-muted); }
+/* Analytics */
+.v-analytics{width:100%}
+.v-analytics .v-stat{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:7px;padding:5px 6px;text-align:center;margin-bottom:6px;
+}
+.v-analytics .v-stat b{display:block;font-size:13px;font-weight:700;letter-spacing:-.03em;line-height:1.1}
+.v-analytics .v-stat span{font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.v-analytics .v-bars{
+  display:flex;align-items:flex-end;gap:3px;height:46px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:7px;padding:6px;
+}
+.v-analytics .v-bar{flex:1;background:var(--text);border-radius:2px 2px 0 0;opacity:.85}
+.v-analytics .v-bar.faded{background:var(--border-strong)}
 
-  .nav-cta {
-    background: var(--primary);
-    color: var(--primary-text);
-    border: 1px solid var(--primary);
-    border-radius: 9px;
-    padding: 9px 18px;
-    font-family: inherit;
-    font-size: 0.84rem; font-weight: 600;
-    cursor: pointer;
-    transition: background .15s ease, border-color .15s ease;
-    text-decoration: none;
-  }
-  .nav-cta:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+/* BioLink */
+.v-phone{
+  width:66px;height:104px;
+  background:var(--text);border-radius:14px;padding:5px 4px;
+}
+.v-phone-screen{
+  background:var(--bg);border-radius:10px;height:100%;
+  padding:8px 6px;display:flex;flex-direction:column;align-items:center;overflow:hidden;
+}
+.v-avatar{
+  width:20px;height:20px;border-radius:50%;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:9px;
+  margin-bottom:4px;flex-shrink:0;
+}
+.v-name{width:30px;height:4px;background:var(--text);border-radius:2px;margin-bottom:3px;opacity:.8}
+.v-handle{width:22px;height:3px;background:var(--subtle);border-radius:2px;margin-bottom:8px}
+.v-link{width:100%;height:11px;background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:4px}
+.v-link.muted{opacity:.55}
 
-  @media (max-width: 480px) {
-    .nav-right { gap: 8px; }
-    .lang-switcher { font-size: 0.7rem; }
-    .lang-switcher a { padding: 5px 8px; }
-    nav { padding: 12px 18px; }
-  }
+/* News */
+.v-news{width:100%;display:flex;flex-direction:column;gap:6px}
+.v-news .n-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:7px 8px;
+}
+.v-news .n-badge{
+  display:inline-block;font-size:6.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.05em;
+  padding:1px 6px;border-radius:99px;margin-bottom:4px;
+}
+.v-news .n-badge.ig{background:#fce4ec;color:#880e4f}
+.v-news .n-badge.tt{background:#f0f0f0;color:#111110}
+.v-news .n-title{font-size:8.5px;font-weight:600;letter-spacing:-.01em;line-height:1.25}
 
-  /* ============ HERO ============ */
-  .hero {
-    padding: 160px 24px 90px;
-    text-align: center;
-    position: relative;
-  }
-  .hero-inner {
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  .hero-tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--primary);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    background: color-mix(in srgb, var(--primary) 12%, var(--surface));
-    border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--border));
-    border-radius: 999px;
-    margin-bottom: 22px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.1s forwards;
-  }
-  .hero h1 {
-    font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.025em;
-    color: var(--text);
-    margin-bottom: 18px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.2s forwards;
-  }
-  .hero h1 em {
-    font-style: normal;
-    color: var(--text-muted);
-    font-weight: 400;
-    display: block;
-  }
-  .hero-sub {
-    font-size: 15px;
-    color: var(--text-muted);
-    line-height: 1.6;
-    max-width: 480px;
-    margin: 0 auto;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.3s forwards;
-  }
-  .hero-actions {
-    display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
-    margin-top: 32px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.4s forwards;
-  }
+/* Media Kit */
+.v-mk{
+  width:100%;background:var(--surface);
+  border:1px solid var(--border);border-radius:9px;padding:8px;
+}
+.v-mk .mk-head{display:flex;align-items:center;gap:5px;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.v-mk .mk-avatar{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--text);color:#fff;
+  display:grid;place-items:center;font-weight:700;font-size:8px;flex-shrink:0;
+}
+.v-mk .mk-name{font-size:8.5px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.v-mk .mk-pos{font-size:6.5px;color:var(--muted);margin-top:1px}
+.v-mk .mk-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:6px}
+.v-mk .mk-stat{background:var(--bg);border-radius:5px;padding:4px 2px;text-align:center}
+.v-mk .mk-val{font-size:10px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.v-mk .mk-lbl{font-size:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.v-mk .mk-row{display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.v-mk .mk-row span{width:12px;font-size:6.5px;font-weight:500;flex-shrink:0}
+.v-mk .mk-track{flex:1;height:3px;background:var(--bg);border-radius:99px;overflow:hidden}
+.v-mk .mk-fill{height:100%;background:var(--text);border-radius:99px}
 
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 14px 24px;
-    border-radius: var(--radius-btn);
-    font-size: 14px;
-    font-weight: 500;
-    text-decoration: none;
-    font-family: inherit;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: transform .12s ease, background .15s ease, border-color .15s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .btn:active { transform: scale(.98); }
+/* MANAGED SERVICE STRIP */
+.strip{
+  text-align:center;
+  padding:32px 0 8px;
+  font-size:14px;
+  color:var(--muted);
+}
+.strip a{
+  color:var(--text);
+  font-weight:500;
+  text-decoration:underline;
+  text-decoration-color:var(--border-strong);
+}
 
-  .btn-primary {
-    background: var(--primary);
-    color: var(--primary-text);
-    border-color: var(--primary);
-  }
-  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+/* FOOTER */
+footer{
+  border-top:1px solid var(--border);
+  padding:32px 0 calc(32px + var(--safe-bottom));
+  font-size:13px;color:var(--muted);
+  margin-top:40px;
+}
+.footer-inner{
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+}
+.footer-brand{display:flex;align-items:center;gap:9px;font-weight:600;color:var(--text)}
+.footer-brand .logo-mark{width:24px;height:24px;font-size:11px;border-radius:6px}
+.footer-links{display:flex;gap:18px;flex-wrap:wrap}
+.footer-links a{color:var(--muted);transition:color .15s}
+.footer-links a:hover{color:var(--text)}
 
-  .btn-secondary {
-    background: transparent;
-    color: var(--text);
-    border-color: var(--border);
-  }
-  .btn-secondary:hover { background: var(--surface); border-color: var(--border-strong); }
+.reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease-out,transform .5s ease-out}
+.reveal.in{opacity:1;transform:translateY(0)}
 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ============ SECTION HEAD ============ */
-  .section-head {
-    text-align: center;
-    max-width: 640px;
-    margin: 0 auto 50px;
-  }
-  .section-eyebrow {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--primary);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 6px 12px;
-    background: color-mix(in srgb, var(--primary) 12%, var(--surface));
-    border: 1px solid color-mix(in srgb, var(--primary) 25%, var(--border));
-    border-radius: 999px;
-    display: inline-block;
-    margin-bottom: 16px;
-  }
-  .section-head h2 {
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
-    color: var(--text);
-  }
-
-  /* ============ FEATURES ============ */
-  .features-section {
-    padding: 90px 24px;
-    border-top: 1px solid var(--border);
-  }
-  .features-inner { max-width: 1080px; margin: 0 auto; }
-  .feature-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-  }
-  @media (max-width: 880px) { .feature-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 560px) { .feature-grid { grid-template-columns: 1fr; } }
-
-  .feature-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    padding: 24px 22px;
-    transition: border-color .2s ease, transform .2s ease;
-  }
-  .feature-card:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-2px);
-  }
-  .feature-card .ico {
-    width: 38px; height: 38px;
-    border-radius: 10px;
-    background: color-mix(in srgb, var(--primary) 15%, var(--surface));
-    color: var(--primary);
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 14px;
-  }
-  .feature-card h4 {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-  }
-  .feature-card p {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.55;
-  }
-
-  /* ============ MANAGED ============ */
-  .managed {
-    padding: 90px 24px;
-    max-width: 880px;
-    margin: 0 auto;
-  }
-  .managed-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 22px;
-    padding: 48px 48px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .managed-card::before {
-    content: '';
-    position: absolute;
-    top: -100px; right: -100px;
-    width: 280px; height: 280px;
-    border-radius: 50%;
-    background: radial-gradient(circle, color-mix(in srgb, var(--primary) 12%, transparent) 0%, transparent 70%);
-    pointer-events: none;
-  }
-  @media (max-width: 700px) {
-    .managed-card { padding: 36px 24px; }
-  }
-  .managed-card h2 {
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
-    color: var(--text);
-    margin-bottom: 24px;
-    position: relative;
-  }
-  .managed-list {
-    list-style: none;
-    margin: 0 auto 28px;
-    max-width: 520px;
-    text-align: left;
-    position: relative;
-  }
-  .managed-list li {
-    font-size: 14px;
-    color: var(--text-muted);
-    padding: 11px 0;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    border-top: 1px solid var(--border);
-    line-height: 1.55;
-  }
-  .managed-list li:first-child { border-top: none; padding-top: 0; }
-  .managed-list li:last-child { padding-bottom: 0; }
-  .managed-list li svg {
-    flex-shrink: 0;
-    margin-top: 3px;
-    color: var(--primary);
-  }
-
-  /* ============ BUSINESS ============ */
-  .business {
-    padding: 90px 24px;
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .business-inner {
-    max-width: 720px;
-    margin: 0 auto;
-    text-align: center;
-  }
-  .business h2 {
-    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
-    font-weight: 700;
-    letter-spacing: -0.025em;
-    line-height: 1.2;
-    color: var(--text);
-    margin-bottom: 16px;
-  }
-  .business p {
-    font-size: 15px;
-    color: var(--text-muted);
-    line-height: 1.65;
-    margin-bottom: 28px;
-    max-width: 520px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  /* ============ FOOTER ============ */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 28px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-  .footer-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  .footer-mark {
-    width: 22px; height: 22px;
-    border-radius: 6px;
-    background: var(--primary);
-    color: var(--primary-text);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-  }
-  .footer-text {
-    font-size: 12px;
-    color: var(--text-subtle);
-  }
-  .footer-links {
-    display: flex;
-    gap: 18px;
-  }
-  .footer-link {
-    font-size: 12px;
-    color: var(--text-subtle);
-    text-decoration: none;
-    background: none;
-    border: none;
-    font-family: inherit;
-    cursor: pointer;
-    padding: 0;
-    transition: color .15s ease;
-  }
-  .footer-link:hover { color: var(--text-muted); }
-
-  /* ============ REVEAL ============ */
-  .reveal {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity .5s ease, transform .5s ease;
-  }
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* ============ LEGAL TEXT (Impressum) ============ */
-  .legal-wrap {
-    max-width: 560px;
-    margin: 0 auto;
-    padding: 32px 24px 60px;
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.65;
-  }
-  .legal-wrap p {
-    margin: 0 0 18px 0;
-  }
-  .legal-wrap p:last-child { margin-bottom: 0; }
-  .legal-wrap strong {
-    color: var(--text);
-    font-weight: 600;
-    display: block;
-    margin-bottom: 4px;
-  }
-  .legal-wrap a {
-    color: var(--primary);
-    text-decoration: none;
-  }
-  .legal-wrap a:hover { text-decoration: underline; }
-
-  /* ============ FULL-SCREEN MODAL (Kontakt + Datenschutz + Impressum) ============ */
-  .cf-overlay {
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .25s ease;
-  }
-  .cf-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-  }
-  .cf-topbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 24px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg);
-    flex-shrink: 0;
-  }
-  .cf-topbar-title {
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: var(--text);
-    letter-spacing: -0.01em;
-  }
-  .cf-close {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    font-size: 18px;
-    line-height: 1;
-    padding: 0;
-    font-family: inherit;
-    transition: background .15s ease, border-color .15s ease;
-  }
-  .cf-close:hover {
-    background: var(--surface);
-    border-color: var(--border-strong);
-  }
-  .cf-body {
-    flex: 1;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-  }
-  .cf-body iframe {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-    background: #ffffff;
-  }
-
-  /* ============ CONTACT FORM ============ */
-  .contact-wrap {
-    max-width: 480px;
-    margin: 0 auto;
-    padding: 32px 20px 60px;
-  }
-  .contact-wrap h2 {
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .contact-sub {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 28px;
-    line-height: 1.6;
-  }
-  .field {
-    margin-bottom: 14px;
-  }
-  .field label {
-    display: block;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
-    margin-bottom: 6px;
-    letter-spacing: 0.01em;
-  }
-  .field label .opt {
-    font-weight: 400;
-    color: var(--text-faint);
-    margin-left: 4px;
-  }
-  .field input,
-  .field textarea {
-    width: 100%;
-    padding: 12px 14px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: inherit;
-    font-size: 14px;
-    line-height: 1.5;
-    transition: border-color .15s ease, background .15s ease;
-  }
-  .field input:focus,
-  .field textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    background: var(--bg);
-  }
-  .field input::placeholder,
-  .field textarea::placeholder {
-    color: var(--text-faint);
-  }
-  .field textarea {
-    resize: vertical;
-    min-height: 110px;
-  }
-  .field input.error,
-  .field textarea.error {
-    border-color: var(--error);
-  }
-  .field-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  @media (max-width: 480px) {
-    .field-row { grid-template-columns: 1fr; }
-  }
-  .contact-submit {
-    width: 100%;
-    padding: 14px 18px;
-    background: var(--primary);
-    color: var(--primary-text);
-    border: 1px solid var(--primary);
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-    transition: background .15s ease, border-color .15s ease;
-  }
-  .contact-submit:hover {
-    background: var(--primary-hover);
-    border-color: var(--primary-hover);
-  }
-  .contact-submit:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .contact-error {
-    font-size: 12px;
-    color: var(--error);
-    text-align: center;
-    margin-top: 12px;
-    display: none;
-  }
-  .contact-error.visible { display: block; }
-
-  .contact-success {
-    text-align: center;
-    padding: 14px 0;
-    display: none;
-  }
-  .contact-success.visible { display: block; }
-  .success-icon {
-    width: 64px; height: 64px;
-    border-radius: 50%;
-    background: color-mix(in srgb, var(--primary) 20%, var(--surface));
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-  }
-  .contact-success h3 {
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 10px;
-    letter-spacing: -0.01em;
-  }
-  .contact-success p {
-    font-size: 14px;
-    color: var(--text-muted);
-    line-height: 1.6;
-    max-width: 320px;
-    margin: 0 auto;
-  }
-
-  body.locked { overflow: hidden; }
-
-  @media (max-width: 600px) {
-    .hero { padding: 130px 20px 70px; }
-    .features-section, .business { padding: 70px 20px; }
-    .managed { padding: 70px 20px; }
-    footer { padding: 22px 20px; }
-  }
+@media (max-width:640px){
+  .hero{padding:48px 0 28px}
+  .tiles-grid{grid-template-columns:1fr}
+  .tile{padding:18px 18px 18px 20px;gap:14px}
+  .tile-visual{width:108px;height:108px;padding:8px}
+  .footer-inner{flex-direction:column;align-items:flex-start;text-align:left}
+}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .tile{transition:none}
+}
 </style>
 </head>
 <body>
 
-<!-- ============ NAV ============ -->
-<nav>
-  <a href="#top" class="nav-logo">
-    <div class="nav-logo-mark">v</div>
-    <span class="nav-logo-text">viuno</span>
-  </a>
-  <div class="nav-right">
-    <div class="lang-switcher" role="group" aria-label="Sprache wählen">
-      <a href="/" class="active" aria-current="page">DE</a>
-      <a href="/it/">IT</a>
-    </div>
-    <button class="nav-cta" onclick="openContact()">Anfragen</button>
+<nav class="top">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <span class="logo-mark">v</span>
+      <span>viuno</span>
+    </a>
+    <a href="/login" class="nav-cta">Login</a>
   </div>
 </nav>
 
-<!-- ============ HERO ============ -->
-<section class="hero" id="top">
-  <div class="hero-inner">
-    <span class="hero-tag">Tools für Creator</span>
-    <h1>
-      Tools für Creator.
-      <em>Management, wenn es ernst wird.</em>
-    </h1>
-    <p class="hero-sub">Für Creator, Brands und Unternehmen im DACH Raum.</p>
-    <div class="hero-actions">
-      <a href="https://app.viuno.de" class="btn btn-primary">App starten</a>
-      <button class="btn btn-secondary" onclick="openContact()">Anfragen</button>
+<header class="hero">
+  <div class="container">
+    <h1 class="reveal">Deine Creator-Toolbox.<br>Ohne Schnickschnack.</h1>
+    <p class="hero-sub reveal">BioLink, Analyse, News und Media Kit — wähl, womit du starten willst.</p>
+  </div>
+</header>
+
+<!-- ─── KACHELN ─── -->
+<section class="tiles-section">
+  <div class="container">
+    <div class="tiles-grid reveal">
+
+      <a href="/biolink" class="tile">
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">BioLink erstellen</div>
+            <div class="tile-desc">Eine Seite für alle deine Links unter viuno.de/dein-name</div>
+          </div>
+        </div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-phone">
+            <div class="v-phone-screen">
+              <div class="v-avatar">L</div>
+              <div class="v-name"></div>
+              <div class="v-handle"></div>
+              <div class="v-link"></div>
+              <div class="v-link"></div>
+              <div class="v-link muted"></div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a href="/analytics" class="tile">
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">Analyse starten</div>
+            <div class="tile-desc">Sieh, welche Posts wirklich performen</div>
+          </div>
+        </div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-analytics">
+            <div class="v-stat"><b>12,4k</b><span>Follower</span></div>
+            <div class="v-bars">
+              <div class="v-bar" style="height:78%"></div>
+              <div class="v-bar" style="height:64%"></div>
+              <div class="v-bar" style="height:88%"></div>
+              <div class="v-bar faded" style="height:42%"></div>
+              <div class="v-bar" style="height:71%"></div>
+              <div class="v-bar faded" style="height:38%"></div>
+              <div class="v-bar" style="height:55%"></div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a href="/digest" class="tile">
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">Creator News</div>
+            <div class="tile-desc">Wöchentlich das Wichtigste, auf Wunsch per Mail</div>
+          </div>
+        </div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-news">
+            <div class="n-card">
+              <span class="n-badge ig">Instagram</span>
+              <div class="n-title">Your Algorithm im Hauptfeed</div>
+            </div>
+            <div class="n-card">
+              <span class="n-badge tt">TikTok</span>
+              <div class="n-title">Keyword-Kontrolle für Videos</div>
+            </div>
+          </div>
+        </div>
+      </a>
+
+      <a href="/mediakit" class="tile">
+        <div class="tile-body">
+          <div class="tile-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div>
+            <div class="tile-title">Media Kit</div>
+            <div class="tile-desc">Live-Stats für Anfragen von Marken, ein Link statt PDF</div>
+          </div>
+        </div>
+        <div class="tile-visual" aria-hidden="true">
+          <div class="v-mk">
+            <div class="mk-head">
+              <div class="mk-avatar">L</div>
+              <div>
+                <div class="mk-name">Lina Becker</div>
+                <div class="mk-pos">Lifestyle · Berlin</div>
+              </div>
+            </div>
+            <div class="mk-grid">
+              <div class="mk-stat"><div class="mk-val">12,4k</div><div class="mk-lbl">IG</div></div>
+              <div class="mk-stat"><div class="mk-val">28,1k</div><div class="mk-lbl">TT</div></div>
+            </div>
+            <div class="mk-row"><span>DE</span><div class="mk-track"><div class="mk-fill" style="width:74%"></div></div></div>
+            <div class="mk-row"><span>AT</span><div class="mk-track"><div class="mk-fill" style="width:14%"></div></div></div>
+          </div>
+        </div>
+      </a>
+
     </div>
   </div>
 </section>
 
-<!-- ============ FEATURES ============ -->
-<section class="features-section" id="creator">
-  <div class="features-inner">
-    <div class="section-head">
-      <span class="section-eyebrow">viuno App</span>
-      <h2>Was drin ist.</h2>
-    </div>
-    <div class="feature-grid">
+<div class="strip reveal">
+  Du willst mehr als die Tools? Wir arbeiten auch persönlich mit ausgewählten Creators.
+  <a href="mailto:kontakt@viuno.de?subject=Beratungsanfrage">Kontakt aufnehmen →</a>
+</div>
 
-      <div class="feature-card reveal">
-        <div class="ico">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        </div>
-        <h4>Analytics</h4>
-        <p>Follower, Engagement, Performance. Auf einen Blick.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <div class="ico">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6z"/></svg>
-        </div>
-        <h4>Daily Digest</h4>
-        <p>Trending Topics und Branchen News, jeden Morgen.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <div class="ico">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        </div>
-        <h4>BioLink</h4>
-        <p>Eine Bio Page mit allen Links, in deinem Stil.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <div class="ico">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        </div>
-        <h4>Media Kit</h4>
-        <p>Automatisch generiert mit Live Zahlen, bereit für Brand Anfragen.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <div class="ico">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-        </div>
-        <h4>Content News</h4>
-        <p>Was performt gerade. Welche Formate, Hooks, Trends.</p>
-      </div>
-
-      <div class="feature-card reveal">
-        <div class="ico">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        </div>
-        <h4>Insights</h4>
-        <p>Konkrete Vorschläge für deinen nächsten Post.</p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ============ MANAGED ============ -->
-<section class="managed">
-  <div class="section-head">
-    <span class="section-eyebrow">Managed Creator</span>
-    <h2>Wenn du mehr willst.</h2>
-  </div>
-  <div class="managed-card reveal">
-    <h2>Wachstum, Deals, Reporting.</h2>
-    <ul class="managed-list">
-      <li>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>Aktive Akquise von passenden Brand Deals</span>
-      </li>
-      <li>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>Vertragsverhandlung und Vertrags Check</span>
-      </li>
-      <li>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>Monatliches Reporting mit konkreten nächsten Schritten</span>
-      </li>
-      <li>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>Content Strategie auf deine Ziele zugeschnitten</span>
-      </li>
-      <li>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>Kurze Laufzeiten, kein Lock in, transparente Konditionen</span>
-      </li>
-    </ul>
-    <button class="btn btn-primary" onclick="openContact()">Anfragen</button>
-  </div>
-</section>
-
-<!-- ============ BUSINESS ============ -->
-<section class="business" id="unternehmen">
-  <div class="business-inner">
-    <span class="section-eyebrow">Für Brands und Unternehmen</span>
-    <h2>Social Media,<br/>direkt mit Creatorn umgesetzt.</h2>
-    <p>Content, Community Management, Reporting. Auf Wunsch passende Creator aus dem viuno Netzwerk als Markenbotschafter.</p>
-    <button class="btn btn-primary" onclick="openContact()">Anfragen</button>
-  </div>
-</section>
-
-<!-- ============ FOOTER ============ -->
 <footer>
-  <div class="footer-left">
-    <div class="footer-mark">v</div>
-    <span class="footer-text">© 2026 viuno</span>
-  </div>
-  <div class="footer-links">
-    <button class="footer-link" onclick="openImpressum()">Impressum</button>
-    <button class="footer-link" onclick="openDatenschutz()">Datenschutz</button>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="logo-mark">v</span>
+        <span>viuno · gemacht in Deutschland</span>
+      </div>
+      <div class="footer-links">
+        <a href="/legal#impressum">Impressum</a>
+        <a href="/legal#datenschutz">Datenschutz</a>
+        <a href="/legal#agb">AGB</a>
+        <a href="/login">Login</a>
+      </div>
+    </div>
   </div>
 </footer>
 
-<!-- ============ IMPRESSUM MODAL ============ -->
-<div class="cf-overlay" id="impressum-modal" role="dialog" aria-modal="true" aria-labelledby="impressum-title">
-  <div class="cf-topbar">
-    <div class="cf-topbar-title" id="impressum-title">Impressum</div>
-    <button class="cf-close" onclick="closeAll()" aria-label="Schließen">×</button>
-  </div>
-  <div class="cf-body">
-    <div class="legal-wrap">
-      <p>
-        <strong>Mehmet Ergürlek</strong>
-        StradaUno<br/>
-        In der Steige 27<br/>
-        71397 Leutenbach<br/>
-        Deutschland
-      </p>
-      <p>
-        Tel.: 015222388776<br/>
-        E-Mail: <a href="mailto:kontakt@viuno.de">kontakt@viuno.de</a>
-      </p>
-      <p>
-        <strong>Umsatzsteuer</strong>
-        Umsatzsteuerbefreit (Kleinunternehmerregelung)
-      </p>
-      <p>
-        <strong>Verantwortliche/r i.S.d. § 18 Abs. 2 MStV</strong>
-        Mehmet Ergürlek<br/>
-        In der Steige 27<br/>
-        71397 Leutenbach
-      </p>
-      <p>
-        Wir sind zur Teilnahme an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle weder verpflichtet noch bereit.
-      </p>
-    </div>
-  </div>
-</div>
-
-<!-- ============ DATENSCHUTZ MODAL ============ -->
-<div class="cf-overlay" id="datenschutz-modal" role="dialog" aria-modal="true" aria-labelledby="datenschutz-title">
-  <div class="cf-topbar">
-    <div class="cf-topbar-title" id="datenschutz-title">Datenschutz</div>
-    <button class="cf-close" onclick="closeAll()" aria-label="Schließen">×</button>
-  </div>
-  <div class="cf-body">
-    <iframe id="datenschutz-iframe" title="Datenschutz" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-  </div>
-</div>
-
-<!-- ============ KONTAKT MODAL ============ -->
-<div class="cf-overlay" id="contact-modal" role="dialog" aria-modal="true" aria-labelledby="contact-title">
-  <div class="cf-topbar">
-    <div class="cf-topbar-title" id="contact-title">Kontakt</div>
-    <button class="cf-close" onclick="closeAll()" aria-label="Schließen">×</button>
-  </div>
-  <div class="cf-body">
-    <div class="contact-wrap">
-
-      <div id="contact-form-view">
-        <h2>Schreib direkt.</h2>
-        <p class="contact-sub">Ob Creator Anfrage oder Unternehmens Projekt. Kurz worum es geht, ich melde mich persönlich zurück.</p>
-
-        <div class="field">
-          <label for="c-name">Name</label>
-          <input type="text" id="c-name" placeholder="Wie heißt du?" autocomplete="name" />
-        </div>
-
-        <div class="field">
-          <label for="c-email">E Mail</label>
-          <input type="email" id="c-email" placeholder="du@beispiel.de" autocomplete="email" />
-        </div>
-
-        <div class="field-row">
-          <div class="field">
-            <label for="c-instagram">Instagram <span class="opt">(optional)</span></label>
-            <input type="text" id="c-instagram" placeholder="@dein.handle" autocomplete="off" />
-          </div>
-          <div class="field">
-            <label for="c-tiktok">TikTok <span class="opt">(optional)</span></label>
-            <input type="text" id="c-tiktok" placeholder="@dein.handle" autocomplete="off" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label for="c-website">Website <span class="opt">(optional)</span></label>
-          <input type="url" id="c-website" placeholder="https://" autocomplete="url" />
-        </div>
-
-        <div class="field">
-          <label for="c-message">Worum geht es?</label>
-          <textarea id="c-message" placeholder="Kurz was du suchst. Creator Management, Social Media für dein Unternehmen oder einfach eine Frage."></textarea>
-        </div>
-
-        <button class="contact-submit" id="c-submit" onclick="submitContact()">Nachricht senden</button>
-        <div class="contact-error" id="c-error">Etwas ist schiefgelaufen. Bitte versuch es nochmal.</div>
-      </div>
-
-      <div class="contact-success" id="contact-success-view">
-        <div class="success-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <h3>Danke. Angekommen.</h3>
-        <p>Ich melde mich innerhalb von 24 Stunden persönlich zurück.</p>
-      </div>
-
-    </div>
-  </div>
-</div>
-
 <script>
-const EDGE_URL = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/contact-submit';
-const DATENSCHUTZ_URL = 'https://itrk.legal/1hAc.8U.ZIR-iframe.html';
-
-let datenschutzLoaded = false;
-
-function lockBody() { document.body.classList.add('locked'); }
-function unlockBody() { document.body.classList.remove('locked'); }
-
-function openImpressum() {
-  document.getElementById('impressum-modal').classList.add('open');
-  lockBody();
-}
-
-function openDatenschutz() {
-  if (!datenschutzLoaded) {
-    document.getElementById('datenschutz-iframe').src = DATENSCHUTZ_URL;
-    datenschutzLoaded = true;
-  }
-  document.getElementById('datenschutz-modal').classList.add('open');
-  lockBody();
-}
-
-function openContact() {
-  document.getElementById('contact-modal').classList.add('open');
-  lockBody();
-  setTimeout(() => {
-    const nameInput = document.getElementById('c-name');
-    const formView = document.getElementById('contact-form-view');
-    if (nameInput && formView.style.display !== 'none') {
-      nameInput.focus();
-    }
-  }, 350);
-}
-
-function closeAll() {
-  document.getElementById('impressum-modal').classList.remove('open');
-  document.getElementById('datenschutz-modal').classList.remove('open');
-  document.getElementById('contact-modal').classList.remove('open');
-  unlockBody();
-}
-
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeAll();
-});
-
-async function submitContact() {
-  const nameEl = document.getElementById('c-name');
-  const emailEl = document.getElementById('c-email');
-  const msgEl = document.getElementById('c-message');
-  const igEl = document.getElementById('c-instagram');
-  const ttEl = document.getElementById('c-tiktok');
-  const webEl = document.getElementById('c-website');
-  const btn = document.getElementById('c-submit');
-  const errEl = document.getElementById('c-error');
-
-  const name = nameEl.value.trim();
-  const email = emailEl.value.trim();
-  const message = msgEl.value.trim();
-  const instagram_handle = igEl.value.trim() || null;
-  const tiktok_handle = ttEl.value.trim() || null;
-  const website_url = webEl.value.trim() || null;
-
-  [nameEl, emailEl, msgEl].forEach(el => el.classList.remove('error'));
-  errEl.classList.remove('visible');
-
-  let hasError = false;
-  let firstErrorEl = null;
-  if (!name || name.length < 2) { nameEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || nameEl; }
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    emailEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || emailEl;
-  }
-  if (!message || message.length < 5) { msgEl.classList.add('error'); hasError = true; firstErrorEl = firstErrorEl || msgEl; }
-  if (hasError) {
-    if (firstErrorEl) firstErrorEl.focus();
+(function(){
+  if(!('IntersectionObserver' in window)){
+    document.querySelectorAll('.reveal').forEach(el=>el.classList.add('in'));
     return;
   }
-
-  btn.disabled = true;
-  btn.textContent = 'Wird gesendet…';
-
-  try {
-    const res = await fetch(EDGE_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name, email, message,
-        instagram_handle, tiktok_handle, website_url,
-        source: 'landing-page'
-      })
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
     });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok || data.success === false) throw new Error(data.error || 'Fehler');
-
-    document.getElementById('contact-form-view').style.display = 'none';
-    document.getElementById('contact-success-view').classList.add('visible');
-    document.querySelector('#contact-modal .cf-body').scrollTop = 0;
-  } catch (err) {
-    errEl.textContent = err.message && err.message !== 'Fehler' ? err.message : 'Etwas ist schiefgelaufen. Bitte versuch es nochmal.';
-    errEl.classList.add('visible');
-    btn.disabled = false;
-    btn.textContent = 'Nachricht senden';
-  }
-}
-
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach(e => {
-    if (e.isIntersecting) {
-      setTimeout(() => e.target.classList.add('visible'), 50);
-      obs.unobserve(e.target);
-    }
-  });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  },{rootMargin:'-20px 0px',threshold:0.05});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  setTimeout(()=>{
+    document.querySelectorAll('.hero .reveal').forEach(el=>el.classList.add('in'));
+  },50);
+})();
 </script>
 
 </body>

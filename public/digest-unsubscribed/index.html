@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>viuno · Abmeldung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#f5f4f2;font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:#111110}
+body{display:flex;align-items:center;justify-content:center;padding:24px}
+.card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:36px 28px;max-width:380px;width:100%;text-align:center}
+.icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px}
+.icon.ok{background:#edf7f1}
+.icon.err{background:#fdf0ef}
+h1{font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em}
+p{font-size:13px;color:#7a7975;line-height:1.6;margin-bottom:20px}
+a.btn{display:inline-block;padding:11px 20px;background:#111110;color:#fff;border-radius:10px;font-size:13px;font-weight:600;text-decoration:none}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="icon ok" id="icon-ok"><span>✓</span></div>
+  <div class="icon err hidden" id="icon-err"><span>⚠️</span></div>
+
+  <div id="state-ok">
+    <h1>Abgemeldet</h1>
+    <p>Du bekommst die Creator News ab jetzt nicht mehr per E-Mail. Du kannst dich in der App jederzeit wieder anmelden.</p>
+  </div>
+
+  <div id="state-invalid" class="hidden">
+    <h1>Link ungültig</h1>
+    <p>Dieser Abmelde-Link ist ungültig oder abgelaufen. Du kannst dich stattdessen direkt in der App abmelden.</p>
+  </div>
+
+  <div id="state-error" class="hidden">
+    <h1>Etwas ist schiefgelaufen</h1>
+    <p>Die Abmeldung konnte gerade nicht verarbeitet werden. Bitte versuch es später erneut oder melde dich direkt in der App ab.</p>
+  </div>
+
+  <a class="btn" href="https://viuno.de">Zu viuno</a>
+</div>
+<script>
+  const status = new URLSearchParams(window.location.search).get('status') || 'ok'
+  if (status !== 'ok') {
+    document.getElementById('icon-ok').classList.add('hidden')
+    document.getElementById('icon-err').classList.remove('hidden')
+    document.getElementById('state-ok').classList.add('hidden')
+  }
+  if (status === 'invalid') {
+    document.getElementById('state-invalid').classList.remove('hidden')
+  } else if (status === 'error') {
+    document.getElementById('state-error').classList.remove('hidden')
+  }
+</script>
+</body>
+</html>

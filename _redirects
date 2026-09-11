@@ -1,0 +1,18 @@
+# Cloudflare Pages _redirects
+# Ensures /legal serves legal.html and not the landing page
+
+/legal          /legal.html     200
+/legal/*        /legal.html     200
+/dashboard      /dashboard.html 200
+/analytics      /analytics.html 200
+/digest         /digest.html    200
+/trends         /trends.html    200
+/requests       /requests.html  200
+/biolink        /biolink.html   200
+/mediakit       /mediakit.html  200
+/profile        /profile.html   200
+/onboarding     /onboarding.html 200
+/login          /login.html     200
+/register       /register.html  200
+/extras         /extras.html    200
+/reset-password     /reset-password.html  200

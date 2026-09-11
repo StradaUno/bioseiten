@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>viuno · Rechtliches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;
+  --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);
+  --text:#111110;--muted:#7a7975;--subtle:#b0afa9;
+  --radius:16px;--radius-sm:10px;
+  --safe-bottom:env(safe-area-inset-bottom,0px)
+}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:16px}
+input,textarea,select{font-size:16px!important}
+
+/* TOPBAR — simple, no sidebar needed */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.topbar-logo{display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
+.logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em;color:var(--text)}
+.topbar-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:500;color:var(--muted);text-decoration:none;padding:6px 10px;border-radius:var(--radius-sm);transition:background .15s}
+.topbar-back:hover{background:var(--surface2);color:var(--text)}
+
+/* PAGE */
+.page{max-width:680px;margin:0 auto;padding:24px 20px calc(48px + var(--safe-bottom))}
+.page-title{font-size:26px;font-weight:700;letter-spacing:-.04em;margin-bottom:6px}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+
+/* TABS */
+.tab-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.tab-btn{padding:8px 16px;border-radius:99px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);transition:all .15s;white-space:nowrap}
+.tab-btn:hover{background:var(--surface2);color:var(--text)}
+.tab-btn.active{background:var(--text);color:white;border-color:var(--text)}
+
+/* CONTENT CARD */
+.content-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;min-height:200px}
+.content-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.content-body{font-size:13px;color:var(--muted);line-height:1.75;white-space:pre-wrap;word-break:break-word}
+.content-updated{font-size:11px;color:var(--subtle);margin-top:20px;padding-top:12px;border-top:1px solid var(--border)}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,#e8e6e2 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skeleton-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+
+/* ERROR */
+.error-state{text-align:center;padding:48px 20px;color:var(--muted)}
+.error-icon{font-size:32px;margin-bottom:10px}
+
+/* FOOTER */
+.page-footer{text-align:center;margin-top:32px;font-size:11px;color:var(--subtle)}
+.page-footer a{color:var(--subtle);text-decoration:none}
+.page-footer a:hover{color:var(--muted)}
+
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-logo" href="/dashboard">
+    <div class="logo-mark">v</div>
+    <div class="logo-text">viuno</div>
+  </a>
+  <a class="topbar-back" href="javascript:history.back()">← Zurück</a>
+</div>
+
+<div class="page">
+  <div class="page-title">Rechtliches</div>
+  <div class="page-sub">Alle rechtlichen Dokumente von viuno auf einen Blick.</div>
+
+  <div class="tab-row" id="tab-row">
+    <button class="tab-btn active" data-tab="impressum">Impressum</button>
+    <button class="tab-btn" data-tab="datenschutz">Datenschutz</button>
+    <button class="tab-btn" data-tab="agb">AGB</button>
+    <button class="tab-btn" data-tab="widerruf">Widerruf</button>
+    <button class="tab-btn" data-tab="biopage_terms">BioLink-Bedingungen</button>
+    <button class="tab-btn" data-tab="mediakit_terms">Media Kit-Bedingungen</button>
+  </div>
+
+  <!-- Skeleton -->
+  <div id="skeleton" class="skeleton-card">
+    <div class="skeleton" style="height:18px;width:200px;margin-bottom:16px"></div>
+    <div class="skeleton" style="height:12px;margin-bottom:8px"></div>
+    <div class="skeleton" style="height:12px;width:90%;margin-bottom:8px"></div>
+    <div class="skeleton" style="height:12px;width:80%;margin-bottom:8px"></div>
+    <div class="skeleton" style="height:12px;width:85%;margin-bottom:8px"></div>
+    <div class="skeleton" style="height:12px;width:75%;margin-bottom:8px"></div>
+    <div class="skeleton" style="height:12px;width:90%"></div>
+  </div>
+
+  <!-- Content -->
+  <div id="content-card" class="content-card hidden">
+    <div class="content-title" id="content-title">Impressum</div>
+    <div class="content-body" id="content-body"></div>
+    <div class="content-updated" id="content-updated"></div>
+  </div>
+
+  <!-- Error -->
+  <div id="error-state" class="error-state hidden">
+    <div class="error-icon">⚠️</div>
+    <div>Inhalt konnte nicht geladen werden.</div>
+  </div>
+
+  <div class="page-footer">
+    viuno · <a href="https://viuno.de">viuno.de</a> · Stand April 2026
+  </div>
+</div>
+
+<script type="module">
+import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+
+const sb = createClient(
+  'https://bzejndghppuipnedasuv.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo',
+  {auth:{persistSession:false}}
+)
+
+const TAB_LABELS = {
+  impressum:      'Impressum',
+  datenschutz:    'Datenschutzerklärung',
+  agb:            'Allgemeine Geschäftsbedingungen',
+  widerruf:       'Widerrufsbelehrung',
+  biopage_terms:  'Nutzungsbedingungen BioLink',
+  mediakit_terms: 'Nutzungsbedingungen Media Kit',
+}
+
+let legalData = null
+let activeTab = 'impressum'
+
+// Check URL hash for deep linking (#datenschutz, #agb, etc.)
+function getHashTab() {
+  const hash = window.location.hash.replace('#', '').toLowerCase()
+  return TAB_LABELS[hash] ? hash : null
+}
+
+async function loadLegal() {
+  const {data, error} = await sb.from('legal_texts').select('*').eq('id', 1).single()
+  document.getElementById('skeleton').classList.add('hidden')
+  if (error || !data) {
+    document.getElementById('error-state').classList.remove('hidden')
+    return
+  }
+  legalData = data
+  document.getElementById('content-card').classList.remove('hidden')
+
+  // Switch to hash tab if present
+  const hashTab = getHashTab()
+  if (hashTab) activeTab = hashTab
+
+  renderTab(activeTab)
+  updateTabButtons(activeTab)
+}
+
+function renderTab(tab) {
+  const body = legalData?.[tab] || ''
+  const updatedAt = legalData?.updated_at
+    ? new Date(legalData.updated_at).toLocaleDateString('de-DE', {day:'2-digit', month:'2-digit', year:'numeric'})
+    : ''
+
+  document.getElementById('content-title').textContent = TAB_LABELS[tab] || tab
+  document.getElementById('content-body').textContent = body || 'Kein Inhalt vorhanden.'
+  document.getElementById('content-updated').textContent = updatedAt ? `Stand: ${updatedAt}` : ''
+
+  // Update page title
+  document.title = `viuno · ${TAB_LABELS[tab] || 'Rechtliches'}`
+
+  // Update hash for deep linking
+  history.replaceState(null, '', '#' + tab)
+}
+
+function updateTabButtons(tab) {
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tab)
+  })
+}
+
+// Tab click events
+document.getElementById('tab-row').addEventListener('click', e => {
+  const btn = e.target.closest('.tab-btn')
+  if (!btn) return
+  activeTab = btn.dataset.tab
+  updateTabButtons(activeTab)
+  renderTab(activeTab)
+  window.scrollTo({top: 0, behavior: 'smooth'})
+})
+
+// Handle hash changes (browser back/forward)
+window.addEventListener('hashchange', () => {
+  const hashTab = getHashTab()
+  if (hashTab && hashTab !== activeTab) {
+    activeTab = hashTab
+    updateTabButtons(activeTab)
+    renderTab(activeTab)
+  }
+})
+
+loadLegal()
+</script>
+</body>
+</html>
