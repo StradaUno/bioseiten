@@ -25,6 +25,8 @@
   --red-bg: #fdf0ef;
   --orange: #b85c00;
   --orange-bg: #fdf3e7;
+  --blue: #3b5bdb;
+  --blue-bg: #f0f4ff;
   --radius: 16px;
   --radius-sm: 10px;
   --nav-h: 56px;
@@ -467,6 +469,98 @@ html, body {
 .edit-page-title{font-size:15px;font-weight:700;letter-spacing:-.03em;flex:1}
 .edit-page-content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 0 calc(40px + var(--safe-bottom))}
 .edit-page-intro{padding:0 20px 12px;font-size:13px;color:var(--muted);line-height:1.5}
+
+/* ═══ VIEW: ANALYSE (aus /analytics/) ═══
+   .section-label ist hier 11px statt 10px wie in /profile/ — deshalb begrenzt. */
+.view-analytics .section-label{font-size:11px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.kpi-card.dark{background:var(--text);border-color:var(--text);grid-column:1/-1;padding:16px 20px}
+.kpi-card.dark .kpi-label{color:rgba(255,255,255,.5)}
+.kpi-card.dark .kpi-value{color:white}
+.kpi-card.dark .kpi-delta{color:rgba(255,255,255,.6)}
+.kpi-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.kpi-value{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1}
+.kpi-delta{font-size:12px;font-weight:500;margin-top:4px}
+.kpi-delta.up{color:var(--green)}.kpi-delta.down{color:var(--red)}.kpi-delta.flat{color:var(--muted)}
+.timing-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.timing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;text-align:center}
+.timing-icon{font-size:20px;margin-bottom:6px}
+.timing-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.timing-value{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.02em}
+.spinner-dark{width:13px;height:13px;border:2px solid rgba(0,0,0,.12);border-top-color:var(--muted);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
+.btn-start-wrap{padding:16px 20px 0}
+.btn-start{width:100%;padding:14px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-start:disabled{opacity:.4;cursor:not-allowed}
+.btn-start.pay{background:#111110}
+.btn-start-sub{font-size:11px;color:var(--muted);text-align:center;margin-top:6px;min-height:16px}
+.consent-wrap{padding:0 20px}
+.consent-box{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-top:10px}
+.consent-checkbox{width:18px;height:18px;flex-shrink:0;accent-color:var(--text);cursor:pointer;margin-top:1px}
+.consent-label{font-size:12px;color:var(--muted);line-height:1.5;cursor:pointer}
+.pay-confirm{margin:12px 20px 0;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.status-flow{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:12px 20px 0;overflow:hidden}
+.status-flow-head{padding:14px 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.flow-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:15px}
+.flow-icon.running{background:var(--surface2)}
+.flow-icon.done{background:var(--green-bg)}
+.flow-icon.error{background:var(--red-bg)}
+.flow-title{font-size:14px;font-weight:600;color:var(--text)}
+.flow-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.flow-steps{padding:12px 16px 14px;display:flex;flex-direction:column}
+.flow-step{display:flex;align-items:center;gap:10px;padding:6px 0;position:relative}
+.flow-step:not(:last-child)::after{content:'';position:absolute;left:10px;top:26px;width:2px;height:calc(100% - 8px);background:var(--border)}
+.step-dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:9px;font-weight:700;z-index:1}
+.step-dot.done{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
+.step-dot.active{background:var(--text);color:white}
+.step-dot.wait{background:var(--surface2);border:1.5px solid var(--border-strong)}
+.step-label{font-size:13px;font-weight:500}
+.step-label.done{color:var(--subtle)}
+.step-label.active{color:var(--text);font-weight:600}
+.step-label.wait{color:var(--subtle)}
+.platform-row{display:flex;gap:6px;padding:16px 20px 0}
+.plat-btn{flex:1;padding:10px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;text-align:center;cursor:pointer;border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-family:inherit;transition:all .15s}
+.plat-btn.active{background:var(--text);color:white;border-color:var(--text)}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.summary-text{font-size:14px;color:var(--text);line-height:1.7;white-space:pre-line}
+.insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.insight-row{padding:14px 16px;border-bottom:1px solid var(--border)}
+.insight-row:last-child{border-bottom:none}
+.insight-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.tag-good{background:var(--green-bg);color:var(--green)}
+.tag-improve{background:var(--orange-bg);color:var(--orange)}
+.tag-tip{background:var(--surface2);color:var(--muted)}
+.tag-dev{background:var(--blue-bg);color:var(--blue)}
+.insight-text{font-size:14px;color:var(--text);line-height:1.65;white-space:pre-line}
+.tips-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.tip-row{display:flex;align-items:flex-start;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.tip-row:last-child{border-bottom:none}
+.tip-num{width:22px;height:22px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+.tip-text{font-size:14px;color:var(--text);line-height:1.5;flex:1}
+.top-posts-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.top-post-row{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border);text-decoration:none;color:inherit}
+.top-post-row:last-child{border-bottom:none}
+.top-post-rank{width:22px;height:22px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--muted);flex-shrink:0}
+.top-post-rank.first{background:var(--text);color:white}
+.top-post-body{flex:1;min-width:0}
+.top-post-why{font-size:13px;color:var(--text);line-height:1.4;margin-bottom:3px}
+.top-post-stat{font-size:12px;color:var(--muted)}
+.top-post-arrow{color:var(--subtle);font-size:14px}
+.empty-state{text-align:center;padding:48px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.empty-icon{font-size:32px;margin-bottom:10px}
+.empty-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.empty-sub{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:16px}
+.btn-empty{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.btn-share{width:100%;padding:13px;background:var(--surface);color:var(--text);border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.modal-field{margin-bottom:12px}
+.modal-label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.modal-input-wrap{display:flex;align-items:center;border:1px solid var(--border-strong);border-radius:var(--radius-sm);overflow:hidden;background:var(--bg)}
+.modal-prefix{padding:12px 10px 12px 14px;font-size:14px;color:var(--subtle);background:var(--surface2);border-right:1px solid var(--border-strong);flex-shrink:0}
+.modal-input{flex:1;padding:12px 14px;border:none;font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none}
+.modal-hint{font-size:11px;margin-top:4px;min-height:16px;padding-left:2px}
+.modal-hint.err{color:var(--red)}
+.modal-divider{height:1px;background:var(--border);margin:16px 0}
+.modal-btn-confirm:disabled{opacity:.45;cursor:not-allowed}
 
 /* ─── TOAST ─── */
 .toast-wrap { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
@@ -3198,8 +3292,572 @@ window.saveLanguage=async function(){
   backToEditMenu('language-sheet')
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   VIEW: ANALYSE — übernommen aus public/analytics/index.html
+   Freischaltung ueber Stripe, Widerrufs-Zustimmung, Analyse-Lauf mit
+   Status-Flow und 5-Sekunden-Polling, Plattform-Tabs, KI-Auswertung
+   und Teilen-Snapshot unveraendert.
+   ═══════════════════════════════════════════════════════════════ */
+const STRIPE_PAYMENT_LINK='https://buy.stripe.com/6oUcN61Id8rf7ov9jc4ow0g'
+const WITHDRAWAL_CONSENT_TEXT='Ich stimme zu, dass die Analyse sofort nach Zahlung beginnt, und verliere damit mein 14-tägiges Widerrufsrecht.'
+
+/* aus /analytics/: Datum ohne Uhrzeit */
+function fmtDateDMY(d){if(!d)return'–';return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}
+
+/* View-lokaler Zustand, entspricht dem `S` der alten Seite */
+let anv = null
+
+async function renderAnalytics(area, ctx){
+  const uid = state.session.user.id
+
+  area.innerHTML = `
+  <div class="view-analytics">
+    <!-- ANALYSE STARTEN / FREISCHALTEN — ganz oben -->
+    <div class="btn-start-wrap">
+      <button class="btn-start" id="btn-start" onclick="handleStartClick()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Neue Analyse starten
+      </button>
+      <div class="btn-start-sub" id="btn-start-sub"></div>
+    </div>
+
+    <!-- Widerrufs-Zustimmung — nur sichtbar solange keine Freischaltung vorliegt -->
+    <div class="consent-wrap hidden" id="consent-wrap">
+      <div class="consent-box">
+        <input type="checkbox" class="consent-checkbox" id="consent-checkbox"/>
+        <label class="consent-label" for="consent-checkbox">Ich stimme zu, dass die Analyse sofort nach Zahlung beginnt, und verliere damit mein 14-tägiges Widerrufsrecht.</label>
+      </div>
+    </div>
+
+    <!-- Banner nach Rueckkehr von Stripe, waehrend auf Webhook gewartet wird -->
+    <div class="pay-confirm hidden" id="pay-confirm">
+      <span class="spinner-dark"></span>
+      <span>Zahlung wird bestätigt…</span>
+    </div>
+
+    <!-- STATUS FLOW (aufklappbar während Analyse läuft) -->
+    <div class="status-flow hidden" id="status-flow">
+      <div class="status-flow-head">
+        <div class="flow-icon running" id="flow-icon"><span class="spinner-dark"></span></div>
+        <div>
+          <div class="flow-title" id="flow-title">Analyse läuft</div>
+          <div class="flow-sub" id="flow-sub">Bitte warte einen Moment…</div>
+        </div>
+      </div>
+      <div class="flow-steps" id="flow-steps"></div>
+    </div>
+
+    <!-- PLATFORM TABS -->
+    <div class="platform-row">
+      <button class="plat-btn active" id="btn-ig" onclick="switchPlatform('instagram')">Instagram</button>
+      <button class="plat-btn" id="btn-tt" onclick="switchPlatform('tiktok')">TikTok</button>
+    </div>
+
+    <!-- ANALYSE INHALT -->
+    <div id="analytics-content"></div>
+
+    <!-- HANDLE MODAL — beide Kanäle editierbar -->
+    <div class="modal-backdrop centered hidden" id="handle-modal" onclick="closeHandleModal()">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-title">Kanäle verknüpfen</div>
+        <div class="modal-sub">Gib mindestens einen Handle ein um deine Analyse zu starten.</div>
+        <div class="modal-field">
+          <label class="modal-label">Instagram</label>
+          <div class="modal-input-wrap">
+            <span class="modal-prefix">@</span>
+            <input type="text" class="modal-input" id="modal-ig" placeholder="dein_handle" autocomplete="off"/>
+          </div>
+          <div class="modal-hint" id="modal-ig-hint"></div>
+        </div>
+        <div class="modal-divider"></div>
+        <div class="modal-field">
+          <label class="modal-label">TikTok</label>
+          <div class="modal-input-wrap">
+            <span class="modal-prefix">@</span>
+            <input type="text" class="modal-input" id="modal-tt" placeholder="dein_handle" autocomplete="off"/>
+          </div>
+          <div class="modal-hint" id="modal-tt-hint"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-cancel" onclick="closeHandleModal()">Abbrechen</button>
+          <button class="modal-btn modal-btn-confirm" id="modal-save-btn" onclick="saveHandlesAndStart()">Speichern &amp; starten</button>
+        </div>
+      </div>
+    </div>
+  </div>`
+
+  anv = {
+    uid, ctx,
+    profile:null,
+    ki:{instagram:null,tiktok:null},
+    stats:{instagram:null,tiktok:null},
+    platform:'instagram',
+    runId:null, pollTimer:null,
+    hasPurchase:false
+  }
+  /* Das 5-Sekunden-Polling darf die Route nicht ueberleben. */
+  ctx.onCleanup(() => {
+    if(anv?.pollTimer)clearInterval(anv.pollTimer)
+    anv = null
+    document.body.style.overflow = ''
+  })
+
+  const{data:p}=await sb.from('users').select('display_name,full_name,profile_image_url,subscription_type,instagram_handle,tiktok_handle').eq('id',uid).single()
+  if(ctx.stale)return
+  anv.profile=p
+
+  // ── Rueckkehr von Stripe? URL-Param pruefen und kurz auf Webhook warten ──
+  const params=new URLSearchParams(location.search)
+  if(params.get('paid')==='1'){
+    // Hash mitnehmen, sonst verliert die SPA ihre Route
+    history.replaceState({},'',location.pathname+location.hash)
+    await waitForPurchaseAfterPayment()
+  } else {
+    await refreshPurchaseState()
+  }
+  if(ctx.stale)return
+
+  await checkActiveRun()
+  if(ctx.stale)return
+  await loadKi()
+}
+
+// ── Freischaltungs-Status laden ──
+async function refreshPurchaseState(){
+  const{data}=await sb.from('analysis_purchases').select('id').eq('user_id',anv.uid).is('consumed_at',null).limit(1).maybeSingle()
+  if(!anv)return
+  anv.hasPurchase=!!data
+  renderBtn()
+}
+
+// ── nach Stripe-Rueckkehr kurz pollen, bis der Webhook die Freischaltung eingetragen hat ──
+async function waitForPurchaseAfterPayment(){
+  const banner=document.getElementById('pay-confirm')
+  banner.classList.remove('hidden')
+  document.getElementById('btn-start').disabled=true
+  for(let i=0;i<8;i++){
+    const{data}=await sb.from('analysis_purchases').select('id').eq('user_id',anv.uid).is('consumed_at',null).limit(1).maybeSingle()
+    if(!anv||anv.ctx.stale)return
+    if(data){
+      anv.hasPurchase=true
+      banner.classList.add('hidden')
+      renderBtn()
+      showToast('Freigeschaltet ✓')
+      return
+    }
+    await new Promise(r=>setTimeout(r,2000))
+    if(!anv||anv.ctx.stale)return
+  }
+  banner.innerHTML='<span>Zahlung wird noch verarbeitet. Lade die Seite gleich nochmal neu.</span>'
+  document.getElementById('btn-start').disabled=false
+  renderBtn()
+}
+
+// ── Button state ──
+function renderBtn(){
+  const p=anv?.profile
+  const btn=document.getElementById('btn-start')
+  const sub=document.getElementById('btn-start-sub')
+  const consentWrap=document.getElementById('consent-wrap')
+  if(!p||!btn)return
+  if(!anv.hasPurchase){
+    btn.disabled=false
+    btn.classList.add('pay')
+    btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Analyse freischalten – 9,99€`
+    sub.textContent='Einmalige Freischaltung pro Analyse'
+    consentWrap.classList.remove('hidden')
+    document.getElementById('consent-checkbox').checked=false
+    return
+  }
+  btn.classList.remove('pay')
+  btn.disabled=false
+  btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Neue Analyse starten`
+  sub.textContent=p.instagram_handle||p.tiktok_handle?'':'Bitte zuerst einen Kanal verknüpfen'
+  consentWrap.classList.add('hidden')
+}
+
+// ── Klick auf den Hauptbutton -- je nach Zustand freischalten oder starten ──
+window.handleStartClick=function(){
+  if(!anv)return
+  if(!anv.hasPurchase){goToPayment();return}
+  startAnalysis()
+}
+
+// ── Erst Zustimmung pruefen + protokollieren, DANN zu Stripe weiterleiten ──
+window.goToPayment=async function(){
+  if(!anv)return
+  const checkbox=document.getElementById('consent-checkbox')
+  if(!checkbox.checked){
+    showToast('Bitte zuerst der sofortigen Leistung zustimmen.',3500)
+    return
+  }
+  const btn=document.getElementById('btn-start')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Einen Moment…'
+  const{error}=await sb.from('withdrawal_consents').insert({
+    user_id:anv.uid,
+    consent_text:WITHDRAWAL_CONSENT_TEXT
+  })
+  if(!anv)return
+  if(error){
+    showToast('Fehler beim Speichern der Zustimmung. Bitte erneut versuchen.',4000)
+    btn.disabled=false
+    renderBtn()
+    return
+  }
+  location.href=`${STRIPE_PAYMENT_LINK}?client_reference_id=${anv.uid}`
+}
+
+// ── Platform switch ──
+window.switchPlatform=function(p){
+  if(!anv)return
+  anv.platform=p
+  document.getElementById('btn-ig').classList.toggle('active',p==='instagram')
+  document.getElementById('btn-tt').classList.toggle('active',p==='tiktok')
+  renderAnalyticsContent()
+}
+
+// ── Load KI results ──
+async function loadKi(){
+  const[kiRes,statsRes]=await Promise.all([
+    sb.from('analyse_ki').select('*').eq('user_id',anv.uid).order('created_at',{ascending:false}).limit(4),
+    sb.from('analyse_stats').select('*').eq('user_id',anv.uid).order('created_at',{ascending:false}).limit(4)
+  ])
+  if(!anv||anv.ctx.stale)return
+  if(kiRes.data?.length){
+    anv.ki.instagram=kiRes.data.find(r=>r.platform==='instagram')||null
+    anv.ki.tiktok=kiRes.data.find(r=>r.platform==='tiktok')||null
+  }
+  if(statsRes.data?.length){
+    anv.stats.instagram=statsRes.data.find(r=>r.platform==='instagram')||null
+    anv.stats.tiktok=statsRes.data.find(r=>r.platform==='tiktok')||null
+  }
+  renderAnalyticsContent()
+}
+
+// ── Check active run on load ──
+async function checkActiveRun(){
+  const{data:run}=await sb.from('analysis_runs').select('*').eq('user_id',anv.uid).in('status',['scraping','analyzing']).order('started_at',{ascending:false}).limit(1).maybeSingle()
+  if(!anv||anv.ctx.stale)return
+  if(run){showFlow(run);poll(run.id)}
+}
+
+// ── Status Flow ──
+function showFlow(run){
+  document.getElementById('status-flow').classList.remove('hidden')
+  document.getElementById('consent-wrap').classList.add('hidden')
+  const btn=document.getElementById('btn-start')
+  btn.disabled=true
+  btn.classList.remove('pay')
+  btn.innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Analyse läuft…`
+  renderFlow(run)
+}
+
+function renderFlow(run){
+  const p=anv?.profile
+  const hasIg=!!(p?.instagram_handle)
+  const hasTt=!!(p?.tiktok_handle)
+  const igDone=run.instagram_done_at||run.instagram_skipped
+  const ttDone=run.tiktok_done_at||run.tiktok_skipped
+  const s=run.status
+
+  const steps=[]
+  steps.push({label:'Analyse gestartet',state:'done'})
+  if(hasIg)steps.push({label:'Instagram-Beiträge werden abgerufen',state:igDone?'done':(s==='scraping'&&!igDone?'active':'wait')})
+  if(hasTt)steps.push({label:'TikTok-Videos werden abgerufen',state:ttDone?'done':(s==='scraping'&&igDone&&!ttDone?'active':hasTt&&!ttDone?'wait':'done')})
+  steps.push({label:'Auswertung läuft',state:s==='analyzing'?'active':(s==='done'?'done':'wait')})
+  steps.push({label:'Ergebnisse bereit',state:s==='done'?'done':'wait'})
+
+  document.getElementById('flow-steps').innerHTML=steps.map(st=>`
+    <div class="flow-step">
+      <div class="step-dot ${st.state}">${st.state==='done'?'✓':st.state==='active'?'<span class="spinner" style="width:8px;height:8px;border-width:1.5px"></span>':''}</div>
+      <div class="step-label ${st.state}">${st.label}</div>
+    </div>`).join('')
+
+  const isDone=s==='done', isFailed=s==='failed'
+  const icon=document.getElementById('flow-icon')
+  const title=document.getElementById('flow-title')
+  const sub=document.getElementById('flow-sub')
+  if(isDone){icon.innerHTML='✓';icon.className='flow-icon done';title.textContent='Analyse abgeschlossen';sub.textContent='Deine Ergebnisse wurden aktualisiert'}
+  else if(isFailed){icon.innerHTML='✕';icon.className='flow-icon error';title.textContent='Analyse fehlgeschlagen';sub.textContent=run.error||'Bitte versuche es erneut'}
+  else{icon.innerHTML='<span class="spinner-dark"></span>';icon.className='flow-icon running';title.textContent='Analyse läuft';sub.textContent=s==='analyzing'?'Auswertung läuft…':'Daten werden abgerufen…'}
+}
+
+// ── Polling ──
+function poll(runId){
+  if(anv.pollTimer)clearInterval(anv.pollTimer)
+  anv.pollTimer=setInterval(async()=>{
+    const{data:run}=await sb.from('analysis_runs').select('*').eq('id',runId).single()
+    if(!anv||anv.ctx.stale)return
+    if(!run)return
+    renderFlow(run)
+    if(run.status==='done'||run.status==='failed'){
+      clearInterval(anv.pollTimer);anv.pollTimer=null
+      if(run.status==='done'){
+        const{data:p}=await sb.from('users').select('instagram_handle,tiktok_handle,subscription_type').eq('id',anv.uid).single()
+        if(!anv||anv.ctx.stale)return
+        if(p)anv.profile={...anv.profile,...p}
+        await refreshPurchaseState()
+        if(!anv||anv.ctx.stale)return
+        await loadKi()
+        if(!anv||anv.ctx.stale)return
+        showToast('Analyse fertig ✓')
+        setTimeout(()=>{document.getElementById('status-flow')?.classList.add('hidden')},4000)
+      } else {
+        renderBtn()
+        showToast('Analyse fehlgeschlagen — deine Freischaltung bleibt erhalten',4500)
+      }
+    }
+  },5000)
+}
+
+// ── Start Analysis ──
+window.startAnalysis=async function(){
+  if(!anv)return
+  const p=anv.profile
+  if(!p?.instagram_handle&&!p?.tiktok_handle){openHandleModal();return}
+  const btn=document.getElementById('btn-start')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird gestartet…'
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session){showToast('Session abgelaufen');location.reload();return}
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/start-analysis`,{method:'POST',headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}})
+    const body=await res.json()
+    if(!anv||anv.ctx.stale)return
+    if(res.status===402||body.error==='payment_required'){
+      anv.hasPurchase=false
+      renderBtn()
+      showToast(body.message||'Für eine neue Analyse ist eine Freischaltung nötig.',4000)
+      return
+    }
+    if(!res.ok||!body.success)throw new Error(body.error||'Unbekannter Fehler')
+    anv.runId=body.analysis_run_id
+    const fakeRun={id:body.analysis_run_id,status:'scraping',instagram_done_at:null,instagram_skipped:!p.instagram_handle,tiktok_done_at:null,tiktok_skipped:!p.tiktok_handle,error:null,started_at:new Date().toISOString()}
+    showFlow(fakeRun);poll(body.analysis_run_id)
+  }catch(err){
+    showToast('Fehler: '+err.message,4000)
+    renderBtn()
+  }
+}
+
+// ── Handle Modal ──
+window.openHandleModal=function(){
+  const p=anv?.profile
+  document.getElementById('modal-ig').value=p?.instagram_handle?p.instagram_handle.replace(/^@/,''):''
+  document.getElementById('modal-tt').value=p?.tiktok_handle?p.tiktok_handle.replace(/^@/,''):''
+  document.getElementById('modal-ig-hint').textContent=''
+  document.getElementById('modal-tt-hint').textContent=''
+  document.getElementById('handle-modal').classList.remove('hidden')
+  document.body.style.overflow='hidden'
+}
+window.closeHandleModal=function(){
+  document.getElementById('handle-modal')?.classList.add('hidden')
+  document.body.style.overflow=''
+}
+window.saveHandlesAndStart=async function(){
+  if(!anv)return
+  const ig=document.getElementById('modal-ig').value.trim().replace(/^@/,'')
+  const tt=document.getElementById('modal-tt').value.trim().replace(/^@/,'')
+  const igH=document.getElementById('modal-ig-hint')
+  const ttH=document.getElementById('modal-tt-hint')
+  igH.textContent='';ttH.textContent=''
+  if(!ig&&!tt){igH.textContent='Mindestens ein Handle eingeben.';igH.className='modal-hint err';return}
+  const re=/^[a-zA-Z0-9._]{1,50}$/
+  if(ig&&!re.test(ig)){igH.textContent='Ungültiges Format (Buchstaben, Zahlen, . und _)';igH.className='modal-hint err';return}
+  if(tt&&!re.test(tt)){ttH.textContent='Ungültiges Format (Buchstaben, Zahlen, . und _)';ttH.className='modal-hint err';return}
+  const btn=document.getElementById('modal-save-btn')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const patch={}
+  if(ig)patch.instagram_handle='@'+ig
+  if(tt)patch.tiktok_handle='@'+tt
+  await sb.from('users').update(patch).eq('id',anv.uid)
+  if(!anv)return
+  anv.profile={...anv.profile,...patch}
+  closeHandleModal()
+  btn.disabled=false;btn.textContent='Speichern & starten'
+  await startAnalysis()
+}
+
+// ── Render Content ──
+function renderAnalyticsContent(){
+  const p=anv.profile
+  const pl=anv.platform
+  const ki=anv.ki[pl]
+  const hasHandle=pl==='instagram'?!!(p?.instagram_handle):!!(p?.tiktok_handle)
+  const el=document.getElementById('analytics-content')
+  const label=pl==='instagram'?'Instagram':'TikTok'
+
+  if(!hasHandle){
+    el.innerHTML=`<div class="section" style="margin-top:12px"><div class="empty-state">
+      <div class="empty-icon">${pl==='instagram'?'📸':'🎵'}</div>
+      <div class="empty-title">Kein ${label}-Handle</div>
+      <div class="empty-sub">Verknüpfe deinen Kanal um die Analyse nutzen zu können.</div>
+      <button class="btn-empty" onclick="openHandleModal()">Kanal verknüpfen</button>
+    </div></div>`
+    return
+  }
+  if(!ki){
+    el.innerHTML=`<div class="section" style="margin-top:12px"><div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <div class="empty-title">Noch keine Analyse</div>
+      <div class="empty-sub">Starte deine erste Analyse um deine ${label}-Performance zu sehen.</div>
+    </div></div>`
+    return
+  }
+
+  let h=''
+  const date=fmtDateDMY(ki.created_at)
+  const st=anv.stats[pl]
+
+  if(st){
+    const follDelta=st.followers_change
+    const erDelta=st.engagement_rate_change
+    const follDeltaStr=follDelta!=null?(follDelta>=0?`↑ +${fmt(follDelta)}`:`↓ ${fmt(follDelta)}`):null
+    const erDeltaStr=erDelta!=null?(erDelta>=0?`↑ +${(+erDelta).toFixed(2)}%`:`↓ ${Math.abs(+erDelta).toFixed(2)}%`):null
+    h+=`<div class="section" style="margin-top:12px"><div class="kpi-grid">
+      <div class="kpi-card dark">
+        <div class="kpi-label">Follower</div>
+        <div class="kpi-value">${fmt(st.followers)}</div>
+        ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} diese Woche</div>`:'<div class="kpi-delta flat">Erste Messung</div>'}
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">⌀ Likes</div>
+        <div class="kpi-value">${fmt(st.avg_likes)}</div>
+        <div class="kpi-delta flat">Pro Beitrag</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Engagement Rate</div>
+        <div class="kpi-value">${st.engagement_rate!=null?(+st.engagement_rate).toFixed(2)+'%':'–'}</div>
+        ${erDeltaStr?`<div class="kpi-delta ${erDelta>=0?'up':'down'}">${erDeltaStr}</div>`:'<div class="kpi-delta flat">Erste Messung</div>'}
+      </div>
+      ${st.avg_views!=null?`<div class="kpi-card">
+        <div class="kpi-label">⌀ Views</div>
+        <div class="kpi-value">${fmt(st.avg_views)}</div>
+        <div class="kpi-delta flat">Pro Beitrag</div>
+      </div>`:`<div class="kpi-card">
+        <div class="kpi-label">⌀ Kommentare</div>
+        <div class="kpi-value">${fmt(st.avg_comments)}</div>
+        <div class="kpi-delta flat">Pro Beitrag</div>
+      </div>`}
+    </div></div>`
+    if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null){
+      h+=`<div class="section"><div class="timing-grid">`
+      if(st.best_posting_day||st.best_posting_hour!=null){
+        const timeStr=st.best_posting_hour!=null?`${st.best_posting_hour}:00 Uhr`:'–'
+        const dayStr=st.best_posting_day||''
+        h+=`<div class="timing-card"><div class="timing-icon">⏰</div><div class="timing-label">Beste Zeit</div><div class="timing-value">${dayStr}${dayStr&&timeStr?' · ':''}${timeStr}</div></div>`
+      }
+      if(st.top_format){
+        h+=`<div class="timing-card"><div class="timing-icon">🎬</div><div class="timing-label">Top Format</div><div class="timing-value">${escHtml(st.top_format)}</div></div>`
+      }
+      if(st.posts_per_week!=null){
+        h+=`<div class="timing-card"><div class="timing-icon">📅</div><div class="timing-label">Posts / Woche</div><div class="timing-value">${(+st.posts_per_week).toFixed(1)}</div></div>`
+      }
+      if(st.avg_shares!=null&&+st.avg_shares>0){
+        h+=`<div class="timing-card"><div class="timing-icon">↗</div><div class="timing-label">⌀ Shares</div><div class="timing-value">${fmt(st.avg_shares)}</div></div>`
+      }
+      h+=`</div></div>`
+    }
+  }
+
+  if(ki.analyse_ueberblick){
+    h+=`<div class="section" style="margin-top:12px"><div class="section-label">${label} · ${date}</div>
+      <div class="summary-card"><div class="summary-text">${escHtml(ki.analyse_ueberblick)}</div></div></div>`
+  }
+
+  if(ki.top_posts?.length){
+    h+=`<div class="section"><div class="section-label">Top-Beiträge</div><div class="top-posts-card">`
+    ki.top_posts.forEach((post,i)=>{
+      const href=post.url?`href="${escHtml(post.url)}" target="_blank" rel="noopener"`:'href="#" onclick="return false"'
+      h+=`<a class="top-post-row" ${href}>
+        <div class="top-post-rank ${i===0?'first':''}">${i+1}</div>
+        <div class="top-post-body">
+          <div class="top-post-why">${escHtml(post.warum_top||'')}</div>
+          <div class="top-post-stat">❤️ ${fmt(post.likes)} Likes</div>
+        </div>
+        ${post.url?'<div class="top-post-arrow">↗</div>':''}
+      </a>`
+    })
+    h+=`</div></div>`
+  }
+
+  if(ki.was_gut_lief||ki.verbesserungspotenzial){
+    h+=`<div class="section"><div class="section-label">Auswertung</div><div class="insight-card">`
+    if(ki.was_gut_lief)h+=`<div class="insight-row"><div class="insight-tag tag-good">✓ Was gut läuft</div><div class="insight-text">${escHtml(ki.was_gut_lief)}</div></div>`
+    if(ki.verbesserungspotenzial)h+=`<div class="insight-row"><div class="insight-tag tag-improve">↑ Wo du wachsen kannst</div><div class="insight-text">${escHtml(ki.verbesserungspotenzial)}</div></div>`
+    h+=`</div></div>`
+  }
+
+  if(ki.top_posts_gemeinsamkeiten||ki.caption_struktur){
+    h+=`<div class="section"><div class="section-label">Content-Muster</div><div class="insight-card">`
+    if(ki.top_posts_gemeinsamkeiten)h+=`<div class="insight-row"><div class="insight-tag tag-tip">🔍 Was deine Top-Posts gemeinsam haben</div><div class="insight-text">${escHtml(ki.top_posts_gemeinsamkeiten)}</div></div>`
+    if(ki.caption_struktur)h+=`<div class="insight-row"><div class="insight-tag tag-tip">✍️ Caption-Struktur</div><div class="insight-text">${escHtml(ki.caption_struktur)}</div></div>`
+    h+=`</div></div>`
+  }
+
+  if(ki.tipps_zukunft?.length){
+    h+=`<div class="section"><div class="section-label">Deine nächsten Schritte</div><div class="tips-card">`
+    ki.tipps_zukunft.forEach((tip,i)=>{h+=`<div class="tip-row"><div class="tip-num">${i+1}</div><div class="tip-text">${escHtml(tip)}</div></div>`})
+    h+=`</div></div>`
+  }
+
+  if(ki.weitere_insights?.trim()){
+    h+=`<div class="section"><div class="section-label">Weitere Erkenntnisse</div>
+      <div class="summary-card"><div class="summary-text">${escHtml(ki.weitere_insights)}</div></div></div>`
+  }
+
+  if(ki.vergleich_vorherige?.trim()){
+    h+=`<div class="section"><div class="section-label">Entwicklung</div><div class="insight-card">
+      <div class="insight-row"><div class="insight-tag tag-dev">📈 Vergleich zur letzten Analyse</div>
+      <div class="insight-text">${escHtml(ki.vergleich_vorherige)}</div></div></div></div>`
+  }
+
+  h+=`<div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
+    <button class="btn-share" onclick="shareAnalytics()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Analyse-Snapshot teilen
+    </button>
+  </div>`
+
+  el.innerHTML=h
+}
+
+// ── Share ──
+window.shareAnalytics=function(){
+  if(!anv)return
+  const ki=anv.ki[anv.platform]
+  const st=anv.stats[anv.platform]
+  const pl=anv.platform==='instagram'?'Instagram':'TikTok'
+  const handle=anv.platform==='instagram'?anv.profile?.instagram_handle:anv.profile?.tiktok_handle
+  const handleStr=handle?handle.startsWith('@')?handle:'@'+handle:''
+
+  const lines=[]
+  lines.push(`📊 Meine ${pl}-Analyse`)
+  if(handleStr)lines.push(handleStr)
+  lines.push('')
+
+  if(st){
+    const follStr=st.followers!=null?`👥 ${fmt(st.followers)} Follower`+( st.followers_change!=null&&st.followers_change!==0?` (${st.followers_change>=0?'+':''}${fmt(st.followers_change)} diese Woche)`:'' ):null
+    if(follStr)lines.push(follStr)
+    if(st.engagement_rate!=null)lines.push(`💫 ${(+st.engagement_rate).toFixed(2)}% Engagement Rate`)
+    if(st.avg_likes!=null)lines.push(`❤️  ⌀ ${fmt(st.avg_likes)} Likes pro Post`)
+    if(st.avg_views!=null)lines.push(`👁  ⌀ ${fmt(st.avg_views)} Views pro Post`)
+    if(st.best_posting_day&&st.best_posting_hour!=null)lines.push(`⏰ Beste Zeit: ${st.best_posting_day} ${st.best_posting_hour}:00 Uhr`)
+  } else if(ki?.analyse_ueberblick){
+    lines.push((ki.analyse_ueberblick||'').slice(0,120)+'…')
+  }
+
+  lines.push('')
+  lines.push('Analysiert mit viuno.')
+  lines.push('👉 viuno.de')
+
+  const text=lines.filter(l=>l!=null).join('\n')
+
+  if(navigator.share)navigator.share({title:`Meine ${pl}-Analyse`,text}).catch(()=>{})
+  else navigator.clipboard.writeText(text).then(()=>showToast('Kopiert ✓')).catch(()=>showToast('Teilen nicht verfügbar'))
+}
+
 /* ── App-Views (Platzhalter) ── */
-function renderAnalytics(area) { placeholder(area, 'Analytics',    'Instagram & TikTok Kennzahlen.',          '📊', 'analytics') }
 function renderTrends(area)    { placeholder(area, 'Trends',       'Hashtags, Sounds und Creator der Woche.', '🔥', 'trends') }
 function renderDigest(area)    { placeholder(area, 'Daily Digest', 'Creator-News, täglich kuratiert.',        '📰', 'digest') }
 function renderRequests(area)  { placeholder(area, 'Anfragen',     'Kooperationsanfragen von Marken.',        '✉️', 'requests') }
