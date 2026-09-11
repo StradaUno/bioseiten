@@ -687,6 +687,39 @@ html, body {
 .empty-cta-text{font-size:13px;font-weight:600;color:var(--text)}
 .empty-cta-sub{font-size:11px;color:var(--muted);margin-top:1px}
 
+/* ═══ VIEW: ONBOARDING (aus /onboarding/) ═══
+   .field und .handle-prefix weichen von der Shell bzw. /profile/ ab
+   und sind deshalb auf .view-onboarding begrenzt. */
+.view-onboarding .field{margin-bottom:14px}
+.view-onboarding .field input,.view-onboarding .field textarea,.view-onboarding .field select{padding:13px 16px;font-size:15px;background:var(--surface)}
+.view-onboarding .handle-prefix{padding:13px 12px 13px 16px;border:1px solid var(--border-strong);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);font-size:15px;color:var(--subtle);background:var(--surface2)}
+.handle-prefix-wrap{display:flex}
+.handle-prefix-wrap input{border-radius:0 var(--radius-sm) var(--radius-sm) 0!important}
+.ob-wrap{min-height:100dvh;display:flex;flex-direction:column;padding:0 0 calc(40px + var(--safe-bottom))}
+.ob-topbar{padding:20px 20px 0;display:flex;align-items:center;justify-content:space-between}
+.ob-logo{display:flex;align-items:center;gap:8px}
+.ob-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--text);color:white;display:grid;place-items:center;font-size:12px;font-weight:700}
+.ob-logo-text{font-size:16px;font-weight:700;letter-spacing:-.03em}
+.ob-step-label{font-size:12px;font-weight:500;color:var(--muted)}
+.progress-bar{margin:20px 20px 0;height:4px;border-radius:2px;background:var(--surface2)}
+.progress-fill{height:100%;border-radius:2px;background:var(--text);transition:width .4s cubic-bezier(.32,.72,0,1)}
+.ob-content{flex:1;padding:28px 20px 0}
+.step-num{font-size:11px;font-weight:700;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.step-title{font-size:26px;font-weight:700;letter-spacing:-.04em;color:var(--text);margin-bottom:6px}
+.step-sub{font-size:14px;color:var(--muted);line-height:1.55;margin-bottom:24px}
+.ob-footer{padding:20px 20px 0;display:flex;gap:10px}
+.btn-back{flex:0 0 48px;padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border-strong);background:var(--surface);font-size:20px;cursor:pointer;display:grid;place-items:center}
+.btn-next{flex:1;padding:14px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .15s}
+.btn-next:disabled{opacity:.4;cursor:not-allowed}
+.success-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100dvh;padding:40px 24px;text-align:center}
+.confetti-area{font-size:48px;margin-bottom:20px}
+.success-title{font-size:28px;font-weight:700;letter-spacing:-.04em;color:var(--text);margin-bottom:10px}
+.success-sub{font-size:15px;color:var(--muted);line-height:1.6;margin-bottom:32px}
+.btn-go-dashboard{padding:14px 28px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:15px;font-weight:600;cursor:pointer}
+/* Der Wizard ist breiter als die Login-Karte */
+#shell.auth-mode.wide #content-area{max-width:560px}
+#shell.auth-mode.wide .page{padding:0}
+
 /* ─── TOAST ─── */
 .toast-wrap { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
 .toast { background: var(--text); color: white; font-size: 13px; font-weight: 500; padding: 10px 18px; border-radius: 99px; animation: toastIn .25s ease-out; white-space: nowrap; }
@@ -997,6 +1030,7 @@ async function router() {
   const chromeless = route.public || route.chromeless
 
   document.getElementById('shell').classList.toggle('auth-mode', !!chromeless)
+  document.getElementById('shell').classList.toggle('wide', !!route.chromeless)
   document.getElementById('topbar-title').textContent = route.title
   document.title = 'viuno · ' + route.title
   setActiveMenuItem(name)
@@ -1400,22 +1434,207 @@ function renderRegister(area, ctx) {
   ctx.on($('inp-pw2'), 'keydown', e => { if(e.key==='Enter') doRegister() })
 }
 
-/* ── ONBOARDING (Platzhalter — der 5-Schritt-Wizard liegt noch in /onboarding/) ── */
-function renderOnboarding(area) {
+/* ═══════════════════════════════════════════════════════════════
+   VIEW: ONBOARDING — übernommen aus public/onboarding/index.html
+   Zwei Schritte, Foto-Upload nach profile-images, users.update und
+   Konfetti unveraendert. Nach Abschluss geht es auf #/dashboard.
+   Nicht uebernommen: renderStep2/collectStep2 (Nischen-Grid) und das
+   zugehoerige window.selectNiche. Beides steht in der Quelle, ist dort
+   aber nicht in STEPS eingetragen und damit unerreichbar — und
+   selectNiche wuerde die gleichnamige Funktion der Profil-View
+   ueberschreiben.
+   ═══════════════════════════════════════════════════════════════ */
+const NICHES_ONBOARDING=[
+  {key:'lifestyle',emoji:'🌿',label:'Lifestyle'},{key:'fashion',emoji:'👗',label:'Fashion'},{key:'beauty',emoji:'💄',label:'Beauty'},
+  {key:'food',emoji:'🍕',label:'Food'},{key:'fitness',emoji:'💪',label:'Fitness'},{key:'travel',emoji:'✈️',label:'Travel'},
+  {key:'gaming',emoji:'🎮',label:'Gaming'},{key:'music',emoji:'🎵',label:'Music'},{key:'comedy',emoji:'😂',label:'Comedy'},
+  {key:'education',emoji:'📚',label:'Bildung'},{key:'business',emoji:'💼',label:'Business'},{key:'tech',emoji:'💻',label:'Tech'},
+  {key:'art',emoji:'🎨',label:'Art'},{key:'family',emoji:'👨‍👩‍👧',label:'Family'},{key:'mental_health',emoji:'🧠',label:'Mental'},{key:'general',emoji:'🌐',label:'Allgemein'}
+]
+const OB_DEFAULT_PHOTO='https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/profile-images/Profilbild_BioUno.png'
+
+/* View-lokaler Zustand, entspricht dem `state` der alten Seite */
+let obv = null
+
+async function renderOnboarding(area, ctx){
+  const session = state.session
+
   area.innerHTML = `
-    <div class="login-card">
-      <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
-      <div class="login-title">Profil einrichten.</div>
-      <div class="login-sub">Dein Profil ist noch nicht vollständig.</div>
-      <div class="placeholder-card" style="border-radius:var(--radius);padding:24px 16px">
-        <div class="placeholder-icon">🚀</div>
-        <div class="placeholder-sub">Der Onboarding-Wizard wird in einem späteren Schritt hierher übernommen.</div>
-        <div class="placeholder-route">#/onboarding</div>
+  <div class="view-onboarding">
+    <div class="ob-wrap" id="ob-wrap">
+      <div class="ob-topbar">
+        <div class="ob-logo"><div class="ob-logo-mark">v</div><div class="ob-logo-text">viuno</div></div>
+        <div class="ob-step-label" id="step-label">Schritt 1 von 2</div>
       </div>
-      <button class="btn-login" style="margin-top:16px" onclick="window.location='/onboarding/'">Zum bestehenden Onboarding →</button>
-      <div class="login-switch"><a href="#" onclick="event.preventDefault();logout()">Abmelden</a></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:20%"></div></div>
+      <div class="ob-content" id="ob-content"></div>
+      <div class="ob-footer">
+        <button class="btn-back hidden" id="btn-back" onclick="prevStep()">←</button>
+        <button class="btn-next" id="btn-next" onclick="nextStep()">Weiter →</button>
+      </div>
+    </div>
+    <div class="success-wrap hidden" id="success-wrap">
+      <div class="confetti-area" id="confetti-area">🎉</div>
+      <div class="success-title">Willkommen bei viuno!</div>
+      <div class="success-sub">Dein Profil ist fertig eingerichtet.<br>Jetzt geht's los.</div>
+      <button class="btn-go-dashboard" onclick="navigate('#/dashboard')">Zum Dashboard →</button>
+    </div>
+    <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
+  </div>`
+
+  obv = { ctx, step:1, total:2, user:session.user, confettiTimer:null,
+          data:{ig:'',tt:'',niche:'general',photoUrl:null,username:'',email:session.user.email||''} }
+  ctx.onCleanup(() => { if(obv?.confettiTimer)clearInterval(obv.confettiTimer); obv = null })
+
+  ctx.on(document.getElementById('photo-input'), 'change', onObPhotoPicked)
+
+  const{data:profile}=await sb.from('users').select('display_name,instagram_handle,tiktok_handle,niche_category,profile_image_url,onboarding_completed').eq('id',session.user.id).single()
+  if(ctx.stale)return
+  if(profile?.onboarding_completed===true){navigate('#/dashboard');return}
+  if(profile){
+    obv.data.username=profile.display_name||''
+    if(profile.instagram_handle)obv.data.ig=profile.instagram_handle.replace(/^@/,'')
+    if(profile.tiktok_handle)obv.data.tt=profile.tiktok_handle.replace(/^@/,'')
+    if(profile.niche_category)obv.data.niche=profile.niche_category
+    if(profile.profile_image_url)obv.data.photoUrl=profile.profile_image_url
+  }
+  renderStep()
+}
+
+// ─── steps ───
+const OB_STEPS=[
+  {title:'Deine Kanäle.',sub:'Verbinde deine Social-Media-Kanäle. Du kannst das auch später erledigen.',render:renderObStep1,collect:collectObStep1},
+  {title:'Fast fertig.',sub:'Überprüfe deine Angaben und klick auf Abschließen.',render:renderObStep3,collect:()=>true},
+]
+
+function renderStep(){
+  const s=OB_STEPS[obv.step-1]
+  document.getElementById('step-label').textContent=`Schritt ${obv.step} von ${obv.total}`
+  document.getElementById('progress-fill').style.width=`${(obv.step/obv.total)*100}%`
+  document.getElementById('btn-back').classList.toggle('hidden',obv.step===1)
+  document.getElementById('btn-next').textContent=obv.step===obv.total?'Abschließen ✓':'Weiter →'
+  document.getElementById('btn-next').disabled=false
+  const content=document.getElementById('ob-content')
+  // Clear first, then set header, then let render() append
+  content.innerHTML=`<div class="step-num">Schritt ${obv.step} / ${obv.total}</div><div class="step-title">${s.title}</div><div class="step-sub">${s.sub}</div>`
+  s.render(content)
+}
+
+function renderObStep1(el){
+  el.innerHTML+=`<div class="field"><label>Instagram-Handle (optional)</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-ig" value="${escHtml(obv.data.ig)}" placeholder="dein_handle"/></div></div>
+    <div class="field"><label>TikTok-Handle (optional)</label><div class="handle-prefix-wrap"><span class="handle-prefix">@</span><input type="text" id="s-tt" value="${escHtml(obv.data.tt)}" placeholder="dein_handle"/></div></div>`
+}
+function collectObStep1(){
+  obv.data.ig=document.getElementById('s-ig')?.value.trim().replace(/^@/,'')||''
+  obv.data.tt=document.getElementById('s-tt')?.value.trim().replace(/^@/,'')||''
+  return true
+}
+
+function renderObStep3(el){
+  const d=obv.data
+  const nicheFound=NICHES_ONBOARDING.find(n=>n.key===d.niche)
+  const nicheLabel=nicheFound?(nicheFound.emoji+' '+nicheFound.label):(d.niche||'–')
+  const defaultPhoto=OB_DEFAULT_PHOTO
+  const photoSrc=d.photoUrl||defaultPhoto
+  const isCustomPhoto=!!(d.photoUrl&&d.photoUrl!==defaultPhoto)
+  el.innerHTML+=`
+    <!-- Profilbild -->
+    <div style="display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px;cursor:pointer" onclick="document.getElementById('photo-input').click()">
+      <div style="position:relative;flex-shrink:0">
+        <img src="${escHtml(photoSrc)}" alt="" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong)"/>
+        <div style="position:absolute;bottom:-2px;right:-2px;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;border:2px solid white;background:${isCustomPhoto?'var(--green)':'var(--subtle)'}; color:white">${isCustomPhoto?'✓':'✕'}</div>
+      </div>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text)">Profilbild</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px" id="upload-status">${isCustomPhoto?'✓ Eigenes Foto':'Tippen um Foto hochzuladen'}</div>
+      </div>
+    </div>
+    <!-- Review -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
+      <div style="padding:14px 16px;display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:12px;color:var(--muted)">Username</span>
+          <span style="font-size:13px;font-weight:600">@${escHtml(d.username||'–')}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:12px">
+          <span style="font-size:12px;color:var(--muted)">E-Mail</span>
+          <span style="font-size:13px;font-weight:500;max-width:60%;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">${escHtml(d.email||'–')}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:12px">
+          <span style="font-size:12px;color:var(--muted)">Nische</span>
+          <span style="font-size:13px;font-weight:500">${escHtml(nicheLabel)}</span>
+        </div>
+      </div>
     </div>`
 }
+
+async function onObPhotoPicked(e){
+  const file=e.target.files?.[0];if(!file)return
+  if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
+  const statusEl=document.getElementById('upload-status')
+  if(statusEl)statusEl.textContent='Wird hochgeladen…'
+  const reader=new FileReader()
+  reader.onload=ev=>{
+    const img=document.querySelector('#ob-content img[style*="56px"]')
+    if(img)img.src=ev.target.result
+  }
+  reader.readAsDataURL(file)
+  if(!obv?.user)return
+  const path=`${obv.user.id}/${Date.now()}.${file.name.split('.').pop()}`
+  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
+  if(!obv)return
+  const st=document.getElementById('upload-status')
+  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);if(st)st.textContent='Upload fehlgeschlagen';return}
+  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
+  obv.data.photoUrl=publicUrl
+  if(st)st.textContent='✓ Eigenes Foto hochgeladen'
+  // Update badge
+  const badge=document.querySelector('#ob-content div[style*="bottom:-2px"]')
+  if(badge){badge.style.background='var(--green)';badge.textContent='✓'}
+  e.target.value=''
+}
+
+window.nextStep=async function(){
+  if(!obv)return
+  const collect=OB_STEPS[obv.step-1].collect
+  if(!collect())return
+  if(obv.step<obv.total){obv.step++;renderStep();return}
+  await saveAndFinish()
+}
+window.prevStep=function(){if(obv&&obv.step>1){obv.step--;renderStep()}}
+
+async function saveAndFinish(){
+  const btn=document.getElementById('btn-next')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const d=obv.data
+  const{error}=await sb.from('users').update({
+    instagram_handle:d.ig||null,
+    tiktok_handle:d.tt||null,
+    niche_category:d.niche,
+    profile_image_url:d.photoUrl||null,
+    onboarding_completed:true,
+    updated_at:new Date().toISOString()
+  }).eq('id',obv.user.id)
+  if(!obv||obv.ctx.stale)return
+  btn.disabled=false;btn.textContent='Abschließen ✓'
+  if(error){showToast('Fehler beim Speichern: '+error.message,4000);return}
+  /* Damit der Router-Guard nicht erneut ins Onboarding schickt */
+  if(state.profile)state.profile.onboarding_completed=true
+  document.getElementById('ob-wrap').classList.add('hidden')
+  document.getElementById('success-wrap').classList.remove('hidden')
+  confetti()
+}
+
+function confetti(){
+  const el=document.getElementById('confetti-area')
+  const emojis=['🎉','✨','🌟','💫','🎊','🎈']
+  let i=0;const iv=setInterval(()=>{
+    if(!obv||!document.getElementById('confetti-area')){clearInterval(iv);return}
+    el.textContent=emojis[i%emojis.length];i++;if(i>12)clearInterval(iv)
+  },200)
+  if(obv)obv.confettiTimer=iv
+}
+
 
 /* ═══════════════════════════════════════════════════════════════
    VIEW: DASHBOARD — übernommen aus public/dashboard/index.html
