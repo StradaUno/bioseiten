@@ -8,6 +8,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 To preview locally, serve `public/` with any static server (e.g. `npx serve public`) — opening files via `file://` breaks the ES-module imports used by the auth pages.
 
+## Working on this repo
+
+**The working branch is `main`, and every push goes live on viuno.de immediately.** There is no staging step: Cloudflare Pages builds `main` on push. Before you change anything, sync:
+
+```bash
+git fetch
+git pull
+```
+
+The repo owner also edits files directly through the GitHub web UI, so `main` moves without local commits. Pulling first is not optional — a stale checkout has already caused one 197-commit divergence.
+
+Push in small, reviewable commits, and check `git diff --name-only origin/main HEAD` before pushing so you know exactly which pages go live.
+
+`app-spa` is the branch the SPA was built on. It is kept for history and is not maintained any more.
+
+## The SPA under `/app/`
+
+`public/app/index.html` is a single-file hash-router SPA that carries the whole logged-in app. It is a *port* of the standalone pages, not a replacement — the pages under `public/dashboard/`, `public/profile/`, `public/biolink/`, `public/mediakit/`, `public/analytics/`, `public/digest/`, `public/requests/`, `public/onboarding/`, `public/login/` and `public/register/` still exist and still work.
+
+- Routes: `#/login`, `#/register`, `#/onboarding`, `#/dashboard`, `#/analytics`, `#/biolink`, `#/mediakit`, `#/digest`, `#/requests`, `#/profile`. Each is a `renderX(area, ctx)` that renders into `#content-area`. Unknown hashes fall back to `#/dashboard`.
+- The sidebar is defined once in the HTML; the router sets `.active` from `data-route`.
+- `ctx.stale` guards late query answers after a route change; `ctx.onCleanup` / `ctx.on` / `ctx.interval` remove listeners, timers and subscriptions when a route is left. Use them — a view must not leave anything behind.
+- View state lives in one module-level object per view (`pv`, `blv`, `mkv`, `anv`, `dgv`, `rqv`, `obv`), nulled on cleanup.
+- Where the source pages used the same global name for different things, the SPA renames: `saveBioProfile`, `mkSaveProfile`, `mkSaveImpressum`, `mkConfirmDelete`, `mkSelectLang`, `setReqFilter`, `renderAnalyticsContent`, `digestCardHtml`, `renderReqList`.
+- Three `fmt` variants coexist on purpose (`fmt`, `fmtCount`, `fmtNum`) because the source pages round differently. Don't unify them without checking every call site.
+
+**When a standalone page changes, the matching SPA view has to be changed too** — they are not generated from a shared source. Port queries and logic 1:1; the views are meant to behave identically to their page, bugs included.
+
 ## Routing model
 
 Each subdirectory of `public/` is a route via its `index.html`. Cloudflare Pages reads `public/_redirects` (SPA fallback for `/app/*`, plus `.html` → directory redirects for the legal pages); there is no `_headers` and no `_routes.json`. Two patterns coexist:
