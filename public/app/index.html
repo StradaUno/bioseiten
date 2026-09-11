@@ -197,36 +197,23 @@ html, body {
 .placeholder-sub { font-size: 13px; color: var(--muted); line-height: 1.55; }
 .placeholder-route { display: inline-block; margin-top: 12px; font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--subtle); background: var(--surface2); border-radius: 99px; padding: 4px 10px; }
 
-/* ─── MODAL (overlay + slide-up sheet) ─── */
-.modal-overlay { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0); pointer-events: none; transition: background .25s; }
-.modal-overlay.open { background: rgba(0,0,0,0.35); pointer-events: auto; }
-.modal-panel {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 101;
-  background: var(--surface);
-  border-radius: 22px 22px 0 0;
-  max-height: 92dvh; overflow-y: auto;
-  transform: translateY(100%);
-  transition: transform .3s cubic-bezier(.32,.72,0,1);
-  padding-bottom: calc(24px + var(--safe-bottom));
-}
-.modal-panel.open { transform: translateY(0); }
-.modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border-strong); margin: 12px auto 0; }
-.modal-header { padding: 14px 20px 0; display: flex; align-items: flex-start; gap: 14px; }
-.modal-title { font-size: 18px; font-weight: 700; letter-spacing: -.02em; color: var(--text); }
-.modal-close { margin-left: auto; width: 32px; height: 32px; border-radius: 99px; background: var(--surface2); border: none; cursor: pointer; flex-shrink: 0; display: grid; place-items: center; font-size: 16px; color: var(--muted); }
-.modal-body { padding: 16px 20px 0; font-size: 13px; color: var(--text); line-height: 1.6; }
-@media (min-width: 900px) {
-  .modal-panel { left: 50%; right: auto; bottom: auto; top: 50%; width: 440px; max-width: calc(100vw - 48px); border-radius: 20px; transform: translate(-50%, -46%) scale(.98); opacity: 0; transition: opacity .2s, transform .2s; }
-  .modal-panel.open { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-  .modal-handle { display: none; }
-  .modal-header { padding-top: 20px; }
-}
+/* ─── MODAL (aus /profile/, /biolink/, /mediakit/, /analytics/) ─── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;padding:0}
+.modal-backdrop.centered{align-items:center;padding:24px}
+.modal-card{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px calc(24px + var(--safe-bottom));width:100%;max-height:90dvh;overflow-y:auto}
+.modal-backdrop.centered .modal-card{border-radius:20px;max-width:400px;margin:0 auto;padding:24px}
+.modal-title{font-size:17px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.modal-warn{background:var(--orange-bg);border:1px solid rgba(184,92,0,.2);border-radius:var(--radius-sm);padding:12px 14px;font-size:12px;color:var(--orange);line-height:1.5;margin-bottom:16px}
+.modal-actions{display:flex;gap:8px;margin-top:20px}
+.modal-btn{flex:1;padding:12px;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border-strong)}
+.modal-btn-cancel{background:var(--surface2);color:var(--text)}
+.modal-btn-confirm{background:var(--text);color:white;border-color:var(--text)}
 
 /* ═══ VIEW: DASHBOARD (aus /dashboard/) ═══ */
 .greeting-section{padding:22px 20px 0}
 .greeting-hi{font-size:22px;font-weight:700;letter-spacing:-.04em}
 .greeting-date{font-size:13px;color:var(--muted);margin-top:3px}
-
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;text-decoration:none;display:flex;flex-direction:column;gap:4px;transition:border-color .15s,transform .1s;cursor:pointer}
 .dash-card:hover{border-color:var(--border-strong)}
@@ -241,7 +228,6 @@ html, body {
 .dash-card-sub{font-size:11px;color:var(--subtle);margin-top:2px}
 .dash-card-icon{font-size:24px;margin-bottom:6px}
 .dash-card-icon-only{justify-content:center;align-items:flex-start;padding:20px 16px}
-
 .dash-digest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;cursor:pointer}
 .dash-digest-card.expanded .dash-card-body-full{display:block}
 .dash-digest-card.expanded .dash-card-chevron{transform:rotate(180deg)}
@@ -263,7 +249,6 @@ html, body {
 .dash-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
 .dash-card-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface)}
 .dash-card-share{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit}
-
 .newsletter-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px}
 .newsletter-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
 .newsletter-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
@@ -274,65 +259,38 @@ html, body {
 .newsletter-btn:disabled{opacity:.5;cursor:not-allowed}
 .newsletter-success{font-size:12px;color:var(--green);margin-top:8px;display:none}
 
-/* ═══ VIEW: PROFIL (aus /profile/) ═══
-   .section und .section-label sind hier auf .view-profile begrenzt,
-   weil /profile/ 20px Padding nutzt, die Shell aber 16px. */
-.view-profile .section { padding: 20px 20px 0; }
-.view-profile .section-label { font-size: 10px; font-weight: 600; color: var(--subtle); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 10px; }
-
-.profile-hero { padding: 24px 20px 0; display: flex; align-items: flex-start; gap: 16px; }
-.profile-photo { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 2px solid var(--border-strong); background: var(--surface2); }
-.profile-photo-fallback { width: 72px; height: 72px; border-radius: 50%; flex-shrink: 0; background: var(--text); color: white; display: grid; place-items: center; font-size: 26px; font-weight: 700; border: 2px solid var(--border-strong); }
-.photo-wrap { position: relative; width: 72px; height: 72px; flex-shrink: 0; cursor: pointer; }
-.photo-edit-btn { position: absolute; bottom: 0; right: 0; width: 22px; height: 22px; border-radius: 50%; background: var(--text); color: white; display: grid; place-items: center; font-size: 11px; border: 2px solid var(--surface); pointer-events: none; }
-.photo-upload-status { font-size: 11px; color: var(--muted); margin-top: 4px; min-height: 16px; }
-.profile-info { flex: 1; min-width: 0; }
-.profile-name { font-size: 20px; font-weight: 700; letter-spacing: -.03em; color: var(--text); }
-.profile-handle { font-size: 13px; color: var(--muted); margin-top: 2px; }
-.profile-plan { display: inline-flex; align-items: center; gap: 5px; margin-top: 8px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 99px; }
-.plan-free { background: var(--surface2); color: var(--muted); border: 1px solid var(--border-strong); }
-.plan-pro { background: #111110; color: white; }
-
-.stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; padding: 16px 20px 0; }
-.stat-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; text-align: center; }
-.stat-box-value { font-size: 20px; font-weight: 700; color: var(--text); letter-spacing: -.03em; }
-.stat-box-label { font-size: 10px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
-
-.biolink-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-.biolink-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.biolink-url { font-size: 13px; font-weight: 500; color: var(--text); }
-.biolink-url a { color: var(--text); text-decoration: none; }
-.biolink-url a:hover { text-decoration: underline; }
-.status-indicator { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 99px; }
-.si-active { background: var(--green-bg); color: var(--green); }
-.si-inactive { background: var(--surface2); color: var(--subtle); border: 1px solid var(--border-strong); }
-.biolink-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-.biolink-stat { text-align: center; }
-.biolink-stat-val { font-size: 16px; font-weight: 700; color: var(--text); letter-spacing: -.02em; }
-.biolink-stat-label { font-size: 10px; color: var(--muted); margin-top: 1px; }
-.biolink-sources { display: flex; gap: 6px; flex-wrap: wrap; }
-.source-pill { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 99px; background: var(--surface2); color: var(--muted); }
-
-.edit-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-.edit-card .field { margin-bottom: 10px; }
-.edit-card .field:last-child { margin-bottom: 0; }
-.edit-card .field label { font-size: 11px; }
-.handle-input-wrap { display: flex; align-items: center; }
-.handle-prefix { padding: 11px 10px 11px 14px; border: 1px solid var(--border-strong); border-right: none; border-radius: var(--radius-sm) 0 0 var(--radius-sm); font-size: 14px; color: var(--muted); background: var(--surface2); }
-.handle-input-wrap input { border-radius: 0 var(--radius-sm) var(--radius-sm) 0 !important; }
-.niche-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.niche-btn { padding: 8px 4px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 500; font-family: inherit; cursor: pointer; text-align: center; transition: all .15s; }
-.niche-btn.active { background: var(--text); color: white; border-color: var(--text); }
-
-.btn-save { width: 100%; padding: 13px; margin-top: 14px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: opacity .15s; }
-.btn-save:disabled { opacity: .5; cursor: not-allowed; }
-.save-success { font-size: 12px; color: var(--green); text-align: center; margin-top: 8px; min-height: 18px; }
-
-.danger-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; }
-.danger-row { display: flex; align-items: center; justify-content: space-between; }
-.danger-info .danger-title { font-size: 13px; font-weight: 600; color: var(--text); }
-.danger-info .danger-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-.btn-danger { padding: 8px 16px; border-radius: var(--radius-sm); background: var(--red-bg); color: var(--red); border: 1px solid rgba(192,57,43,.2); font-family: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+/* ═══ VIEW: PROFIL (aus /profile/) ═══ */
+.profile-hero{padding:24px 20px 0;display:flex;align-items:flex-start;gap:16px}
+.photo-wrap{position:relative;width:72px;height:72px;flex-shrink:0;cursor:pointer}
+.profile-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong);background:var(--surface2)}
+.profile-photo-fallback{width:72px;height:72px;border-radius:50%;flex-shrink:0;background:var(--text);color:white;display:grid;place-items:center;font-size:26px;font-weight:700;border:2px solid var(--border-strong)}
+.photo-edit-btn{position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:11px;border:2px solid var(--surface);pointer-events:none}
+.profile-info{flex:1;min-width:0}
+.profile-name{font-size:20px;font-weight:700;letter-spacing:-.03em;color:var(--text)}
+.profile-handle{font-size:13px;color:var(--muted);margin-top:2px}
+.profile-plan{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:600;padding:3px 10px;border-radius:99px}
+.plan-free{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
+.plan-pro{background:#111;color:white}
+.section-label{font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.edit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.edit-card .field{margin-bottom:10px}
+.edit-card .field:last-child{margin-bottom:0}
+.edit-card .field label{font-size:11px}
+.handle-input-wrap{display:flex;align-items:center}
+.handle-prefix{padding:11px 10px 11px 14px;border:1px solid var(--border-strong);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);font-size:14px;color:var(--muted);background:var(--surface2)}
+.handle-input-wrap input{border-radius:0 var(--radius-sm) var(--radius-sm) 0!important}
+.niche-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.niche-btn{padding:8px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:11px;font-weight:500;font-family:inherit;cursor:pointer;text-align:center;transition:all .15s}
+.niche-btn.active{background:var(--text);color:white;border-color:var(--text)}
+.btn-save{width:100%;padding:13px;margin-top:14px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.btn-save:disabled{opacity:.5;cursor:not-allowed}
+.save-success{font-size:12px;color:var(--green);text-align:center;margin-top:8px;min-height:18px}
+.danger-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+.danger-row{display:flex;align-items:center;justify-content:space-between}
+.danger-title{font-size:13px;font-weight:600;color:var(--text)}
+.danger-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.btn-danger{padding:8px 16px;border-radius:var(--radius-sm);background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.2);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.username-hint{font-size:11px;color:var(--subtle);margin-top:5px}
 
 /* ─── TOAST ─── */
 .toast-wrap { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 300; pointer-events: none; }
@@ -440,17 +398,6 @@ html, body {
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeModal()"></div>
-<div class="modal-panel" id="modal-panel" role="dialog" aria-modal="true">
-  <div class="modal-handle"></div>
-  <div class="modal-header">
-    <div class="modal-title" id="modal-title"></div>
-    <button class="modal-close" onclick="closeModal()">✕</button>
-  </div>
-  <div class="modal-body" id="modal-body"></div>
-</div>
-
 <!-- TOAST -->
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
@@ -526,20 +473,28 @@ window.showToast = function(msg, dur = 2500) {
   w._t = setTimeout(() => w.classList.add('hidden'), dur)
 }
 
-/* ─── Modal (Overlay + Sheet, Muster aus /Requests/) ─── */
-window.openModal = function(title, html) {
-  document.getElementById('modal-title').textContent = title || ''
-  document.getElementById('modal-body').innerHTML = html || ''
-  document.getElementById('modal-overlay').classList.add('open')
-  document.getElementById('modal-panel').classList.add('open')
+/* ─── Modal (Muster aus /profile/, dort showModal/closeModal) ─── */
+window.showModal = function(title, body, confirmLabel, onConfirm, warnText) {
+  let el = document.getElementById('app-modal')
+  if (!el) { el = document.createElement('div'); el.id = 'app-modal'; document.body.appendChild(el) }
+  el.className = 'modal-backdrop centered'
+  el.innerHTML = `<div class="modal-card">
+    <div class="modal-title">${escHtml(title)}</div>
+    ${body?`<div class="modal-sub">${body}</div>`:''}
+    ${warnText?`<div class="modal-warn">⚠️ ${escHtml(warnText)}</div>`:''}
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Abbrechen</button>
+      <button class="modal-btn modal-btn-confirm" id="modal-confirm-btn">${escHtml(confirmLabel)}</button>
+    </div>
+  </div>`
+  document.getElementById('modal-confirm-btn').addEventListener('click', onConfirm)
   document.body.style.overflow = 'hidden'
 }
 window.closeModal = function() {
-  document.getElementById('modal-overlay').classList.remove('open')
-  document.getElementById('modal-panel').classList.remove('open')
+  const el = document.getElementById('app-modal')
+  if (el) el.remove()
   document.body.style.overflow = ''
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
 
 /* ─── Sidebar (aus /dashboard/) ─── */
 window.openSidebar  = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('open'); document.body.style.overflow = 'hidden' }
@@ -1276,320 +1231,403 @@ function renderRequests(area)  { placeholder(area, 'Anfragen',     'Kooperations
 function renderDeals(area)     { placeholder(area, 'Deals',        'Deine laufenden Kooperationen.',          '⭐', 'deals') }
 /* ═══════════════════════════════════════════════════════════════
    VIEW: PROFIL — übernommen aus public/profile/index.html
-   Queries, Merge-Reihenfolge, Save-Patch, Foto-Upload und Markup
-   unverändert. Der Datei-Input lebt jetzt in der View und wird beim
-   Verlassen mitsamt Listener abgeräumt.
+   Query, Formular-Patch, Foto-Upload, Newsletter-Toggle, Passwort-,
+   Username-, E-Mail- und Loesch-Dialoge unveraendert. Die beiden
+   statischen Modals liegen jetzt in der View und verschwinden mit ihr.
    ═══════════════════════════════════════════════════════════════ */
-const NICHES_PROFILE = [
-  { key: 'lifestyle',     label: '🌿 Lifestyle' },
-  { key: 'fashion',       label: '👗 Fashion' },
-  { key: 'beauty',        label: '💄 Beauty' },
-  { key: 'food',          label: '🍕 Food' },
-  { key: 'fitness',       label: '💪 Fitness' },
-  { key: 'travel',        label: '✈️ Travel' },
-  { key: 'gaming',        label: '🎮 Gaming' },
-  { key: 'music',         label: '🎵 Music' },
-  { key: 'comedy',        label: '😂 Comedy' },
-  { key: 'education',     label: '📚 Edu' },
-  { key: 'business',      label: '💼 Business' },
-  { key: 'tech',          label: '💻 Tech' },
-  { key: 'art',           label: '🎨 Art' },
-  { key: 'family',        label: '👨‍👩‍👧 Family' },
-  { key: 'mental_health', label: '🧠 Mental' },
-  { key: 'general',       label: '🌐 Allgemein' },
-]
+const NICHES_PROFILE=[{key:'lifestyle',label:'Lifestyle'},{key:'fashion',label:'Fashion'},{key:'beauty',label:'Beauty'},{key:'food',label:'Food'},{key:'fitness',label:'Fitness'},{key:'travel',label:'Travel'},{key:'gaming',label:'Gaming'},{key:'music',label:'Music'},{key:'comedy',label:'Comedy'},{key:'education',label:'Bildung & Wissen'},{key:'business',label:'Business'},{key:'tech',label:'Tech'},{key:'art',label:'Art'},{key:'family',label:'Family'},{key:'mental_health',label:'Mental Health'},{key:'general',label:'Allgemein'}]
 
 /* View-lokaler Zustand, entspricht dem `state` der alten Seite */
 let pv = null
+let _usernameTimer = null
 
 async function renderProfile(area, ctx) {
   const uid = state.session.user.id
 
   area.innerHTML = `
-    <div class="view-profile">
-      <div id="skeleton-area" style="padding:20px">
-        <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
-          <div class="skeleton" style="width:72px;height:72px;border-radius:50%;flex-shrink:0"></div>
-          <div style="flex:1"><div class="skeleton" style="height:22px;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:60%"></div></div>
+    <div id="skeleton-area" style="padding:20px;display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:16px;align-items:center"><div class="skeleton" style="width:72px;height:72px;border-radius:50%;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="height:22px;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:60%"></div></div></div>
+      <div class="skeleton" style="height:80px"></div><div class="skeleton" style="height:200px"></div>
+    </div>
+    <div id="profile-content" class="hidden"></div>
+    <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
+
+    <!-- PASSWORD MODAL (zentriertes Popup) -->
+    <div class="modal-backdrop centered hidden" id="password-modal" onclick="closePasswordModal()">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-title">Passwort ändern</div>
+        <div class="modal-sub">Wähle ein neues sicheres Passwort.</div>
+        <div style="margin-bottom:12px">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neues Passwort</label>
+          <input type="password" id="sheet-new-pw" placeholder="Mindestens 8 Zeichen"
+            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
+            oninput="checkPwSheet()"/>
+          <div id="pw-sheet-hint" style="font-size:11px;margin-top:5px;min-height:16px"></div>
         </div>
-        <div class="skeleton" style="height:80px;margin-bottom:12px"></div>
-        <div class="skeleton" style="height:120px;margin-bottom:12px"></div>
-        <div class="skeleton" style="height:200px"></div>
+        <div style="margin-bottom:20px">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Passwort bestätigen</label>
+          <input type="password" id="sheet-new-pw2" placeholder="••••••••"
+            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"/>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-cancel" onclick="closePasswordModal()">Abbrechen</button>
+          <button class="modal-btn modal-btn-confirm" id="btn-save-pw" onclick="saveNewPassword()" disabled style="opacity:.5">Speichern</button>
+        </div>
       </div>
-      <div id="profile-content" class="hidden"></div>
-      <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
+    </div>
+
+    <!-- USERNAME MODAL (zentriertes Popup) -->
+    <div class="modal-backdrop centered hidden" id="username-modal" onclick="closeUsernameModal()">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-title">Username ändern</div>
+        <div class="modal-sub">Dein BioLink und Media Kit werden deaktiviert. Du musst sie danach mit dem neuen Username neu erstellen.</div>
+        <div style="margin-bottom:6px">
+          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neuer Username</label>
+          <input type="text" id="sheet-new-username" placeholder="Neuer Username"
+            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
+            oninput="checkUsernameAvailability()"/>
+        </div>
+        <div id="username-status" style="font-size:12px;min-height:18px;margin-bottom:16px"></div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-cancel" onclick="closeUsernameModal()">Abbrechen</button>
+          <button class="modal-btn modal-btn-confirm" id="btn-save-username" onclick="confirmUsernameChange()" disabled style="opacity:.5">Weiter</button>
+        </div>
+      </div>
     </div>`
 
-  const [profileRes, bioRes, bioStatsRes] = await Promise.all([
-    sb.from('users').select('*').eq('id', uid).single(),
-    sb.from('biolink_settings').select('*').eq('user_id', uid).single(),
-    sb.from('bio_stats').select('*').eq('user_id', uid).single(),
-  ])
-
+  const [profileRes] = await Promise.all([sb.from('users').select('*').eq('id',uid).single()])
   if (ctx.stale) return
 
   pv = {
     uid,
-    profile:  { ...profileRes.data, ...bioRes.data },
-    bioStats: bioStatsRes.data,
-    niche:    profileRes.data?.niche_category || 'general'
+    user: state.session.user,
+    profile: profileRes.data,
+    niche: profileRes.data?.niche_category || 'general',
+    isSubscribed: profileRes.data?.newsletter_subscribed || false
   }
-  ctx.onCleanup(() => { pv = null })
+  ctx.onCleanup(() => { pv = null; clearTimeout(_usernameTimer); document.body.style.overflow = '' })
 
   document.getElementById('skeleton-area').classList.add('hidden')
   document.getElementById('profile-content').classList.remove('hidden')
-
   paintProfile()
 
-  /* Foto-Upload — Listener hängt an dem Input dieser View und geht
-     beim Routenwechsel mit ihm weg. */
   ctx.on(document.getElementById('photo-input'), 'change', onPhotoPicked)
 }
 
-function paintProfile() {
-  const p  = pv.profile
-  const bs = pv.bioStats
-  const bioUrl = p.slug ? `biouno.de/${p.slug}` : '—'
-  const bioFullUrl = p.slug ? `https://biouno.de/${p.slug}` : null
-
-  const initial = (p.display_name || p.full_name || '?')[0].toUpperCase()
-  const photoInner = p.profile_image_url
-    ? `<img class="profile-photo" src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;profile-photo-fallback&quot;>${initial}</div>'">`
-    : `<div class="profile-photo-fallback">${initial}</div>`
-  const photoHtml = `
-    <div class="photo-wrap" onclick="document.getElementById('photo-input').click()" title="Foto ändern">
-      ${photoInner}
-      <div class="photo-edit-btn">✎</div>
-    </div>`
-
-  document.getElementById('profile-content').innerHTML = `
-
-    <!-- ── Hero ── -->
+function paintProfile(){
+  const p = pv.profile
+  const initial=(p.display_name||p.full_name||'?')[0].toUpperCase()
+  const photoInner=p.profile_image_url?`<img class="profile-photo" src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;profile-photo-fallback&quot;>${initial}</div>'">`:`<div class="profile-photo-fallback">${initial}</div>`
+  document.getElementById('profile-content').innerHTML=`
     <div class="profile-hero">
-      ${photoHtml}
+      <div class="photo-wrap" onclick="document.getElementById('photo-input').click()" title="Foto ändern">${photoInner}<div class="photo-edit-btn">✎</div></div>
       <div class="profile-info">
-        <div class="profile-name">${escHtml(p.display_name || p.full_name || '–')}</div>
-        <div class="profile-handle">${p.email ? escHtml(p.email) : ''}</div>
-        <div class="profile-plan ${p.subscription_type === 'pro' ? 'plan-pro' : 'plan-free'}">
-          ${p.subscription_type === 'pro' ? '⭐ Pro' : 'Free Plan'}
-        </div>
+        <div class="profile-name">${escHtml(p.display_name||p.full_name||'–')}</div>
+        <div class="profile-handle">${p.email?escHtml(p.email):''}</div>
+        <div class="profile-plan ${p.subscription_type==='pro'?'plan-pro':'plan-free'}">${p.subscription_type==='pro'?'⭐ Pro':'Free Plan'}</div>
       </div>
     </div>
-
-    <!-- ── Stats ── -->
-    <div class="stats-row">
-      <div class="stat-box">
-        <div class="stat-box-value">${fmtCount(p.total_followers)}</div>
-        <div class="stat-box-label">Follower</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-value">${fmtCount(bs?.views_total)}</div>
-        <div class="stat-box-label">Bio-Aufrufe</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-value">${fmtCount(p.new_requests_count)}</div>
-        <div class="stat-box-label">Anfragen</div>
-      </div>
-    </div>
-
-    <!-- ── BioLink ── -->
-    <div class="section">
-      <div class="section-label">BioLink</div>
-      <div class="biolink-card">
-        <div class="biolink-top">
-          <div class="biolink-url">
-            ${bioFullUrl
-              ? `<a href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>`
-              : `<span style="color:var(--subtle)">Noch kein Slug gesetzt</span>`}
-          </div>
-          <span class="status-indicator ${p.is_active ? 'si-active' : 'si-inactive'}">
-            ${p.is_active ? '● Aktiv' : '○ Inaktiv'}
-          </span>
-        </div>
-        <div class="biolink-stats">
-          <div class="biolink-stat">
-            <div class="biolink-stat-val">${fmtCount(bs?.views_today)}</div>
-            <div class="biolink-stat-label">Heute</div>
-          </div>
-          <div class="biolink-stat">
-            <div class="biolink-stat-val">${fmtCount(bs?.views_last_7_days)}</div>
-            <div class="biolink-stat-label">7 Tage</div>
-          </div>
-          <div class="biolink-stat">
-            <div class="biolink-stat-val">${fmtCount(bs?.views_total)}</div>
-            <div class="biolink-stat-label">Gesamt</div>
-          </div>
-        </div>
-        <div class="biolink-sources">
-          ${bs?.instagram_pct > 0 ? `<span class="source-pill">📸 Instagram ${bs.instagram_pct}%</span>` : ''}
-          ${bs?.tiktok_pct > 0   ? `<span class="source-pill">🎵 TikTok ${bs.tiktok_pct}%</span>` : ''}
-          ${bs?.direct_pct > 0   ? `<span class="source-pill">🔗 Direkt ${bs.direct_pct}%</span>` : ''}
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Profil bearbeiten ── -->
-    <div class="section">
-      <div class="section-label">Profil bearbeiten</div>
+    <div class="section"><div class="section-label">Profil bearbeiten</div>
       <div class="edit-card">
-
-        <div class="field">
-          <label>Name</label>
-          <input type="text" id="edit-fullname" value="${escHtml(p.full_name || '')}" placeholder="Dein Name"/>
-        </div>
-
-        <div class="field">
-          <label>Bio</label>
-          <textarea id="edit-bio" rows="3" placeholder="Kurze Beschreibung von dir…">${escHtml(p.bio || '')}</textarea>
-        </div>
-
-        <div class="field">
-          <label>Kontakt-E-Mail</label>
-          <input type="email" id="edit-contact-email" value="${escHtml(p.contact_email || '')}" placeholder="fuer@brands.de"/>
-        </div>
-
-        <div class="field">
-          <label>Instagram</label>
-          <div class="handle-input-wrap">
-            <span class="handle-prefix">@</span>
-            <input type="text" id="edit-ig" value="${escHtml((p.instagram_handle||'').replace(/^@/,''))}" placeholder="deinhandle"/>
+        <div class="field"><label>Username</label>
+          <div style="display:flex;gap:8px;align-items:center;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg)">
+            <span style="flex:1;font-size:14px;color:var(--text)" id="display-username">${escHtml(p.display_name||'–')}</span>
+            <button onclick="openUsernameSheet()" style="padding:6px 12px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">Ändern</button>
           </div>
+          <div class="username-hint">Dein öffentlicher Name auf viuno.de</div>
         </div>
-
-        <div class="field">
-          <label>TikTok</label>
-          <div class="handle-input-wrap">
-            <span class="handle-prefix">@</span>
-            <input type="text" id="edit-tt" value="${escHtml((p.tiktok_handle||'').replace(/^@/,''))}" placeholder="deinhandle"/>
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Stadt</label>
-          <input type="text" id="edit-city" value="${escHtml(p.city || '')}" placeholder="z.B. München"/>
-        </div>
-
-        <div class="field">
-          <label>Nische</label>
-          <div class="niche-grid" id="niche-grid">
-            ${NICHES_PROFILE.map(n => `
-              <button class="niche-btn ${pv.niche === n.key ? 'active' : ''}"
-                data-niche="${n.key}" onclick="selectNiche('${n.key}')">
-                ${n.label}
-              </button>`).join('')}
-          </div>
-        </div>
-
+        <div class="field"><label>Name</label><input type="text" id="edit-fullname" value="${escHtml(p.full_name||'')}"/></div>
+        <div class="field"><label>Bio</label><textarea id="edit-bio" rows="3">${escHtml(p.bio||'')}</textarea></div>
+        <div class="field"><label>Instagram</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="edit-ig" value="${escHtml((p.instagram_handle||'').replace(/^@/,''))}"/></div></div>
+        <div class="field"><label>TikTok</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="edit-tt" value="${escHtml((p.tiktok_handle||'').replace(/^@/,''))}"/></div></div>
+        <div class="field"><label>Stadt</label><input type="text" id="edit-city" value="${escHtml(p.city||'')}"/></div>
+        <div class="field"><label>Nische</label><div class="niche-grid">${NICHES_PROFILE.map(n=>`<button class="niche-btn ${pv.niche===n.key?'active':''}" data-niche="${n.key}" onclick="selectNiche('${n.key}')">${n.label}</button>`).join('')}</div></div>
         <button class="btn-save" id="btn-save" onclick="saveProfile()">Speichern</button>
         <div class="save-success hidden" id="save-success">✓ Gespeichert</div>
       </div>
     </div>
-
-    <!-- ── Account ── -->
-    <div class="section" style="padding-bottom:8px">
-      <div class="section-label">Account</div>
+    <div class="section" style="padding-bottom:calc(8px + var(--safe-bottom))"><div class="section-label">Account</div>
       <div class="danger-card">
-        <div class="danger-row" style="margin-bottom:12px">
-          <div class="danger-info">
-            <div class="danger-title">E-Mail Adresse</div>
-            <div class="danger-sub">${escHtml(p.email || '–')}</div>
+        <div class="danger-row" style="margin-bottom:0">
+          <div style="flex:1;min-width:0">
+            <div class="danger-title">Login-E-Mail</div>
+            <div class="danger-sub" id="current-email-display">${escHtml(pv.user.email||'–')}</div>
           </div>
+          <button class="btn-danger" onclick="openEmailModal()" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong)">Ändern</button>
         </div>
-        <div class="danger-row">
-          <div class="danger-info">
-            <div class="danger-title">Account löschen</div>
-            <div class="danger-sub">Alle Daten werden unwiderruflich gelöscht.</div>
+        <div style="height:1px;background:var(--border);margin:14px 0"></div>
+        <div class="danger-row" style="margin-bottom:0">
+          <div><div class="danger-title">Passwort ändern</div><div class="danger-sub">Neues Passwort setzen</div></div>
+          <button class="btn-danger" onclick="openPasswordSheet()" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong)">Ändern</button>
+        </div>
+        <div style="height:1px;background:var(--border);margin:14px 0"></div>
+        <div class="danger-row" style="margin-bottom:0">
+          <div>
+            <div class="danger-title">Creator News Newsletter</div>
+            <div class="danger-sub">${pv.isSubscribed?'Aktiv — du erhältst tägliche Creator News':'Nicht abonniert'}</div>
           </div>
-          <button class="btn-danger" onclick="showToast('Bitte wende dich an den Support.')">Löschen</button>
+          ${pv.isSubscribed
+            ?`<button class="btn-danger" onclick="toggleNewsletter(false)" style="background:var(--surface2);color:var(--muted);border-color:var(--border-strong)">Abmelden</button>`
+            :`<button class="btn-danger" onclick="toggleNewsletter(true)" style="background:var(--text);color:white;border-color:var(--text)">Anmelden</button>`
+          }
+        </div>
+        <div style="height:1px;background:var(--border);margin:14px 0"></div>
+        <div class="danger-row">
+          <div><div class="danger-title">Account löschen</div><div class="danger-sub">Alle Daten werden unwiderruflich gelöscht.</div></div>
+          <button class="btn-danger" onclick="openDeleteModal()">Löschen</button>
         </div>
       </div>
-    </div>
-  `
+    </div>`
+}
+window.selectNiche=function(key){if(!pv)return;pv.niche=key;document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===key))}
+
+// ── Passwort Sheet ──
+window.openPasswordSheet=function(){
+  document.getElementById('sheet-new-pw').value=''
+  document.getElementById('sheet-new-pw2').value=''
+  document.getElementById('pw-sheet-hint').textContent=''
+  const btn=document.getElementById('btn-save-pw')
+  btn.disabled=true;btn.style.opacity='.5'
+  document.getElementById('password-modal').classList.remove('hidden')
+  document.body.style.overflow='hidden'
+  setTimeout(()=>document.getElementById('sheet-new-pw')?.focus(),100)
+}
+window.closePasswordModal=function(){
+  document.getElementById('password-modal')?.classList.add('hidden')
+  document.body.style.overflow=''
+}
+window.checkPwSheet=function(){
+  const pw=document.getElementById('sheet-new-pw').value
+  const hint=document.getElementById('pw-sheet-hint')
+  const btn=document.getElementById('btn-save-pw')
+  if(!pw){hint.textContent='';btn.disabled=true;btn.style.opacity='.5';return}
+  if(pw.length<8){
+    hint.textContent='Mindestens 8 Zeichen erforderlich.'
+    hint.style.color='var(--red)';btn.disabled=true;btn.style.opacity='.5';return
+  }
+  hint.textContent='✓ Passwort sieht gut aus';hint.style.color='var(--green)'
+  btn.disabled=false;btn.style.opacity='1'
+}
+window.saveNewPassword=async function(){
+  const pw=document.getElementById('sheet-new-pw').value
+  const pw2=document.getElementById('sheet-new-pw2').value
+  if(pw.length<8){showToast('Mindestens 8 Zeichen.');return}
+  if(pw!==pw2){showToast('Passwörter stimmen nicht überein.');return}
+  const btn=document.getElementById('btn-save-pw')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{error}=await sb.auth.updateUser({password:pw})
+  if(!document.getElementById('btn-save-pw'))return
+  btn.disabled=false;btn.textContent='Passwort speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  closePasswordModal()
+  showToast('Passwort gespeichert ✓')
 }
 
-window.selectNiche = function(key) {
-  if (!pv) return
-  pv.niche = key
-  document.querySelectorAll('.niche-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.niche === key)
-  })
+// ── Newsletter Toggle ──
+window.toggleNewsletter=async function(subscribe){
+  if(!pv)return
+  if(subscribe){
+    const email=pv.user.email
+    if(!email){showToast('Keine E-Mail-Adresse gefunden.');return}
+    await sb.from('newsletter_subscribers').upsert({
+      email,user_id:pv.uid,source:'profile',status:'active',subscribed_at:new Date().toISOString()
+    },{onConflict:'email'})
+    await sb.from('users').update({newsletter_subscribed:true}).eq('id',pv.uid)
+    if(!pv)return
+    pv.isSubscribed=true
+    showToast('Newsletter abonniert ✓')
+  } else {
+    await sb.from('newsletter_subscribers').update({status:'unsubscribed',unsubscribed_at:new Date().toISOString()}).eq('user_id',pv.uid)
+    await sb.from('users').update({newsletter_subscribed:false}).eq('id',pv.uid)
+    if(!pv)return
+    pv.isSubscribed=false
+    showToast('Newsletter abgemeldet')
+  }
+  // Re-render profile to update button state
+  paintProfile()
 }
 
-window.saveProfile = async function() {
-  if (!pv) return
-  const btn = document.getElementById('btn-save')
-  const successEl = document.getElementById('save-success')
-  btn.disabled = true
-  btn.innerHTML = '<span class="spinner"></span> Speichern…'
-  successEl.classList.add('hidden')
-
-  const ig = document.getElementById('edit-ig').value.trim().replace(/^@/, '')
-  const tt = document.getElementById('edit-tt').value.trim().replace(/^@/, '')
-
-  const patch = {
-    full_name:        document.getElementById('edit-fullname').value.trim() || null,
-    bio:              document.getElementById('edit-bio').value.trim() || null,
-    contact_email:    document.getElementById('edit-contact-email').value.trim() || null,
-    instagram_handle: ig || null,
-    tiktok_handle:    tt || null,
-    city:             document.getElementById('edit-city').value.trim() || null,
-    niche_category:   pv.niche,
-    updated_at:       new Date().toISOString(),
+// ── Username Sheet ──
+window.openUsernameSheet=function(){
+  const input=document.getElementById('sheet-new-username')
+  const status=document.getElementById('username-status')
+  const btn=document.getElementById('btn-save-username')
+  if(input)input.value=''
+  if(status)status.textContent=''
+  if(btn){btn.disabled=true;btn.style.opacity='.5'}
+  document.getElementById('username-modal').classList.remove('hidden')
+  document.body.style.overflow='hidden'
+  setTimeout(()=>input?.focus(),100)
+}
+window.closeUsernameSheet=function(){
+  document.getElementById('username-modal')?.classList.add('hidden')
+  document.body.style.overflow=''
+}
+window.closeUsernameModal=window.closeUsernameSheet
+window.checkUsernameAvailability=async function(){
+  const input=document.getElementById('sheet-new-username')
+  const status=document.getElementById('username-status')
+  const btn=document.getElementById('btn-save-username')
+  const val=input.value.trim()
+  clearTimeout(_usernameTimer)
+  btn.disabled=true;btn.style.opacity='.5'
+  if(!val){status.textContent='';return}
+  if(val.toLowerCase()===pv?.profile?.display_name?.toLowerCase()){status.style.color='var(--muted)';status.textContent='Das ist bereits dein Username.';return}
+  if(!/^[a-zA-Z0-9_]{3,30}$/.test(val)){status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.';return}
+  status.style.color='var(--muted)';status.textContent='Wird geprüft…'
+  _usernameTimer=setTimeout(async()=>{
+    // RPC umgeht RLS und prüft sicher gegen users + username_blacklist
+    const{data:result,error}=await sb.rpc('check_username_available',{p_username:val})
+    if(!document.getElementById('username-status'))return
+    if(error){
+      status.style.color='var(--red)';status.textContent='Fehler bei Prüfung'
+      btn.disabled=true;btn.style.opacity='.5';return
+    }
+    if(result==='reserved'){
+      status.style.color='var(--red)';status.textContent='❌ Dieser Username ist reserviert.'
+      btn.disabled=true;btn.style.opacity='.5'
+    } else if(result==='taken'){
+      status.style.color='var(--red)';status.textContent='❌ Leider vergeben.'
+      btn.disabled=true;btn.style.opacity='.5'
+    } else if(result==='invalid_format'){
+      status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.'
+      btn.disabled=true;btn.style.opacity='.5'
+    } else if(result==='available'){
+      status.style.color='var(--green)';status.textContent='✓ Verfügbar!'
+      btn.disabled=false;btn.style.opacity='1'
+    } else {
+      status.style.color='var(--red)';status.textContent='Unbekannte Antwort'
+      btn.disabled=true;btn.style.opacity='.5'
+    }
+  },500)
+}
+window.confirmUsernameChange=function(){
+  const newName=document.getElementById('sheet-new-username').value.trim()
+  if(!newName)return
+  closeUsernameSheet()
+  showModal(
+    `Username ändern zu "${newName}"?`,
+    null,
+    'Ja, Username ändern',
+    ()=>commitUsername(newName),
+    'Dein BioLink und Media Kit werden deaktiviert. Die alten URLs (' + (pv?.profile?.display_name?'viuno.de/'+pv.profile.display_name.toLowerCase():'alte URL') + ') funktionieren danach nicht mehr. Du musst BioLink und Media Kit mit dem neuen Username neu erstellen.'
+  )
+}
+async function commitUsername(newName){
+  closeModal()
+  showToast('Username wird geändert…',5000)
+  const{data:{session}}=await sb.auth.getSession()
+  if(!session){showToast('Session abgelaufen');location.reload();return}
+  try{
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/change-username`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({new_username:newName})
+    })
+    const body=await res.json().catch(()=>({}))
+    if(!res.ok||body.success!==true){
+      showToast('Fehler: '+(body.error||'Unbekannt'),5000)
+      return
+    }
+    showToast('Username geändert ✓ — bitte BioLink & Media Kit neu erstellen',5000)
+    if(state.route==='profile')router()
+  }catch(err){
+    showToast('Fehler: '+err.message,5000)
   }
-
-  const { error } = await sb.from('users').update(patch).eq('id', pv.uid)
-
-  /* View inzwischen verlassen → nichts mehr anfassen */
-  if (!pv || !document.getElementById('btn-save')) return
-
-  btn.disabled = false
-  btn.textContent = 'Speichern'
-
-  if (error) {
-    showToast('Fehler beim Speichern: ' + error.message, 4000)
-    return
-  }
-
-  // update local state
-  Object.assign(pv.profile, patch)
-  successEl.classList.remove('hidden')
-  setTimeout(() => { const el = document.getElementById('save-success'); if (el) el.classList.add('hidden') }, 3000)
-  showToast('Profil gespeichert ✓')
 }
 
-async function onPhotoPicked(e) {
-  const file = e.target.files?.[0]
-  if (!file) return
-  if (file.size > 5 * 1024 * 1024) { showToast('Bild zu groß. Max. 5 MB.'); return }
+// ── E-Mail ändern ──
+window.openEmailModal=function(){
+  showModal(
+    'E-Mail-Adresse ändern',
+    `<div style="margin-bottom:12px">Aktuelle E-Mail: <strong>${escHtml(pv.user.email)}</strong></div>
+     <div class="field" style="margin:0"><label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Neue E-Mail</label>
+     <input type="email" id="modal-new-email" placeholder="neue@email.de" style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none"/></div>`,
+    'Bestätigungsmail senden',
+    commitEmailChange,
+    null
+  )
+}
+async function commitEmailChange(){
+  const input=document.getElementById('modal-new-email')
+  const newEmail=input?.value?.trim()
+  if(!newEmail||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)){showToast('Bitte gültige E-Mail eingeben.');return}
+  if(newEmail===pv?.user.email){showToast('Das ist bereits deine E-Mail.');return}
+  const btn=document.getElementById('modal-confirm-btn')
+  if(btn){btn.disabled=true;btn.textContent='Wird gesendet…'}
+  const{error}=await sb.auth.updateUser({email:newEmail})
+  closeModal()
+  if(error){showToast('Fehler: '+error.message,5000);return}
+  showToast('Bestätigungsmail gesendet! Bitte prüfe dein Postfach.',5000)
+}
 
-  // Sofort Preview anzeigen
-  const reader = new FileReader()
-  reader.onload = (ev) => {
-    const wrap = document.querySelector('.photo-wrap')
-    if (!wrap) return
-    const existing = wrap.querySelector('img, .profile-photo-fallback')
-    if (existing) existing.remove()
-    const img = document.createElement('img')
-    img.className = 'profile-photo'
-    img.src = ev.target.result
-    wrap.insertBefore(img, wrap.querySelector('.photo-edit-btn'))
+// ── Account löschen ──
+window.openDeleteModal=function(){
+  showModal(
+    'Account löschen?',
+    'Alle deine Daten, BioLink-Seite und Media Kit werden dauerhaft gelöscht.',
+    'Weiter',
+    showDeleteConfirm,
+    null
+  )
+}
+function showDeleteConfirm(){
+  showModal(
+    'Wirklich unwiderruflich löschen?',
+    null,
+    'Ja, Account jetzt löschen',
+    commitDeleteAccount,
+    'Diese Aktion kann nicht rückgängig gemacht werden. Dein Account wird sofort gelöscht.'
+  )
+}
+async function commitDeleteAccount(){
+  const btn=document.getElementById('modal-confirm-btn')
+  if(btn){btn.disabled=true;btn.textContent='Wird gelöscht…'}
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session){showToast('Session abgelaufen');navigate('#/login');return}
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/delete-account`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json().catch(()=>({}))
+    if(!res.ok&&body.success!==true){closeModal();showToast('Fehler: '+(body.error||'Unbekannt'),5000);return}
+    await sb.auth.signOut()
+    location.replace('https://viuno.de')
+  }catch(err){
+    closeModal();showToast('Fehler: '+err.message,5000)
   }
-  reader.readAsDataURL(file)
+}
 
-  // Upload zu Supabase Storage
-  showToast('Wird hochgeladen…', 8000)
-  const uid = pv ? pv.uid : state.session.user.id
-  const path = `${uid}/${Date.now()}.${file.name.split('.').pop()}`
-  const { error } = await sb.storage.from('profile-images').upload(path, file, { upsert: true })
-  if (error) { showToast('Upload fehlgeschlagen: ' + error.message, 4000); return }
+window.saveProfile=async function(){
+  if(!pv)return
+  const btn=document.getElementById('btn-save'),successEl=document.getElementById('save-success')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Speichern…';successEl.classList.add('hidden')
+  const ig=document.getElementById('edit-ig').value.trim().replace(/^@/,''),tt=document.getElementById('edit-tt').value.trim().replace(/^@/,'')
+  const patch={full_name:document.getElementById('edit-fullname').value.trim()||null,bio:document.getElementById('edit-bio').value.trim()||null,instagram_handle:ig||null,tiktok_handle:tt||null,city:document.getElementById('edit-city').value.trim()||null,niche_category:pv.niche,updated_at:new Date().toISOString()}
+  const{error}=await sb.from('users').update(patch).eq('id',pv.uid)
+  if(!pv||!document.getElementById('btn-save'))return
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  Object.assign(pv.profile,patch);successEl.classList.remove('hidden');setTimeout(()=>document.getElementById('save-success')?.classList.add('hidden'),3000);showToast('Profil gespeichert ✓')
+}
 
-  const { data: { publicUrl } } = sb.storage.from('profile-images').getPublicUrl(path)
-  await sb.from('users').update({ profile_image_url: publicUrl }).eq('id', uid)
-  if (pv) pv.profile.profile_image_url = publicUrl
-  /* Avatar in der Topbar mitziehen — in der alten Seite gab es den nicht */
-  if (state.profile) { state.profile.profile_image_url = publicUrl; paintUser() }
-  showToast('Profilbild gespeichert ✓')
-  e.target.value = ''
+async function onPhotoPicked(e){
+  const file=e.target.files?.[0];if(!file)return
+  if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
+  const reader=new FileReader()
+  reader.onload=(ev)=>{const wrap=document.querySelector('.photo-wrap');if(!wrap)return;const ex=wrap.querySelector('img,.profile-photo-fallback');if(ex)ex.remove();const img=document.createElement('img');img.className='profile-photo';img.src=ev.target.result;wrap.insertBefore(img,wrap.querySelector('.photo-edit-btn'))}
+  reader.readAsDataURL(file);showToast('Wird hochgeladen…',8000)
+  const uid=pv?pv.uid:state.session.user.id
+  const path=`${uid}/${Date.now()}.${file.name.split('.').pop()}`
+  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
+  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);return}
+  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
+  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',uid)
+  if(pv)pv.profile.profile_image_url=publicUrl
+  /* Avatar in der Topbar mitziehen — die alte Seite lud die Seite dafuer neu */
+  if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
+  showToast('Profilbild gespeichert ✓');e.target.value=''
 }
 
 /* ─────────────────────────────────────────────
