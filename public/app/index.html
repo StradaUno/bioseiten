@@ -227,82 +227,52 @@ html, body {
 .greeting-hi{font-size:22px;font-weight:700;letter-spacing:-.04em}
 .greeting-date{font-size:13px;color:var(--muted);margin-top:3px}
 
-.kpi-scroll{display:flex;gap:10px;padding:16px 20px 0;overflow-x:auto;scrollbar-width:none}
-.kpi-scroll::-webkit-scrollbar{display:none}
-.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;min-width:120px;flex-shrink:0}
-.kpi-card.dark{background:var(--text);border-color:var(--text)}
-.kpi-card.dark .kpi-label{color:rgba(255,255,255,.45)}
-.kpi-card.dark .kpi-value{color:white}
-.kpi-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.kpi-value{font-size:24px;font-weight:700;color:var(--text);letter-spacing:-.04em;margin-top:4px;line-height:1}
-.kpi-delta{font-size:11px;font-weight:500;margin-top:5px}
-.kpi-delta.up{color:var(--green)}
-.kpi-delta.down{color:var(--red)}
-.kpi-delta.neu{color:var(--muted)}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px;text-decoration:none;display:flex;flex-direction:column;gap:4px;transition:border-color .15s,transform .1s;cursor:pointer}
+.dash-card:hover{border-color:var(--border-strong)}
+.dash-card:active{transform:scale(.97)}
+.dash-card-dark{background:var(--text);border-color:var(--text)}
+.dash-card-dark .dash-card-label{color:rgba(255,255,255,.5)}
+.dash-card-dark .dash-card-value{color:white}
+.dash-card-dark .dash-card-sub{color:rgba(255,255,255,.45)}
+.dash-card-dark .dash-card-icon{color:white}
+.dash-card-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.dash-card-value{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1.1;margin-top:4px}
+.dash-card-sub{font-size:11px;color:var(--subtle);margin-top:2px}
+.dash-card-icon{font-size:24px;margin-bottom:6px}
+.dash-card-icon-only{justify-content:center;align-items:flex-start;padding:20px 16px}
 
-.mini-chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;text-decoration:none;display:block;transition:border-color .15s}
-.mini-chart-card:hover{border-color:var(--border-strong)}
-.mini-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.a-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.a-value{font-size:26px;font-weight:700;color:var(--text);letter-spacing:-.04em;margin-top:3px;line-height:1}
-.a-delta{font-size:11px;font-weight:500;margin-top:4px}
-.a-delta.up{color:var(--green)}
-.a-delta.down{color:var(--red)}
-.mini-svg{width:100%;height:52px;display:block;overflow:visible}
-.mini-footer{display:flex;gap:14px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);flex-wrap:wrap}
-.a-stat{font-size:11px;color:var(--muted)}
-.a-stat strong{color:var(--text);font-weight:600}
+.dash-digest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;cursor:pointer}
+.dash-digest-card.expanded .dash-card-body-full{display:block}
+.dash-digest-card.expanded .dash-card-chevron{transform:rotate(180deg)}
+.dash-card-image{width:100%;height:120px;object-fit:cover;background:var(--surface2);display:block}
+.dash-card-image-fallback{width:100%;height:120px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:28px}
+.dash-card-inner{padding:12px 14px}
+.dash-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.dash-platform-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.03em}
+.pb-tiktok{background:#f0f9ff;color:#0891b2}.pb-instagram{background:#fdf2f8;color:#9d174d}.pb-youtube{background:#fff7ed;color:#c2410c}.pb-meta{background:#eff6ff;color:#1d4ed8}.pb-allgemein{background:var(--surface2);color:var(--muted)}
+.dash-card-source{font-size:11px;color:var(--subtle);margin-left:auto}
+.dash-card-chevron{font-size:12px;color:var(--subtle);transition:transform .2s;margin-left:4px}
+.dash-card-headline{font-size:14px;font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.35;margin-bottom:5px}
+.dash-card-summary{font-size:13px;color:var(--muted);line-height:1.5}
+.dash-card-body-full{display:none;border-top:1px solid var(--border);padding-top:12px;margin-top:10px}
+.dash-card-full-text{font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-line}
+.dash-card-impact{background:var(--surface2);border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px}
+.dash-card-impact-label{font-size:10px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.dash-card-impact-text{font-size:12px;color:var(--text);line-height:1.5;font-weight:500}
+.dash-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
+.dash-card-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface)}
+.dash-card-share{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit}
 
-.digest-preview{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;text-decoration:none;display:block;transition:border-color .15s}
-.digest-preview:hover{border-color:var(--border-strong)}
-.digest-img{width:100%;height:110px;object-fit:cover;background:var(--surface2);display:block}
-.digest-img-fallback{width:100%;height:110px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:32px}
-.digest-inner{padding:12px 16px}
-.digest-pill{display:inline-flex;align-items:center;background:var(--surface2);border-radius:99px;font-size:10px;font-weight:600;color:var(--muted);padding:3px 10px;margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
-.digest-headline{font-size:14px;font-weight:600;color:var(--text);line-height:1.4}
-.digest-more{font-size:12px;color:var(--muted);margin-top:6px}
-
-.list-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;text-decoration:none;display:block;transition:border-color .15s}
-.list-card:hover{border-color:var(--border-strong)}
-.list-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border)}
-.list-row:last-child{border-bottom:none}
-.req-initial{width:36px;height:36px;border-radius:10px;flex-shrink:0;background:var(--surface2);border:1px solid var(--border);display:grid;place-items:center;font-size:13px;font-weight:700}
-.req-name{font-size:13px;font-weight:600;color:var(--text)}
-.req-sub{font-size:11px;color:var(--muted);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
-.req-dot{width:7px;height:7px;border-radius:50%;background:var(--text);margin-left:auto;flex-shrink:0}
-
-.deal-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.deal-dot.open{background:var(--orange)}
-.deal-dot.negotiating{background:#7c5cfc}
-.deal-dot.closed_won{background:var(--green)}
-.deal-dot.closed{background:var(--green)}
-.deal-dot.draft{background:var(--subtle)}
-.deal-info{flex:1;min-width:0}
-.deal-title-text{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.deal-brand{font-size:11px;color:var(--muted);margin-top:1px}
-.deal-value{font-size:13px;font-weight:700;color:var(--text);flex-shrink:0}
-
-.goal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:8px}
-.goal-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.goal-label{font-size:13px;font-weight:600;color:var(--text)}
-.goal-pct{font-size:13px;font-weight:700;color:var(--text)}
-.goal-sub{font-size:11px;color:var(--muted);margin-bottom:10px}
-.goal-bar-track{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden}
-.goal-bar-fill{height:100%;border-radius:99px;background:var(--text)}
-
-.trend-row{display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border)}
-.trend-row:last-child{border-bottom:none}
-.trend-rank{font-size:12px;font-weight:700;color:var(--subtle);width:18px;text-align:right;flex-shrink:0}
-.trend-thumb-fb{width:34px;height:34px;border-radius:8px;background:var(--surface2);display:grid;place-items:center;font-size:13px;flex-shrink:0}
-.trend-name{font-size:13px;font-weight:600;color:var(--text);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.trend-views{font-size:11px;color:var(--subtle);flex-shrink:0}
-
-.quick-links{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.quick-link{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;cursor:pointer;text-decoration:none;display:flex;flex-direction:column;gap:6px;transition:border-color .15s}
-.quick-link:hover{border-color:var(--border-strong)}
-.quick-link-icon{font-size:20px}
-.quick-link-label{font-size:13px;font-weight:600;color:var(--text)}
-.quick-link-sub{font-size:11px;color:var(--muted)}
+.newsletter-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px}
+.newsletter-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
+.newsletter-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.newsletter-row{display:flex;gap:8px}
+.newsletter-input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.newsletter-input:focus{border-color:var(--text)}
+.newsletter-btn{padding:10px 16px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.newsletter-btn:disabled{opacity:.5;cursor:not-allowed}
+.newsletter-success{font-size:12px;color:var(--green);margin-top:8px;display:none}
 
 /* ═══ VIEW: PROFIL (aus /profile/) ═══
    .section und .section-label sind hier auf .view-profile begrenzt,
@@ -1092,8 +1062,10 @@ function renderOnboarding(area) {
 
 /* ═══════════════════════════════════════════════════════════════
    VIEW: DASHBOARD — übernommen aus public/dashboard/index.html
-   Queries, Feldlisten, Reihenfolge und Berechnungen unverändert.
-   Angepasst: interne Links (/analytics.html → #/analytics usw.).
+   Neun Queries in gleicher Reihenfolge, gleiche Feldlisten, gleiche
+   Follower-Fallback-Logik, gleiche Karten und Newsletter-Anmeldung.
+   Angepasst: interne Links auf Hash-Routen. Die Klick-Listener der
+   Digest-Karten haengen an ctx und gehen beim Verlassen weg.
    ═══════════════════════════════════════════════════════════════ */
 async function renderDashboard(area, ctx) {
   const uid = state.session.user.id
@@ -1111,215 +1083,187 @@ async function renderDashboard(area, ctx) {
     </div>
     <div id="dashboard-content" class="hidden"></div>`
 
-  const [profileRes,analyticsRes,digestRes,requestsRes,hashtagsRes,bioStatsRes,dealsRes,goalsRes] = await Promise.all([
-    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count').eq('id',uid).single(),
+  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes,dailyTextRes,statsRes] = await Promise.all([
+    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count,newsletter_subscribed').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
     sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
-    sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).is('deleted_at',null).neq('status','deleted').order('created_at',{ascending:false}).limit(3),
-    sb.from('live_hashtags').select('rank,name,view_count').order('rank',{ascending:true}).limit(5),
+    sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).eq('status','new').is('deleted_at',null).order('created_at',{ascending:false}).limit(3),
     sb.from('bio_stats').select('views_today,views_last_7_days,views_total').eq('user_id',uid).single(),
-    sb.from('deals').select('id,title,brand_name,deal_value,final_value,status,deadline,platform').eq('user_id',uid).is('deleted_at',null).in('status',['open','negotiating','draft']).order('created_at',{ascending:false}).limit(4),
     sb.from('user_goals').select('goal_type,target_value,current_value,deadline,platform,is_active,achieved').eq('user_id',uid).eq('is_active',true).eq('achieved',false).limit(3),
+    sb.from('mediakit_settings').select('views_last_7_days').eq('user_id',uid).single(),
+    sb.rpc('get_daily_text',{p_user_id:uid}),
+    sb.from('analyse_stats').select('platform,followers,followers_change').eq('user_id',uid).order('created_at',{ascending:false}).limit(2),
   ])
 
-  if (ctx.stale) return   // inzwischen weitergeklickt
+  if (ctx.stale) return
 
-  const p      = profileRes.data
-  const anRows = analyticsRes.data || []
-  const an     = anRows[0] || null
-  const d      = digestRes.data
-  const reqs   = requestsRes.data || []
-  const trends = hashtagsRes.data || []
-  const bs     = bioStatsRes.data
-  const deals  = dealsRes.data || []
-  const goals  = goalsRes.data || []
+  const p           = profileRes.data
+  const anRows      = analyticsRes.data || []
+  const an          = anRows[0] || null
+  const d           = digestRes.data
+  const cards       = d?.cards || []
+  const reqs        = requestsRes.data || []
+  const bs          = bioStatsRes.data
+  const goals       = goalsRes.data || []
+  const mk          = mkRes.data
+  const dailyText   = dailyTextRes.data || null
+  const statsRows   = statsRes.data || []
+  const isSubscribed= p?.newsletter_subscribed || false
 
-  const name    = p?.display_name||p?.full_name||'Creator'
-  const hour    = new Date().getHours()
-  const greet   = hour<12?'Guten Morgen':hour<18?'Guten Tag':'Guten Abend'
-  const newReqs = reqs.filter(r=>r.status==='new').length
-  const follDelta = an?.followers_change
-  const topCard   = d?.cards?.[0]
-  const lineSvg   = buildLineSvg(anRows)
-  const activeDealsVal = deals.filter(d=>['open','negotiating'].includes(d.status)).reduce((s,d)=>s+(+d.deal_value||0),0)
+  const name      = p?.display_name||p?.full_name||'Creator'
+  const newReqs   = reqs.filter(r=>r.status==='new').length
+
+  // Follower: neue analyse_stats bevorzugen, Fallback auf users.total_followers
+  const igStats   = statsRows.find(r=>r.platform==='instagram')
+  const ttStats   = statsRows.find(r=>r.platform==='tiktok')
+  const totalFollowers = igStats||ttStats
+    ? (igStats?.followers||0)+(ttStats?.followers||0)
+    : p?.total_followers
+  const follDelta = igStats?.followers_change??an?.followers_change
+
+  // greeting: get_daily_text result or fallback
+  const greetText = dailyText || (()=>{
+    const h=new Date().getHours()
+    return h<12?`Guten Morgen, ${name.split(' ')[0]}.`:h<18?`Guten Tag, ${name.split(' ')[0]}.`:`Guten Abend, ${name.split(' ')[0]}.`
+  })()
 
   document.getElementById('skeleton-area').classList.add('hidden')
   document.getElementById('dashboard-content').classList.remove('hidden')
   document.getElementById('dashboard-content').innerHTML = `
 
-    <div class="greeting-section">
-      <div class="greeting-hi">${greet}, ${escHtml(name.split(' ')[0])}.</div>
-      <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
-    </div>
-
-    <!-- KPI Scroll -->
-    <div class="kpi-scroll">
-      <div class="kpi-card dark">
-        <div class="kpi-label">Follower</div>
-        <div class="kpi-value">${fmt(p?.total_followers)}</div>
-        ${follDelta!=null
-          ?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDelta>=0?'↑':'↓'} ${Math.abs(follDelta).toLocaleString('de-DE')}</div>`
-          :'<div class="kpi-delta neu">Gesamt</div>'}
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Bio 7 Tage</div>
-        <div class="kpi-value">${fmt(bs?.views_last_7_days||p?.bio_views_last_7_days)}</div>
-        <div class="kpi-delta neu">Aufrufe</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Engagement</div>
-        <div class="kpi-value">${an?Number(an.engagement_rate).toFixed(1)+'%':'–'}</div>
-        <div class="kpi-delta ${Number(an?.engagement_rate||0)>6?'up':Number(an?.engagement_rate||0)>3?'neu':'down'}">${Number(an?.engagement_rate||0)>6?'Sehr gut ↑':Number(an?.engagement_rate||0)>3?'Gut':'–'}</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Anfragen</div>
-        <div class="kpi-value">${newReqs}</div>
-        <div class="kpi-delta neu">Neu</div>
-      </div>
-      ${activeDealsVal>0?`<div class="kpi-card">
-        <div class="kpi-label">Deal-Pipeline</div>
-        <div class="kpi-value">${fmtEuro(activeDealsVal)}</div>
-        <div class="kpi-delta neu">Offen</div>
-      </div>`:''}
-    </div>
-
-    <!-- Analytics (Linie) -->
-    ${an?`<div class="section">
-      <div class="section-header"><div class="section-title">Analytics</div><a class="section-link" href="#/analytics">Alle →</a></div>
-      <a class="mini-chart-card" href="#/analytics">
-        <div class="mini-top">
-          <div>
-            <div class="a-label">Instagram · Follower</div>
-            <div class="a-value">${fmt(an.followers)}</div>
-            ${follDelta!=null?`<div class="a-delta ${follDelta>=0?'up':'down'}">${follDelta>=0?'↑':'↓'} ${Math.abs(follDelta).toLocaleString('de-DE')} diese Woche</div>`:''}
-          </div>
-          <div style="font-size:12px;color:var(--muted)">↗</div>
-        </div>
-        ${lineSvg}
-        <div class="mini-footer">
-          <span class="a-stat"><strong>${fmt(an.avg_likes)}</strong> Ø Likes</span>
-          <span class="a-stat"><strong>${fmt(an.avg_views)}</strong> Ø Views</span>
-          <span class="a-stat"><strong>${Number(an.engagement_rate).toFixed(1)}%</strong> ER</span>
-          ${an.avg_saves?`<span class="a-stat"><strong>${fmt(an.avg_saves)}</strong> Ø Saves</span>`:''}
-        </div>
-      </a>
-    </div>`:''}
-
-    <!-- Daily Digest -->
-    ${d&&topCard?`<div class="section">
-      <div class="section-header"><div class="section-title">Daily Digest</div><a class="section-link" href="#/digest">Alle →</a></div>
-      <a class="digest-preview" href="#/digest">
-        ${topCard.image_url?`<img class="digest-img" src="${escHtml(topCard.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;digest-img-fallback&quot;>📰</div>'">`:'<div class="digest-img-fallback">📰</div>'}
-        <div class="digest-inner">
-          <div class="digest-pill">${escHtml(topCard.platform||'News')}</div>
-          <div class="digest-headline">${escHtml(topCard.headline||d.teaser||'')}</div>
-          <div class="digest-more">Mehr lesen →</div>
-        </div>
-      </a>
-    </div>`:''}
-
-    <!-- Anfragen -->
-    ${reqs.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Anfragen</div><a class="section-link" href="#/requests">Alle →</a></div>
-      <a class="list-card" href="#/requests">
-        ${reqs.map(r=>`<div class="list-row">
-          <div class="req-initial">${escHtml(r.sender_initial||r.sender_name?.[0]||'?')}</div>
-          <div style="flex:1;min-width:0">
-            <div class="req-name">${escHtml(r.sender_name)}</div>
-            <div class="req-sub">${escHtml(r.message||'–')}</div>
-          </div>
-          ${r.status==='new'?'<div class="req-dot"></div>':''}
-        </div>`).join('')}
-      </a>
-    </div>`:''}
-
-    <!-- Deals -->
-    ${deals.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Offene Deals</div><a class="section-link" href="#/deals">Alle →</a></div>
-      <a class="list-card" href="#/deals">
-        ${deals.map(deal=>`<div class="list-row">
-          <div class="deal-dot ${deal.status||'draft'}"></div>
-          <div class="deal-info">
-            <div class="deal-title-text">${escHtml(deal.title||'Deal')}</div>
-            <div class="deal-brand">${escHtml(deal.brand_name||'–')}${deal.deadline?' · '+fmtDateShort(deal.deadline):''}</div>
-          </div>
-          <div class="deal-value">${deal.deal_value?fmtEuro(deal.deal_value):'–'}</div>
-        </div>`).join('')}
-      </a>
-    </div>`:''}
-
-    <!-- Ziele -->
-    ${goals.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Meine Ziele</div></div>
-      ${goals.map(g=>{
-        const pct=g.target_value>0?Math.min(100,Math.round((+g.current_value/+g.target_value)*100)):0
-        const labels={'followers':'Follower-Ziel','engagement':'Engagement-Ziel','revenue':'Umsatz-Ziel'}
-        const label=labels[g.goal_type]||escHtml(g.goal_type)
-        return `<div class="goal-card">
-          <div class="goal-row"><div class="goal-label">${label}${g.platform?' · '+g.platform:''}</div><div class="goal-pct">${pct}%</div></div>
-          <div class="goal-sub">${fmt(g.current_value)} von ${fmt(g.target_value)}${g.deadline?' · bis '+new Date(g.deadline).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}):''}</div>
-          <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
-        </div>`
-      }).join('')}
-    </div>`:''}
-
-    <!-- Top Trends -->
-    ${trends.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Top Hashtags</div><a class="section-link" href="#/trends">Alle →</a></div>
-      <a class="list-card" href="#/trends">
-        ${trends.map(h=>`<div class="trend-row">
-          <span class="trend-rank">${h.rank}</span>
-          <div class="trend-thumb-fb">#</div>
-          <span class="trend-name">#${escHtml(h.name)}</span>
-          <span class="trend-views">${fmt(h.view_count)} Views</span>
-        </div>`).join('')}
-      </a>
-    </div>`:''}
-
-    <!-- Schnellzugriff -->
-    <div class="section" style="padding-bottom:8px">
-      <div class="section-title" style="margin-bottom:10px">Schnellzugriff</div>
-      <div class="quick-links">
-        <a class="quick-link" href="#/analytics"><div class="quick-link-icon">📊</div><div class="quick-link-label">Analytics</div><div class="quick-link-sub">Instagram & TikTok</div></a>
-        <a class="quick-link" href="#/digest"><div class="quick-link-icon">📰</div><div class="quick-link-label">Daily Digest</div><div class="quick-link-sub">Creator News</div></a>
-        <a class="quick-link" href="#/trends"><div class="quick-link-icon">🔥</div><div class="quick-link-label">Trends</div><div class="quick-link-sub">Hashtags & Sounds</div></a>
-        <a class="quick-link" href="#/requests"><div class="quick-link-icon">✉️</div><div class="quick-link-label">Anfragen</div><div class="quick-link-sub">Kooperationen</div></a>
+    <div class="section" style="padding-top:16px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+        <div class="greeting-hi" style="font-size:17px">${escHtml(greetText)}</div>
+        <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
       </div>
     </div>
+
+    <!-- Row 1: Follower + Anfragen -->
+    <div class="section">
+      <div class="dash-grid">
+        <a class="dash-card dash-card-dark" href="#/analytics">
+          <div class="dash-card-label">Follower</div>
+          <div class="dash-card-value">${fmt(totalFollowers)}</div>
+          <div class="dash-card-sub">${follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' diese Woche':'Gesamt'}</div>
+        </a>
+        <a class="dash-card" href="#/requests">
+          <div class="dash-card-label">Anfragen</div>
+          <div class="dash-card-value">${newReqs}</div>
+          <div class="dash-card-sub">${newReqs===1?'Neue Anfrage':newReqs>1?'Neue Anfragen':'Keine neuen'}</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Row 2: BioLink + Media Kit -->
+    <div class="section">
+      <div class="dash-grid">
+        <a class="dash-card" href="#/biolink">
+          <div class="dash-card-label">BioLink</div>
+          <div class="dash-card-value">${fmt(bs?.views_last_7_days)}</div>
+          <div class="dash-card-sub">Aufrufe · 7 Tage</div>
+        </a>
+        <a class="dash-card" href="#/mediakit">
+          <div class="dash-card-label">Media Kit</div>
+          <div class="dash-card-value">${fmt(mk?.views_last_7_days)}</div>
+          <div class="dash-card-sub">Aufrufe · 7 Tage</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Daily Digest Karten — heute, ausklappbar, teilbar -->
+    ${d&&cards.length?`<div class="section">
+      <div class="section-header">
+        <div class="section-title">Creator News</div>
+        <a class="section-link" href="#/digest">Alle →</a>
+      </div>
+      <div id="dash-cards-list">${cards.map(c=>dashCardHtml(c)).join('')}</div>
+    </div>`:''}
+
+    <!-- Newsletter unten — nur wenn nicht abonniert -->
+    ${!isSubscribed?`<div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
+      <div class="newsletter-box" id="nl-box-bottom">
+        <div class="newsletter-title">📬 Hol dir die Creator News als Newsletter</div>
+        <div class="newsletter-sub">Täglich die wichtigsten Updates — kostenlos in dein Postfach.</div>
+        <div class="newsletter-row">
+          <input type="email" class="newsletter-input" id="nl-email-bottom" placeholder="${escHtml(p?.email||'deine@email.de')}"/>
+          <button class="newsletter-btn" id="nl-btn-bottom">Anmelden</button>
+        </div>
+        <div class="newsletter-success" id="nl-success-bottom">✓ Erfolgreich angemeldet!</div>
+      </div>
+    </div>`:`<div style="height:calc(24px + var(--safe-bottom))"></div>`}
   `
+
+  // Wire up card interactions
+  document.getElementById('dash-cards-list')?.querySelectorAll('.dash-digest-card').forEach(card=>{
+    ctx.on(card,'click',()=>card.classList.toggle('expanded'))
+  })
+  document.getElementById('dash-cards-list')?.querySelectorAll('.dash-card-share').forEach(btn=>{
+    ctx.on(btn,'click',e=>{e.stopPropagation();dashShareCard(btn.dataset.headline,btn.dataset.summary)})
+  })
+  const nlBtn = document.getElementById('nl-btn-bottom')
+  if (nlBtn) ctx.on(nlBtn,'click',()=>subscribeNewsletter('bottom', uid, nlBtn))
 }
 
-/* Linien-Chart SVG aus echten historischen Daten — aus /dashboard/ */
-function buildLineSvg(rows){
-  const sorted=[...rows].reverse() // älteste zuerst
-  if(sorted.length<2){
-    // wenig Daten → einfache flache Linie
-    return `<svg class="mini-svg" viewBox="0 0 300 52" preserveAspectRatio="none">
-      <line x1="0" y1="40" x2="300" y2="40" stroke="var(--border-strong)" stroke-width="2" stroke-dasharray="4 3"/>
-    </svg>`
-  }
-  const values=sorted.map(r=>+(r.followers)||0)
-  const min=Math.min(...values), max=Math.max(...values), range=max-min||1
-  const W=300,H=52,PAD=5
-  const pts=values.map((v,i)=>{
-    const x=i/(values.length-1)*W
-    const y=PAD+(1-(v-min)/range)*(H-PAD*2)
-    return [x,y]
-  })
-  const pathD=pts.map((p,i)=>i===0?`M${p[0].toFixed(1)},${p[1].toFixed(1)}`:`L${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' ')
-  const areaD=`${pathD} L${W},${H} L0,${H} Z`
-  const last=pts[pts.length-1]
-  return `<svg class="mini-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="lg-dash" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--text)" stop-opacity=".1"/>
-        <stop offset="100%" stop-color="var(--text)" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <path d="${areaD}" fill="url(#lg-dash)"/>
-    <path d="${pathD}" fill="none" stroke="var(--text)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    <circle cx="${last[0].toFixed(1)}" cy="${last[1].toFixed(1)}" r="4" fill="var(--text)" stroke="var(--surface)" stroke-width="2"/>
-  </svg>`
+// ── Digest card helpers ──
+function dashPlatformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p||'News'}
+function dashPlatformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta'}[p]||'pb-allgemein'}
+function dashPlatformEmoji(p){return{tiktok:'🎵',instagram:'📸',youtube:'📺',meta:'🔵'}[p]||'📰'}
+
+function dashCardHtml(c){
+  const hasFull=c.full_content?.trim()
+  const hasExtra=hasFull||c.impact||c.source_url
+  const shareBtn=`<button class="dash-card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">↗ Teilen</button>`
+  return`<div class="dash-digest-card">
+    <div class="dash-card-inner">
+      <div class="dash-card-meta">
+        <span class="dash-platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
+        <span class="dash-card-source">${escHtml(c.source||'')}</span>
+        ${hasExtra?'<span class="dash-card-chevron">▼</span>':''}
+      </div>
+      <div class="dash-card-headline">${escHtml(c.headline||'')}</div>
+      <div class="dash-card-summary">${escHtml(c.summary||'')}</div>
+      ${hasExtra?`<div class="dash-card-body-full">
+        ${hasFull?`<div class="dash-card-full-text">${escHtml(c.full_content)}</div>`:''}
+        ${c.impact?`<div class="dash-card-impact"><div class="dash-card-impact-label">⚡ Was das für dich bedeutet</div><div class="dash-card-impact-text">${escHtml(c.impact)}</div></div>`:''}
+        <div class="dash-card-actions">
+          ${c.source_url?`<a class="dash-card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ↗</a>`:''}
+          ${shareBtn}
+        </div>
+      </div>`:''}
+    </div>
+  </div>`
+}
+
+async function dashShareCard(headline,summary){
+  const text=`📰 ${headline}\n\n${summary?summary.slice(0,120)+'…':''}\n\nMehr Creator-News auf viuno.de`
+  if(navigator.share){try{await navigator.share({title:headline,text,url:'https://viuno.de'});return}catch(_){}}
+  try{await navigator.clipboard.writeText(text);showToast('In Zwischenablage kopiert ✓')}catch(_){showToast('Teilen nicht verfügbar')}
+}
+
+// ── Newsletter ──
+/* Die alte Seite las den Button aus dem impliziten window.event —
+   hier wird er uebergeben, Verhalten sonst identisch. */
+async function subscribeNewsletter(pos, uid, btn){
+  const inputId=pos==='top'?'nl-email-top':'nl-email-bottom'
+  const successId=pos==='top'?'nl-success-top':'nl-success-bottom'
+  const email=document.getElementById(inputId)?.value?.trim()
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Bitte gültige E-Mail eingeben.');return}
+  btn.disabled=true;btn.textContent='…'
+  // Upsert into newsletter_subscribers
+  const{error}=await sb.from('newsletter_subscribers').upsert({
+    email,user_id:uid||null,source:pos==='top'?'dashboard_top':'dashboard_bottom',status:'active',subscribed_at:new Date().toISOString()
+  },{onConflict:'email'})
+  // Update users table flag
+  if(uid)await sb.from('users').update({newsletter_subscribed:true}).eq('id',uid)
+  btn.disabled=false;btn.textContent='Anmelden'
+  if(error){showToast('Fehler beim Anmelden.');return}
+  const successEl=document.getElementById(successId)
+  if(successEl){successEl.style.display='block'}
+  // Hide both boxes after 2s
+  setTimeout(()=>{
+    document.getElementById('nl-box-bottom')?.remove()
+  },2000)
+  showToast('Newsletter abonniert ✓')
 }
 
 /* ── App-Views (Platzhalter) ── */
