@@ -260,15 +260,6 @@ html, body {
 .dash-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
 .dash-card-link{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface)}
 .dash-card-share{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--muted);padding:6px 12px;border-radius:99px;border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit}
-.newsletter-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 16px}
-.newsletter-title{font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px}
-.newsletter-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
-.newsletter-row{display:flex;gap:8px}
-.newsletter-input{flex:1;padding:10px 12px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
-.newsletter-input:focus{border-color:var(--text)}
-.newsletter-btn{padding:10px 16px;background:var(--text);color:white;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0}
-.newsletter-btn:disabled{opacity:.5;cursor:not-allowed}
-.newsletter-success{font-size:12px;color:var(--green);margin-top:8px;display:none}
 
 /* ═══ VIEW: PROFIL (aus /profile/) ═══ */
 .profile-hero{padding:24px 20px 0;display:flex;align-items:flex-start;gap:16px}
@@ -1660,7 +1651,7 @@ async function renderDashboard(area, ctx) {
     <div id="dashboard-content" class="hidden"></div>`
 
   const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes,dailyTextRes,statsRes] = await Promise.all([
-    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count,newsletter_subscribed').eq('id',uid).single(),
+    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count,newsletter_subscribed,email,contact_email').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
     sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
     sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).eq('status','new').is('deleted_at',null).order('created_at',{ascending:false}).limit(3),
@@ -1672,6 +1663,7 @@ async function renderDashboard(area, ctx) {
   ])
 
   if (ctx.stale) return
+  ctx.onCleanup(() => { nlv = null })
 
   const p           = profileRes.data
   const anRows      = analyticsRes.data || []
@@ -1755,18 +1747,10 @@ async function renderDashboard(area, ctx) {
       <div id="dash-cards-list">${cards.map(c=>dashCardHtml(c)).join('')}</div>
     </div>`:''}
 
-    <!-- Newsletter unten — nur wenn nicht abonniert -->
-    ${!isSubscribed?`<div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
-      <div class="newsletter-box" id="nl-box-bottom">
-        <div class="newsletter-title">📬 Hol dir die Creator News als Newsletter</div>
-        <div class="newsletter-sub">Täglich die wichtigsten Updates — kostenlos in dein Postfach.</div>
-        <div class="newsletter-row">
-          <input type="email" class="newsletter-input" id="nl-email-bottom" placeholder="${escHtml(p?.email||'deine@email.de')}"/>
-          <button class="newsletter-btn" id="nl-btn-bottom">Anmelden</button>
-        </div>
-        <div class="newsletter-success" id="nl-success-bottom">✓ Erfolgreich angemeldet!</div>
-      </div>
-    </div>`:`<div style="height:calc(24px + var(--safe-bottom))"></div>`}
+    <!-- Newsletter unten — dieselbe Box wie oben auf Creator News -->
+    <div style="padding-bottom:calc(24px + var(--safe-bottom))">
+      <div id="nl-box-wrap"></div>
+    </div>
   `
 
   // Wire up card interactions
@@ -1776,8 +1760,9 @@ async function renderDashboard(area, ctx) {
   document.getElementById('dash-cards-list')?.querySelectorAll('.dash-card-share').forEach(btn=>{
     ctx.on(btn,'click',e=>{e.stopPropagation();dashShareCard(btn.dataset.headline,btn.dataset.summary)})
   })
-  const nlBtn = document.getElementById('nl-btn-bottom')
-  if (nlBtn) ctx.on(nlBtn,'click',()=>subscribeNewsletter('bottom', uid, nlBtn))
+  // Newsletter-Box wie oben auf Creator News
+  nlv = { uid, isSubscribed, email: p?.contact_email||p?.email||state.session.user.email||'' }
+  renderNewsletterBox()
 }
 
 // ── Digest card helpers ──
@@ -1816,31 +1801,6 @@ async function dashShareCard(headline,summary){
   try{await navigator.clipboard.writeText(text);showToast('In Zwischenablage kopiert ✓')}catch(_){showToast('Teilen nicht verfügbar')}
 }
 
-// ── Newsletter ──
-/* Die alte Seite las den Button aus dem impliziten window.event —
-   hier wird er uebergeben, Verhalten sonst identisch. */
-async function subscribeNewsletter(pos, uid, btn){
-  const inputId=pos==='top'?'nl-email-top':'nl-email-bottom'
-  const successId=pos==='top'?'nl-success-top':'nl-success-bottom'
-  const email=document.getElementById(inputId)?.value?.trim()
-  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Bitte gültige E-Mail eingeben.');return}
-  btn.disabled=true;btn.textContent='…'
-  // Upsert into newsletter_subscribers
-  const{error}=await sb.from('newsletter_subscribers').upsert({
-    email,user_id:uid||null,source:pos==='top'?'dashboard_top':'dashboard_bottom',status:'active',subscribed_at:new Date().toISOString()
-  },{onConflict:'email'})
-  // Update users table flag
-  if(uid)await sb.from('users').update({newsletter_subscribed:true}).eq('id',uid)
-  btn.disabled=false;btn.textContent='Anmelden'
-  if(error){showToast('Fehler beim Anmelden.');return}
-  const successEl=document.getElementById(successId)
-  if(successEl){successEl.style.display='block'}
-  // Hide both boxes after 2s
-  setTimeout(()=>{
-    document.getElementById('nl-box-bottom')?.remove()
-  },2000)
-  showToast('Newsletter abonniert ✓')
-}
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -4200,6 +4160,46 @@ window.shareAnalytics=function(){
 
 
 /* ═══════════════════════════════════════════════════════════════
+   Newsletter-Box — aus public/digest/index.html
+   Wird von Creator News und vom Dashboard genutzt, deshalb liegt sie
+   hier statt in einer View. Immer nur eine View ist gemountet.
+   ═══════════════════════════════════════════════════════════════ */
+let nlv = null   // { uid, isSubscribed, email }
+
+// Bei abonniert: nur Haken + kurze Bestaetigung. Bei nicht abonniert: Haken + Titel + Erklaertext.
+function renderNewsletterBox(){
+  const wrap=document.getElementById('nl-box-wrap')
+  if(!wrap||!nlv)return
+  if(nlv.isSubscribed){
+    wrap.innerHTML=`<div class="nl-box" style="align-items:center">
+      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" checked onchange="toggleDigestEmail()"/>
+      <label for="nl-checkbox" style="cursor:pointer;flex:1">
+        <div class="nl-title" style="margin-bottom:0">📬 Creator News wöchentlich abonniert</div>
+      </label>
+    </div>`
+  } else {
+    wrap.innerHTML=`<div class="nl-box">
+      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" onchange="toggleDigestEmail()"/>
+      <label for="nl-checkbox" style="cursor:pointer;flex:1">
+        <div class="nl-title">📬 Creator News wöchentlich abonnieren</div>
+        <div class="nl-sub">Schick mir die Creator News jede Woche an ${escHtml(nlv.email||'meine Account-E-Mail')}.</div>
+      </label>
+    </div>`
+  }
+}
+
+window.toggleDigestEmail=async function(){
+  if(!nlv)return
+  const checked=document.getElementById('nl-checkbox').checked
+  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',nlv.uid)
+  if(!nlv)return
+  if(error){showToast('Fehler beim Speichern');return}
+  nlv.isSubscribed=checked
+  renderNewsletterBox()
+  showToast(checked?'Abonniert ✓':'Abo beendet')
+}
+
+/* ═══════════════════════════════════════════════════════════════
    VIEW: CREATOR NEWS — übernommen aus public/digest/index.html
    Wochen-Logik, Datums-Pills, Plattform-Filter, ausklappbare Karten,
    Teilen und die Newsletter-Checkbox unverändert.
@@ -4264,48 +4264,15 @@ async function renderDigest(area, ctx){
     <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">📭</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Wird jeden Montag aktualisiert.</div></div>
   </div>`
 
-  dgv = { uid, ctx, digests:[], activeDate:null, activeFilter:'alle', isSubscribed:false, userEmail:state.session.user.email||'' }
-  ctx.onCleanup(() => { dgv = null })
+  dgv = { uid, ctx, digests:[], activeDate:null, activeFilter:'alle' }
+  ctx.onCleanup(() => { dgv = null; nlv = null })
 
   const{data:p}=await sb.from('users').select('newsletter_subscribed,email,contact_email').eq('id',uid).single()
   if(ctx.stale)return
-  dgv.isSubscribed=p?.newsletter_subscribed||false
-  dgv.userEmail=p?.contact_email||p?.email||dgv.userEmail
-  renderDigestEmailBox()
+  nlv = { uid, isSubscribed: p?.newsletter_subscribed||false,
+          email: p?.contact_email||p?.email||state.session.user.email||'' }
+  renderNewsletterBox()
   await loadDigests()
-}
-
-// Bei abonniert: nur Haken + kurze Bestaetigung. Bei nicht abonniert: Haken + Titel + Erklaertext.
-function renderDigestEmailBox(){
-  const wrap=document.getElementById('nl-box-wrap')
-  if(!wrap||!dgv)return
-  if(dgv.isSubscribed){
-    wrap.innerHTML=`<div class="nl-box" style="align-items:center">
-      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" checked onchange="toggleDigestEmail()"/>
-      <label for="nl-checkbox" style="cursor:pointer;flex:1">
-        <div class="nl-title" style="margin-bottom:0">📬 Creator News wöchentlich abonniert</div>
-      </label>
-    </div>`
-  } else {
-    wrap.innerHTML=`<div class="nl-box">
-      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" onchange="toggleDigestEmail()"/>
-      <label for="nl-checkbox" style="cursor:pointer;flex:1">
-        <div class="nl-title">📬 Creator News wöchentlich abonnieren</div>
-        <div class="nl-sub">Schick mir die Creator News jede Woche an ${escHtml(dgv.userEmail||'meine Account-E-Mail')}.</div>
-      </label>
-    </div>`
-  }
-}
-
-window.toggleDigestEmail=async function(){
-  if(!dgv)return
-  const checked=document.getElementById('nl-checkbox').checked
-  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',dgv.uid)
-  if(!dgv)return
-  if(error){showToast('Fehler beim Speichern');return}
-  dgv.isSubscribed=checked
-  renderDigestEmailBox()
-  showToast(checked?'Abonniert ✓':'Abo beendet')
 }
 
 async function loadDigests(){
