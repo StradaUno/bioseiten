@@ -110,8 +110,10 @@ html, body {
 #shell.auth-mode .sidebar-overlay,
 #shell.auth-mode .topbar { display: none !important; }
 #shell.auth-mode .main { padding-left: 0 !important; }
-#shell.auth-mode .page { display: flex; align-items: center; justify-content: center; padding: 24px; }
-#shell.auth-mode #content-area { width: 100%; }
+/* margin:auto statt align-items:center — zentriert, schneidet aber
+   lange Formulare (Register) oben nicht ab */
+#shell.auth-mode .page { display: flex; padding: 24px; }
+#shell.auth-mode #content-area { margin: auto; width: 100%; max-width: 380px; min-height: 0; }
 
 /* ─── DESKTOP: sidebar permanently visible ─── */
 @media (min-width: 900px) {
@@ -123,8 +125,46 @@ html, body {
   .topbar { padding-left: 24px; }
 }
 
-/* ─── LOGIN / REGISTER CARD ─── */
-.login-card { width: 100%; max-width: 360px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; }
+/* ═══ VIEW: LOGIN + REGISTER (aus /login/ und /register/) ═══ */
+.view-auth .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.view-auth .logo-mark { width: 36px; height: 36px; border-radius: 10px; background: var(--text); color: white; display: grid; place-items: center; font-size: 16px; font-weight: 700; }
+.view-auth .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -.04em; }
+.view-auth .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 28px 24px; }
+.view-auth .card-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
+.view-auth .card-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
+.view-auth .field { margin-bottom: 14px; }
+.view-auth .field input { padding: 12px 14px; }
+.view-auth .field input.invalid { border-color: var(--red); }
+.view-auth .field-hint { font-size: 11px; color: var(--subtle); margin-top: 5px; }
+.view-auth .field-hint.error { color: var(--red); }
+.view-auth .btn-primary { width: 100%; padding: 13px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+.view-auth .btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+.view-auth .error-msg { font-size: 12px; color: var(--red); background: var(--red-bg); border: 1px solid rgba(192,57,43,.15); border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 12px; display: none; }
+.view-auth .error-msg.show { display: block; }
+.view-auth .link-row { text-align: center; font-size: 13px; color: var(--muted); margin-top: 20px; }
+.view-auth .link-row a { color: var(--text); font-weight: 600; text-decoration: none; }
+.view-auth .link-row a:hover { text-decoration: underline; }
+.view-auth .section-divider { height: 1px; background: var(--border); margin: 20px 0; }
+.view-auth .niche-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.view-auth .niche-btn { padding: 10px 6px; border-radius: var(--radius-sm); border: 1px solid var(--border-strong); background: var(--surface2); font-family: inherit; font-size: 12px; font-weight: 500; color: var(--muted); cursor: pointer; text-align: center; transition: all .15s; }
+.view-auth .niche-btn.active { background: var(--text); color: white; border-color: var(--text); }
+.view-auth .legal-box { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 14px; }
+.view-auth .legal-check { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+.view-auth .legal-check input[type="checkbox"] { width: 18px; height: 18px; margin-top: 1px; flex-shrink: 0; accent-color: var(--text); cursor: pointer; }
+.view-auth .legal-check span { font-size: 12px; color: var(--muted); line-height: 1.55; }
+.view-auth .legal-check a { color: var(--text); font-weight: 600; text-decoration: none; }
+.view-auth .legal-check a:hover { text-decoration: underline; }
+.view-auth .success-state { display: none; flex-direction: column; align-items: center; text-align: center; padding: 40px 24px; }
+.view-auth .success-state.show { display: flex; }
+.view-auth .success-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--green-bg); color: var(--green); display: grid; place-items: center; font-size: 28px; margin-bottom: 20px; }
+.view-auth .success-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 8px; }
+.view-auth .success-sub { font-size: 13px; color: var(--muted); line-height: 1.6; max-width: 280px; }
+.view-auth .success-email { font-weight: 600; color: var(--text); }
+/* iOS-Zoom-Fix wie in /login/ und /register/ — bewusst nur hier */
+.view-auth input, .view-auth textarea, .view-auth select { font-size: 16px !important; }
+
+/* Onboarding-Zwischenseite nutzt weiter die schlichte Karte */
+.login-card { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; }
 .login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
 .login-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--text); color: white; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
 .login-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
@@ -137,8 +177,6 @@ html, body {
 .field textarea { resize: none; line-height: 1.5; }
 .btn-login { width: 100%; padding: 12px; margin-top: 8px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
 .btn-login:disabled { opacity: .5; cursor: not-allowed; }
-.login-error { font-size: 12px; color: var(--red); margin-top: 10px; text-align: center; min-height: 18px; }
-.login-note { font-size: 12px; color: var(--green); margin-top: 10px; text-align: center; line-height: 1.5; }
 .login-switch { font-size: 12px; color: var(--muted); margin-top: 18px; text-align: center; }
 .login-switch a { color: var(--text); font-weight: 600; text-decoration: none; }
 .login-switch a:hover { text-decoration: underline; }
@@ -425,6 +463,7 @@ html, body {
         <a href="/datenschutz.html">Datenschutz</a>
         <a href="/agb.html">AGB</a>
         <a href="/widerruf.html">Widerruf</a>
+        <a href="/legal/">Legal</a>
       </div>
       <div class="footer-copy">© <span id="footer-year"></span> viuno</div>
     </footer>
@@ -710,97 +749,328 @@ function placeholder(area, title, sub, icon, route) {
     </div>`
 }
 
-/* ── LOGIN (Logik aus /dashboard/, /trends/, /onboarding/) ── */
-function renderLogin(area) {
+/* ═══════════════════════════════════════════════════════════════
+   VIEW: LOGIN — übernommen aus public/login/index.html
+   Fehlermeldungen, Enter-Verhalten und Validierung unverändert.
+   Angepasst: location.replace('/dashboard') → Hash-Route, damit der
+   Router die Onboarding-Weiche ziehen kann.
+   ═══════════════════════════════════════════════════════════════ */
+function renderLogin(area, ctx) {
   area.innerHTML = `
-    <div class="login-card">
-      <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
-      <div class="login-title">Willkommen zurück.</div>
-      <div class="login-sub">Melde dich mit deinem viuno-Account an.</div>
-      <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
-      <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/></div>
-      <button class="btn-login" id="btn-login">Einloggen</button>
-      <div class="login-error" id="login-error"></div>
-      <div class="login-switch">Noch keinen Account? <a href="#/register">Jetzt registrieren</a></div>
+    <div class="view-auth">
+      <div class="logo">
+        <div class="logo-mark">v</div>
+        <div class="logo-text">viuno</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Willkommen zurück.</div>
+        <div class="card-sub">Melde dich mit deinem viuno-Account an.</div>
+        <div class="field">
+          <label>E-Mail</label>
+          <input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/>
+        </div>
+        <div class="field">
+          <label>Passwort</label>
+          <input type="password" id="inp-pw" placeholder="••••••••" autocomplete="current-password"/>
+        </div>
+        <button class="btn-primary" id="btn-login">Einloggen</button>
+        <div class="error-msg" id="error-msg"></div>
+        <div style="text-align:center;margin-top:14px">
+          <a href="/reset-password" style="font-size:13px;color:var(--muted);text-decoration:none">Passwort vergessen?</a>
+        </div>
+      </div>
+      <div class="link-row">
+        Noch kein Account? <a href="#/register">Jetzt registrieren</a>
+      </div>
     </div>`
 
-  const btn = document.getElementById('btn-login')
-  btn.addEventListener('click', doLogin)
-  document.getElementById('inp-pw').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin() })
-}
+  const emailEl = document.getElementById('inp-email')
+  const pwEl    = document.getElementById('inp-pw')
+  const btn     = document.getElementById('btn-login')
+  const errEl   = document.getElementById('error-msg')
 
-async function doLogin() {
-  const email = document.getElementById('inp-email').value.trim()
-  const pw    = document.getElementById('inp-pw').value
-  const errEl = document.getElementById('login-error')
-  const btn   = document.getElementById('btn-login')
-  errEl.textContent = ''
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
-  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
-  btn.disabled = false; btn.textContent = 'Einloggen'
-  if (error) { errEl.textContent = 'Falsche E-Mail oder Passwort.'; return }
+  function showError(msg){ errEl.textContent = msg; errEl.classList.add('show') }
+  function hideError(){ errEl.classList.remove('show') }
 
-  state.session = data.session
-  await loadProfile(data.session.user.id)
-  paintUser()
-  navigate(needsOnboarding() ? '#/onboarding' : '#/' + DEFAULT_ROUTE)
-}
-
-/* ── REGISTER ──
-   Hinweis: im Repo existiert keine register.html — dieser Flow ist neu
-   aufgebaut, aber im Stil/Ton der bestehenden Login-Karte.            */
-function renderRegister(area) {
-  area.innerHTML = `
-    <div class="login-card">
-      <div class="login-logo"><div class="login-logo-mark">v</div><div class="login-logo-text">viuno</div></div>
-      <div class="login-title">Account erstellen.</div>
-      <div class="login-sub">Starte in wenigen Sekunden mit viuno.</div>
-      <div class="field"><label>E-Mail</label><input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/></div>
-      <div class="field"><label>Passwort</label><input type="password" id="inp-pw" placeholder="Mind. 8 Zeichen" autocomplete="new-password"/></div>
-      <div class="field"><label>Passwort wiederholen</label><input type="password" id="inp-pw2" placeholder="••••••••" autocomplete="new-password"/></div>
-      <button class="btn-login" id="btn-register">Registrieren</button>
-      <div class="login-error" id="login-error"></div>
-      <div class="login-note hidden" id="register-note"></div>
-      <div class="login-switch">Schon registriert? <a href="#/login">Zum Login</a></div>
-    </div>`
-
-  const btn = document.getElementById('btn-register')
-  btn.addEventListener('click', doRegister)
-  document.getElementById('inp-pw2').addEventListener('keydown', e => { if (e.key === 'Enter') doRegister() })
-}
-
-async function doRegister() {
-  const email = document.getElementById('inp-email').value.trim()
-  const pw    = document.getElementById('inp-pw').value
-  const pw2   = document.getElementById('inp-pw2').value
-  const errEl = document.getElementById('login-error')
-  const noteEl= document.getElementById('register-note')
-  const btn   = document.getElementById('btn-register')
-
-  errEl.textContent = ''; noteEl.classList.add('hidden')
-  if (!email)            { errEl.textContent = 'Bitte E-Mail eingeben.'; return }
-  if (pw.length < 8)     { errEl.textContent = 'Passwort muss mindestens 8 Zeichen haben.'; return }
-  if (pw !== pw2)        { errEl.textContent = 'Passwörter stimmen nicht überein.'; return }
-
-  btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
-  const { data, error } = await sb.auth.signUp({ email, password: pw })
-  btn.disabled = false; btn.textContent = 'Registrieren'
-
-  if (error) { errEl.textContent = error.message || 'Registrierung fehlgeschlagen.'; return }
-
-  if (data.session) {
-    // Direkt eingeloggt → ins Onboarding
+  async function doLogin(){
+    hideError()
+    const email = emailEl.value.trim()
+    const pw    = pwEl.value
+    if(!email||!pw){ showError('Bitte E-Mail und Passwort eingeben.'); return }
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>'
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pw })
+    if (ctx.stale) return
+    btn.disabled = false; btn.textContent = 'Einloggen'
+    if(error){
+      if(error.message.includes('Invalid login')||error.message.includes('invalid_credentials')){
+        showError('E-Mail oder Passwort falsch.')
+      } else if(error.message.includes('Email not confirmed')){
+        showError('Bitte bestätige zuerst deine E-Mail-Adresse.')
+      } else {
+        showError(error.message)
+      }
+      return
+    }
     state.session = data.session
     await loadProfile(data.session.user.id)
     paintUser()
-    navigate('#/onboarding')
-    return
+    navigate('#/' + DEFAULT_ROUTE)   // Router schickt ggf. weiter ins Onboarding
   }
 
-  // Supabase verlangt E-Mail-Bestätigung
-  noteEl.textContent = 'Fast geschafft: Wir haben dir eine Bestätigungs-Mail geschickt. Bestätige deine Adresse und melde dich anschließend an.'
-  noteEl.classList.remove('hidden')
-  showToast('Bestätigungs-Mail verschickt.')
+  ctx.on(btn, 'click', doLogin)
+  ctx.on(pwEl, 'keydown', e => { if(e.key==='Enter') doLogin() })
+  ctx.on(emailEl, 'keydown', e => { if(e.key==='Enter') pwEl.focus() })
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   VIEW: REGISTER — übernommen aus public/register/index.html
+   Username-Live-Check (RPC is_username_available, 500 ms Debounce),
+   Passwort-Hinweis, Nischen-Grid, Legal-Checkbox, signUp-Optionen,
+   users-Update und Success-Karte unverändert.
+   ═══════════════════════════════════════════════════════════════ */
+const NICHES_REGISTER = [
+  ['lifestyle','Lifestyle'],['fashion','Fashion'],['beauty','Beauty'],['food','Food'],
+  ['fitness','Fitness'],['travel','Travel'],['gaming','Gaming'],['music','Music'],
+  ['comedy','Comedy'],['education','Bildung & Wissen'],['business','Business'],['tech','Tech'],
+  ['art','Art'],['family','Family'],['mental_health','Mental Health'],['general','Allgemein']
+]
+
+function renderRegister(area, ctx) {
+  area.innerHTML = `
+    <div class="view-auth">
+      <div class="logo">
+        <div class="logo-mark">v</div>
+        <div class="logo-text">viuno</div>
+      </div>
+
+      <!-- FORM -->
+      <div class="card" id="form-card">
+        <div class="card-title">Account erstellen.</div>
+        <div class="card-sub">Starte kostenlos — kein Abo nötig.</div>
+
+        <div class="field">
+          <label>Username</label>
+          <input type="text" id="inp-username" placeholder="z.B. maria_lifestyle" autocomplete="username"/>
+          <div class="field-hint" id="username-hint">Dein öffentlicher Name auf viuno.de</div>
+        </div>
+
+        <div class="field">
+          <label>E-Mail</label>
+          <input type="email" id="inp-email" placeholder="du@beispiel.de" autocomplete="email"/>
+        </div>
+
+        <div class="field">
+          <label>Passwort</label>
+          <input type="password" id="inp-pw" placeholder="Mindestens 8 Zeichen" autocomplete="new-password"/>
+          <div class="field-hint" id="pw-hint"></div>
+        </div>
+
+        <div class="field">
+          <label>Passwort bestätigen</label>
+          <input type="password" id="inp-pw2" placeholder="••••••••" autocomplete="new-password"/>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="field">
+          <label>Nische</label>
+          <div class="niche-grid" id="niche-grid">
+            ${NICHES_REGISTER.map(([key,label]) =>
+              `<button class="niche-btn" data-niche="${key}">${label}</button>`).join('')}
+          </div>
+          <div class="field-hint" id="niche-hint" style="margin-top:8px">Bitte wähle deine Nische.</div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="legal-box">
+          <label class="legal-check">
+            <input type="checkbox" id="chk-legal"/>
+            <span>Ich habe die <a href="/legal#agb" target="_blank">AGB</a> und <a href="/legal#datenschutz" target="_blank">Datenschutzerklärung</a> gelesen und akzeptiere sie.</span>
+          </label>
+        </div>
+
+        <button class="btn-primary" id="btn-register">Account erstellen</button>
+        <div class="error-msg" id="error-msg"></div>
+      </div>
+
+      <div class="link-row" id="login-link">
+        Bereits registriert? <a href="#/login">Einloggen</a>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="card success-state" id="success-card">
+        <div class="success-icon">✉️</div>
+        <div class="success-title">Fast geschafft!</div>
+        <div class="success-sub">
+          Wir haben eine Bestätigungsmail an<br>
+          <span class="success-email" id="success-email"></span><br><br>
+          gesendet. Klicke auf den Link in der Mail um deinen Account zu aktivieren und direkt loszulegen.
+        </div>
+      </div>
+    </div>`
+
+  let selectedNiche = null
+  let usernameValid = false
+  let _unameTimer = null
+  /* Debounce-Timer stoppen, wenn die View verlassen wird */
+  ctx.onCleanup(() => clearTimeout(_unameTimer))
+
+  const $ = id => document.getElementById(id)
+
+  function selectNiche(n){
+    selectedNiche = n
+    document.querySelectorAll('.niche-btn').forEach(b => b.classList.toggle('active', b.dataset.niche === n))
+    $('niche-hint').style.display = 'none'
+  }
+  document.querySelectorAll('#niche-grid .niche-btn').forEach(b => {
+    ctx.on(b, 'click', () => selectNiche(b.dataset.niche))
+  })
+
+  function onUsernameInput(){
+    const val   = $('inp-username').value.trim()
+    const hint  = $('username-hint')
+    const input = $('inp-username')
+    usernameValid = false
+    clearTimeout(_unameTimer)
+
+    if(!val){
+      hint.textContent = 'Dein öffentlicher Name auf viuno.de'
+      hint.className = 'field-hint'
+      input.classList.remove('invalid')
+      return
+    }
+    if(!/^[a-zA-Z0-9_]{3,30}$/.test(val)){
+      hint.textContent = '3–30 Zeichen, nur Buchstaben, Zahlen und _'
+      hint.className = 'field-hint error'
+      input.classList.add('invalid')
+      return
+    }
+    // Format ok — check availability after 500ms
+    hint.textContent = 'Wird geprüft…'
+    hint.className = 'field-hint'
+    hint.style.color = 'var(--muted)'
+    input.classList.remove('invalid')
+
+    _unameTimer = setTimeout(async () => {
+      const { data, error } = await sb.rpc('is_username_available', { p_username: val })
+      if (ctx.stale) return
+      if(error||!data){
+        hint.textContent = 'Fehler beim Prüfen — bitte nochmal versuchen.'
+        hint.className = 'field-hint error'
+        return
+      }
+      if(data.available){
+        hint.textContent = '✓ Verfügbar!'
+        hint.className = 'field-hint'
+        hint.style.color = 'var(--green)'
+        input.classList.remove('invalid')
+        usernameValid = true
+      } else {
+        const msgs = {
+          taken:'Dieser Username ist leider vergeben.',
+          reserved:'Dieser Username ist reserviert.',
+          invalid_format:'Ungültiges Format.'
+        }
+        hint.textContent = msgs[data.reason]||'Nicht verfügbar.'
+        hint.className = 'field-hint error'
+        input.classList.add('invalid')
+        usernameValid = false
+      }
+    }, 500)
+  }
+  ctx.on($('inp-username'), 'input', onUsernameInput)
+
+  function checkPwStrength(){
+    const pw = $('inp-pw').value
+    const hint = $('pw-hint')
+    if(!pw){ hint.textContent=''; return }
+    if(pw.length<8){ hint.textContent='Zu kurz — mindestens 8 Zeichen.'; hint.className='field-hint error'; return }
+    hint.textContent = '✓ Passwort sieht gut aus'
+    hint.className = 'field-hint'; hint.style.color = 'var(--green)'
+  }
+  ctx.on($('inp-pw'), 'input', checkPwStrength)
+
+  function showError(msg){
+    const el = $('error-msg')
+    el.textContent = msg; el.classList.add('show')
+    el.scrollIntoView({ behavior:'smooth', block:'nearest' })
+  }
+  function hideError(){ $('error-msg').classList.remove('show') }
+
+  async function doRegister(){
+    hideError()
+    const username = $('inp-username').value.trim()
+    const email    = $('inp-email').value.trim()
+    const pw       = $('inp-pw').value
+    const pw2      = $('inp-pw2').value
+    const legal    = $('chk-legal').checked
+
+    if(!username){ showError('Bitte gib einen Username ein.'); return }
+    if(!usernameValid){ showError('Bitte wähle einen verfügbaren Username.'); return }
+    if(!email){ showError('Bitte gib deine E-Mail-Adresse ein.'); return }
+    if(pw.length<8){ showError('Das Passwort muss mindestens 8 Zeichen lang sein.'); return }
+    if(pw!==pw2){ showError('Die Passwörter stimmen nicht überein.'); return }
+    if(!selectedNiche){
+      $('niche-hint').style.display = 'block'
+      $('niche-hint').textContent = 'Bitte wähle eine Nische.'
+      $('niche-hint').className = 'field-hint error'
+      showError('Bitte wähle deine Nische aus.'); return
+    }
+    if(!legal){ showError('Bitte akzeptiere AGB und Datenschutzerklärung.'); return }
+
+    const btn = $('btn-register')
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Account wird erstellt…'
+
+    // Final availability check before submit (race condition safety)
+    const { data: check } = await sb.rpc('is_username_available', { p_username: username })
+    if (ctx.stale) return
+    if(!check?.available){
+      btn.disabled = false; btn.textContent = 'Account erstellen'
+      showError('Dieser Username ist nicht mehr verfügbar. Bitte wähle einen anderen.'); return
+    }
+
+    // Sign up
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password: pw,
+      options:{
+        data:{ display_name: username, niche_category: selectedNiche },
+        emailRedirectTo:'https://viuno.de/onboarding'
+      }
+    })
+    if (ctx.stale) return
+
+    if(error){
+      btn.disabled = false; btn.textContent = 'Account erstellen'
+      if(error.message.includes('already registered')||error.message.includes('already been registered')){
+        showError('Diese E-Mail-Adresse ist bereits registriert. Bitte logge dich ein.')
+      } else {
+        showError(error.message)
+      }
+      return
+    }
+
+    // Update users table (trigger creates the row, we set display_name + niche)
+    if(data.user){
+      await sb.from('users').update({
+        display_name: username,
+        niche_category: selectedNiche,
+        updated_at: new Date().toISOString()
+      }).eq('id', data.user.id)
+    }
+    if (ctx.stale) return
+
+    // Show success
+    btn.disabled = false; btn.textContent = 'Account erstellen'
+    $('form-card').style.display = 'none'
+    $('login-link').style.display = 'none'
+    $('success-email').textContent = email
+    $('success-card').classList.add('show')
+  }
+
+  ctx.on($('btn-register'), 'click', doRegister)
+  ctx.on($('inp-pw2'), 'keydown', e => { if(e.key==='Enter') doRegister() })
 }
 
 /* ── ONBOARDING (Platzhalter — der 5-Schritt-Wizard liegt noch in /onboarding/) ── */
