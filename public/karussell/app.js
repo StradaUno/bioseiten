@@ -25,6 +25,49 @@ let filterTyp = "";
 let keywordsCache = [];
 
 // --- Zugang -------------------------------------------------------------
+//
+// Zwei Wege, und der erste ist der Normalfall:
+//
+//   1. Die Sitzung von viuno.de/admin. Die Seite liegt auf derselben
+//      Herkunft, also liegt die Sitzung schon im localStorage - einmal
+//      dort eingeloggt, und hier ist nichts mehr einzugeben.
+//   2. Das feste Admin-Token. Dafuer, wenn ich gar nicht angemeldet bin.
+
+/** Das Supabase-Projekt von viuno.de - dieselben Werte wie in /admin/. */
+const VIUNO_URL = "https://bzejndghppuipnedasuv.supabase.co";
+const VIUNO_ANON =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo";
+
+/** /karussell/?token geht an der Sitzung vorbei - siehe ausweis(). */
+const NUR_TOKEN = new URLSearchParams(location.search).has("token");
+
+/** Der Supabase-Client wird nur einmal geholt, und nur wenn er gebraucht wird. */
+let viunoClient = null;
+
+function viunoHolen() {
+  if (!viunoClient) {
+    viunoClient = import("https://esm.sh/@supabase/supabase-js@2")
+      .then((m) =>
+        m.createClient(VIUNO_URL, VIUNO_ANON, {
+          auth: { persistSession: true, autoRefreshToken: true },
+        })
+      )
+      .catch(() => null);
+  }
+  return viunoClient;
+}
+
+/** Die laufende Anmeldung auf viuno.de - oder null. */
+async function viunoSitzung() {
+  try {
+    const sb = await viunoHolen();
+    if (!sb) return null;
+    const { data } = await sb.auth.getSession();
+    return data?.session ?? null;
+  } catch {
+    return null;
+  }
+}
 
 function token() {
   let wert = localStorage.getItem(SCHLUESSEL);
@@ -35,17 +78,43 @@ function token() {
   return wert ? wert.trim() : "";
 }
 
+/**
+ * Womit weist sich diese Anfrage aus? Die Sitzung hat Vorrang; nach dem
+ * Token wird nur gefragt, wenn es keine gibt.
+ */
+async function ausweis() {
+  // Notluke: /karussell/?token erzwingt den Token-Weg. Gebraucht, wenn
+  // ich mit einem Konto angemeldet bin, das hier nichts darf - sonst
+  // bliebe die Seite verschlossen, obwohl ich das Token habe.
+  const sitzung = NUR_TOKEN ? null : await viunoSitzung();
+  if (sitzung?.access_token) {
+    return { weg: "sitzung", kopf: { "Authorization": `Bearer ${sitzung.access_token}` } };
+  }
+  return { weg: "token", kopf: { "X-Admin-Token": token() } };
+}
+
 async function api(pfad, optionen = {}) {
+  const { weg, kopf } = await ausweis();
+
   const antwort = await fetch(API + pfad, {
     ...optionen,
     headers: {
-      "X-Admin-Token": token(),
+      ...kopf,
       "Content-Type": "application/json",
       ...(optionen.headers ?? {}),
     },
   });
 
   if (antwort.status === 401) {
+    const grund = await fehlertext(antwort);
+    if (weg === "sitzung") {
+      // Hier hilft kein Neuladen - die Anmeldung selbst stimmt nicht.
+      throw new Error(
+        `${grund} Melde dich auf viuno.de/admin an – oder öffne diese Seite ` +
+          `als /karussell/?token, um das feste Token zu benutzen.`,
+      );
+    }
+    // Ein abgelehntes Token ist wertlos; beim naechsten Mal neu fragen.
     localStorage.removeItem(SCHLUESSEL);
     throw new Error("Token abgelehnt. Bitte neu laden und erneut eingeben.");
   }
