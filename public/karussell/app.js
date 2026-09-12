@@ -1606,6 +1606,10 @@ for (const tab of document.querySelectorAll('[role="tab"]')) {
       anderer.setAttribute("aria-selected", String(anderer === tab));
     }
     melde("");
+    // Seit der Kopf mitscrollt, sind die Reiter nur oben erreichbar - dann
+    // gehoert man nach dem Wechsel auch wieder nach oben, statt mitten in
+    // einer frisch geladenen Liste zu stehen.
+    scrollTo(0, 0);
     listeLaden();
   };
 }
