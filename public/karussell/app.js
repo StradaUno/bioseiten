@@ -57,14 +57,34 @@ function viunoHolen() {
   return viunoClient;
 }
 
-/** Die laufende Anmeldung auf viuno.de - oder null. */
+/**
+ * Die laufende Anmeldung auf viuno.de - oder null. Warum sie fehlt, wird
+ * festgehalten: "keine Sitzung" und "Bibliothek liess sich nicht laden"
+ * sehen fuer den Benutzer sonst gleich aus, brauchen aber verschiedene
+ * Antworten.
+ */
+let sitzungsBefund = "noch nicht geprüft";
+
 async function viunoSitzung() {
   try {
     const sb = await viunoHolen();
-    if (!sb) return null;
-    const { data } = await sb.auth.getSession();
-    return data?.session ?? null;
-  } catch {
+    if (!sb) {
+      sitzungsBefund = "Supabase-Bibliothek ließ sich nicht laden";
+      return null;
+    }
+    const { data, error } = await sb.auth.getSession();
+    if (error) {
+      sitzungsBefund = `Sitzung nicht lesbar: ${error.message}`;
+      return null;
+    }
+    if (!data?.session) {
+      sitzungsBefund = `keine viuno-Anmeldung unter ${location.origin}`;
+      return null;
+    }
+    sitzungsBefund = `angemeldet als ${data.session.user?.email ?? "unbekannt"}`;
+    return data.session;
+  } catch (fehler) {
+    sitzungsBefund = `Sitzung nicht lesbar: ${fehler?.message ?? fehler}`;
     return null;
   }
 }
@@ -89,6 +109,12 @@ async function ausweis() {
   const sitzung = NUR_TOKEN ? null : await viunoSitzung();
   if (sitzung?.access_token) {
     return { weg: "sitzung", kopf: { "Authorization": `Bearer ${sitzung.access_token}` } };
+  }
+
+  // Vor der Abfrage sagen, warum sie kommt. Ohne diesen Satz sieht es aus,
+  // als haette die Anmeldung ueber viuno gar nicht erst existiert.
+  if (!NUR_TOKEN && !localStorage.getItem(SCHLUESSEL)) {
+    melde(`Kein viuno-Login gefunden (${sitzungsBefund}) – Token nötig.`, true);
   }
   return { weg: "token", kopf: { "X-Admin-Token": token() } };
 }
