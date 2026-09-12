@@ -57,7 +57,7 @@ function viunoHolen() {
   return viunoClient;
 }
 
-/** Die laufende Anmeldung auf viuno.de - oder null. */
+/** Die laufende Anmeldung - oder null. */
 async function viunoSitzung() {
   try {
     const sb = await viunoHolen();
@@ -67,6 +67,101 @@ async function viunoSitzung() {
   } catch {
     return null;
   }
+}
+
+// --- Anmelden -----------------------------------------------------------
+//
+// Wie auf /admin/: Die Seite meldet sich selbst an, statt auf eine Sitzung
+// zu hoffen, die anderswo angelegt wurde. Das ist der Unterschied, auf den
+// es ankommt - viuno.de und www.viuno.de sind getrennte Herkuenfte mit
+// getrenntem Speicher, und ein Handy war ohnehin nie angemeldet. Wer sich
+// hier anmelden kann, braucht nichts davon zu wissen.
+
+const anmeldeFeld = document.getElementById("anmeldung");
+
+function anmeldungZeigen(hinweis = "") {
+  document.querySelector(".huelle").style.display = "none";
+  anmeldeFeld.classList.add("sichtbar");
+  document.getElementById("anmelde-hinweis").textContent = hinweis;
+  document.getElementById("anmelde-mail").focus();
+}
+
+function anmeldungVerstecken() {
+  anmeldeFeld.classList.remove("sichtbar");
+  document.querySelector(".huelle").style.display = "";
+}
+
+/**
+ * Gehoert dieses Konto hierher? Geprueft wird dasselbe Kennzeichen wie
+ * auf /admin/. Die Antwort ist nur fuer die Meldung da - ob wirklich
+ * etwas geht, entscheidet ohnehin admin-api bei jeder Anfrage.
+ */
+async function istAdmin(sb, benutzerId) {
+  try {
+    const { data } = await sb.from("users").select("is_admin").eq("id", benutzerId).maybeSingle();
+    return data?.is_admin === true;
+  } catch {
+    return false;
+  }
+}
+
+async function anmelden(email, passwort) {
+  const sb = await viunoHolen();
+  if (!sb) throw new Error("Die Supabase-Bibliothek ließ sich nicht laden.");
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: passwort });
+  if (error) throw new Error("Falsche E-Mail oder falsches Passwort.");
+
+  if (!(await istAdmin(sb, data.session.user.id))) {
+    // Angemeldet bleiben waere hier eine Falle: Die Seite fände beim
+    // naechsten Laden eine Sitzung, mit der sie nichts anfangen kann.
+    await sb.auth.signOut();
+    throw new Error("Dieses Konto hat keinen Admin-Zugriff.");
+  }
+  return data.session;
+}
+
+/**
+ * Laeuft einmal beim Start. Gibt es schon eine gueltige Anmeldung, geht
+ * es ohne Zutun weiter; sonst wartet die Seite auf das Formular.
+ */
+async function anmeldungSicherstellen() {
+  // Die Notluke geht am Login vorbei - siehe NUR_TOKEN.
+  if (NUR_TOKEN) return;
+
+  const sitzung = await viunoSitzung();
+  if (sitzung?.access_token) return;
+
+  anmeldungZeigen(
+    "Danach bleibst du in diesem Browser angemeldet – das Admin-Token brauchst du nicht mehr.",
+  );
+
+  await new Promise((fertig) => {
+    const form = document.getElementById("anmelde-form");
+    const knopf = document.getElementById("anmelde-knopf");
+    const fehlerFeld = document.getElementById("anmelde-fehler");
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      fehlerFeld.textContent = "";
+      knopf.disabled = true;
+      knopf.textContent = "Melde an …";
+      try {
+        await anmelden(
+          document.getElementById("anmelde-mail").value.trim(),
+          document.getElementById("anmelde-pw").value,
+        );
+        document.getElementById("anmelde-pw").value = "";
+        anmeldungVerstecken();
+        fertig();
+      } catch (fehler) {
+        fehlerFeld.textContent = fehler.message;
+      } finally {
+        knopf.disabled = false;
+        knopf.textContent = "Einloggen";
+      }
+    };
+  });
 }
 
 function token() {
@@ -90,6 +185,7 @@ async function ausweis() {
   if (sitzung?.access_token) {
     return { weg: "sitzung", kopf: { "Authorization": `Bearer ${sitzung.access_token}` } };
   }
+
   return { weg: "token", kopf: { "X-Admin-Token": token() } };
 }
 
@@ -108,11 +204,10 @@ async function api(pfad, optionen = {}) {
   if (antwort.status === 401) {
     const grund = await fehlertext(antwort);
     if (weg === "sitzung") {
-      // Hier hilft kein Neuladen - die Anmeldung selbst stimmt nicht.
-      throw new Error(
-        `${grund} Melde dich auf viuno.de/admin an – oder öffne diese Seite ` +
-          `als /karussell/?token, um das feste Token zu benutzen.`,
-      );
+      // Sitzung abgelaufen oder Konto nicht mehr berechtigt: zurueck zum
+      // Formular, statt den Benutzer in einer Fehlermeldung stehenzulassen.
+      anmeldungZeigen(`${grund} Melde dich neu an.`);
+      throw new Error(grund);
     }
     // Ein abgelehntes Token ist wertlos; beim naechsten Mal neu fragen.
     localStorage.removeItem(SCHLUESSEL);
@@ -1528,18 +1623,26 @@ document.getElementById("filter-typ").onchange = (e) => {
   listeLaden();
 };
 
-// Keywords einmal vorab laden, damit das Auswahlfeld gefuellt ist.
-apiJson("/keywords").then((d) => {
-  keywordsCache = d.keywords ?? [];
-  keywordAuswahlFuellen();
-}).catch(() => {});
-
-laufFensterPruefen();
-
 manualKnopf.onclick = einreihen;
 manualFeld.addEventListener("keydown", (e) => {
   if (e.key === "Enter") einreihen();
 });
 
 ziehenEinrichten();
-listeLaden();
+
+/**
+ * Erst anmelden, dann laden. Ohne diese Reihenfolge liefen die ersten
+ * Abrufe ins Leere, waehrend das Formular noch offen steht.
+ */
+(async () => {
+  await anmeldungSicherstellen();
+
+  // Keywords einmal vorab laden, damit das Auswahlfeld gefuellt ist.
+  apiJson("/keywords").then((d) => {
+    keywordsCache = d.keywords ?? [];
+    keywordAuswahlFuellen();
+  }).catch(() => {});
+
+  laufFensterPruefen();
+  listeLaden();
+})();
