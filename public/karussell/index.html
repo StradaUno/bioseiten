@@ -43,7 +43,10 @@
   }
   .huelle { max-width: 720px; margin: 0 auto; padding: 0 var(--rand) 64px; }
 
-  header { position: sticky; top: 0; z-index: 20; background: var(--papier);
+  /* Der Kopf scrollt mit weg. Titel, Reiter, Filter und das Einreih-Feld
+     sind zusammen so hoch, dass auf dem Handy kaum eine Karte uebrig
+     blieb, wenn das alles stehen bleibt. */
+  header { background: var(--papier);
            padding: 14px 0 10px; border-bottom: 1px solid var(--linie); }
   .kopfzeile { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   h1 {
