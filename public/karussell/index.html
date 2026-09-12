@@ -421,6 +421,44 @@
 
   .leer { text-align: center; color: var(--leise); padding: 48px 20px; font-size: 15px; }
 
+  /* --- Anmeldung ------------------------------------------------------ */
+  /* Derselbe Weg wie auf /admin/: Die Seite meldet sich selbst an, statt
+     auf eine Sitzung zu hoffen, die anderswo angelegt wurde. */
+  #anmeldung {
+    position: fixed; inset: 0; z-index: 100; display: none;
+    align-items: center; justify-content: center; padding: 24px;
+    background: var(--papier);
+  }
+  #anmeldung.sichtbar { display: flex; }
+  .anmelde-karte {
+    width: 100%; max-width: 340px;
+    background: var(--karte); border: 1px solid var(--linie);
+    border-radius: var(--radius); padding: 22px 20px;
+  }
+  .anmelde-marke {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  }
+  .anmelde-marke .zeichen {
+    width: 30px; height: 30px; border-radius: 9px; background: var(--tinte);
+    color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 16px;
+  }
+  .anmelde-marke .name {
+    font-family: "Outfit", "Inter", sans-serif; font-weight: 700; font-size: 17px;
+  }
+  .anmelde-marke .was {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--leise); border: 1px solid var(--linie); border-radius: 5px; padding: 2px 6px;
+  }
+  .anmelde-titel { font-size: 17px; font-weight: 650; }
+  .anmelde-sub { font-size: 13px; color: var(--leise); margin: 3px 0 16px }
+  .anmelde-feld { margin-bottom: 10px }
+  .anmelde-feld label {
+    display: block; font-size: 12px; color: var(--leise); margin-bottom: 4px;
+  }
+  .anmelde-feld input { width: 100%; }
+  #anmelde-fehler { color: var(--warn); font-size: 13px; margin-top: 10px; min-height: 18px }
+  #anmelde-hinweis { color: var(--leise); font-size: 12px; margin-top: 14px; line-height: 1.5 }
+
   /* --- Konten und Token --------------------------------------------- */
   .feld { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
   /* Auf dem Handy steht das Eingabefeld allein in der ersten Zeile,
@@ -490,6 +528,30 @@
 
   <div id="ziehen" aria-hidden="true"></div>
   <main id="liste"></main>
+</div>
+
+<div id="anmeldung">
+  <form class="anmelde-karte" id="anmelde-form">
+    <div class="anmelde-marke">
+      <span class="zeichen">v</span>
+      <span class="name">viuno</span>
+      <span class="was">Swipe-File</span>
+    </div>
+    <div class="anmelde-titel">Anmelden</div>
+    <p class="anmelde-sub">Mit deinem viuno-Admin-Konto – dasselbe wie auf /admin/.</p>
+    <div class="anmelde-feld">
+      <label for="anmelde-mail">E-Mail</label>
+      <input type="email" id="anmelde-mail" name="username" autocomplete="username"
+             autocapitalize="none" autocorrect="off" required>
+    </div>
+    <div class="anmelde-feld">
+      <label for="anmelde-pw">Passwort</label>
+      <input type="password" id="anmelde-pw" name="password" autocomplete="current-password" required>
+    </div>
+    <button class="primaer breit" type="submit" id="anmelde-knopf">Einloggen</button>
+    <p id="anmelde-fehler"></p>
+    <p id="anmelde-hinweis"></p>
+  </form>
 </div>
 
 <dialog id="detail"></dialog>
