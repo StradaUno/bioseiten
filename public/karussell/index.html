@@ -1,0 +1,500 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>viuno Swipe-File</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Farben, Schrift und Radien stammen aus dem viuno-Design im Repo
+   bioseiten (public/index.html und public/admin/index.html), damit das
+   Werkzeug aussieht wie der Rest. Kein dunkles Thema - die Seite ist
+   hell, so wie viuno selbst. */
+:root {
+  --papier: #f5f4f2;
+  --karte: #ffffff;
+  --karte2: #f0efed;
+  --tinte: #111110;
+  --leise: #7a7975;
+  --zart: #b0afa9;
+  --linie: rgba(0, 0, 0, .08);
+  --linie-stark: rgba(0, 0, 0, .13);
+
+  --gut: #1a7f4b;
+  --mittel: #b85c00;
+  --schwach: #b0afa9;
+  --warn: #c0392b;
+  --blau: #1d4ed8;
+
+  --radius: 16px;
+  --radius-klein: 10px;
+  --rand: 16px;
+}
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    background: var(--papier); color: var(--tinte);
+    font: 15px/1.5 "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .huelle { max-width: 720px; margin: 0 auto; padding: 0 var(--rand) 64px; }
+
+  header { position: sticky; top: 0; z-index: 20; background: var(--papier);
+           padding: 14px 0 10px; border-bottom: 1px solid var(--linie); }
+  .kopfzeile { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  h1 {
+    font-family: "Outfit", "Inter", sans-serif;
+    font-size: 20px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .kopf-aktionen { display: flex; gap: 8px; }
+
+  button {
+    font: inherit; font-weight: 550; border: 1px solid var(--linie); border-radius: var(--radius-klein);
+    background: var(--karte); color: var(--tinte); padding: 11px 14px; cursor: pointer;
+    min-height: 44px;
+  }
+  button:active { transform: scale(0.985); }
+  button.primaer { background: var(--tinte); color: #fff; border-color: var(--tinte); font-weight: 600; }
+  button.still { background: none; border-color: transparent; color: var(--leise); padding: 8px; }
+  button[disabled] { opacity: 0.45; cursor: not-allowed; }
+  button.breit { width: 100%; }
+
+  /* Mehr Reiter, als nebeneinander passen: waagerecht schiebbar, statt
+     die Beschriftungen unleserlich zu quetschen. */
+  .tabs {
+    display: flex; gap: 6px; margin-top: 12px;
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs button {
+    flex: 0 0 auto; padding: 9px 12px; font-size: 14px; min-height: 40px;
+    white-space: nowrap;
+  }
+  .tabs button[aria-selected="true"] { background: var(--tinte); color: var(--papier); border-color: var(--tinte); }
+
+  .stand { margin-top: 10px; font-size: 14px; color: var(--leise); min-height: 20px; }
+  .stand.arbeitet::after { content: ""; display: inline-block; width: 9px; height: 9px;
+    margin-left: 7px; border-radius: 50%; background: var(--mittel);
+    animation: pulsieren 1s ease-in-out infinite; vertical-align: middle; }
+  @keyframes pulsieren { 0%, 100% { opacity: 0.25; } 50% { opacity: 1; } }
+  .stand.fehler { color: var(--warn); }
+
+  .filter { display: flex; gap: 8px; margin-top: 10px; }
+  .filter select {
+    flex: 1; font: inherit; font-size: 14px; padding: 9px 10px; min-height: 40px;
+    border: 1px solid var(--linie); border-radius: var(--radius-klein);
+    background: var(--karte); color: var(--tinte);
+  }
+  input:focus, select:focus { border-color: var(--tinte); outline: none; }
+  .filter[hidden] { display: none; }
+
+  /* Fortschritt der Phasen waehrend eines Laufs */
+  .phasen { display: grid; gap: 6px; margin-top: 10px; }
+  .phase {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-size: 14px; padding: 8px 11px; border-radius: 9px;
+    background: var(--karte); border: 1px solid var(--linie); color: var(--leise);
+  }
+  .phase.laeuft { color: var(--tinte); border-color: var(--mittel); }
+  .phase.fertig { color: var(--gut); }
+  .phase.fehler { color: var(--warn); border-color: var(--warn); }
+  .phase .wert { font-variant-numeric: tabular-nums; }
+
+  /* Quellen-Tab */
+  .bereich-titel {
+    font-size: 15px; font-weight: 650; margin: 22px 0 8px;
+    display: flex; align-items: baseline; justify-content: space-between;
+    flex-wrap: wrap; gap: 2px 10px;
+  }
+  /* Der Zusatz rutscht auf schmalen Schirmen unter die Ueberschrift,
+     statt sich mit ihr zu ueberlagern. */
+  .bereich-titel .klein {
+    font-size: 13px; font-weight: 400; color: var(--leise);
+    flex: 1 0 100%;
+  }
+  .quelle-karte {
+    background: var(--karte); border: 1px solid var(--linie); border-radius: 12px;
+    padding: 12px; margin-top: 8px;
+  }
+  .quelle-kopf { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .quelle-kopf strong { font-size: 15px; }
+  .quelle-zahlen {
+    display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 7px;
+    font-size: 13px; color: var(--leise);
+  }
+  .quelle-zahlen b { color: var(--tinte); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .schalter { font-size: 13px; padding: 6px 11px; min-height: 34px; }
+  .sprache {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em; padding: 2px 6px;
+    border: 1px solid var(--linie); border-radius: 5px; color: var(--leise);
+  }
+
+  /* Runs-Tab */
+  table.runs { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+  table.runs th, table.runs td { padding: 9px 6px; text-align: right; border-bottom: 1px solid var(--linie); }
+  table.runs th:first-child, table.runs td:first-child { text-align: left; }
+  table.runs th { color: var(--leise); font-weight: 600; font-size: 12px; }
+  table.runs td { font-variant-numeric: tabular-nums; }
+  table.runs .kosten { font-weight: 650; }
+
+  /* Quellen-Badge auf den Karten */
+  .quelle-badge {
+    display: inline-block; font-size: 12px; padding: 2px 7px; border-radius: 5px;
+    background: var(--linie); color: var(--leise); margin-right: 6px;
+  }
+  .quelle-badge.keyword { background: #ece7f8; color: #5b3fa8; }
+  .kennzahl { font-variant-numeric: tabular-nums; }
+
+  .karte {
+    background: var(--karte); border: 1px solid var(--linie); border-radius: var(--radius);
+    margin-top: 12px; overflow: hidden; cursor: pointer;
+  }
+  .karte-oben { display: flex; gap: 12px; padding: 12px; }
+  .karte img { width: 88px; height: 110px; object-fit: cover; border-radius: 8px; background: var(--linie); flex: none; }
+  .karte-text { min-width: 0; flex: 1; }
+  .zeile1 { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .handle { font-weight: 600; font-size: 15px; }
+  .meta { font-size: 13px; color: var(--leise); margin-top: 2px; }
+  .zusammenfassung {
+    font-size: 14px; color: var(--tinte); margin-top: 7px;
+    display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  /* Reels tragen ein Play-Symbol auf dem Vorschaubild */
+  .vorschau { position: relative; flex: none; }
+  .vorschau .play {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 26px; line-height: 1;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, .55);
+    pointer-events: none;
+  }
+  .views-badge {
+    display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 7px;
+    border-radius: 5px; background: var(--tinte); color: var(--papier); margin-right: 6px;
+  }
+  .typ-badge {
+    display: inline-block; font-size: 12px; padding: 2px 7px; border-radius: 5px;
+    background: var(--karte2); color: var(--leise); margin-right: 6px;
+  }
+
+  /* Zustandszeile auf der Karte - nur dort, wo sie etwas sagt */
+  .zustand { font-weight: 600; }
+  .zustand.geplant { color: var(--mittel); }
+  .zustand.veroeffentlicht { color: var(--gut); }
+
+  .badge { font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 99px;
+           border: 1px solid currentColor; flex: none; }
+  .badge.gut { color: var(--gut); }
+  .badge.mittel { color: var(--mittel); }
+  .badge.schwach { color: var(--schwach); }
+
+  /* --- Detail ------------------------------------------------------- */
+  dialog {
+    width: 100%; max-width: 720px; max-height: 100dvh; height: 100dvh;
+    border: none; padding: 0; background: var(--papier); color: var(--tinte);
+  }
+  dialog::backdrop { background: rgba(0, 0, 0, 0.55); }
+  .detail-kopf {
+    position: sticky; top: 0; z-index: 5; background: var(--papier);
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px var(--rand); border-bottom: 1px solid var(--linie);
+  }
+  /* Lange Handles duerfen den Schliessen-Knopf nicht verdraengen. */
+  .detail-kopf strong {
+    min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .detail-kopf .still { flex: none; }
+  /* Der Bildstreifen ragt mit negativen Raendern ueber den Satzspiegel
+     hinaus - ohne diese Bremse dehnt er den ganzen Dialog und alles
+     verschiebt sich nach links. */
+  .detail-inhalt { padding: 0 var(--rand) 40px; overflow-x: hidden; }
+
+  .streifen { position: relative; margin: 14px calc(var(--rand) * -1) 0; }
+  .bilder {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
+    gap: 10px; padding: 0 var(--rand); scrollbar-width: none;
+  }
+  .bilder::-webkit-scrollbar { display: none; }
+  .bilder img {
+    width: min(78vw, 420px); aspect-ratio: 4 / 5; object-fit: cover;
+    border-radius: 12px; scroll-snap-align: center; flex: none; background: var(--linie);
+  }
+  .pfeil {
+    position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+    width: 40px; height: 40px; min-height: 40px; padding: 0; border-radius: 50%;
+    background: var(--karte); opacity: 0.94;
+  }
+  .pfeil.links { left: 4px; } .pfeil.rechts { right: 4px; }
+  .zaehler { text-align: center; font-size: 13px; color: var(--leise); margin-top: 8px; }
+
+  h2 { font-size: 15px; font-weight: 650; margin: 22px 0 8px; }
+  .block {
+    background: var(--karte); border: 1px solid var(--linie); border-radius: 12px;
+    padding: 13px; overflow-wrap: anywhere;
+  }
+  .block + .block { margin-top: 8px; }
+  .block p + p { margin-top: 8px; }
+  ul.punkte { list-style: none; }
+  ul.punkte li { padding: 6px 0 6px 18px; position: relative; font-size: 15px; }
+  ul.punkte li::before { content: "—"; position: absolute; left: 0; color: var(--leise); }
+  .fit-slide { font-weight: 650; }
+  .kopierbar { white-space: pre-wrap; font-size: 15px; }
+  .kopf-mit-knopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .kopf-mit-knopf button { padding: 6px 11px; min-height: 36px; font-size: 14px; }
+
+  .aktionen { display: grid; gap: 8px; margin-top: 22px; }
+  .aktionen .paar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  a.original { display: block; text-align: center; padding: 12px; color: var(--leise);
+               font-size: 14px; text-decoration: none; }
+
+  /* --- Zahlenblock oberhalb der KI-Texte ----------------------------- */
+  /* Die Trennlinien haengen an den Zellen, nicht an den Luecken: Sonst
+     stuende dort, wo in der letzten Reihe Zellen fehlen, ein grauer
+     Block statt nichts. */
+  .kennzahlen {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    background: var(--karte); border: 1px solid var(--linie);
+    border-radius: 12px; overflow: hidden; margin-top: 10px;
+  }
+  .kennzahlen div {
+    padding: 9px 8px;
+    border-right: 1px solid var(--linie);
+    border-bottom: 1px solid var(--linie);
+  }
+  .kennzahlen div:nth-child(4n) { border-right: none; }
+  .kennzahlen div:last-child { border-right: none; }
+
+  .kennzahlen .wert {
+    font-size: 16px; font-weight: 650; font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .kennzahlen .was { font-size: 11px; color: var(--leise); margin-top: 1px; }
+  @media (max-width: 420px) {
+    .kennzahlen { grid-template-columns: repeat(3, 1fr); }
+    .kennzahlen div:nth-child(4n) { border-right: 1px solid var(--linie); }
+    .kennzahlen div:nth-child(3n) { border-right: none; }
+    .kennzahlen div:last-child { border-right: none; }
+  }
+
+  /* Zwei Balken: wogegen messe ich diesen Beitrag? */
+  .balken { margin-top: 10px; }
+  .balken + .balken { margin-top: 9px; }
+  .balken .kopf {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 10px;
+    font-size: 12px; color: var(--leise); margin-bottom: 4px;
+  }
+  /* Die Beschriftung darf umbrechen; der Faktor rechts nicht - sonst
+     schiebt ihn ein langer Titel aus dem Block heraus. */
+  .balken .kopf span { flex: 1 1 auto; min-width: 0; }
+  .balken .kopf b {
+    flex: none; color: var(--tinte); font-variant-numeric: tabular-nums;
+  }
+  .balken .spur {
+    position: relative; height: 8px; border-radius: 99px;
+    background: var(--karte2); overflow: hidden;
+  }
+  .balken .fuellung {
+    position: absolute; inset: 0 auto 0 0; border-radius: 99px;
+    background: var(--tinte);
+  }
+  .balken .fuellung.gut { background: var(--gut); }
+  .balken .fuellung.schwach { background: var(--zart); }
+  /* Die Markierung sitzt dort, wo der Vergleichswert liegt. */
+  .balken .marke {
+    position: absolute; top: -2px; bottom: -2px; width: 2px;
+    background: var(--tinte); opacity: 0.55;
+  }
+  .balken .fuss { font-size: 11px; color: var(--leise); margin-top: 3px; }
+
+  /* --- Reiter "Veroeffentlicht": Original gegen meinen Beitrag -------- */
+  .vergleich {
+    display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px;
+    align-items: center; padding: 10px 12px;
+    border-top: 1px solid var(--linie); background: var(--karte2);
+  }
+  .vergleich .seite { min-width: 0; }
+  .vergleich .titel {
+    font-size: 11px; color: var(--leise); text-transform: uppercase;
+    letter-spacing: 0.04em; margin-bottom: 2px;
+  }
+  .vergleich .zahlenreihe {
+    font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+  }
+  .vergleich .verhaeltnis {
+    font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums;
+    padding: 3px 9px; border-radius: 99px; background: var(--karte);
+    border: 1px solid currentColor; color: var(--leise);
+  }
+  .vergleich .verhaeltnis.gut { color: var(--gut); }
+  .vergleich .verhaeltnis.mittel { color: var(--mittel); }
+
+  /* Auf dem Handy reicht die Breite nicht fuer drei Spalten nebeneinander -
+     die Zahlenreihen wuerden abgeschnitten. Dann untereinander, das
+     Verhaeltnis rechts daneben. */
+  @media (max-width: 420px) {
+    .vergleich {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "original verhaeltnis" "meiner verhaeltnis";
+      row-gap: 7px;
+    }
+    .vergleich .seite:first-of-type { grid-area: original; }
+    .vergleich .seite:last-of-type { grid-area: meiner; }
+    .vergleich .verhaeltnis { grid-area: verhaeltnis; align-self: center; }
+  }
+
+  .normalzeile {
+    font-size: 13px; color: var(--leise); padding: 10px 12px; margin-top: 12px;
+    background: var(--karte); border: 1px solid var(--linie); border-radius: 12px;
+  }
+  .normalzeile b { color: var(--tinte); font-variant-numeric: tabular-nums; }
+
+  .zahlen { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .zahlen div { background: var(--karte); border: 1px solid var(--linie); border-radius: 10px; padding: 10px; }
+  .zahlen .wert { font-size: 19px; font-weight: 650; }
+  .zahlen .was { font-size: 12px; color: var(--leise); }
+
+  /* Zuordnung von Hand im Reiter "Geplant" */
+  .zuordnen {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    padding: 10px 12px; border-top: 1px solid var(--linie); background: var(--karte2);
+  }
+  .zuordnen label { font-size: 13px; color: var(--leise); flex: 1 0 100%; }
+  .zuordnen select { flex: 1 1 160px; font-size: 14px; min-height: 40px; padding: 8px 10px; }
+  .zuordnen button { flex: 0 0 auto; font-size: 14px; min-height: 40px; padding: 8px 14px; }
+
+  /* Eigenen Link einreihen */
+  .einreihen { display: flex; gap: 8px; margin-top: 10px; }
+  .einreihen input { flex: 1; min-width: 0; }
+  .einreihen button { flex: none; }
+  .einreihen-stand {
+    margin-top: 8px; font-size: 13px; color: var(--leise);
+    display: flex; align-items: center; gap: 7px;
+  }
+  .einreihen-stand.fehler { color: var(--warn); }
+  .einreihen-stand .punkt {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--mittel);
+    animation: pulsieren 1s ease-in-out infinite; flex: none;
+  }
+
+  /* Von Hand eingereihte Beitraege heben sich leicht ab */
+  .karte.manual {
+    border-color: #cbb8f0;
+    background: linear-gradient(0deg, rgba(203, 184, 240, .06), rgba(203, 184, 240, .06)), var(--karte);
+  }
+  .quelle-badge.manual { background: #ece7f8; color: #5b3fa8; font-weight: 600; }
+
+  /* Kurz hervorheben, wenn eine Karte neu dazukommt */
+  @keyframes aufleuchten {
+    from { box-shadow: 0 0 0 3px rgba(91, 63, 168, .35); }
+    to { box-shadow: 0 0 0 3px rgba(91, 63, 168, 0); }
+  }
+  .karte.neu { animation: aufleuchten 2.4s ease-out; }
+
+  /* Gummiband beim Ziehen zum Aktualisieren */
+  #ziehen {
+    height: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--leise); transition: height .12s ease-out;
+  }
+
+  /* Was die Automatik aus einer Quelle gemacht hat */
+  .quelle-lernen {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px;
+    margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--linie);
+    font-size: 12px; color: var(--leise);
+  }
+  .gewicht {
+    font-weight: 600; padding: 2px 8px; border-radius: 99px;
+    background: var(--karte2); color: var(--leise);
+  }
+  .gewicht.hoch { background: #e4f3ea; color: var(--gut); }
+  .gewicht.niedrig { background: #f7e7e4; color: var(--warn); }
+  .von-hand {
+    font-weight: 600; padding: 2px 8px; border-radius: 99px;
+    background: #e7ecfb; color: var(--blau);
+  }
+  .quelle-lernen .grund { flex: 1 1 100%; }
+
+  .leer { text-align: center; color: var(--leise); padding: 48px 20px; font-size: 15px; }
+
+  /* --- Konten und Token --------------------------------------------- */
+  .feld { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  /* Auf dem Handy steht das Eingabefeld allein in der ersten Zeile,
+     Sprache, Art und Knopf darunter - sonst faellt der Knopf heraus. */
+  .feld input { flex: 1 1 100%; }
+  .feld select { flex: 0 1 auto; }
+  .feld button { flex: 1 1 auto; }
+  input, select {
+    flex: 1; font: inherit; font-size: 16px; padding: 11px 12px; min-height: 44px;
+    border: 1px solid var(--linie); border-radius: var(--radius-klein);
+    background: var(--karte); color: var(--tinte);
+  }
+  input:focus, select:focus { border-color: var(--tinte); outline: none; }
+  .konto { display: flex; align-items: center; justify-content: space-between;
+           gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--linie); }
+  .konto:last-child { border-bottom: none; }
+  .konto .an { color: var(--gut); font-size: 13px; font-weight: 600; }
+  .konto .aus { color: var(--leise); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="huelle">
+  <header>
+    <div class="kopfzeile">
+      <h1>Swipe-File</h1>
+      <div class="kopf-aktionen">
+        <button class="still" id="knopf-eigene" title="Meine eigenen Beiträge holen und zuordnen">Meine Zahlen</button>
+        <button class="primaer" id="knopf-holen">Neue holen</button>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-ansicht="analyzed" aria-selected="true">Neu</button>
+      <button role="tab" data-ansicht="planned" aria-selected="false">Geplant</button>
+      <button role="tab" data-ansicht="published" aria-selected="false">Veröffentlicht</button>
+      <button role="tab" data-ansicht="rejected" aria-selected="false">Verworfen</button>
+      <button role="tab" data-ansicht="funde" aria-selected="false">Meine Funde</button>
+      <button role="tab" data-ansicht="quellen" aria-selected="false">Quellen</button>
+      <button role="tab" data-ansicht="runs" aria-selected="false">Runs</button>
+    </nav>
+
+    <div class="filter" id="filter">
+      <select id="filter-quelle">
+        <option value="">Alle Quellen</option>
+        <option value="account">Nur Accounts</option>
+        <option value="keyword">Nur Keywords</option>
+        <option value="manual">von mir</option>
+      </select>
+      <select id="filter-keyword"><option value="">Alle Keywords</option></select>
+      <select id="filter-typ" hidden>
+        <option value="">Alle Typen</option>
+        <option value="carousel">Karussells</option>
+        <option value="reel">Reels</option>
+        <option value="image">Bilder</option>
+      </select>
+    </div>
+
+    <div class="einreihen">
+      <input id="manual-url" type="url" inputmode="url" autocapitalize="none"
+             autocorrect="off" spellcheck="false" placeholder="Instagram-Link einfügen">
+      <button id="manual-los">Einreihen</button>
+    </div>
+    <p class="einreihen-stand" id="manual-stand" hidden></p>
+
+    <p class="stand" id="stand"></p>
+    <div class="phasen" id="phasen" hidden></div>
+  </header>
+
+  <div id="ziehen" aria-hidden="true"></div>
+  <main id="liste"></main>
+</div>
+
+<dialog id="detail"></dialog>
+<dialog id="konten"></dialog>
+
+<script src="app.js"></script>
+</body>
+</html>
