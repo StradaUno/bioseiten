@@ -1,0 +1,16 @@
+# viuno — Cloudflare Pages headers
+# Publish-Verzeichnis ist `public/`, deshalb liegt diese Datei hier
+# (Cloudflare Pages liest `_headers` nur aus dem Build-Output-Root —
+# eine Datei in einem Unterordner wird stattdessen einfach ausgeliefert).
+
+# ── Swipe-File unter /karussell/ ────────────────────────────────
+# Interne Seite. Sie hält den ADMIN_TOKEN der Edge Functions im
+# localStorage dieser Herkunft; in ein fremdes Fenster eingebettet wäre
+# sie ein lohnendes Ziel. Deshalb hier und nur hier die Sperren.
+/karussell/*
+  X-Frame-Options: DENY
+  Content-Security-Policy: frame-ancestors 'none'
+  Referrer-Policy: no-referrer
+  X-Content-Type-Options: nosniff
+  # Suchmaschinen haben hier nichts zu holen.
+  X-Robots-Tag: noindex, nofollow
