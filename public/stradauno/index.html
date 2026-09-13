@@ -50,12 +50,6 @@ function knopf(href,label,name){
   return a
 }
 function baueSeite(){
-  const s=document.getElementById('socials')
-  const ig=document.createElement('a')
-  ig.href='https://instagram.com/stradauno'; ig.target='_blank'; ig.rel='noopener'
-  ig.tabIndex=-1; ig.title='Instagram'; ig.innerHTML=icon('instagram')
-  s.appendChild(ig)
-
   const c=document.getElementById('links')
 
   const karte=document.createElement('a')
@@ -65,8 +59,8 @@ function baueSeite(){
   c.appendChild(karte)
 
   c.appendChild(knopf('https://viuno.de/news','Creator News','news'))
-  c.appendChild(knopf('https://viuno.de/register','Kostenlos starten','plus'))
-  c.appendChild(knopf('https://instagram.com/viuno.de','viuno auf Instagram','instagram'))
+  c.appendChild(knopf('https://viuno.de','Kostenlos starten','plus'))
+  c.appendChild(knopf('https://instagram.com/viuno.pro','viuno auf Instagram','instagram'))
 
   const inq=document.createElement('button')
   inq.className='btn btn-primary'; inq.id='btn-inquiry'; inq.type='button'
