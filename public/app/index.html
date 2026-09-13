@@ -380,6 +380,11 @@ html, body {
 .loading-title{font-size:var(--t-xl);font-weight:var(--fw-b);color:var(--text);letter-spacing:-.02em}
 .loading-sub{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:var(--s-1)}
 .loading-card .flow-steps{padding:var(--s-4) 0 0}
+.loading-card .step-body{flex:1;min-width:0}
+/* Wartebalken fuer die Bauzeit nach der Antwort der Edge Function */
+.loading-bar{height:3px;border-radius:2px;background:var(--surface2);overflow:hidden;margin-top:7px}
+.loading-bar span{display:block;height:100%;width:0;background:var(--text);border-radius:2px;animation:loadingFill linear forwards}
+@keyframes loadingFill{from{width:0}to{width:100%}}
 /* Der aktive Schritt bekommt einen ruhigen Puls, damit klar ist: es laeuft noch */
 .loading-card .step-label.active{animation:stepPulse 1.8s ease-in-out infinite}
 @keyframes stepPulse{0%,100%{opacity:1}50%{opacity:.55}}
@@ -1853,84 +1858,121 @@ window.copyLink=function(url){
 
 /* ─── Fortschritts-Overlay ───────────────────────────────────────
    Erstellen, Design-Wechsel und Loeschen laufen ueber eine Edge
-   Function und brauchen bis zu einer halben Minute. Die Function
-   meldet keinen Zwischenstand, deshalb laeuft die Schrittliste auf
-   einem Timer — der letzte Schritt bleibt aber aktiv, bis die Antwort
-   wirklich da ist, und wird erst dann abgehakt. */
+   Function, die die erzeugte Seite ins Repo committet. Wenn sie
+   antwortet, ist die Seite noch nicht im Netz — Cloudflare Pages baut
+   danach noch rund fuenfzehn Sekunden. Deshalb zwei Phasen:
+
+   1. Schrittliste auf einem Timer, solange die Function laeuft. Der
+      vorletzte Schritt bleibt aktiv, bis die Antwort da ist.
+   2. Danach der Schluss-Schritt mit Fortschrittsbalken, der die
+      Bauzeit abwartet. Erst dann ist alles gruen und das Overlay geht.
+   ───────────────────────────────────────────────────────────────── */
 const LOADING_FLOWS={
   biolinkCreate:{
     title:'BioLink wird erstellt',
     sub:'Das dauert einen Moment — bitte lass die Seite offen.',
-    steps:['Angaben werden geprüft','Layout wird gebaut','Design wird angewendet','Inhalte werden eingefügt','Seite wird veröffentlicht']
+    steps:['Angaben werden geprüft','Layout wird gebaut','Design wird angewendet','Inhalte werden eingefügt'],
+    tail:'Seite geht online',
+    tailSub:'Fast geschafft — deine Seite wird gerade ausgeliefert.'
   },
   biolinkTheme:{
     title:'Neues Design wird übernommen',
     sub:'Deine Seite wird mit dem neuen Design neu erzeugt.',
-    steps:['Design wird gespeichert','Seite wird neu gebaut','Seite wird veröffentlicht']
+    steps:['Design wird gespeichert','Seite wird neu gebaut'],
+    tail:'Neue Fassung geht online',
+    tailSub:'Fast geschafft — die neue Fassung wird ausgeliefert.'
   },
   biolinkDelete:{
     title:'BioLink-Seite wird gelöscht',
     sub:'Deine Einstellungen und Links bleiben gespeichert.',
-    steps:['Seite wird offline genommen','Verweise werden entfernt','Abschluss']
+    steps:['Seite wird offline genommen','Verweise werden entfernt'],
+    tail:'Änderung wird verteilt',
+    tailSub:'Fast geschafft — gleich ist die Seite nicht mehr erreichbar.'
   },
   mediakitCreate:{
     title:'Media Kit wird erstellt',
     sub:'Das dauert einen Moment — bitte lass die Seite offen.',
-    steps:['Angaben werden geprüft','Layout wird gebaut','Kennzahlen werden eingesetzt','Design wird angewendet','Media Kit wird veröffentlicht']
+    steps:['Angaben werden geprüft','Layout wird gebaut','Kennzahlen werden eingesetzt','Design wird angewendet'],
+    tail:'Media Kit geht online',
+    tailSub:'Fast geschafft — dein Media Kit wird gerade ausgeliefert.'
   },
   mediakitDelete:{
     title:'Media Kit wird gelöscht',
     sub:'Deine Angaben bleiben gespeichert.',
-    steps:['Seite wird offline genommen','Verweise werden entfernt','Abschluss']
+    steps:['Seite wird offline genommen','Verweise werden entfernt'],
+    tail:'Änderung wird verteilt',
+    tailSub:'Fast geschafft — gleich ist das Media Kit nicht mehr erreichbar.'
   }
 }
-const LOADING_STEP_MS=6000
+const LOADING_STEP_MS=6000     // Taktung der Schritte, solange die Function laeuft
+const LOADING_HOLD_MS=15000    // Bauzeit von Cloudflare Pages nach der Antwort
 
 let _loadingTimer=null
-let _loadingSteps=[]
+let _loadingHold=null
+let _loadingFlow=null
 
-function paintLoadingSteps(activeIdx){
+/* activeIdx zeigt auf den laufenden Schritt; alles davor ist erledigt.
+   Der Schluss-Schritt steht am Ende der Liste und bekommt waehrend der
+   Wartezeit den Fortschrittsbalken. */
+function paintLoadingSteps(activeIdx,withBar){
   const el=document.getElementById('loading-steps')
-  if(!el)return
-  el.innerHTML=_loadingSteps.map((label,i)=>{
+  if(!el||!_loadingFlow)return
+  const all=[..._loadingFlow.steps,_loadingFlow.tail]
+  el.innerHTML=all.map((label,i)=>{
     const state=i<activeIdx?'done':i===activeIdx?'active':'wait'
+    const bar=(withBar&&i===activeIdx)
+      ? `<div class="loading-bar"><span style="animation-duration:${LOADING_HOLD_MS}ms"></span></div>`
+      : ''
     return `<div class="flow-step">
       <div class="step-dot ${state}">${state==='done'?icon('check',11):state==='active'?'<span class="spinner" style="width:8px;height:8px;border-width:1.5px"></span>':''}</div>
-      <div class="step-label ${state}">${escHtml(label)}</div>
+      <div class="step-body"><div class="step-label ${state}">${escHtml(label)}</div>${bar}</div>
     </div>`
   }).join('')
 }
 
 function showLoadingOverlay(flowKey='biolinkCreate'){
   const flow=LOADING_FLOWS[flowKey]||LOADING_FLOWS.biolinkCreate
+  _loadingFlow=flow
   document.getElementById('loading-title').textContent=flow.title
   document.getElementById('loading-sub').textContent=flow.sub
-  _loadingSteps=flow.steps
   paintLoadingSteps(0)
   document.getElementById('loading-overlay').classList.remove('hidden')
   document.body.style.overflow='hidden'
 
   let i=0
+  const lastTimed=flow.steps.length-1
   const t=setInterval(()=>{
     i++
-    // Der letzte Schritt bleibt aktiv, bis die Antwort da ist
-    if(i>=_loadingSteps.length-1){ paintLoadingSteps(_loadingSteps.length-1); clearInterval(t); return }
+    // Nicht in den Schluss-Schritt laufen — der kommt erst nach der Antwort
+    if(i>=lastTimed){ paintLoadingSteps(lastTimed); clearInterval(t); return }
     paintLoadingSteps(i)
   },LOADING_STEP_MS)
   _loadingTimer=t
   return t
 }
 
-/* Erfolgreich fertig: alles abhaken, kurz stehen lassen, dann ausblenden */
+/* Die Function ist durch: Schluss-Schritt aktivieren und die Bauzeit
+   abwarten, bevor "fertig" behauptet wird. */
 function finishLoadingOverlay(timer){
   if(timer)clearInterval(timer)
   _loadingTimer=null
-  paintLoadingSteps(_loadingSteps.length)
-  return new Promise(res=>setTimeout(()=>{ hideLoadingOverlay(); res() },500))
+  if(!_loadingFlow)return Promise.resolve()
+  const tailIdx=_loadingFlow.steps.length
+  paintLoadingSteps(tailIdx,true)
+  const sub=document.getElementById('loading-sub')
+  if(sub)sub.textContent=_loadingFlow.tailSub
+  return new Promise(res=>{
+    _loadingHold=setTimeout(()=>{
+      _loadingHold=null
+      paintLoadingSteps(tailIdx+1)
+      setTimeout(()=>{ hideLoadingOverlay(); res() },600)
+    },LOADING_HOLD_MS)
+  })
 }
 
 function hideLoadingOverlay(timer){
   if(timer)clearInterval(timer)
+  if(_loadingHold){clearTimeout(_loadingHold);_loadingHold=null}
   _loadingTimer=null
   document.getElementById('loading-overlay')?.classList.add('hidden')
   document.body.style.overflow=''
