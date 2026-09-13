@@ -4707,10 +4707,10 @@ function renderAnalyticsContent(){
       <p class="c-lede">Nach Likes sortiert, mit der Begründung aus den Daten.</p>
       <div class="c-tbl-wrap"><table class="c-tbl"><thead><tr><th>Datum</th><th>Warum</th><th class="n">Likes</th></tr></thead><tbody>`
     ki.top_posts.forEach(post=>{
-      const datum=post.datum||(post.url?'':'–')
+      const datum=post.datum||'–'
       const text=verlinke(post.warum_top||'')
       const zelle=post.url?`<a href="${escHtml(post.url)}" target="_blank" rel="noopener">${text}</a>`:text
-      h+=`<tr><td class="c-mono" style="white-space:nowrap">${escHtml(datum)}</td><td>${zelle}</td><td class="n">${deN(post.likes)}</td></tr>`
+      h+=`<tr><td class="c-mono" style="white-space:nowrap">${verlinke(datum)}</td><td>${zelle}</td><td class="n">${deN(post.likes)}</td></tr>`
     })
     h+=`</tbody></table></div></div>`
   }
