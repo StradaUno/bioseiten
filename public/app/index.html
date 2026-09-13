@@ -1775,7 +1775,9 @@ async function renderDashboard(area, ctx) {
 
   const setup=[]
   if(!bioActive)  setup.push({icon:'link',href:'#/biolink',title:'BioLink-Seite erstellen',sub:'Deine Visitenkarte für Brands'})
-  if(!hasAnalyse) setup.push({icon:'barChart',href:'#/analytics',title:'Analyse starten',sub:'Sieh, was deine Beiträge leisten'})
+  /* P3: Der Preis gehoert dorthin, wo geklickt wird. Vorher stand er ausschliesslich
+     auf dem Kaufbutton -- der Weg dahin versprach implizit etwas Kostenloses. */
+  if(!hasAnalyse) setup.push({icon:'barChart',href:'#/analytics',title:'Analyse starten',sub:'Was deine Top-Posts verbindet — 9,99 € je Kanal'})
   if(!mkActive)   setup.push({icon:'fileText',href:'#/mediakit',title:'Media Kit erstellen',sub:'Reichweite und Zahlen für Marken'})
 
   document.getElementById('skeleton-area').classList.add('hidden')
@@ -4369,6 +4371,17 @@ function renderAnalyticsContent(){
     h+=`<div class="section"><div class="section-label">Entwicklung</div><div class="insight-card">
       <div class="insight-row"><div class="insight-tag tag-dev">${icon('trendingUp',12)} Vergleich zur letzten Analyse</div>
       <div class="insight-text">${escHtml(ki.vergleich_vorherige)}</div></div></div></div>`
+  }
+
+  /* P7: Die Media-Kit-Uebernahme existiert seit jeher (loadMediakit liest analyse_stats),
+     wurde im Ergebnis aber nirgends erwaehnt. Ein Satz plus Link genuegt. */
+  if(st){
+    h+=`<div class="section"><div class="insight-card"><div class="insight-row">
+      <div class="insight-tag tag-tip">${icon('fileText',12)} Weiterverwenden</div>
+      <div class="insight-text">Diese Zahlen kannst du direkt in dein Media Kit übernehmen —
+        dann sehen Marken deine aktuelle Reichweite, ohne dass du etwas abtippst.
+        <a class="plat-link" href="#/mediakit">Zum Media Kit</a></div>
+    </div></div></div>`
   }
 
   h+=`<div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">

@@ -104,6 +104,12 @@ nav.top{
 }
 .tile-title{font-size:17px;font-weight:600;letter-spacing:-.02em}
 .tile-desc{font-size:13.5px;color:var(--muted);line-height:1.5;margin-top:2px}
+.tile-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tile-price{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;
+  padding:3px 9px;border-radius:99px;background:var(--text);color:#fff;white-space:nowrap}
+.pricing-note{max-width:760px;margin:22px auto 0;padding:16px 20px;background:var(--surface);
+  border:1px solid var(--border);border-radius:16px;font-size:13.5px;color:var(--muted);line-height:1.6}
+.pricing-note b{color:var(--text);font-weight:600}
 
 /* Einheitliche Grafik-Fläche rechts */
 .tile-visual{
@@ -284,14 +290,17 @@ footer{
         </div>
       </a>
 
-      <a href="/analytics" class="tile">
+      <a href="/app/#/analytics" class="tile">
         <div class="tile-body">
           <div class="tile-icon">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
           </div>
           <div>
-            <div class="tile-title">Analyse starten</div>
-            <div class="tile-desc">Sieh, welche Posts wirklich performen</div>
+            <div class="tile-head">
+              <div class="tile-title">Analyse starten</div>
+              <span class="tile-price">9,99 € je Kanal</span>
+            </div>
+            <div class="tile-desc">Was deine Top-Posts verbindet — und was du als Nächstes ändern solltest</div>
           </div>
         </div>
         <div class="tile-visual" aria-hidden="true">
@@ -363,6 +372,15 @@ footer{
         </div>
       </a>
 
+    </div>
+
+    <div class="pricing-note reveal">
+      <b>Drei Tools kostenlos, eines mit Preis.</b>
+      BioLink, Creator News und Media Kit kosten nichts. Die Analyse kostet 9,99 € pro Kanal und
+      Durchlauf — bei jedem Lauf werden echte Daten abgerufen und ausgewertet. Kein Abo, keine Kündigung.
+      <br><br>
+      Was wir <b>nicht</b> können: Saves, Reichweite und die Demografie deiner Follower stehen nur in
+      deinen Instagram Insights. Wir liefern das, was dort nicht steht — die Einordnung.
     </div>
   </div>
 </section>
