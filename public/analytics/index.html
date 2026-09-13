@@ -673,7 +673,7 @@ function renderContent(){
       <div class="kpi-card dark">
         <div class="kpi-label">Follower</div>
         <div class="kpi-value">${fmt(st.followers)}</div>
-        ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} diese Woche</div>`:'<div class="kpi-delta flat">Erste Messung</div>'}
+        ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} seit letzter Analyse</div>`:(st.handle_changed?'<div class="kpi-delta flat">Handle geändert – kein Vergleich</div>':'<div class="kpi-delta flat">Erste Messung</div>')}
       </div>
       <div class="kpi-card">
         <div class="kpi-label">⌀ Likes</div>
@@ -791,7 +791,7 @@ window.shareAnalytics=function(){
   lines.push('')
 
   if(st){
-    const follStr=st.followers!=null?`👥 ${fmt(st.followers)} Follower`+( st.followers_change!=null&&st.followers_change!==0?` (${st.followers_change>=0?'+':''}${fmt(st.followers_change)} diese Woche)`:'' ):null
+    const follStr=st.followers!=null?`👥 ${fmt(st.followers)} Follower`+( st.followers_change!=null&&st.followers_change!==0?` (${st.followers_change>=0?'+':''}${fmt(st.followers_change)} seit letzter Analyse)`:'' ):null
     if(follStr)lines.push(follStr)
     if(st.engagement_rate!=null)lines.push(`💫 ${(+st.engagement_rate).toFixed(2)}% Engagement Rate`)
     if(st.avg_likes!=null)lines.push(`❤️  ⌀ ${fmt(st.avg_likes)} Likes pro Post`)

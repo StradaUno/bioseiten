@@ -437,7 +437,7 @@ async function loadDashboard(uid){
         <a class="dash-card dash-card-dark" href="/analytics">
           <div class="dash-card-label">Follower</div>
           <div class="dash-card-value">${fmt(totalFollowers)}</div>
-          <div class="dash-card-sub">${follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' diese Woche':'Gesamt'}</div>
+          <div class="dash-card-sub">${follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' seit letzter Analyse':'Gesamt'}</div>
         </a>
         <a class="dash-card" href="/requests">
           <div class="dash-card-label">Anfragen</div>

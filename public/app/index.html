@@ -1719,7 +1719,7 @@ async function renderDashboard(area, ctx) {
     sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
     sb.from('collab_requests').select('id',{count:'exact',head:true}).eq('creator_id',uid).eq('status','new').is('deleted_at',null),
     sb.rpc('get_daily_text',{p_user_id:uid}),
-    sb.from('analyse_stats').select('platform,followers,followers_change').eq('user_id',uid).order('created_at',{ascending:false}).limit(2),
+    sb.from('analyse_stats').select('platform,followers,followers_change,handle_changed,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(20),
   ])
 
   if (ctx.stale) return
@@ -1752,9 +1752,13 @@ async function renderDashboard(area, ctx) {
     return h<12?`Guten Morgen, ${name.split(' ')[0]}.`:h<18?`Guten Tag, ${name.split(' ')[0]}.`:`Guten Abend, ${name.split(' ')[0]}.`
   })()
 
+  /* B5: Bezugspunkt ist die vorherige Analyse derselben Plattform, nicht "diese Woche". */
+  const igPrev = statsRows.filter(r=>r.platform==='instagram')[1] || null
   const tiles=[]
   if(hasAnalyse) tiles.push({dark:true,href:'#/analytics',label:'Follower',value:fmt(totalFollowers),
-    sub:follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' diese Woche':'Gesamt'})
+    sub:follDelta!=null
+      ?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+(igPrev?.created_at?' seit '+new Date(igPrev.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):' seit letzter Analyse')
+      :'Gesamt'})
   tiles.push({href:'#/requests',label:'Anfragen',value:String(newReqs),
     sub:newReqs===1?'Neue Anfrage':newReqs>1?'Neue Anfragen':'Keine neuen'})
   if(bioActive) tiles.push({href:'#/biolink',label:'BioLink',value:fmt(p?.bio_views_last_7_days),sub:'Aufrufe · 7 Tage'})
@@ -3761,6 +3765,13 @@ const WITHDRAWAL_CONSENT_TEXT='Ich stimme zu, dass die Analyse sofort nach Zahlu
 
 /* aus /analytics/: Datum ohne Uhrzeit */
 function fmtDateDMY(d){if(!d)return'–';return new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}
+/* B5: Der Vergleich laeuft gegen die letzte Analyse, nicht gegen eine Woche.
+   Datumsformat kommt aus dem vorhandenen fmtDateShort (oben, aus /dashboard/).
+   Zwischen zwei Laeufen lagen real 1, 23 und 109 Tage. */
+function deltaSeitLabel(prevRow){
+  const d=prevRow?.created_at
+  return d?`seit letzter Analyse (${fmtDateShort(d)})`:'seit letzter Analyse'
+}
 
 /* View-lokaler Zustand, entspricht dem `S` der alten Seite */
 let anv = null
@@ -3849,6 +3860,7 @@ async function renderAnalytics(area, ctx){
     profile:null,
     ki:{instagram:null,tiktok:null},
     stats:{instagram:null,tiktok:null},
+    prevStats:{instagram:null,tiktok:null},
     platform:'instagram',
     runId:null, pollTimer:null,
     hasPurchase:false
@@ -3976,9 +3988,12 @@ window.switchPlatform=function(p){
 
 // ── Load KI results ──
 async function loadKi(){
+  /* Mehr als die neueste Zeile laden: fuer die Delta-Beschriftung wird der
+     Zeitpunkt der VORHERIGEN Analyse gebraucht ("seit letzter Analyse (13.09.)"
+     statt des frueheren pauschalen "diese Woche"). */
   const[kiRes,statsRes]=await Promise.all([
     sb.from('analyse_ki').select('*').eq('user_id',anv.uid).order('created_at',{ascending:false}).limit(4),
-    sb.from('analyse_stats').select('*').eq('user_id',anv.uid).order('created_at',{ascending:false}).limit(4)
+    sb.from('analyse_stats').select('*').eq('user_id',anv.uid).order('created_at',{ascending:false}).limit(20)
   ])
   if(!anv||anv.ctx.stale)return
   if(kiRes.data?.length){
@@ -3986,8 +4001,11 @@ async function loadKi(){
     anv.ki.tiktok=kiRes.data.find(r=>r.platform==='tiktok')||null
   }
   if(statsRes.data?.length){
-    anv.stats.instagram=statsRes.data.find(r=>r.platform==='instagram')||null
-    anv.stats.tiktok=statsRes.data.find(r=>r.platform==='tiktok')||null
+    for(const pl of ['instagram','tiktok']){
+      const rows=statsRes.data.filter(r=>r.platform===pl)
+      anv.stats[pl]=rows[0]||null
+      anv.prevStats[pl]=rows[1]||null
+    }
   }
   renderAnalyticsContent()
 }
@@ -4035,7 +4053,10 @@ function renderFlow(run){
   const iconEl=document.getElementById('flow-icon')
   const title=document.getElementById('flow-title')
   const sub=document.getElementById('flow-sub')
-  if(isDone){iconEl.innerHTML=icon('check',16);iconEl.className='flow-icon done';title.textContent='Analyse abgeschlossen';sub.textContent='Deine Ergebnisse wurden aktualisiert'}
+  /* B8: Ein Teilfehler laesst den Run auf 'done' stehen, der Kauf ist trotzdem
+     verbraucht. Der Hinweis darf deshalb nicht nur im failed-Zweig erscheinen. */
+  if(isDone&&run.error){iconEl.innerHTML=icon('x',16);iconEl.className='flow-icon error';title.textContent='Analyse teilweise abgeschlossen';sub.textContent=run.error}
+  else if(isDone){iconEl.innerHTML=icon('check',16);iconEl.className='flow-icon done';title.textContent='Analyse abgeschlossen';sub.textContent='Deine Ergebnisse wurden aktualisiert'}
   else if(isFailed){iconEl.innerHTML=icon('x',16);iconEl.className='flow-icon error';title.textContent='Analyse fehlgeschlagen';sub.textContent=run.error||'Bitte versuche es erneut'}
   else{iconEl.innerHTML='<span class="spinner-dark"></span>';iconEl.className='flow-icon running';title.textContent='Analyse läuft';sub.textContent=s==='analyzing'?'Auswertung läuft…':'Daten werden abgerufen…'}
 }
@@ -4058,8 +4079,9 @@ function poll(runId){
         if(!anv||anv.ctx.stale)return
         await loadKi()
         if(!anv||anv.ctx.stale)return
-        showToast('Analyse fertig ✓')
-        setTimeout(()=>{document.getElementById('status-flow')?.classList.add('hidden')},4000)
+        showToast(run.error?'Analyse teilweise fertig':'Analyse fertig ✓',run.error?5000:undefined)
+        /* Bei einem Teilfehler bleibt der Kasten stehen -- der Hinweis darf nicht wegblenden. */
+        if(!run.error)setTimeout(()=>{document.getElementById('status-flow')?.classList.add('hidden')},4000)
       } else {
         renderBtn()
         showToast('Analyse fehlgeschlagen — deine Freischaltung bleibt erhalten',4500)
@@ -4169,13 +4191,18 @@ function renderAnalyticsContent(){
   if(st){
     const follDelta=st.followers_change
     const erDelta=st.engagement_rate_change
+    const seit=deltaSeitLabel(anv.prevStats[pl])
+    /* B4: Nach einem Handle-Wechsel gehoeren die beiden Laeufe zu verschiedenen
+       Profilen. Die Delta-Felder sind dann bewusst NULL -- hier steht der Grund. */
+    const handleHinweis=st.handle_changed
+      ? `<div class="kpi-delta flat">Handle geändert – kein Vergleich</div>` : null
     const follDeltaStr=follDelta!=null?(follDelta>=0?`↑ +${fmt(follDelta)}`:`↓ ${fmt(follDelta)}`):null
     const erDeltaStr=erDelta!=null?(erDelta>=0?`↑ +${(+erDelta).toFixed(2)}%`:`↓ ${Math.abs(+erDelta).toFixed(2)}%`):null
     h+=`<div class="section" style="margin-top:12px"><div class="kpi-grid">
       <div class="kpi-card dark">
         <div class="kpi-label">Follower</div>
         <div class="kpi-value">${fmt(st.followers)}</div>
-        ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} diese Woche</div>`:'<div class="kpi-delta flat">Erste Messung</div>'}
+        ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} ${escHtml(seit)}</div>`:(handleHinweis||'<div class="kpi-delta flat">Erste Messung</div>')}
       </div>
       <div class="kpi-card">
         <div class="kpi-label">⌀ Likes</div>
@@ -4185,7 +4212,7 @@ function renderAnalyticsContent(){
       <div class="kpi-card">
         <div class="kpi-label">Engagement Rate</div>
         <div class="kpi-value">${st.engagement_rate!=null?(+st.engagement_rate).toFixed(2)+'%':'–'}</div>
-        ${erDeltaStr?`<div class="kpi-delta ${erDelta>=0?'up':'down'}">${erDeltaStr}</div>`:'<div class="kpi-delta flat">Erste Messung</div>'}
+        ${erDeltaStr?`<div class="kpi-delta ${erDelta>=0?'up':'down'}">${erDeltaStr} ${escHtml(seit)}</div>`:(handleHinweis||'<div class="kpi-delta flat">Erste Messung</div>')}
       </div>
       ${st.avg_views!=null?`<div class="kpi-card">
         <div class="kpi-label">⌀ Views</div>
@@ -4197,7 +4224,7 @@ function renderAnalyticsContent(){
         <div class="kpi-delta flat">Pro Beitrag</div>
       </div>`}
     </div></div>`
-    if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null){
+    if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null||st.engagement_per_view!=null){
       h+=`<div class="section"><div class="timing-grid">`
       if(st.best_posting_day||st.best_posting_hour!=null){
         const timeStr=st.best_posting_hour!=null?`${st.best_posting_hour}:00 Uhr`:'–'
@@ -4212,6 +4239,11 @@ function renderAnalyticsContent(){
       }
       if(st.avg_shares!=null&&+st.avg_shares>0){
         h+=`<div class="timing-card"><div class="timing-icon">${icon('share',19)}</div><div class="timing-label">⌀ Shares</div><div class="timing-value">${fmt(st.avg_shares)}</div></div>`
+      }
+      /* B2: Zweitkennzahl, bewusst nicht als Headline. Zaehler und Nenner kommen
+         hier aus derselben Post-Menge -- nur Beitraege, die Views ausweisen. */
+      if(st.engagement_per_view!=null){
+        h+=`<div class="timing-card"><div class="timing-icon">${icon('trendingUp',19)}</div><div class="timing-label">Engagement / View</div><div class="timing-value">${(+st.engagement_per_view).toFixed(2)}%</div></div>`
       }
       h+=`</div></div>`
     }
@@ -4294,7 +4326,8 @@ window.shareAnalytics=function(){
   lines.push('')
 
   if(st){
-    const follStr=st.followers!=null?`👥 ${fmt(st.followers)} Follower`+( st.followers_change!=null&&st.followers_change!==0?` (${st.followers_change>=0?'+':''}${fmt(st.followers_change)} diese Woche)`:'' ):null
+    const seitShare=deltaSeitLabel(anv.prevStats[anv.platform])
+    const follStr=st.followers!=null?`👥 ${fmt(st.followers)} Follower`+( st.followers_change!=null&&st.followers_change!==0?` (${st.followers_change>=0?'+':''}${fmt(st.followers_change)} ${seitShare})`:'' ):null
     if(follStr)lines.push(follStr)
     if(st.engagement_rate!=null)lines.push(`💫 ${(+st.engagement_rate).toFixed(2)}% Engagement Rate`)
     if(st.avg_likes!=null)lines.push(`❤️  ⌀ ${fmt(st.avg_likes)} Likes pro Post`)
