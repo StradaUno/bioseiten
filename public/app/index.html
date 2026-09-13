@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>viuno · App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -526,7 +526,116 @@ html, body {
 .btn-plat.ghost{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
 .plat-note{font-size:var(--t-xs);color:var(--muted);line-height:1.5;margin-top:8px;text-align:center}
 .plat-link{color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
+.plat-cards.eingeklappt{grid-template-columns:1fr}
+.btn-menue{width:100%;font:inherit;font-weight:600;font-size:var(--t-md);padding:13px 16px;border-radius:var(--r-md);
+  border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-menue:active{background:var(--surface2)}
+.btn-menue-pfeil{opacity:.5}
 .plat-done{display:flex;align-items:center;justify-content:center;gap:6px;font-size:var(--t-sm);color:var(--green);font-weight:600;margin-bottom:10px}
+/* ══ Analyse-Ergebnis: "Cockpit" ══════════════════════════════════════════
+   Bewusst durchgehend dunkel und gegen den Rest der App abgesetzt. Das
+   Ergebnis ist das bezahlte Produkt -- es soll sich wie ein Instrument lesen
+   und nicht wie die naechste Einstellungsseite. Alle Farben stehen explizit
+   hier, nichts erbt aus dem hellen App-Theme. */
+.ckpt{
+  --c-bg:#0B0E13; --c-panel:#141922; --c-panel2:#1B212C; --c-line:#262E3B; --c-line2:#36404F;
+  --c-fg:#EDF1F7; --c-fg2:#9AA6B8; --c-fg3:#6B7789;
+  --c-ok:#34D399; --c-ok-bg:#0C2A21; --c-ok-line:#17513E;
+  --c-bad:#FB7185; --c-bad-bg:#2B1219; --c-bad-line:#5A222E;
+  --c-cool:#60A5FA; --c-cool-bg:#0E1D33; --c-cool-line:#1D3A5F;
+  --c-amber:#FBBF24; --c-amber-bg:#2A2008; --c-amber-line:#54401A;
+  background:var(--c-bg); color:var(--c-fg);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,Arial,sans-serif;
+  line-height:1.6; margin:12px var(--page-x) 0; border-radius:20px;
+  padding:18px 16px calc(24px + var(--safe-bottom));
+  display:flex; flex-direction:column; gap:16px;
+}
+.ckpt h1,.ckpt h2,.ckpt h3,.ckpt .c-num,.ckpt .c-big{font-family:"Outfit","Inter",sans-serif;text-wrap:balance;margin:0}
+.ckpt .c-mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:var(--c-fg3)}
+.ckpt p{margin:0}
+
+/* Kopf: die Kernaussage ist die Ueberschrift, nicht der Kanalname. */
+.c-head{background:linear-gradient(180deg,var(--c-panel2),var(--c-panel));
+  border:1px solid var(--c-line);border-radius:18px;padding:20px}
+.c-eyebrow{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--c-fg3);font-weight:600}
+.c-head h1{font-size:clamp(22px,5.4vw,30px);font-weight:800;letter-spacing:-.025em;line-height:1.16;margin:8px 0 6px}
+.c-head .c-sub{color:var(--c-fg2);font-size:14.5px}
+
+.c-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:640px){.c-grid{grid-template-columns:repeat(4,1fr)}}
+.c-tile{border-radius:15px;padding:14px 15px 13px;border:1px solid var(--c-line);background:var(--c-panel)}
+.c-tile.ok{background:var(--c-ok-bg);border-color:var(--c-ok-line)}
+.c-tile.bad{background:var(--c-bad-bg);border-color:var(--c-bad-line)}
+.c-tile.cool{background:var(--c-cool-bg);border-color:var(--c-cool-line)}
+.c-tile .c-k{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--c-fg3);font-weight:600}
+.c-tile .c-num{font-size:27px;font-weight:800;letter-spacing:-.035em;line-height:1.02;margin-top:5px;font-variant-numeric:tabular-nums}
+.c-tile .c-s{font-size:11.5px;color:var(--c-fg3);margin-top:3px;line-height:1.4}
+.c-tile.ok .c-num,.c-tile.ok .c-s{color:var(--c-ok)}
+.c-tile.bad .c-num,.c-tile.bad .c-s{color:var(--c-bad)}
+.c-tile.cool .c-num,.c-tile.cool .c-s{color:var(--c-cool)}
+
+.c-panel{background:var(--c-panel);border:1px solid var(--c-line);border-radius:16px;padding:18px}
+.c-panel > h2{font-size:18px;font-weight:700;letter-spacing:-.015em;margin-bottom:3px}
+.c-panel > .c-lede{color:var(--c-fg3);font-size:12.5px;margin:0 0 14px}
+.c-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--c-fg3);margin-bottom:12px}
+.c-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.c-chart{overflow-x:auto}
+.c-chart svg{min-width:520px;display:block}
+
+.c-split{display:grid;gap:10px}
+@media(min-width:600px){.c-split{grid-template-columns:1fr 1fr}}
+.c-box{border-radius:15px;padding:17px 18px;border:1px solid var(--c-line);background:var(--c-panel)}
+.c-box.ok{background:var(--c-ok-bg);border-color:var(--c-ok-line)}
+.c-box.bad{background:var(--c-bad-bg);border-color:var(--c-bad-line)}
+.c-box.cool{background:var(--c-cool-bg);border-color:var(--c-cool-line)}
+.c-box.amber{background:var(--c-amber-bg);border-color:var(--c-amber-line)}
+.c-chip{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:10px;
+  background:rgba(255,255,255,.07);color:var(--c-fg2)}
+.c-box.ok .c-chip{color:var(--c-ok)} .c-box.bad .c-chip{color:var(--c-bad)}
+.c-box.cool .c-chip{color:var(--c-cool)} .c-box.amber .c-chip{color:var(--c-amber)}
+.c-box h3{font-size:16.5px;font-weight:700;letter-spacing:-.012em;margin-bottom:8px}
+.c-box p{font-size:14px;color:var(--c-fg2);margin:0 0 10px}
+.c-box p:last-child{margin-bottom:0}
+.c-box .c-big{font-size:36px;font-weight:800;letter-spacing:-.035em;line-height:1;
+  font-variant-numeric:tabular-nums;margin:2px 0 6px}
+.c-box.ok .c-big{color:var(--c-ok)} .c-box.bad .c-big{color:var(--c-bad)}
+.c-box.cool .c-big{color:var(--c-cool)} .c-box.amber .c-big{color:var(--c-amber)}
+
+.c-tbl{width:100%;border-collapse:collapse;font-size:13px}
+.c-tbl th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--c-fg3);
+  font-weight:600;padding:0 10px 8px 0;border-bottom:1px solid var(--c-line)}
+.c-tbl td{padding:9px 10px 9px 0;border-bottom:1px solid var(--c-line);color:var(--c-fg2)}
+.c-tbl tr:last-child td{border-bottom:none}
+.c-tbl td.n,.c-tbl th.n{text-align:right;padding-right:0}
+.c-tbl td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+.c-tbl .up{color:var(--c-ok);font-weight:600} .c-tbl .down{color:var(--c-bad);font-weight:600}
+.c-tbl a{color:var(--c-fg);text-decoration:none;border-bottom:1px solid var(--c-line2)}
+.c-tbl-wrap{overflow-x:auto}
+
+.c-steps{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:9px;counter-reset:s}
+.c-steps li{counter-increment:s;background:var(--c-panel2);border:1px solid var(--c-line);border-radius:12px;
+  padding:14px 16px 14px 50px;position:relative;font-size:14px;color:var(--c-fg2)}
+.c-steps li::before{content:counter(s);position:absolute;left:15px;top:13px;width:24px;height:24px;
+  border-radius:8px;background:var(--c-cool);color:var(--c-bg);display:grid;place-items:center;
+  font-family:"Outfit",sans-serif;font-size:12.5px;font-weight:800}
+
+/* Waagerechte Vergleichsbalken (Format, Videolaenge) */
+.c-cmp{display:flex;flex-direction:column;gap:9px}
+.c-cmp-row{display:grid;grid-template-columns:minmax(80px,1fr) 2fr auto;gap:10px;align-items:center;font-size:12.5px}
+.c-cmp-label{color:var(--c-fg2)}
+.c-cmp-track{height:8px;border-radius:99px;background:var(--c-panel2);overflow:hidden}
+.c-cmp-fill{height:100%;border-radius:99px;background:var(--c-cool)}
+.c-cmp-val{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--c-fg);font-variant-numeric:tabular-nums}
+
+.c-foot{border-top:1px solid var(--c-line);padding-top:14px;font-size:12px;color:var(--c-fg3);line-height:1.55}
+.c-foot a{color:var(--c-fg2)}
+.c-share{width:100%;font:inherit;font-weight:600;font-size:13px;padding:12px 16px;border-radius:12px;
+  border:1px solid var(--c-line2);background:var(--c-panel);color:var(--c-fg);cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.c-share:active{background:var(--c-panel2)}
+
 /* Ergebnis-Kopf: der Moment nach dem Warten gehoert dem Ergebnis, nicht dem Verkauf */
 .result-head{padding:var(--s-4) var(--page-x) 0}
 .result-head-inner{background:var(--text);border-radius:var(--r-md);padding:16px 18px}
@@ -3895,7 +4004,7 @@ async function renderAnalytics(area, ctx){
     purchases:{instagram:false,tiktok:false},
     lastDone:{instagram:null,tiktok:null},
     posts:{instagram:[],tiktok:[]},
-    expandBuy:{instagram:false,tiktok:false},
+    kaufOffen:false,
     activeRun:null,
     busy:null
   }
@@ -3940,6 +4049,22 @@ function renderPlatformCards(){
   const p=anv.profile||{}
   const laufend=anv.activeRun?.platform||null
 
+  /* Nach einem fertigen Lauf steht oben nur noch ein Knopf. Zwei Kaufkarten
+     direkt ueber dem frisch bezahlten Ergebnis lasen sich wie die Aufforderung,
+     sofort nochmal zu zahlen. Die Karten kommen erst auf Klick zurueck --
+     ausser es laeuft gerade etwas oder es liegt eine ungenutzte Freischaltung. */
+  const fertig=!!(anv.lastDone.instagram||anv.lastDone.tiktok)
+  const offeneFreischaltung=!!(anv.purchases.instagram||anv.purchases.tiktok)
+  if(fertig&&!laufend&&!offeneFreischaltung&&!anv.kaufOffen){
+    el.classList.add('eingeklappt')
+    el.innerHTML=`<button class="btn-menue" onclick="kaufKlappe()" aria-expanded="false">
+      ${SVG_REFRESH} Neue Analyse
+      <svg class="btn-menue-pfeil" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>`
+    return
+  }
+  el.classList.remove('eingeklappt')
+
   el.innerHTML=['instagram','tiktok'].map(pl=>{
     const label=pl==='instagram'?'Instagram':'TikTok'
     const raw=pl==='instagram'?p.instagram_handle:p.tiktok_handle
@@ -3963,11 +4088,6 @@ function renderPlatformCards(){
           ${busy?'<span class="spinner"></span> Wird gestartet…':SVG_REFRESH+' Analyse starten'}
         </button>
         <div class="plat-note">Freigeschaltet ✓ — dauert etwa 1–2 Minuten.</div>`
-    } else if(letzte&&!anv.expandBuy[pl]){
-      /* Punkt 5: Direkt nach einer Analyse wirkte ein schwarzer Kaufbutton wie eine
-         Aufforderung, gleich nochmal zu zahlen. Hier steht erst der Abschluss. */
-      body=`<div class="plat-done">${icon('check',13)} Analyse vom ${fmtDateShort(letzte)} liegt vor</div>
-        <button class="btn-plat ghost" onclick="expandBuy('${pl}')">Neue Analyse – 9,99 €</button>`
     } else {
       body=`<div class="plat-consent">
           <input type="checkbox" id="consent-${pl}"/>
@@ -3976,7 +4096,7 @@ function renderPlatformCards(){
         <button class="btn-plat" onclick="buyPlatform('${pl}')" ${busy?'disabled':''}>
           ${busy?'<span class="spinner"></span> Einen Moment…':SVG_LOCK+' Zahlungspflichtig freischalten – 9,99 €'}
         </button>
-        <div class="plat-note">Einmalig pro Analyse, kein Abo.${letzte?` Letzte Analyse: ${fmtDateShort(letzte)}`:''}<br>
+        <div class="plat-note">Einmalig pro Analyse, kein Abo.${letzte?` Deine letzte ${label}-Analyse: ${fmtDateShort(letzte)}`:''}<br>
           Mit dem Kauf gelten unsere <a class="plat-link" href="/legal#agb" target="_blank" rel="noopener">AGB</a>
           und die <a class="plat-link" href="/legal#widerruf" target="_blank" rel="noopener">Widerrufsbelehrung</a>.</div>`
     }
@@ -4028,9 +4148,9 @@ async function waitForPurchaseAfterPayment(platform){
 }
 
 // ── Kauf-Bereich nach einer fertigen Analyse aufklappen (Punkt 5) ──
-window.expandBuy=function(platform){
+window.kaufKlappe=function(){
   if(!anv)return
-  anv.expandBuy[platform]=true
+  anv.kaufOffen=!anv.kaufOffen
   renderPlatformCards()
 }
 
@@ -4226,7 +4346,7 @@ function poll(runId){
       clearInterval(anv.pollTimer);anv.pollTimer=null
       anv.activeRun=null
       if(run.status==='done'){
-        anv.expandBuy={instagram:false,tiktok:false}
+        anv.kaufOffen=false
         const{data:p}=await sb.from('users').select('instagram_handle,tiktok_handle,subscription_type').eq('id',anv.uid).single()
         if(!anv||anv.ctx.stale)return
         if(p)anv.profile={...anv.profile,...p}
@@ -4323,213 +4443,249 @@ function renderAnalyticsContent(){
     return
   }
 
-  let h=''
-  const date=fmtDateDMY(ki.created_at)
   const st=anv.stats[pl]
   const posts=anv.posts[pl]||[]
+  const date=fmtDateDMY(ki.created_at)
+  const handle=st?.username?'@'+String(st.username).replace(/^@/,''):label
 
-  /* Punkt 5: Das Erste nach dem Warten ist das Ergebnis, nicht der naechste Kauf. */
-  h+=`<div class="result-head"><div class="result-head-inner">
-    <div class="result-head-kicker">Deine ${label}-Analyse</div>
-    <div class="result-head-title">${escHtml(st?.username?'@'+String(st.username).replace(/^@/,''):label)}</div>
-    <div class="result-head-sub">${date}${posts.length?` · ${posts.length} Beiträge ausgewertet`:''}</div>
-  </div></div>`
+  /* Deutsche Schreibweise, eine Stelle. Gerechnet wird hier nichts mehr --
+     alle Werte kommen fertig aus analyse_stats. */
+  const deN=(n,k=0)=>(n==null||isNaN(+n))?'–':(+n).toLocaleString('de-DE',{minimumFractionDigits:k,maximumFractionDigits:k})
+  const absatz=t=>String(t||'').split(/\n{2,}/).map(x=>x.trim()).filter(Boolean).map(x=>`<p>${escHtml(x)}</p>`).join('')
+  const tag=(d)=>d?new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):'–'
+
+  let h='<div class="ckpt">'
+
+  /* Der Kopf traegt die Kernaussage als Ueberschrift. Wer bezahlt hat, soll als
+     Erstes den Befund lesen und nicht noch einmal seinen eigenen Kanalnamen. */
+  const zeitraum=(()=>{
+    const mitDatum=posts.filter(x=>x.posted_at).map(x=>new Date(x.posted_at)).sort((a,b)=>a-b)
+    if(mitDatum.length<2)return ''
+    return ` vom ${tag(mitDatum[0])} bis ${tag(mitDatum[mitDatum.length-1])}`
+  })()
+  h+=`<div class="c-head">
+    <div class="c-eyebrow">${label} · ${escHtml(handle)} · ${date}</div>
+    <h1>${escHtml(ki.kernaussage||'Deine Auswertung')}</h1>
+    <div class="c-sub">${posts.length?`${deN(posts.length)} Beiträge${zeitraum}.`:''} Alle Zahlen stammen aus diesem Lauf.</div>
+  </div>`
 
   if(st){
-    const follDelta=st.followers_change
-    const erDelta=st.engagement_rate_change
+    /* Kacheln: gefaerbt wird nur, wo die Farbe etwas behauptet. Ein Durchschnitt
+       ist weder gut noch schlecht -- die staerksten und schwaechsten Beitraege
+       dagegen sind genau das, und die Followerbewegung hat eine Richtung. */
+    const kachel=(k,num,s,cls='')=>`<div class="c-tile ${cls}"><div class="c-k">${k}</div><div class="c-num">${num}</div><div class="c-s">${s}</div></div>`
     const seit=deltaSeitLabel(anv.prevStats[pl])
-    /* B4: Nach einem Handle-Wechsel gehoeren die beiden Laeufe zu verschiedenen
-       Profilen. Die Delta-Felder sind dann bewusst NULL -- hier steht der Grund. */
-    const handleHinweis=st.handle_changed
-      ? `<div class="kpi-delta flat">Handle geändert – kein Vergleich</div>` : null
-    const follDeltaStr=follDelta!=null?(follDelta>=0?`↑ +${fmt(follDelta)}`:`↓ ${fmt(follDelta)}`):null
-    const erDeltaStr=erDelta!=null?(erDelta>=0?`↑ +${(+erDelta).toFixed(2)}%`:`↓ ${Math.abs(+erDelta).toFixed(2)}%`):null
-    /* Punkt 6: Engagement pro View steht vorn. Die Follower-ER kann bei stark
-       ausgespielten Beitraegen weit ueber 30 % liegen -- rechnerisch richtig, aber
-       keine Marke glaubt die Zahl. Die belastbare Groesse ist die pro Aufruf. */
-    const epv=st.engagement_per_view
-    h+=`<div class="section" style="margin-top:12px"><div class="kpi-grid">
-      <div class="kpi-card dark">
-        <div class="kpi-label">Follower</div>
-        <div class="kpi-value">${fmt(st.followers)}</div>
-        ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} ${escHtml(seit)}</div>`:(handleHinweis||'<div class="kpi-delta flat">Erste Messung</div>')}
-      </div>
-      ${epv!=null?`<div class="kpi-card">
-        <div class="kpi-label">Engagement</div>
-        <div class="kpi-value">${(+epv).toFixed(2)}%</div>
-        <div class="kpi-delta flat">Je Aufruf</div>
-      </div>`:''}
-      <div class="kpi-card">
-        <div class="kpi-label">⌀ Likes</div>
-        <div class="kpi-value">${fmt(st.avg_likes)}</div>
-        <div class="kpi-delta flat">Pro Beitrag</div>
-      </div>
-      ${epv==null?`<div class="kpi-card">
-        <div class="kpi-label">⌀ Kommentare</div>
-        <div class="kpi-value">${fmt(st.avg_comments)}</div>
-        <div class="kpi-delta flat">Pro Beitrag</div>
-      </div>`:''}
-      <div class="kpi-card">
-        <div class="kpi-label">Je Follower</div>
-        <div class="kpi-value">${st.engagement_rate!=null?(+st.engagement_rate).toFixed(2)+'%':'–'}</div>
-        ${erDeltaStr?`<div class="kpi-delta ${erDelta>=0?'up':'down'}">${erDeltaStr} ${escHtml(seit)}</div>`:(handleHinweis||'<div class="kpi-delta flat">Erste Messung</div>')}
-      </div>
-      ${st.avg_views!=null?`<div class="kpi-card">
-        <div class="kpi-label">⌀ Views</div>
-        <div class="kpi-value">${fmt(st.avg_views)}</div>
-        <div class="kpi-delta flat">Pro Beitrag</div>
-      </div>`:''}
-    </div></div>`
+    const fd=st.followers_change
+    const fCls=st.handle_changed?'':(fd>0?'ok':(fd<0?'bad':''))
+    const fSub=st.handle_changed?'Handle geändert – kein Vergleich'
+      :(fd!=null?`${fd>=0?'+':'−'}${deN(Math.abs(fd))} ${seit}`:'Erste Messung')
 
-    /* Punkt 8: Balken je Beitrag. Der Ø verschweigt, dass ein einziger Ausreisser
-       den Schnitt traegt -- hier sieht man es auf einen Blick. */
-    if(posts.length>=4){
-      const maxL=Math.max(...posts.map(x=>x.likes??0),1)
-      const bestIdx=posts.reduce((bi,x,i)=>(x.likes??0)>(posts[bi].likes??0)?i:bi,0)
-      h+=`<div class="section"><div class="section-label">Beiträge im Vergleich</div>
-        <div class="bars-card">
-          <div class="bars-row">${posts.map((x,i)=>{
-            const hh=Math.max(3,Math.round(((x.likes??0)/maxL)*100))
-            const t=`${fmt(x.likes)} Likes${x.posted_at?' · '+fmtDateShort(x.posted_at):''}`
-            return `<div class="bar${i===bestIdx?' best':''}" style="height:${hh}%" title="${escHtml(t)}"></div>`
-          }).join('')}</div>
-          <div class="bars-legend"><span>älteste</span><span>stärkster: ${fmt(posts[bestIdx].likes)} Likes</span><span>neueste</span></div>
-        </div></div>`
-    }
-    if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null||(st.avg_shares!=null&&+st.avg_shares>0)){
-      h+=`<div class="section"><div class="timing-grid">`
-      if(st.best_posting_day||st.best_posting_hour!=null){
-        const timeStr=st.best_posting_hour!=null?`${st.best_posting_hour}:00 Uhr`:'–'
-        const dayStr=st.best_posting_day||''
-        /* Punkt 12: Bei kleiner Stichprobe ist das eine Tendenz, keine Regel --
-           das muss dranstehen, sonst liest es sich wie ein Gesetz. */
-        const n=st.best_time_sample
-        const zusatz=n!=null?(n<20?`Tendenz aus ${n} Beiträgen`:`aus ${n} Beiträgen`):''
-        h+=`<div class="timing-card"><div class="timing-icon">${icon('clock',19)}</div><div class="timing-label">Beste Zeit</div><div class="timing-value">${dayStr}${dayStr&&timeStr?' · ':''}${timeStr}</div>${zusatz?`<div class="cmp-note" style="padding:4px 0 0;text-align:center">${escHtml(zusatz)}</div>`:''}</div>`
-      }
-      if(st.top_format){
-        h+=`<div class="timing-card"><div class="timing-icon">${icon('clapperboard',19)}</div><div class="timing-label">Top Format</div><div class="timing-value">${escHtml(st.top_format)}</div></div>`
-      }
-      if(st.posts_per_week!=null){
-        h+=`<div class="timing-card"><div class="timing-icon">${icon('calendar',19)}</div><div class="timing-label">Posts / Woche</div><div class="timing-value">${(+st.posts_per_week).toFixed(1)}</div></div>`
-      }
-      if(st.avg_shares!=null&&+st.avg_shares>0){
-        h+=`<div class="timing-card"><div class="timing-icon">${icon('share',19)}</div><div class="timing-label">⌀ Shares</div><div class="timing-value">${fmt(st.avg_shares)}</div></div>`
-      }
-      /* B2: Zweitkennzahl, bewusst nicht als Headline. Zaehler und Nenner kommen
-         hier aus derselben Post-Menge -- nur Beitraege, die Views ausweisen. */
-      h+=`</div></div>`
-    }
+    const kacheln=[]
+    if(st.avg_views!=null)kacheln.push(kachel('Ø Aufrufe',fmt(st.avg_views),'pro Beitrag','cool'))
+    if(st.resonanz_schnitt!=null)kacheln.push(kachel('Resonanz',deN(st.resonanz_schnitt,1),'Likes je 1.000 Aufrufe','cool'))
+    if(st.resonanz_top!=null)kacheln.push(kachel('Stärkste',deN(st.resonanz_top,1),'Likes je 1.000 Aufrufe','ok'))
+    if(st.resonanz_flop!=null)kacheln.push(kachel('Schwächste',deN(st.resonanz_flop,1),'Likes je 1.000 Aufrufe','bad'))
+    kacheln.push(kachel('Follower',deN(st.followers),fSub,fCls))
+    kacheln.push(kachel('Ø Likes',fmt(st.avg_likes),'pro Beitrag'))
+    kacheln.push(kachel('Ø Kommentare',fmt(st.avg_comments),'pro Beitrag'))
+    if(st.kommentarrate_schnitt!=null)kacheln.push(kachel('Kommentarrate',deN(st.kommentarrate_schnitt,1),'Kommentare je 1.000 Aufrufe'))
+    if(st.engagement_rate!=null)kacheln.push(kachel('Je Follower',deN(st.engagement_rate,2)+' %','Likes plus Kommentare'))
+    if(st.posts_per_week!=null)kacheln.push(kachel('Beiträge',deN(st.posts_per_week,1),'pro Woche'))
+    h+=`<div class="c-grid">${kacheln.join('')}</div>`
 
-    /* Punkt 9: Format und Video-Laenge gegen die Wirkung. Beides wird seit jeher
-       erfasst und war nirgends sichtbar. Verglichen wird nur innerhalb derselben
-       Metrik -- Views gegen Views, Likes gegen Likes. */
-    const balken=(zeilen,einheit)=>{
-      const max=Math.max(...zeilen.map(z=>z.wert),1)
-      return `<div class="cmp-card">${zeilen.map(z=>`
-        <div class="cmp-row">
-          <div class="cmp-label">${escHtml(z.label)}</div>
-          <div class="cmp-track"><div class="cmp-fill" style="width:${Math.max(4,Math.round(z.wert/max*100))}%"></div></div>
-          <div class="cmp-val">${fmt(z.wert)}${einheit}</div>
-        </div>`).join('')}</div>`
-    }
-
-    const fs=Array.isArray(st.format_stats)?st.format_stats:[]
-    if(fs.length>1){
-      const mitViews=fs.filter(f=>f.avg_views!=null)
-      const nutzeViews=mitViews.length>1
-      const quelle=nutzeViews?mitViews:fs
-      h+=`<div class="section"><div class="section-label">Welches Format trägt</div>
-        ${balken(quelle.map(f=>({label:`${f.typ} (${f.n}×)`,wert:nutzeViews?f.avg_views:f.avg_likes})),'')}
-        <div class="cmp-card" style="border:none;background:none"><div class="cmp-note" style="padding:8px 2px 0">
-          Ø ${nutzeViews?'Views':'Likes'} je Beitrag dieses Formats.${nutzeViews?'':' Für diese Formate weist die Plattform keine Views aus.'}
-        </div></div></div>`
-    }
-
-    const ds=Array.isArray(st.duration_stats)?st.duration_stats:[]
-    if(ds.length>1){
-      const best=ds.reduce((b,x)=>x.avg_views>b.avg_views?x:b,ds[0])
-      const schwach=ds.reduce((b,x)=>x.avg_views<b.avg_views?x:b,ds[0])
-      const faktor=schwach.avg_views>0?(best.avg_views/schwach.avg_views):null
-      h+=`<div class="section"><div class="section-label">Videolänge und Reichweite</div>
-        ${balken(ds.map(d=>({label:`${d.bucket} (${d.n}×)`,wert:d.avg_views})),'')}
-        <div class="cmp-card" style="border:none;background:none"><div class="cmp-note" style="padding:8px 2px 0">
-          Ø Views je Länge.${faktor&&faktor>=1.3?` Deine Videos ${escHtml(best.bucket)} holen im Schnitt das ${faktor.toFixed(1).replace('.',',')}-Fache der Videos ${escHtml(schwach.bucket)}.`:''}
-        </div></div></div>`
-    }
-  }
-
-  if(ki.analyse_ueberblick){
-    h+=`<div class="section" style="margin-top:12px"><div class="section-label">${label} · ${date}</div>
-      <div class="summary-card"><div class="summary-text">${escHtml(ki.analyse_ueberblick)}</div></div></div>`
-  }
-
-  if(ki.top_posts?.length){
-    h+=`<div class="section"><div class="section-label">Top-Beiträge</div><div class="top-posts-card">`
-    ki.top_posts.forEach((post,i)=>{
-      const href=post.url?`href="${escHtml(post.url)}" target="_blank" rel="noopener"`:'href="#" onclick="return false"'
-      h+=`<a class="top-post-row" ${href}>
-        <div class="top-post-rank ${i===0?'first':''}">${i+1}</div>
-        <div class="top-post-body">
-          <div class="top-post-why">${escHtml(post.warum_top||'')}</div>
-          <div class="top-post-stat">${icon('heart',13)} ${fmt(post.likes)} Likes</div>
+    /* Punkt 8 aus dem Entwurf: zwei Balken je Beitrag. Oben die Reichweite,
+       unten wie viele davon reagiert haben. Der Durchschnitt verschweigt, dass
+       ein einziger Beitrag ihn traegt -- hier steht es nebeneinander. */
+    const pr=(Array.isArray(st.post_resonanz)?st.post_resonanz:[]).filter(x=>x.views>0&&x.resonanz!=null)
+    if(pr.length>=4){
+      const d=[...pr].sort((a,b)=>new Date(a.datum||0)-new Date(b.datum||0))
+      const maxV=Math.max(...d.map(x=>x.views),1)
+      const maxR=Math.max(...d.map(x=>x.resonanz),1)
+      const stark=st.resonanz_top??maxR, schwach=st.resonanz_flop??0
+      const W=760,PADL=8,PADR=8,TOP=14,MID=140,BOT=222
+      const slot=(W-PADL-PADR)/d.length, bw=slot*0.6, off=(slot-bw)/2
+      let svg=''
+      d.forEach((x,i)=>{
+        const bx=PADL+i*slot+off
+        const hv=Math.max(3,(x.views/maxV)*(MID-TOP))
+        svg+=`<rect x="${bx.toFixed(1)}" y="${(MID-hv).toFixed(1)}" width="${bw.toFixed(1)}" height="${hv.toFixed(1)}" rx="3" fill="var(--c-cool)" opacity="${x.views>=maxV*0.6?1:.5}"></rect>`
+        const hr=Math.max(3,(x.resonanz/maxR)*(BOT-MID-28))
+        const farbe=x.resonanz>=stark?'var(--c-ok)':(x.resonanz<=schwach?'var(--c-bad)':'var(--c-line2)')
+        svg+=`<rect x="${bx.toFixed(1)}" y="${MID+16}" width="${bw.toFixed(1)}" height="${hr.toFixed(1)}" rx="3" fill="${farbe}"></rect>`
+        svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${BOT+20}" text-anchor="middle" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${escHtml(tag(x.datum))}</text>`
+        svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${MID+11}" text-anchor="middle" font-size="10" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${deN(x.resonanz,1)}</text>`
+      })
+      svg+=`<line x1="${PADL}" y1="${MID+2}" x2="${W-PADR}" y2="${MID+2}" stroke="var(--c-line)" stroke-width="1"></line>`
+      svg+=`<text x="${PADL}" y="${TOP-2}" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${fmt(maxV)} Aufrufe</text>`
+      h+=`<div class="c-panel">
+        <h2>Jeder Beitrag einzeln</h2>
+        <p class="c-lede">Oben die Aufrufe, unten wie viele davon reagiert haben. Chronologisch von links.</p>
+        <div class="c-legend">
+          <span><i style="background:var(--c-cool)"></i>Aufrufe</span>
+          <span><i style="background:var(--c-ok)"></i>starke Resonanz</span>
+          <span><i style="background:var(--c-bad)"></i>schwache Resonanz</span>
         </div>
-        ${post.url?icon('arrowUpRight',15,'top-post-arrow'):''}
-      </a>`
-    })
-    h+=`</div></div>`
+        <div class="c-chart"><svg viewBox="0 0 ${W} 252" width="100%" role="img" aria-label="Aufrufe und Resonanz je Beitrag">${svg}</svg></div>
+      </div>`
+    }
   }
 
+  /* Gegenueberstellung: was getragen hat und wo Wirkung liegen bleibt.
+     Die grosse Zahl links ist die Resonanz der staerksten Beitraege, rechts die
+     des Beitrags mit viel Reichweite und wenig Reaktion. */
   if(ki.was_gut_lief||ki.verbesserungspotenzial){
-    h+=`<div class="section"><div class="section-label">Auswertung</div><div class="insight-card">`
-    if(ki.was_gut_lief)h+=`<div class="insight-row"><div class="insight-tag tag-good">${icon('check',12)} Was gut läuft</div><div class="insight-text">${escHtml(ki.was_gut_lief)}</div></div>`
-    if(ki.verbesserungspotenzial)h+=`<div class="insight-row"><div class="insight-tag tag-improve">${icon('trendingUp',12)} Wo du wachsen kannst</div><div class="insight-text">${escHtml(ki.verbesserungspotenzial)}</div></div>`
-    h+=`</div></div>`
+    h+=`<div class="c-split">`
+    if(ki.was_gut_lief){
+      h+=`<div class="c-box ok"><span class="c-chip">Das trägt</span>
+        ${st?.resonanz_top!=null?`<div class="c-big">${deN(st.resonanz_top,1)}</div>`:''}
+        <h3>Was funktioniert hat</h3>${absatz(ki.was_gut_lief)}</div>`
+    }
+    if(ki.verbesserungspotenzial){
+      const a=st?.ausreisser
+      h+=`<div class="c-box bad"><span class="c-chip">Hier liegt Wirkung</span>
+        ${a?.resonanz!=null?`<div class="c-big">${deN(a.resonanz,1)}</div>`:''}
+        <h3>${a?`${deN(a.views)} Aufrufe, kaum Reaktion`:'Wo Wirkung verloren geht'}</h3>
+        ${absatz(ki.verbesserungspotenzial)}</div>`
+    }
+    h+=`</div>`
+  }
+
+  if(ki.reichweite_resonanz){
+    h+=`<div class="c-box cool"><span class="c-chip">Reichweite gegen Resonanz</span>
+      <h3>Ausgespielt heißt nicht angekommen</h3>${absatz(ki.reichweite_resonanz)}</div>`
+  }
+
+  /* Toene: die Tabelle ist der eigentliche Befund. Derselbe Ton liefert voellig
+     verschiedene Ergebnisse -- damit ist der verbreitete "nimm den richtigen
+     Sound"-Rat fuer diesen Kanal widerlegt, und zwar mit seinen eigenen Zahlen. */
+  const snd=Array.isArray(st?.sound_stats)?st.sound_stats:[]
+  if(snd.length||ki.sound_befund){
+    h+=`<div class="c-box cool"><span class="c-chip">${snd.length?'Widerlegt':'Töne'}</span>
+      <h3>${snd.length?'Am Ton allein liegt es nicht':'Was die Tonspur verrät'}</h3>`
+    if(snd.length){
+      const spalten=Math.max(...snd.map(x=>x.werte.length))
+      const kopf=Array.from({length:spalten},(_,i)=>
+        `<th class="n">${i===0?'Stärkster':(i===spalten-1?'Schwächster':'dazwischen')}</th>`).join('')
+      h+=`<div class="c-tbl-wrap"><table class="c-tbl"><thead><tr><th>Ton</th>${kopf}<th class="n">Faktor</th></tr></thead><tbody>`
+      snd.forEach(x=>{
+        const zellen=Array.from({length:spalten},(_,i)=>{
+          const w=x.werte[i]
+          if(w==null)return '<td class="n">–</td>'
+          const cls=i===0&&x.werte.length>1&&x.faktor>=1.5?'up':(i===x.werte.length-1&&x.werte.length>1&&x.faktor>=1.5?'down':'')
+          return `<td class="n ${cls}">${deN(w,1)}</td>`
+        }).join('')
+        h+=`<tr><td>${escHtml(x.sound)}</td>${zellen}<td class="n">${deN(x.faktor,1)}×</td></tr>`
+      })
+      h+=`</tbody></table></div>`
+      h+=`<p style="margin-top:12px">Alle Werte sind Likes je 1.000 Aufrufe, vom stärksten zum schwächsten Einsatz sortiert.</p>`
+    }
+    if(ki.sound_befund)h+=absatz(ki.sound_befund)
+    if(st?.eigener_ton&&st.eigener_ton.gesamt>0&&st.eigener_ton.mit===0){
+      h+=`<p>Alle ${deN(st.eigener_ton.gesamt)} ausgewerteten Beiträge laufen auf fremdem Ton. Zu eigener Tonspur hast du bisher keinen einzigen Messwert.</p>`
+    }
+    h+=`</div>`
   }
 
   if(ki.top_posts_gemeinsamkeiten||ki.caption_struktur){
-    h+=`<div class="section"><div class="section-label">Content-Muster</div><div class="insight-card">`
-    if(ki.top_posts_gemeinsamkeiten)h+=`<div class="insight-row"><div class="insight-tag tag-tip">${icon('search',12)} Was deine Top-Posts gemeinsam haben</div><div class="insight-text">${escHtml(ki.top_posts_gemeinsamkeiten)}</div></div>`
-    if(ki.caption_struktur)h+=`<div class="insight-row"><div class="insight-tag tag-tip">${icon('pencil',12)} Caption-Struktur</div><div class="insight-text">${escHtml(ki.caption_struktur)}</div></div>`
-    h+=`</div></div>`
+    h+=`<div class="c-split">`
+    if(ki.top_posts_gemeinsamkeiten)h+=`<div class="c-box"><span class="c-chip">Das Muster</span>
+      <h3>Was die starken Beiträge verbindet</h3>${absatz(ki.top_posts_gemeinsamkeiten)}</div>`
+    if(ki.caption_struktur)h+=`<div class="c-box"><span class="c-chip">Der Aufbau</span>
+      <h3>Wie deine Texte gebaut sind</h3>${absatz(ki.caption_struktur)}</div>`
+    h+=`</div>`
+  }
+
+  if(ki.weglassen){
+    h+=`<div class="c-box amber"><span class="c-chip">Weglassen</span>
+      <h3>Was weniger werden sollte</h3>${absatz(ki.weglassen)}</div>`
+  }
+
+  if(ki.top_posts?.length){
+    h+=`<div class="c-panel"><h2>Die stärksten Beiträge</h2>
+      <p class="c-lede">Nach Likes sortiert, mit der Begründung aus den Daten.</p>
+      <div class="c-tbl-wrap"><table class="c-tbl"><thead><tr><th>Datum</th><th>Warum</th><th class="n">Likes</th></tr></thead><tbody>`
+    ki.top_posts.forEach(post=>{
+      const datum=post.datum||(post.url?'':'–')
+      const text=escHtml(post.warum_top||'')
+      const zelle=post.url?`<a href="${escHtml(post.url)}" target="_blank" rel="noopener">${text}</a>`:text
+      h+=`<tr><td class="c-mono" style="white-space:nowrap">${escHtml(datum)}</td><td>${zelle}</td><td class="n">${deN(post.likes)}</td></tr>`
+    })
+    h+=`</tbody></table></div></div>`
+  }
+
+  if(st?.best_posting_day||st?.best_posting_hour!=null){
+    const n=st.best_time_sample
+    const unsicher=n!=null&&n<20
+    h+=`<div class="c-box ${unsicher?'amber':'cool'}"><span class="c-chip">${unsicher?'Mit Vorbehalt':'Aus deinen Daten'}</span>
+      <h3>${escHtml(st.best_posting_day||'')}${st.best_posting_day&&st.best_posting_hour!=null?', ':''}${st.best_posting_hour!=null?st.best_posting_hour+' Uhr':''}</h3>
+      <p>Zu dieser Zeit sind deine stärkeren Beiträge erschienen${n!=null?`, gerechnet über ${deN(n)} Beiträge`:''}.${unsicher?' Für eine Regel ist das zu wenig — behandle es als Tendenz.':''}</p></div>`
+  }
+
+  /* Vergleiche nur innerhalb derselben Metrik: Aufrufe gegen Aufrufe, Likes
+     gegen Likes. Bei Instagram liefert der Scraper keine Videolaenge -- dann
+     faellt der Laengenvergleich hier still weg, statt leer dazustehen. */
+  const cmpBalken=(zeilen)=>`<div class="c-cmp">${(()=>{
+    const max=Math.max(...zeilen.map(z=>z.wert),1)
+    return zeilen.map(z=>`<div class="c-cmp-row">
+      <div class="c-cmp-label">${escHtml(z.label)}</div>
+      <div class="c-cmp-track"><div class="c-cmp-fill" style="width:${Math.max(4,Math.round(z.wert/max*100))}%"></div></div>
+      <div class="c-cmp-val">${fmt(z.wert)}</div></div>`).join('')
+  })()}</div>`
+
+  const fs=Array.isArray(st?.format_stats)?st.format_stats:[]
+  if(fs.length>1){
+    const mitViews=fs.filter(f=>f.avg_views!=null)
+    const nutzeViews=mitViews.length>1
+    const quelle=nutzeViews?mitViews:fs
+    h+=`<div class="c-panel"><h2>Welches Format trägt</h2>
+      <p class="c-lede">Ø ${nutzeViews?'Aufrufe':'Likes'} je Beitrag dieses Formats.${nutzeViews?'':` Für diese Formate weist ${label} keine Aufrufe aus.`}</p>
+      ${cmpBalken(quelle.map(f=>({label:`${f.typ} (${deN(f.n)}×)`,wert:nutzeViews?f.avg_views:f.avg_likes})))}</div>`
+  }
+
+  const ds=Array.isArray(st?.duration_stats)?st.duration_stats:[]
+  if(ds.length>1){
+    const best=ds.reduce((b,x)=>x.avg_views>b.avg_views?x:b,ds[0])
+    const schwach=ds.reduce((b,x)=>x.avg_views<b.avg_views?x:b,ds[0])
+    const faktor=schwach.avg_views>0?(best.avg_views/schwach.avg_views):null
+    h+=`<div class="c-panel"><h2>Videolänge und Reichweite</h2>
+      <p class="c-lede">Ø Aufrufe je Länge.${faktor&&faktor>=1.3?` Deine Videos ${escHtml(best.bucket)} holen im Schnitt das ${deN(faktor,1)}-Fache der Videos ${escHtml(schwach.bucket)}.`:''}</p>
+      ${cmpBalken(ds.map(d=>({label:`${d.bucket} (${deN(d.n)}×)`,wert:d.avg_views})))}</div>`
+  }
+
+  if(ki.einordnung||ki.analyse_ueberblick){
+    h+=`<div class="c-panel"><h2>Wo dein Kanal steht</h2>
+      <div style="color:var(--c-fg2);font-size:14px;display:flex;flex-direction:column;gap:10px">${absatz(ki.einordnung||ki.analyse_ueberblick)}</div></div>`
   }
 
   if(ki.tipps_zukunft?.length){
-    h+=`<div class="section"><div class="section-label">Deine nächsten Schritte</div><div class="tips-card">`
-    ki.tipps_zukunft.forEach((tip,i)=>{h+=`<div class="tip-row"><div class="tip-num">${i+1}</div><div class="tip-text">${escHtml(tip)}</div></div>`})
-    h+=`</div></div>`
+    h+=`<div class="c-panel"><h2>Was du als Nächstes tun kannst</h2>
+      <p class="c-lede">${deN(ki.tipps_zukunft.length)} Schritte, direkt aus den Zahlen oben.</p>
+      <ol class="c-steps">${ki.tipps_zukunft.map(t=>`<li>${escHtml(t)}</li>`).join('')}</ol></div>`
   }
 
   if(ki.weitere_insights?.trim()){
-    h+=`<div class="section"><div class="section-label">Weitere Erkenntnisse</div>
-      <div class="summary-card"><div class="summary-text">${escHtml(ki.weitere_insights)}</div></div></div>`
+    h+=`<div class="c-box"><span class="c-chip">Noch aufgefallen</span>
+      <h3>Ein Befund am Rand</h3>${absatz(ki.weitere_insights)}</div>`
   }
 
   if(ki.vergleich_vorherige?.trim()){
-    h+=`<div class="section"><div class="section-label">Entwicklung</div><div class="insight-card">
-      <div class="insight-row"><div class="insight-tag tag-dev">${icon('trendingUp',12)} Vergleich zur letzten Analyse</div>
-      <div class="insight-text">${escHtml(ki.vergleich_vorherige)}</div></div></div></div>`
+    h+=`<div class="c-box cool"><span class="c-chip">Entwicklung</span>
+      <h3>Verglichen mit der letzten Analyse</h3>${absatz(ki.vergleich_vorherige)}</div>`
   }
 
-  /* P7: Die Media-Kit-Uebernahme existiert seit jeher (loadMediakit liest analyse_stats),
-     wurde im Ergebnis aber nirgends erwaehnt. Ein Satz plus Link genuegt. */
-  if(st){
-    h+=`<div class="section"><div class="insight-card"><div class="insight-row">
-      <div class="insight-tag tag-tip">${icon('fileText',12)} Weiterverwenden</div>
-      <div class="insight-text">Diese Zahlen kannst du direkt in dein Media Kit übernehmen —
-        dann sehen Marken deine aktuelle Reichweite, ohne dass du etwas abtippst.
-        <a class="plat-link" href="#/mediakit">Zum Media Kit</a></div>
-    </div></div></div>`
-  }
-
-  h+=`<div class="section" style="padding-bottom:calc(24px + var(--safe-bottom))">
-    <button class="btn-share" onclick="shareAnalytics()">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      Analyse-Snapshot teilen
-    </button>
+  /* P7: Die Media-Kit-Uebernahme existiert seit jeher (loadMediakit liest
+     analyse_stats), wurde im Ergebnis aber nirgends erwaehnt. */
+  h+=`<div class="c-foot">
+    ${posts.length?`${deN(posts.length)} öffentlich sichtbare Beiträge. `:''}Gespeicherte Beiträge, Reichweite nach Followern und Demografie stehen nur in deinen ${label}-Insights.
+    ${st?' · <a href="#/mediakit">Diese Zahlen ins Media Kit übernehmen</a>':''}
   </div>`
 
+  h+=`<button class="c-share" onclick="shareAnalytics()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Analyse-Snapshot teilen
+  </button>`
+
+  h+='</div>'
   el.innerHTML=h
 }
 
