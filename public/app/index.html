@@ -678,12 +678,26 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 .c-rang-zusatz{font-size:12px;color:var(--c-fg3);white-space:nowrap}
 .c-datum{color:inherit;text-decoration:none;border-bottom:1px dotted var(--c-line2)}
 .c-datum:hover{border-bottom-style:solid;color:var(--c-fg)}
+/* Teilen: der einzige Block im Cockpit, der nach aussen zeigt. Deshalb als
+   eigene Flaeche mit heller Taste statt als unauffaelliger Knopf am Rand. */
+.c-teilen{background:linear-gradient(180deg,var(--c-panel2),var(--c-panel));
+  border:1px solid var(--c-line2);border-radius:16px;padding:22px}
+.c-teilen h2{font-size:18px;font-weight:700;letter-spacing:-.015em;margin-bottom:4px}
+.c-teilen .c-lede{margin-bottom:16px}
+.c-teilen-knoepfe{display:flex;flex-wrap:wrap;gap:9px}
+.c-btn{flex:1 1 190px;font:inherit;font-weight:700;font-size:14px;padding:14px 18px;border-radius:12px;
+  cursor:pointer;border:1px solid var(--c-fg);background:var(--c-fg);color:var(--c-bg);
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:"Outfit","Inter",sans-serif}
+.c-btn:active{opacity:.85}
+.c-btn.leise{background:transparent;color:var(--c-fg);border-color:var(--c-line2);font-weight:600}
+.c-btn:disabled{opacity:.5;cursor:not-allowed}
+.c-link-feld{margin-top:14px;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.c-link-feld input{flex:1 1 220px;min-width:0;font-family:"JetBrains Mono",monospace;font-size:12.5px;
+  padding:11px 13px;border-radius:10px;border:1px solid var(--c-line);background:var(--c-bg);color:var(--c-fg)}
+.c-link-meta{font-size:12px;color:var(--c-fg3);margin-top:10px;line-height:1.6}
+.c-link-meta a{color:var(--c-fg2)}
 .c-foot{border-top:1px solid var(--c-line);padding-top:14px;font-size:12px;color:var(--c-fg3);line-height:1.55}
 .c-foot a{color:var(--c-fg2)}
-.c-share{width:100%;font:inherit;font-weight:600;font-size:13px;padding:12px 16px;border-radius:12px;
-  border:1px solid var(--c-line2);background:var(--c-panel);color:var(--c-fg);cursor:pointer;
-  display:inline-flex;align-items:center;justify-content:center;gap:8px}
-.c-share:active{background:var(--c-panel2)}
 
 /* Ergebnis-Kopf: der Moment nach dem Warten gehoert dem Ergebnis, nicht dem Verkauf */
 .result-head{padding:var(--s-4) var(--page-x) 0}
@@ -4204,6 +4218,65 @@ async function waitForPurchaseAfterPayment(platform){
 // ── Kauf-Bereich nach einer fertigen Analyse aufklappen (Punkt 5) ──
 /* Schaltet zwischen den vier Ranglisten um. Alle vier stehen schon im DOM --
    umgeschaltet wird nur die Sichtbarkeit, damit nichts neu gerendert werden muss. */
+const SVG_TEILEN='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'
+
+/* Erzeugt den oeffentlichen Link oder gibt den vorhandenen zurueck. Pro Analyse
+   genau einer -- zweimal Teilen ergibt nicht zwei Links. */
+window.teilenLinkErzeugen=async function(runId){
+  const knopf=document.getElementById('teilen-knopf')
+  const ziel=document.getElementById('teilen-ergebnis')
+  if(!knopf||!ziel)return
+  knopf.disabled=true
+  const vorher=knopf.innerHTML
+  knopf.innerHTML='<span class="spinner"></span> Einen Moment…'
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    const res=await fetch(SUPABASE_URL+'/functions/v1/analyse-freigeben',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify({analysis_run_id:runId,aktion:'erzeugen'})
+    })
+    const d=await res.json()
+    if(!d.success)throw new Error(d.error||'Fehlgeschlagen')
+    const url=location.origin+'/analyse/'+d.token
+    const bis=new Date(d.expires_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})
+    ziel.innerHTML=`<div class="c-link-feld">
+        <input type="text" readonly value="${escHtml(url)}" onclick="this.select()" aria-label="Öffentlicher Link"/>
+        <button class="c-btn" style="flex:0 0 auto" onclick="teilenLinkKopieren('${escHtml(url)}')">Kopieren</button>
+      </div>
+      <div class="c-link-meta">
+        Gültig bis ${escHtml(bis)}${d.aufrufe>0?` · ${fmt(d.aufrufe)} mal geöffnet`:''} ·
+        <a href="${escHtml(url)}" target="_blank" rel="noopener">Ansehen</a> ·
+        <a href="#" onclick="teilenLinkZuruecknehmen('${runId}');return false">Link zurückziehen</a>
+      </div>`
+    knopf.innerHTML=vorher
+    knopf.disabled=false
+    if(navigator.share)navigator.share({title:'Meine viuno-Analyse',url}).catch(()=>{})
+  }catch(e){
+    knopf.innerHTML=vorher
+    knopf.disabled=false
+    showToast('Link konnte nicht erzeugt werden')
+  }
+}
+
+window.teilenLinkKopieren=function(url){
+  navigator.clipboard.writeText(url).then(()=>showToast('Link kopiert ✓')).catch(()=>showToast('Kopieren nicht möglich'))
+}
+
+window.teilenLinkZuruecknehmen=async function(runId){
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    await fetch(SUPABASE_URL+'/functions/v1/analyse-freigeben',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:JSON.stringify({analysis_run_id:runId,aktion:'zuruecknehmen'})
+    })
+    const ziel=document.getElementById('teilen-ergebnis')
+    if(ziel)ziel.innerHTML='<div class="c-link-meta">Der Link wurde zurückgezogen und funktioniert nicht mehr. Du kannst jederzeit einen neuen erzeugen.</div>'
+    showToast('Link zurückgezogen ✓')
+  }catch(e){ showToast('Zurückziehen fehlgeschlagen') }
+}
+
 window.ckptRang=function(id){
   document.querySelectorAll('.c-rang-liste').forEach(el=>{ el.hidden = el.dataset.rang !== id })
   document.querySelectorAll('.c-rang-tab').forEach(el=>{ el.classList.toggle('aktiv', el.dataset.rang === id) })
@@ -4826,10 +4899,26 @@ function renderAnalyticsContent(){
     ${st?' · <a href="#/mediakit">Diese Zahlen ins Media Kit übernehmen</a>':''}
   </div>`
 
-  h+=`<button class="c-share" onclick="shareAnalytics()">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-    Analyse-Snapshot teilen
-  </button>`
+  /* Teilen erzeugt einen oeffentlichen Ausschnitt: Ueberschrift, vier Kacheln,
+     die Balkengrafik und einen angeschnittenen Absatz. Die neun Textabschnitte,
+     die Ranglisten und die Beitragstexte bleiben drin -- das ist das, wofuer
+     bezahlt wurde. */
+  const runId=st?.analysis_run_id||null
+  if(runId){
+    h+=`<div class="c-teilen" id="teilen-block">
+      <h2>Diese Analyse teilen</h2>
+      <p class="c-lede">Erzeugt eine öffentliche Seite mit deiner Kernaussage, vier Kennzahlen und der Balkengrafik.
+        Die Auswertungstexte und die Ranglisten bleiben privat. Der Link läuft nach 90 Tagen ab und lässt sich
+        jederzeit zurückziehen.</p>
+      <div class="c-teilen-knoepfe">
+        <button class="c-btn" onclick="teilenLinkErzeugen('${runId}')" id="teilen-knopf">
+          ${SVG_TEILEN} Link erzeugen
+        </button>
+        <button class="c-btn leise" onclick="shareAnalytics()">Nur Zahlen als Text</button>
+      </div>
+      <div id="teilen-ergebnis"></div>
+    </div>`
+  }
 
   h+='</div>'
   el.innerHTML=h

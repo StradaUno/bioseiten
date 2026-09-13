@@ -15,3 +15,9 @@
 /datenschutz.html   /legal#datenschutz    301
 /agb.html           /legal#agb            301
 /widerruf.html      /legal#widerruf       301
+
+# ── Geteilte Analyse-Ausschnitte ────────────────────────────────────
+# /analyse/<token> ist keine Datei, sondern eine Seite, die ihren Token aus
+# dem Pfad liest. Jede Freigabe hat einen eigenen Token, deshalb ueberschreibt
+# eine neue Analyse den Link der vorherigen nicht.
+/analyse/*    /analyse/index.html    200
