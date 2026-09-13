@@ -415,7 +415,8 @@ html, body {
 .edit-action-row{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--border);cursor:pointer;background:none;border-left:none;border-right:none;border-top:none;font-family:inherit;text-align:left;width:100%;transition:background .15s}
 .edit-action-row:last-child{border-bottom:none}
 .edit-action-row:hover{background:var(--surface2)}
-.edit-action-icon{font-size:var(--t-xl);width:20px;text-align:center;flex-shrink:0}
+.edit-action-icon{width:20px;display:grid;place-items:center;flex-shrink:0;color:var(--muted)}
+.icon{flex-shrink:0;vertical-align:-.15em}
 .edit-action-body{flex:1;min-width:0}
 .edit-action-label{font-size:var(--t-md);font-weight:500;color:var(--text);flex:1}
 .edit-action-sub{font-size:var(--t-xs);color:var(--muted);margin-top:1px}
@@ -848,6 +849,30 @@ const state = {
    bleiben getrennte Funktionen mit sprechendem Namen erhalten,
    damit jede View exakt so formatiert wie vorher.
    ───────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────
+   Icons — Pfaddaten aus Lucide (MIT), inline statt Emoji.
+   Kein CDN, kein Build-Step: icon('user') gibt ein fertiges <svg>
+   zurueck, das Farbe (currentColor) und Groesse vom Aufrufer erbt.
+   ───────────────────────────────────────────── */
+const ICONS = {
+  user:        '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  users:       '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+  link:        '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/>',
+  globe:       '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  palette:     '<circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>',
+  fileText:    '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>',
+  mail:        '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+  barChart:    '<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>',
+  clapperboard:'<path d="M4 11v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8Z"/><path d="m4 11-.88-2.87a2 2 0 0 1 1.33-2.5l11.48-3.5a2 2 0 0 1 2.5 1.32l.87 2.87L4 11.01Z"/><path d="m6.6 4.99 3.38 4.2"/><path d="m11.86 3.38 3.38 4.2"/>',
+  briefcase:   '<rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'
+}
+
+function icon(name, size = 18, cls = '') {
+  return `<svg class="icon${cls?' '+cls:''}" width="${size}" height="${size}" viewBox="0 0 24 24"`
+    + ` fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"`
+    + ` stroke-linejoin="round" aria-hidden="true">${ICONS[name]||''}</svg>`
+}
 
 /* identisch in allen alten Seiten */
 function escHtml(s) {
@@ -2285,24 +2310,24 @@ function renderBioEditMenu(){
   const linkCount=blv.customLinks.length
 
   const items=[
-    {id:'profile-sheet',icon:'👤',label:'Profil',
+    {id:'profile-sheet',icon:'user',label:'Profil',
      sub:profileOk?'Bild und Bio vollständig':'Bild oder Bio fehlt',
      status:profileOk?'ok':'miss',statusLabel:profileOk?'OK':'Pflicht'},
-    {id:'handles-sheet',icon:'🔗',label:'Social Kanäle',
+    {id:'handles-sheet',icon:'link',label:'Social Kanäle',
      sub:socials.length?socials.join(' · '):'Instagram, TikTok, YouTube, Threads',
      status:socials.length?'ok':'miss',statusLabel:socials.length?'OK':'Pflicht'},
-    {id:'links-sheet',icon:'🌐',label:'Custom Links',
+    {id:'links-sheet',icon:'globe',label:'Custom Links',
      sub:linkCount?`${linkCount} / 10`:'Bis zu 10 eigene Links',status:'',statusLabel:''},
-    {id:'theme-sheet',icon:'🎨',label:'Design & Sprache',
+    {id:'theme-sheet',icon:'palette',label:'Design & Sprache',
      sub:`${themeLabels[blv.theme]||'Color'} · ${langLabels[blv.lang]||'Deutsch'}`,status:'',statusLabel:''},
-    {id:'impressum-sheet',icon:'📄',label:'Impressum',
+    {id:'impressum-sheet',icon:'fileText',label:'Impressum',
      sub:impOk?'Hinterlegt':'Gesetzlich vorgeschrieben',
      status:impOk?'ok':'miss',statusLabel:impOk?'OK':'Pflicht'}
   ]
 
   list.innerHTML=items.map(it=>`
     <button class="edit-action-row" onclick="openSheet('${it.id}')">
-      <span class="edit-action-icon">${it.icon}</span>
+      <span class="edit-action-icon">${icon(it.icon)}</span>
       <div class="edit-action-body">
         <div class="edit-action-label">${escHtml(it.label)}</div>
         <div class="edit-action-sub">${escHtml(it.sub)}</div>
@@ -3182,20 +3207,20 @@ function renderEditMenu(){
   const impOk=!!(p.impressum_text&&p.impressum_text.trim())
 
   const items=[
-    {id:'profile-sheet',icon:'👤',label:'Profil',sub:profileSub,status:profileOk?'ok':'miss',statusLabel:profileOk?'OK':'Pflicht'},
-    {id:'contact-sheet',icon:'📧',label:'Kontakt-E-Mail',sub:p.contact_email||'Anfrage-Adresse für Marken',status:contactOk?'ok':'miss',statusLabel:contactOk?'OK':'Pflicht'},
-    {id:'stats-sheet',icon:'📊',label:'Kennzahlen',sub:statsSub.length?statsSub.join(' · '):'IG / TikTok Performance',status:statsOk?'ok':'miss',statusLabel:statsOk?'OK':'Pflicht'},
-    {id:'platforms-sheet',icon:'🔗',label:'Weitere Plattformen',sub:platformsSub,status:'',statusLabel:''},
-    {id:'audience-sheet',icon:'👥',label:'Zielgruppe',sub:audOk?'Demografie eingetragen':'Optional',status:'',statusLabel:''},
-    {id:'offers-sheet',icon:'🎬',label:'Content Angebote',sub:offersCount?`${offersCount} ausgewählt`:'Optional',status:'',statusLabel:''},
-    {id:'brands-sheet',icon:'🤝',label:'Marken Kooperationen',sub:brandsCount?`${brandsCount} / 10`:'Optional',status:'',statusLabel:''},
-    {id:'language-sheet',icon:'🌐',label:'Standard-Sprache',sub:({de:'Deutsch',en:'English',it:'Italiano'}[mkv.defaultLang]||'Deutsch'),status:'',statusLabel:''},
-    {id:'impressum-sheet',icon:'📄',label:'Impressum',sub:impOk?'Hinterlegt':'Gesetzlich vorgeschrieben',status:impOk?'ok':'miss',statusLabel:impOk?'OK':'Pflicht'}
+    {id:'profile-sheet',icon:'user',label:'Profil',sub:profileSub,status:profileOk?'ok':'miss',statusLabel:profileOk?'OK':'Pflicht'},
+    {id:'contact-sheet',icon:'mail',label:'Kontakt-E-Mail',sub:p.contact_email||'Anfrage-Adresse für Marken',status:contactOk?'ok':'miss',statusLabel:contactOk?'OK':'Pflicht'},
+    {id:'stats-sheet',icon:'barChart',label:'Kennzahlen',sub:statsSub.length?statsSub.join(' · '):'IG / TikTok Performance',status:statsOk?'ok':'miss',statusLabel:statsOk?'OK':'Pflicht'},
+    {id:'platforms-sheet',icon:'link',label:'Weitere Plattformen',sub:platformsSub,status:'',statusLabel:''},
+    {id:'audience-sheet',icon:'users',label:'Zielgruppe',sub:audOk?'Demografie eingetragen':'Optional',status:'',statusLabel:''},
+    {id:'offers-sheet',icon:'clapperboard',label:'Content Angebote',sub:offersCount?`${offersCount} ausgewählt`:'Optional',status:'',statusLabel:''},
+    {id:'brands-sheet',icon:'briefcase',label:'Marken Kooperationen',sub:brandsCount?`${brandsCount} / 10`:'Optional',status:'',statusLabel:''},
+    {id:'language-sheet',icon:'globe',label:'Standard-Sprache',sub:({de:'Deutsch',en:'English',it:'Italiano'}[mkv.defaultLang]||'Deutsch'),status:'',statusLabel:''},
+    {id:'impressum-sheet',icon:'fileText',label:'Impressum',sub:impOk?'Hinterlegt':'Gesetzlich vorgeschrieben',status:impOk?'ok':'miss',statusLabel:impOk?'OK':'Pflicht'}
   ]
 
   document.getElementById('edit-action-list').innerHTML=items.map(it=>`
     <button class="edit-action-row" onclick="openEditSubSheet('${it.id}')">
-      <span class="edit-action-icon">${it.icon}</span>
+      <span class="edit-action-icon">${icon(it.icon)}</span>
       <div class="edit-action-body">
         <div class="edit-action-label">${escHtml(it.label)}</div>
         <div class="edit-action-sub">${escHtml(it.sub)}</div>
