@@ -672,7 +672,6 @@ function renderPage(){
   // Checkliste
   const checks=[
     {label:'Profilbild hochgeladen',ok:!!(p?.profile_image_url)},
-    {label:'Bio ausgefüllt',ok:!!(p?.bio?.trim())},
     {label:'Impressum hinterlegt',ok:!!(p?.impressum_text?.trim())},
     {label:'Mindestens 1 Social-Kanal',ok:!!(p?.instagram_handle||p?.tiktok_handle||p?.youtube_handle||p?.threads_handle)},
   ]

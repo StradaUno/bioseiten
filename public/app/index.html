@@ -2262,7 +2262,6 @@ function paintBiolink(){
   // Checkliste
   const checks=[
     {label:'Profilbild hochgeladen',ok:!!(p?.profile_image_url)},
-    {label:'Bio ausgefüllt',ok:!!(p?.bio?.trim())},
     {label:'Impressum hinterlegt',ok:!!(p?.impressum_text?.trim())},
     {label:'Mindestens 1 Social-Kanal',ok:!!(p?.instagram_handle||p?.tiktok_handle||p?.youtube_handle||p?.threads_handle)},
   ]
@@ -2386,7 +2385,8 @@ function renderBioEditMenu(){
   const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
   const langLabels={de:'Deutsch',en:'English',it:'Italiano'}
 
-  const profileOk=!!(p.profile_image_url&&p.bio&&p.bio.trim())
+  const profileOk=!!p.profile_image_url
+  const hatBio=!!(p.bio&&p.bio.trim())
   const socials=[
     p.instagram_handle?'Instagram':null, p.tiktok_handle?'TikTok':null,
     p.youtube_handle?'YouTube':null,     p.threads_handle?'Threads':null
@@ -2396,7 +2396,7 @@ function renderBioEditMenu(){
 
   const items=[
     {id:'profile-sheet',icon:'user',label:'Profil',
-     sub:profileOk?'Bild und Bio vollständig':'Bild oder Bio fehlt',
+     sub:profileOk?(hatBio?'Bild und Bio hinterlegt':'Bild hinterlegt · Bio optional'):'Profilbild fehlt',
      status:profileOk?'ok':'miss',statusLabel:profileOk?'OK':'Pflicht'},
     {id:'handles-sheet',icon:'link',label:'Social Kanäle',
      sub:socials.length?socials.join(' · '):'Instagram, TikTok, YouTube, Threads',
