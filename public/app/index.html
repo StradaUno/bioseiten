@@ -588,9 +588,12 @@ html, body {
 .day-head{display:flex;align-items:center;gap:var(--s-3);margin:var(--s-5) 0 var(--s-3);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em}
 .day-head::after{content:'';flex:1;height:1px;background:var(--border)}
 .cards-list>.day-head:first-child{margin-top:var(--s-2)}
-/* Einzeiler zum Newsletter — verwaltet wird das Abo im Profil */
-.nl-hint{display:block;padding:var(--s-3) var(--s-4);margin-bottom:var(--s-3);background:none;border:1px dashed var(--border-strong);border-radius:var(--r-md);font-size:var(--t-sm);color:var(--muted);text-decoration:none}
-.nl-hint:hover{color:var(--text);border-color:var(--muted)}
+/* Einzeiler zum Newsletter — direkt zwischen den Karten anklickbar */
+.nl-line{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-3);border:1px dashed var(--border-strong);border-radius:var(--r-md);cursor:pointer;transition:border-color .15s}
+.nl-line:hover{border-color:var(--muted)}
+.nl-line-check{width:18px;height:18px;flex-shrink:0;accent-color:var(--text);cursor:pointer}
+.nl-line-text{font-size:var(--t-sm);color:var(--muted)}
+.nl-line:has(.nl-line-check:checked) .nl-line-text{color:var(--text)}
 .earlier-days{margin-top:var(--s-6)}
 .earlier-days>summary{cursor:pointer;list-style:none;padding:var(--s-3) 0;text-align:center;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted)}
 .earlier-days>summary::-webkit-details-marker{display:none}
@@ -4309,8 +4312,12 @@ async function renderDigest(area, ctx){
     <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">${icon('inbox',30)}</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Sobald es etwas Neues gibt, steht es hier.</div></div>
   </div>`
 
-  dgv = { uid, ctx, digests:[], activeFilter:'alle' }
+  dgv = { uid, ctx, digests:[], activeFilter:'alle', subscribed:false }
   ctx.onCleanup(() => { dgv = null })
+
+  const{data:p}=await sb.from('users').select('newsletter_subscribed').eq('id',uid).single()
+  if(ctx.stale)return
+  dgv.subscribed=p?.newsletter_subscribed||false
 
   await loadDigests()
 }
@@ -4369,7 +4376,7 @@ function renderDays(){
     for(const c of cards){
       html+=digestCardHtml(c)
       shown++
-      if(shown===3&&!hintPlaced){ hintPlaced=true; html+=NL_HINT }
+      if(shown===3&&!hintPlaced){ hintPlaced=true; html+=nlLineHtml() }
     }
     return html
   }).join('')
@@ -4396,8 +4403,29 @@ function renderDays(){
   el.querySelectorAll('.card-share').forEach(btn=>dgv.ctx.on(btn,'click',e=>{e.stopPropagation();shareCard(btn.dataset.headline,btn.dataset.summary)}))
 }
 
-/* Einzeiler statt Newsletter-Box: verwaltet wird das Abo im Profil. */
-const NL_HINT=`<a class="nl-hint" href="#/profile">Creator News täglich per Mail — im Profil aktivieren</a>`
+/* Einzeiler zwischen den Karten: direkt an- und abwaehlbar.
+   Schreibt dieselbe Spalte wie die Newsletter-Zeile im Profil. */
+function nlLineHtml(){
+  const on=!!dgv?.subscribed
+  return `<label class="nl-line">
+    <input type="checkbox" class="nl-line-check" ${on?'checked':''} onchange="toggleNewsMail(this)"/>
+    <span class="nl-line-text">${on?'Kommt täglich per Mail':'Creator News täglich per Mail bekommen'}</span>
+  </label>`
+}
+
+window.toggleNewsMail=async function(el){
+  if(!dgv)return
+  const checked=el.checked
+  el.disabled=true
+  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',dgv.uid)
+  if(!dgv)return
+  el.disabled=false
+  if(error){ el.checked=!checked; showToast('Konnte nicht gespeichert werden'); return }
+  dgv.subscribed=checked
+  const label=el.parentElement?.querySelector('.nl-line-text')
+  if(label)label.textContent=checked?'Kommt täglich per Mail':'Creator News täglich per Mail bekommen'
+  showToast(checked?'Abonniert ✓':'Abo beendet')
+}
 
 function platformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p}
 function platformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta',allgemein:'pb-allgemein'}[p]||'pb-allgemein'}
