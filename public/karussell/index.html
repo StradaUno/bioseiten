@@ -221,6 +221,12 @@
     display: inline-block; font-size: 12px; padding: 2px 7px; border-radius: 5px;
     background: var(--karte2); color: var(--leise); margin-right: 6px;
   }
+  /* Ein geschriebenes Skript ist der Unterschied zwischen Fund und
+     Drehvorlage - deshalb steht es vorn und in Gruen. */
+  .skript-badge {
+    display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px;
+    border-radius: 5px; background: var(--gut); color: #fff; margin-right: 6px;
+  }
 
   /* Zustandszeile auf der Karte - nur dort, wo sie etwas sagt */
   .zustand { font-weight: 600; }
@@ -284,6 +290,21 @@
   ul.punkte li::before { content: "—"; position: absolute; left: 0; color: var(--leise); }
   .fit-slide { font-weight: 650; }
   .kopierbar { white-space: pre-wrap; font-size: 15px; }
+
+  /* --- Sprechtext ---------------------------------------------------- */
+  /* Zeilenumbrueche sind bei ElevenLabs Teil der Auszeichnung, nicht
+     Gestaltung: Was hier steht, muss genau so hinueberwandern. */
+  pre.skript {
+    white-space: pre-wrap; overflow-wrap: anywhere;
+    font: inherit; font-size: 15px; line-height: 1.6; margin-top: 10px;
+  }
+  .warnung {
+    font-size: 14px; font-weight: 600; color: var(--warn);
+    background: #fdeeec; border-radius: 8px; padding: 8px 10px; margin-top: 8px;
+  }
+  ol.beats { margin-left: 20px; }
+  ol.beats li { padding: 5px 0; font-size: 15px; font-weight: 550; }
+  ol.beats li::marker { color: var(--leise); font-weight: 400; }
   .kopf-mit-knopf { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .kopf-mit-knopf button { padding: 6px 11px; min-height: 36px; font-size: 14px; }
 

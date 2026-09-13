@@ -378,7 +378,7 @@ function zeichneListe(posts) {
           </div>
           <p class="meta">${
       post.kind === "news" ? '<span class="news-badge">News</span>' + alterBadge(post.posted_at) : ""
-    }${quelle}${typBadge(post)}${datum(post.posted_at)} · ${zahl(post.likes)} Likes · ${
+    }${analyse.skript ? '<span class="skript-badge">Skript</span>' : ""}${quelle}${typBadge(post)}${datum(post.posted_at)} · ${zahl(post.likes)} Likes · ${
       zahl(post.comments)
     } Kommentare${post.type === "carousel" ? ` · ${post.slide_count} Slides` : ""}</p>
           <p class="meta">
@@ -390,10 +390,8 @@ function zeichneListe(posts) {
           ${zustandZeile(post)}
           <p class="zusammenfassung">${
       text(
-        analyse.summary ??
-          (post.type === "carousel"
-            ? "Noch nicht bewertet – ausserhalb der Top 30."
-            : "Reels und Bilder werden nicht bewertet – nur die Zahlen zählen."),
+        analyse.summary ?? analyse.viuno_hook ??
+          "Noch kein Skript – im Detail schreibt die KI eines auf Knopfdruck.",
       )
     }</p>
         </div>
@@ -625,6 +623,8 @@ function zeichneDetail(post, bilder, kennzahlen = {}) {
       : ""
   }
 
+      ${a.skript ? skriptBlock(a) : ""}
+
       ${
     a.caption_de
       ? abschnittMitKopieren("Caption", a.caption_de, `<p class="kopierbar">${text(a.caption_de)}</p>`)
@@ -644,6 +644,9 @@ function zeichneDetail(post, bilder, kennzahlen = {}) {
       ${eigener ? zahlenBlock(post, eigener) : ""}
 
       <div class="aktionen">
+        <button class="breit" id="skript">${
+    a.skript ? "Skript neu schreiben (≈0,4 ct)" : "Skript schreiben (≈0,4 ct)"
+  }</button>
         ${
     post.type !== "carousel" && !a.caption_de
       ? '<button class="breit" id="caption">Caption schreiben (≈0,3 ct)</button>'
@@ -674,6 +677,7 @@ function zeichneDetail(post, bilder, kennzahlen = {}) {
   detail.querySelector("#zip").onclick = (e) => zipLaden(post.id, post.shortcode, e.target);
   const captionKnopf = detail.querySelector("#caption");
   if (captionKnopf) captionKnopf.onclick = (e) => captionSchreiben(post.id, e.target);
+  detail.querySelector("#skript").onclick = (e) => skriptSchreiben(post.id, e.target);
   // "Nachbauen" fragt nichts mehr ab. Den eigenen Beitrag findet spaeter
   // die Zuordnung von allein - siehe scrape-own. Bei einem bereits
   // zugeordneten Beitrag heisst derselbe Knopf "Zuordnung lösen": Er
@@ -933,6 +937,106 @@ async function captionSchreiben(id, knopf) {
   }
 }
 
+/**
+ * Holt einen Sprechtext fuer genau diesen Beitrag. Erst hier entstehen
+ * Anthropic-Kosten - der Lauf selbst sammelt nur noch und rangiert.
+ */
+async function skriptSchreiben(id, knopf) {
+  const alt = knopf.textContent;
+  knopf.textContent = "Schreibe …";
+  knopf.disabled = true;
+  try {
+    const ergebnis = await apiJson(`/post/${id}/skript`, { method: "POST" });
+    await detailOeffnen(id);
+    melde(
+      `Skript fertig – ${ergebnis.dauer_sekunden ?? "?"} s, ${
+        ergebnis.woerter ?? "?"
+      } Wörter, ${cent(ergebnis.kosten)}`,
+    );
+  } catch (fehler) {
+    knopf.textContent = alt;
+    knopf.disabled = false;
+    alert(fehler.message);
+  }
+}
+
+/**
+ * Der Sprechtext, so wie ElevenLabs ihn braucht: Zeilenumbrueche sind
+ * Teil der Auszeichnung, deshalb steht er in einem <pre> und wird als
+ * Rohtext kopiert - nicht als das, was der Browser daraus macht.
+ *
+ * Die Warnung wird hier noch einmal gerechnet statt gespeichert. Sie
+ * haengt am eingestellten Modell, und das kann sich aendern, nachdem das
+ * Skript geschrieben wurde.
+ */
+function skriptBlock(a) {
+  const modell = a.skript_modell === "v2" ? "v2" : "v3";
+  const warnungen = markierungPruefen(a.skript, modell);
+  const kopf = [
+    `ElevenLabs ${modell === "v2" ? "Multilingual v2" : "v3"}`,
+    a.skript_dauer ? `${a.skript_dauer} s` : "",
+    `${skriptWoerter(a.skript)} Wörter`,
+  ].filter(Boolean).join(" · ");
+
+  const beats = liste_(a.skript_beats) ? a.skript_beats : [];
+  const beatText = beats.map((b) => `${b.nr}. ${b.auf_dem_bild}`).join("\n");
+
+  return `${
+    abschnittMitKopieren(
+      "Reel-Skript",
+      a.skript,
+      `<p class="meta">${text(kopf)}</p>
+       ${
+        warnungen.map((w) => `<p class="warnung">${text(w)}</p>`).join("")
+      }
+       <pre class="skript kopierbar">${text(a.skript)}</pre>`,
+    )
+  }${
+    beats.length > 0
+      ? abschnittMitKopieren(
+        "Was auf dem Bild steht",
+        beatText,
+        `<ol class="punkte beats">${
+          beats.map((b) => `<li>${text(b.auf_dem_bild)}</li>`).join("")
+        }</ol>
+         <p class="meta">Eine Zeile je Beat, in Canva nacheinander einblenden.</p>`,
+      )
+      : ""
+  }`;
+}
+
+/** Woerter ohne Auszeichnung - Tags und breaks spricht niemand. */
+function skriptWoerter(skript) {
+  const blank = String(skript ?? "").replace(/\[[^\]]*\]|<[^>]*>/g, " ").trim();
+  return blank ? blank.split(/\s+/).length : 0;
+}
+
+/**
+ * Dieselbe Pruefung wie im Server - siehe analyze/index.ts. Die beiden
+ * Modelle sind unvereinbar: v3 liest ein <break> vor, v2 liest einen
+ * Audio-Tag vor. Beides faellt sonst erst in der fertigen Tonspur auf.
+ */
+function markierungPruefen(skript, modell) {
+  const warnungen = [];
+  if (modell === "v3" && /<break\s/i.test(skript)) {
+    warnungen.push(
+      "Enthält <break …/> – v3 kennt das nicht und liest es vor. Vor dem Einfügen entfernen.",
+    );
+  }
+  if (modell === "v2" && /\[[a-zA-ZäöüÄÖÜ ]{2,20}\]/.test(skript)) {
+    warnungen.push(
+      "Enthält Audio-Tags in eckigen Klammern – v2 kennt sie nicht und liest sie vor. Vor dem Einfügen entfernen.",
+    );
+  }
+  const woerter = skriptWoerter(skript);
+  if (woerter > 80) {
+    warnungen.push(
+      `${woerter} Wörter – das sind über dreissig Sekunden. Vor dem Einsprechen kürzen oder neu schreiben lassen.`,
+    );
+  }
+  return warnungen;
+}
+
 async function kopieren(inhalt, knopf) {
   try {
     await navigator.clipboard.writeText(inhalt);
@@ -988,6 +1092,10 @@ async function quellenZeichnen() {
   ]);
   const ownHandle =
     (einstellungen.settings ?? []).find((e) => e.key === "own_handle")?.value ?? "";
+  const elevenModell =
+    (einstellungen.settings ?? []).find((e) => e.key === "elevenlabs_modell")?.value === "v2"
+      ? "v2"
+      : "v3";
   keywordsCache = keywords.keywords ?? [];
   keywordAuswahlFuellen();
 
@@ -1005,6 +1113,19 @@ async function quellenZeichnen() {
       <input id="eigenes-konto" placeholder="dein handle" autocapitalize="none"
              autocorrect="off" spellcheck="false" value="${text(ownHandle)}">
       <button class="primaer" id="eigenes-speichern">Merken</button>
+    </div>
+
+    <div class="bereich-titel">Stimme
+      <span class="klein">wofür die Skripte formatiert werden - die beiden Modelle sind unvereinbar</span></div>
+    <div class="feld">
+      <select id="eleven-modell">
+        <option value="v3"${elevenModell === "v3" ? " selected" : ""}>
+          ElevenLabs v3 – Audio-Tags wie [pause], [excited]
+        </option>
+        <option value="v2"${elevenModell === "v2" ? " selected" : ""}>
+          Multilingual v2 – Pausen als &lt;break time="1.5s"/&gt;
+        </option>
+      </select>
     </div>
 
     <div class="bereich-titel">Suchbegriffe
@@ -1143,6 +1264,25 @@ function quellenAktionen() {
     }
   };
 
+  // Die Wahl wirkt erst beim naechsten Skript. Bereits geschriebene
+  // behalten ihre Auszeichnung - und bekommen im Detail eine Warnung,
+  // wenn sie nicht mehr zum eingestellten Modell passt.
+  liste.querySelector("#eleven-modell").onchange = async (e) => {
+    const wert = e.target.value;
+    e.target.disabled = true;
+    try {
+      await apiJson("/settings", {
+        method: "POST",
+        body: JSON.stringify({ key: "elevenlabs_modell", value: wert }),
+      });
+      melde(`Skripte werden jetzt für ${wert === "v2" ? "Multilingual v2" : "v3"} formatiert.`);
+    } catch (fehler) {
+      melde(fehler.message, true);
+    } finally {
+      e.target.disabled = false;
+    }
+  };
+
   liste.querySelector("#keyword-hinzu").onclick = async () => {
     const feld = liste.querySelector("#neues-keyword");
     const term = feld.value.trim();
@@ -1271,7 +1411,6 @@ const PHASEN = [
   { name: "news", titel: "News" },
   { name: "keywords", titel: "Keywords" },
   { name: "enrich", titel: "Enrichment" },
-  { name: "analyze", titel: "Analyse" },
   { name: "own", titel: "Meine Zahlen" },
 ];
 
@@ -1372,9 +1511,8 @@ function phasenText(phase, e) {
     const summe = (e.ergebnisse ?? []).reduce((s, k) => s + Number(k.neu ?? 0), 0);
     return `${e.keywords ?? 0} Begriffe, ${zahl(summe)} neu`;
   }
-  if (phase === "enrich") return `${zahl(e.engagement_gesetzt)} bewertbar`;
-  if (phase === "analyze") {
-    return `${zahl(e.analysiert)} von ${zahl(e.top30)}${e.offen ? `, ${e.offen} offen` : ""}`;
+  if (phase === "enrich") {
+    return `${zahl(e.engagement_gesetzt)} bewertbar, ${zahl(e.sichtbar)} in der Liste`;
   }
   if (phase === "own") {
     const zugeordnet = (e.zugeordnet ?? []).length;
@@ -1519,6 +1657,13 @@ function kommazahl(wert) {
   const n = Number(wert);
   if (!Number.isFinite(n)) return "–";
   return n.toLocaleString("de-DE", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+}
+
+/** Ein Skript kostet Bruchteile eines Cents - in Dollar waere es immer 0,00. */
+function cent(wert) {
+  const n = Number(wert);
+  if (!Number.isFinite(n)) return "–";
+  return (n * 100).toLocaleString("de-DE", { maximumFractionDigits: 1 }) + " ct";
 }
 
 function dollar(wert) {
