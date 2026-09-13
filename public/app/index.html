@@ -425,6 +425,9 @@ html, body {
 .preview-img-wrap img{display:block;width:100%;height:auto}
 .sheet-header{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 14px 0 20px;gap:8px}
 .sheet-header-text{flex:1;min-width:0}
+/* Im Header bringt schon .sheet-header den Seitenrand mit — Titel und Sub duerfen ihn nicht doppelt setzen */
+.sheet-header-text .sheet-title{padding:16px 0 4px}
+.sheet-header-text .sheet-sub{padding:0 0 16px}
 .sheet-close{width:32px;height:32px;border-radius:99px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;display:grid;place-items:center;font-size:16px;color:var(--muted);flex-shrink:0;font-family:inherit;line-height:1;padding:0}
 .sheet-close:hover{background:var(--border);color:var(--text)}
 .sheet-suffix{padding:12px 14px 12px 10px;font-size:14px;color:var(--muted);background:var(--surface2);border-left:1px solid var(--border-strong);flex-shrink:0}
@@ -1906,7 +1909,7 @@ async function renderBiolink(area, ctx){
         <div class="sheet-handle"></div>
         <div class="sheet-title">Bearbeiten</div>
         <div class="edit-action-list">
-          <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('profile-sheet')">
+          <button class="edit-action-row" onclick="openSheet('profile-sheet')">
             <span class="edit-action-icon">👤</span>
             <div class="edit-action-body">
               <div class="edit-action-label">Profil</div>
@@ -1914,7 +1917,7 @@ async function renderBiolink(area, ctx){
             </div>
             <span class="edit-action-arrow">›</span>
           </button>
-          <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('handles-sheet')">
+          <button class="edit-action-row" onclick="openSheet('handles-sheet')">
             <span class="edit-action-icon">🔗</span>
             <div class="edit-action-body">
               <div class="edit-action-label">Social Kanäle</div>
@@ -1922,7 +1925,7 @@ async function renderBiolink(area, ctx){
             </div>
             <span class="edit-action-arrow">›</span>
           </button>
-          <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('links-sheet')">
+          <button class="edit-action-row" onclick="openSheet('links-sheet')">
             <span class="edit-action-icon">🌐</span>
             <div class="edit-action-body">
               <div class="edit-action-label">Custom Links</div>
@@ -1930,7 +1933,7 @@ async function renderBiolink(area, ctx){
             </div>
             <span class="edit-action-arrow">›</span>
           </button>
-          <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('theme-sheet')">
+          <button class="edit-action-row" onclick="openSheet('theme-sheet')">
             <span class="edit-action-icon">🎨</span>
             <div class="edit-action-body">
               <div class="edit-action-label">Design & Sprache</div>
@@ -1938,7 +1941,7 @@ async function renderBiolink(area, ctx){
             </div>
             <span class="edit-action-arrow">›</span>
           </button>
-          <button class="edit-action-row" onclick="closeSheet('edit-actions-sheet');openSheet('impressum-sheet')">
+          <button class="edit-action-row" onclick="openSheet('impressum-sheet')">
             <span class="edit-action-icon">📄</span>
             <div class="edit-action-body">
               <div class="edit-action-label">Impressum</div>
@@ -1951,11 +1954,16 @@ async function renderBiolink(area, ctx){
     </div>
 
     <!-- PROFILE SHEET -->
-    <div class="sheet-backdrop hidden" id="profile-sheet" onclick="closeSheet('profile-sheet')">
+    <div class="sheet-backdrop hidden" id="profile-sheet" onclick="backToEditMenu('profile-sheet')">
       <div class="sheet" onclick="event.stopPropagation()">
         <div class="sheet-handle"></div>
-        <div class="sheet-title">Profil</div>
-        <div class="sheet-sub">Dein Name und Bio erscheinen auf deiner BioLink-Seite.</div>
+        <div class="sheet-header">
+          <div class="sheet-header-text">
+            <div class="sheet-title">Profil</div>
+            <div class="sheet-sub">Dein Name und Bio erscheinen auf deiner BioLink-Seite.</div>
+          </div>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+        </div>
         <div class="sheet-field">
           <label class="sheet-label">Profilbild</label>
           <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="document.getElementById('photo-input').click()">
@@ -1972,18 +1980,23 @@ async function renderBiolink(area, ctx){
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" id="btn-save-profile" onclick="saveBioProfile()">Speichern</button>
-          <button class="sheet-btn-cancel" onclick="closeSheet('profile-sheet')">Abbrechen</button>
+          <button class="sheet-btn-cancel" onclick="backToEditMenu('profile-sheet')">Abbrechen</button>
         </div>
       </div>
     </div>
     <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" style="display:none"/>
 
     <!-- HANDLES SHEET -->
-    <div class="sheet-backdrop hidden" id="handles-sheet" onclick="closeSheet('handles-sheet')">
+    <div class="sheet-backdrop hidden" id="handles-sheet" onclick="backToEditMenu('handles-sheet')">
       <div class="sheet" onclick="event.stopPropagation()">
         <div class="sheet-handle"></div>
-        <div class="sheet-title">Social Kanäle</div>
-        <div class="sheet-sub">Verbinde deine Kanäle. Nur ausgefüllte werden angezeigt.</div>
+        <div class="sheet-header">
+          <div class="sheet-header-text">
+            <div class="sheet-title">Social Kanäle</div>
+            <div class="sheet-sub">Verbinde deine Kanäle. Nur ausgefüllte werden angezeigt.</div>
+          </div>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+        </div>
         <div class="sheet-field">
           <label class="sheet-label">Instagram</label>
           <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-ig" placeholder="dein_handle"/></div>
@@ -2002,24 +2015,29 @@ async function renderBiolink(area, ctx){
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="saveHandles()">Speichern</button>
-          <button class="sheet-btn-cancel" onclick="closeSheet('handles-sheet')">Abbrechen</button>
+          <button class="sheet-btn-cancel" onclick="backToEditMenu('handles-sheet')">Abbrechen</button>
         </div>
       </div>
     </div>
 
     <!-- LINKS SHEET -->
-    <div class="sheet-backdrop hidden" id="links-sheet" onclick="closeSheet('links-sheet')">
+    <div class="sheet-backdrop hidden" id="links-sheet" onclick="backToEditMenu('links-sheet')">
       <div class="sheet" onclick="event.stopPropagation()">
         <div class="sheet-handle"></div>
-        <div class="sheet-title">Custom Links</div>
-        <div class="sheet-sub">Bis zu 10 Links. Werbungs-Flag zeigt einen kleinen Hinweis auf der Seite.</div>
+        <div class="sheet-header">
+          <div class="sheet-header-text">
+            <div class="sheet-title">Custom Links</div>
+            <div class="sheet-sub">Bis zu 10 Links. Werbungs-Flag zeigt einen kleinen Hinweis auf der Seite.</div>
+          </div>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+        </div>
         <div class="sheet-field">
           <div class="links-list" id="links-list"></div>
           <button class="btn-add-link" id="btn-add-link" onclick="openAddLink()">+ Link hinzufügen</button>
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="saveLinks()">Speichern</button>
-          <button class="sheet-btn-cancel" onclick="closeSheet('links-sheet')">Abbrechen</button>
+          <button class="sheet-btn-cancel" onclick="backToEditMenu('links-sheet')">Abbrechen</button>
         </div>
       </div>
     </div>
@@ -2050,11 +2068,16 @@ async function renderBiolink(area, ctx){
     </div>
 
     <!-- THEME SHEET -->
-    <div class="sheet-backdrop hidden" id="theme-sheet" onclick="closeSheet('theme-sheet')">
+    <div class="sheet-backdrop hidden" id="theme-sheet" onclick="backToEditMenu('theme-sheet')">
       <div class="sheet" onclick="event.stopPropagation()">
         <div class="sheet-handle"></div>
-        <div class="sheet-title">Design & Sprache</div>
-        <div class="sheet-sub">Design der BioLink-Seite. Sprache wird als Standard gesetzt (User kann wechseln).</div>
+        <div class="sheet-header">
+          <div class="sheet-header-text">
+            <div class="sheet-title">Design & Sprache</div>
+            <div class="sheet-sub">Design der BioLink-Seite. Sprache wird als Standard gesetzt (User kann wechseln).</div>
+          </div>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+        </div>
         <div style="padding:0 20px 8px">
           <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Design</div>
           <div class="theme-options" style="padding:0;margin-bottom:16px">
@@ -2083,23 +2106,28 @@ async function renderBiolink(area, ctx){
         </div>
         <div class="sheet-actions" style="margin-top:8px">
           <button class="sheet-btn-primary" onclick="saveThemeLang()">Speichern</button>
-          <button class="sheet-btn-cancel" onclick="closeSheet('theme-sheet')">Abbrechen</button>
+          <button class="sheet-btn-cancel" onclick="backToEditMenu('theme-sheet')">Abbrechen</button>
         </div>
       </div>
     </div>
 
     <!-- IMPRESSUM SHEET -->
-    <div class="sheet-backdrop hidden" id="impressum-sheet" onclick="closeSheet('impressum-sheet')">
+    <div class="sheet-backdrop hidden" id="impressum-sheet" onclick="backToEditMenu('impressum-sheet')">
       <div class="sheet" onclick="event.stopPropagation()">
         <div class="sheet-handle"></div>
-        <div class="sheet-title">Impressum</div>
-        <div class="sheet-sub">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Name, Adresse, Kontakt.</div>
+        <div class="sheet-header">
+          <div class="sheet-header-text">
+            <div class="sheet-title">Impressum</div>
+            <div class="sheet-sub">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Name, Adresse, Kontakt.</div>
+          </div>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+        </div>
         <div class="sheet-field">
           <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="saveImpressum()">Speichern</button>
-          <button class="sheet-btn-cancel" onclick="closeSheet('impressum-sheet')">Abbrechen</button>
+          <button class="sheet-btn-cancel" onclick="backToEditMenu('impressum-sheet')">Abbrechen</button>
         </div>
       </div>
     </div>
@@ -2406,7 +2434,7 @@ window.saveBioProfile=async function(){
   if(!blv)return
   if(blv.profile)blv.profile.bio=bio
   btn.disabled=false;btn.textContent='Speichern'
-  closeSheet('profile-sheet')
+  backToEditMenu('profile-sheet')
   showToast('Profil gespeichert ✓')
   paintBiolink()
 }
@@ -2422,7 +2450,7 @@ window.saveHandles=async function(){
   await sb.from('users').update(patch).eq('id',blv.uid)
   if(!blv)return
   Object.assign(blv.profile,patch)
-  closeSheet('handles-sheet')
+  backToEditMenu('handles-sheet')
   showToast('Kanäle gespeichert ✓')
   paintBiolink()
 }
@@ -2433,7 +2461,7 @@ window.saveImpressum=async function(){
   await sb.from('users').update({impressum_text:text,updated_at:new Date().toISOString()}).eq('id',blv.uid)
   if(!blv)return
   if(blv.profile)blv.profile.impressum_text=text
-  closeSheet('impressum-sheet')
+  backToEditMenu('impressum-sheet')
   showToast('Impressum gespeichert ✓')
   paintBiolink()
 }
@@ -2458,13 +2486,15 @@ window.saveThemeLang=async function(){
   await sb.from('biolink_viuno').upsert({user_id:blv.uid,theme:blv.theme,default_language:blv.lang,updated_at:new Date().toISOString()},{onConflict:'user_id'})
   if(!blv)return
   if(blv.biolink){blv.biolink.theme=blv.theme;blv.biolink.default_language=blv.lang}else{blv.biolink={user_id:blv.uid,theme:blv.theme,default_language:blv.lang}}
-  closeSheet('theme-sheet')
   btn.disabled=false;btn.textContent='Speichern'
   // Theme-Änderung erfordert Neu-Generierung (einzige Änderung die nicht live ist)
   if(blv.profile?.bio_active){
+    // Hier alles schliessen: das Vollbild-Overlay der Generierung liegt sonst ueber dem Menue
+    closeAllSheets()
     showToast('Design gespeichert — Seite wird neu generiert…')
     await generatePage()
   } else {
+    backToEditMenu('theme-sheet')
     showToast('Design gespeichert ✓')
     const lbl=document.getElementById('current-theme-lang')
     if(lbl&&blv)lbl.textContent=`${blv.theme==='color'?'Color':blv.theme==='dark'?'Dark':'Clean'} · ${blv.lang==='de'?'Deutsch':blv.lang==='en'?'English':'Italiano'}`
@@ -2535,7 +2565,7 @@ window.deleteLink=async function(id){
 }
 
 window.saveLinks=function(){
-  closeSheet('links-sheet')
+  backToEditMenu('links-sheet')
   showToast('Links gespeichert ✓')
   paintBiolink()
 }
