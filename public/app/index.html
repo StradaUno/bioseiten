@@ -374,17 +374,15 @@ html, body {
 .theme-card:active{transform:scale(.97)}
 .theme-card-img{width:100%;aspect-ratio:9/16;border-radius:var(--r-xs);background:var(--surface2);object-fit:cover;display:block}
 .theme-card-name{font-size:var(--t-xs);font-weight:600;color:var(--text)}
-.loading-overlay{position:fixed;inset:0;background:rgba(245,244,242,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:300;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;animation:fadeIn .25s ease-out}
+.loading-overlay{position:fixed;inset:0;background:rgba(245,244,242,.96);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:300;display:flex;align-items:center;justify-content:center;padding:var(--s-6);animation:fadeIn .25s ease-out}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-.loading-spinner-big{width:56px;height:56px;border:3px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin 1s linear infinite;margin-bottom:24px}
-.loading-title{font-size:var(--t-xl);font-weight:700;color:var(--text);letter-spacing:-.02em;margin-bottom:8px}
-.loading-status{font-size:var(--t-md);color:var(--muted);min-height:20px;animation:statusFade .4s ease-out}
-@keyframes statusFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-.loading-dots{display:inline-flex;gap:4px;margin-left:4px}
-.loading-dots span{width:4px;height:4px;background:var(--muted);border-radius:50%;animation:dotPulse 1.2s infinite}
-.loading-dots span:nth-child(2){animation-delay:.2s}
-.loading-dots span:nth-child(3){animation-delay:.4s}
-@keyframes dotPulse{0%,60%,100%{opacity:.3;transform:scale(.8)}30%{opacity:1;transform:scale(1)}}
+.loading-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:var(--s-5) var(--s-5) var(--s-4);box-shadow:var(--sh-card)}
+.loading-title{font-size:var(--t-xl);font-weight:var(--fw-b);color:var(--text);letter-spacing:-.02em}
+.loading-sub{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:var(--s-1)}
+.loading-card .flow-steps{padding:var(--s-4) 0 0}
+/* Der aktive Schritt bekommt einen ruhigen Puls, damit klar ist: es laeuft noch */
+.loading-card .step-label.active{animation:stepPulse 1.8s ease-in-out infinite}
+@keyframes stepPulse{0%,100%{opacity:1}50%{opacity:.55}}
 
 /* ─── SHEETS (aus /biolink/ und /mediakit/) ─── */
 .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
@@ -831,6 +829,16 @@ html, body {
 
 <!-- TOAST -->
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
+
+<!-- FORTSCHRITT — Vollbild, waehrend eine Seite erzeugt oder geloescht wird.
+     Einmal definiert, BioLink und Media Kit teilen es sich. -->
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="loading-card">
+    <div class="loading-title" id="loading-title"></div>
+    <div class="loading-sub" id="loading-sub"></div>
+    <div class="flow-steps" id="loading-steps"></div>
+  </div>
+</div>
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
@@ -1840,44 +1848,91 @@ window.copyLink=function(url){
   navigator.clipboard.writeText(url).then(()=>showToast('Link kopiert ✓')).catch(()=>{showToast('Nicht kopierbar')})
 }
 
-const LOADING_STEPS=[
-  'Vorbereitung',
-  'Layout wird generiert',
-  'Design wird angewendet',
-  'Inhalte werden eingefügt',
-  'Wird auf den Server geladen',
-  'Fast fertig'
-]
+/* ─── Fortschritts-Overlay ───────────────────────────────────────
+   Erstellen, Design-Wechsel und Loeschen laufen ueber eine Edge
+   Function und brauchen bis zu einer halben Minute. Die Function
+   meldet keinen Zwischenstand, deshalb laeuft die Schrittliste auf
+   einem Timer — der letzte Schritt bleibt aber aktiv, bis die Antwort
+   wirklich da ist, und wird erst dann abgehakt. */
+const LOADING_FLOWS={
+  biolinkCreate:{
+    title:'BioLink wird erstellt',
+    sub:'Das dauert einen Moment — bitte lass die Seite offen.',
+    steps:['Angaben werden geprüft','Layout wird gebaut','Design wird angewendet','Inhalte werden eingefügt','Seite wird veröffentlicht']
+  },
+  biolinkTheme:{
+    title:'Neues Design wird übernommen',
+    sub:'Deine Seite wird mit dem neuen Design neu erzeugt.',
+    steps:['Design wird gespeichert','Seite wird neu gebaut','Seite wird veröffentlicht']
+  },
+  biolinkDelete:{
+    title:'BioLink-Seite wird gelöscht',
+    sub:'Deine Einstellungen und Links bleiben gespeichert.',
+    steps:['Seite wird offline genommen','Verweise werden entfernt','Abschluss']
+  },
+  mediakitCreate:{
+    title:'Media Kit wird erstellt',
+    sub:'Das dauert einen Moment — bitte lass die Seite offen.',
+    steps:['Angaben werden geprüft','Layout wird gebaut','Kennzahlen werden eingesetzt','Design wird angewendet','Media Kit wird veröffentlicht']
+  },
+  mediakitDelete:{
+    title:'Media Kit wird gelöscht',
+    sub:'Deine Angaben bleiben gespeichert.',
+    steps:['Seite wird offline genommen','Verweise werden entfernt','Abschluss']
+  }
+}
+const LOADING_STEP_MS=6000
+
 let _loadingTimer=null
-function showLoadingOverlay(){
+let _loadingSteps=[]
+
+function paintLoadingSteps(activeIdx){
+  const el=document.getElementById('loading-steps')
+  if(!el)return
+  el.innerHTML=_loadingSteps.map((label,i)=>{
+    const state=i<activeIdx?'done':i===activeIdx?'active':'wait'
+    return `<div class="flow-step">
+      <div class="step-dot ${state}">${state==='done'?icon('check',11):state==='active'?'<span class="spinner" style="width:8px;height:8px;border-width:1.5px"></span>':''}</div>
+      <div class="step-label ${state}">${escHtml(label)}</div>
+    </div>`
+  }).join('')
+}
+
+function showLoadingOverlay(flowKey='biolinkCreate'){
+  const flow=LOADING_FLOWS[flowKey]||LOADING_FLOWS.biolinkCreate
+  document.getElementById('loading-title').textContent=flow.title
+  document.getElementById('loading-sub').textContent=flow.sub
+  _loadingSteps=flow.steps
+  paintLoadingSteps(0)
   document.getElementById('loading-overlay').classList.remove('hidden')
   document.body.style.overflow='hidden'
+
   let i=0
-  const dotsHtml='<span class="loading-dots"><span></span><span></span><span></span></span>'
-  const setStep=(idx)=>{
-    const el=document.getElementById('loading-status')
-    if(!el)return
-    el.style.animation='none'
-    el.offsetHeight  // Force reflow
-    el.style.animation=''
-    el.innerHTML=LOADING_STEPS[idx]+dotsHtml
-  }
-  setStep(0)
   const t=setInterval(()=>{
     i++
-    if(i>=LOADING_STEPS.length){clearInterval(t);return}
-    setStep(i)
-  },4200)
+    // Der letzte Schritt bleibt aktiv, bis die Antwort da ist
+    if(i>=_loadingSteps.length-1){ paintLoadingSteps(_loadingSteps.length-1); clearInterval(t); return }
+    paintLoadingSteps(i)
+  },LOADING_STEP_MS)
   _loadingTimer=t
   return t
 }
+
+/* Erfolgreich fertig: alles abhaken, kurz stehen lassen, dann ausblenden */
+function finishLoadingOverlay(timer){
+  if(timer)clearInterval(timer)
+  _loadingTimer=null
+  paintLoadingSteps(_loadingSteps.length)
+  return new Promise(res=>setTimeout(()=>{ hideLoadingOverlay(); res() },500))
+}
+
 function hideLoadingOverlay(timer){
   if(timer)clearInterval(timer)
   _loadingTimer=null
   document.getElementById('loading-overlay')?.classList.add('hidden')
   document.body.style.overflow=''
 }
-function stopLoadingOverlay(){ if(_loadingTimer){clearInterval(_loadingTimer);_loadingTimer=null} }
+function stopLoadingOverlay(){ if(_loadingTimer){clearInterval(_loadingTimer);_loadingTimer=null} hideLoadingOverlay() }
 
 /* ═══════════════════════════════════════════════════════════════
    VIEW: BIOLINK — übernommen aus public/biolink/index.html
@@ -2104,13 +2159,6 @@ async function renderBiolink(area, ctx){
           <button class="modal-btn modal-btn-danger" onclick="confirmDelete()">Löschen</button>
         </div>
       </div>
-    </div>
-
-    <!-- LOADING OVERLAY — vollbild beim Erstellen -->
-    <div class="loading-overlay hidden" id="loading-overlay">
-      <div class="loading-spinner-big"></div>
-      <div class="loading-title">BioLink wird erstellt</div>
-      <div class="loading-status" id="loading-status">Vorbereitung<span class="loading-dots"><span></span><span></span><span></span></span></div>
     </div>
   </div>`
 
@@ -2354,10 +2402,10 @@ window.pickThemeCard=async function(theme){
   if(blv.biolink){blv.biolink.theme=theme}else{blv.biolink={user_id:blv.uid,theme,default_language:blv.lang}}
 }
 
-window.generatePage=async function(){
+window.generatePage=async function(flow='biolinkCreate'){
   const btn=document.getElementById('btn-generate')
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'}
-  const loadingTimer=showLoadingOverlay()
+  const loadingTimer=showLoadingOverlay(flow)
   try{
     const{data:{session}}=await sb.auth.getSession()
     const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-biolink`,{
@@ -2366,7 +2414,7 @@ window.generatePage=async function(){
     })
     const body=await res.json()
     if(!res.ok||!body.success)throw new Error(body.error||`HTTP ${res.status}`)
-    hideLoadingOverlay(loadingTimer)
+    await finishLoadingOverlay(loadingTimer)
     showToast('BioLink veröffentlicht ✓')
     if(blv&&!blv.ctx.stale)await loadBiolink()
   }catch(err){
@@ -2379,6 +2427,7 @@ window.generatePage=async function(){
 
 window.confirmDelete=async function(){
   closeModal('delete-modal')
+  const loadingTimer=showLoadingOverlay('biolinkDelete')
   try{
     const{data:{session}}=await sb.auth.getSession()
     const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-biolink?action=delete`,{
@@ -2387,9 +2436,10 @@ window.confirmDelete=async function(){
     })
     const body=await res.json()
     if(!res.ok||!body.success)throw new Error(body.error||'Fehler')
+    await finishLoadingOverlay(loadingTimer)
     showToast('Seite gelöscht')
     if(blv&&!blv.ctx.stale)await loadBiolink()
-  }catch(err){showToast('Fehler: '+err.message,4000)}
+  }catch(err){hideLoadingOverlay(loadingTimer);showToast('Fehler: '+err.message,4000)}
 }
 
 function initBioSheets(){
@@ -2498,8 +2548,7 @@ window.saveThemeLang=async function(){
   if(blv.profile?.bio_active){
     // Hier alles schliessen: das Vollbild-Overlay der Generierung liegt sonst ueber dem Menue
     closeAllSheets()
-    showToast('Design gespeichert — Seite wird neu generiert…')
-    await generatePage()
+    await generatePage('biolinkTheme')
   } else {
     backToEditMenu('theme-sheet')   // rendert das Menue mit dem neuen Label neu
     showToast('Design gespeichert ✓')
@@ -2956,12 +3005,6 @@ async function renderMediakit(area, ctx){
       </div>
     </div>
 
-    <!-- LOADING OVERLAY -->
-    <div class="loading-overlay hidden" id="loading-overlay">
-      <div class="loading-spinner-big"></div>
-      <div class="loading-title">Media Kit wird erstellt</div>
-      <div class="loading-status" id="loading-status">Vorbereitung<span class="loading-dots"><span></span><span></span><span></span></span></div>
-    </div>
   </div>`
 
   mkv = {
@@ -3259,7 +3302,7 @@ window.generateMK=async function(){
   const btn=document.getElementById('btn-create')
   const isUpdate=mkv?.isActive
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'}
-  const loadingTimer=showLoadingOverlay()
+  const loadingTimer=showLoadingOverlay('mediakitCreate')
   try{
     const{data:{session}}=await sb.auth.getSession()
     const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-mediakit`,{
@@ -3268,7 +3311,7 @@ window.generateMK=async function(){
     })
     const body=await res.json()
     if(!res.ok||!body.success)throw new Error(body.error||`HTTP ${res.status}`)
-    hideLoadingOverlay(loadingTimer)
+    await finishLoadingOverlay(loadingTimer)
     showToast('Media Kit live ✓')
     if(mkv&&!mkv.ctx.stale)await loadMediakit()
   }catch(err){
@@ -3281,6 +3324,7 @@ window.generateMK=async function(){
 
 window.mkConfirmDelete=async function(){
   closeModal('delete-modal')
+  const loadingTimer=showLoadingOverlay('mediakitDelete')
   try{
     const{data:{session}}=await sb.auth.getSession()
     const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-mediakit?action=delete`,{
@@ -3289,9 +3333,10 @@ window.mkConfirmDelete=async function(){
     })
     const body=await res.json()
     if(!res.ok||!body.success)throw new Error(body.error||'Fehler')
+    await finishLoadingOverlay(loadingTimer)
     showToast('Media Kit gelöscht')
     if(mkv&&!mkv.ctx.stale)await loadMediakit()
-  }catch(err){showToast('Fehler: '+err.message,4000)}
+  }catch(err){hideLoadingOverlay(loadingTimer);showToast('Fehler: '+err.message,4000)}
 }
 
 // ── Photo Upload ──
