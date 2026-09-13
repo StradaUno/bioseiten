@@ -576,15 +576,18 @@ html, body {
 .view-digest .pb-youtube{background:#ffebee;color:#b71c1c}
 .view-digest .pb-meta{background:#e3f2fd;color:#0d47a1}
 .view-digest .pb-allgemein{background:var(--surface2);color:var(--muted)}
-.date-scroll{display:flex;gap:var(--s-2);padding:var(--s-4) var(--page-x) 0;overflow-x:auto;scrollbar-width:none}
-.date-scroll::-webkit-scrollbar{display:none}
-.date-pill{display:flex;flex-direction:column;align-items:center;padding:8px 14px;border-radius:var(--r-sm);cursor:pointer;flex-shrink:0;border:1px solid var(--border);background:var(--surface);transition:all .15s;min-width:56px}
-.date-pill.active{background:var(--text);border-color:var(--text)}
-.date-pill-day{font-size:var(--t-2xs);font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
-.date-pill.active .date-pill-day{color:rgba(255,255,255,.6)}
-.date-pill-num{font-size:var(--t-xl);font-weight:700;color:var(--text);letter-spacing:-.02em;margin-top:1px}
-.date-pill.active .date-pill-num{color:white}
-.date-pill-dot{width:4px;height:4px;border-radius:50%;background:var(--green);margin-top:4px}
+/* Tagesblock-Ueberschrift: kleine Versalie mit Trennlinie nach rechts */
+.day-head{display:flex;align-items:center;gap:var(--s-3);margin:var(--s-5) 0 var(--s-3);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em}
+.day-head::after{content:'';flex:1;height:1px;background:var(--border)}
+.cards-list>.day-head:first-child{margin-top:var(--s-2)}
+/* Einzeiler zum Newsletter — verwaltet wird das Abo im Profil */
+.nl-hint{display:block;padding:var(--s-3) var(--s-4);margin-bottom:var(--s-3);background:none;border:1px dashed var(--border-strong);border-radius:var(--r-md);font-size:var(--t-sm);color:var(--muted);text-decoration:none}
+.nl-hint:hover{color:var(--text);border-color:var(--muted)}
+.earlier-days{margin-top:var(--s-6)}
+.earlier-days>summary{cursor:pointer;list-style:none;padding:var(--s-3) 0;text-align:center;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted)}
+.earlier-days>summary::-webkit-details-marker{display:none}
+.earlier-days>summary:hover{color:var(--text)}
+.earlier-days[open]>summary{color:var(--subtle)}
 .filter-row{display:flex;gap:6px;padding:var(--s-3) var(--page-x) 0;overflow-x:auto;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
 .f-pill{padding:6px 14px;border-radius:var(--r-full);white-space:nowrap;font-size:var(--t-sm);font-weight:500;font-family:inherit;flex-shrink:0;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s}
@@ -4266,17 +4269,20 @@ window.toggleDigestEmail=async function(){
 
 /* ═══════════════════════════════════════════════════════════════
    VIEW: CREATOR NEWS — übernommen aus public/digest/index.html
-   Wochen-Logik, Datums-Pills, Plattform-Filter, ausklappbare Karten,
-   Teilen und die Newsletter-Checkbox unverändert.
+   Die Karten, das Aufklappen, der Plattform-Filter und das Teilen sind
+   unverändert. Neu ist die Gliederung: der Digest erscheint täglich,
+   deshalb zeigt die Seite die laufende Woche als Tagesblöcke — heute
+   oben, darunter die vorherigen Tage. Tage ohne Einträge bekommen keine
+   Überschrift und keine Meldung, sie fehlen einfach.
    ═══════════════════════════════════════════════════════════════ */
-const MONTHS_SHORT=['Jan','Feb','Mär','Apr','Mai','Jun','Jul','Aug','Sep','Okt','Nov','Dez']
 const MONTHS_FULL=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
-// Ab diesem Datum sind daily_digest-Eintraege echte Wochen-Ausgaben. Aeltere (taegliche) Eintraege
-// aus der Zeit vor der Umstellung werden hier bewusst ausgeblendet, damit keine "Fake-Wochen" auftauchen.
-// Die alten Daten bleiben in der DB unangetastet.
-const WEEKLY_SWITCH_DATE='2026-09-07'
+const WEEKDAYS_FULL=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag']
+/* Wie weit zurück die Liste reicht: laufende Woche plus die davor.
+   Ein rollierendes Fenster statt einer festen Cutoff-Konstante — alte
+   Ausgaben fallen von selbst heraus, ohne dass jemand ein Datum pflegt. */
+const DIGEST_WINDOW_DAYS=14
 
-// Montag der aktuellen ISO-Woche (lokale Zeit), als YYYY-MM-DD — identische Logik wie im Backend
+// Montag der aktuellen ISO-Woche (lokale Zeit) — identische Logik wie im Backend
 function getWeekStartLocal(d){
   const day=d.getDay()
   const diff=day===0?-6:1-day
@@ -4285,31 +4291,31 @@ function getWeekStartLocal(d){
   monday.setHours(0,0,0,0)
   return monday
 }
-function toIso(d){return d.toISOString().split('T')[0]}
-function weekEnd(dateStr){const d=new Date(dateStr+'T12:00:00');d.setDate(d.getDate()+6);return d}
-function isThisWeek(dateStr){return dateStr===toIso(getWeekStartLocal(new Date()))}
-function isLastWeek(dateStr){const lw=getWeekStartLocal(new Date());lw.setDate(lw.getDate()-7);return dateStr===toIso(lw)}
-
-// Pill-Label: oben kurzer Hinweis, unten der Start-Tag der Woche
-function pillTopLabel(dateStr){
-  if(isThisWeek(dateStr))return'Aktuell'
-  if(isLastWeek(dateStr))return'Letzte'
-  const d=new Date(dateStr+'T12:00:00')
-  return MONTHS_SHORT[d.getMonth()]
+/* Lokales Datum als YYYY-MM-DD. Bewusst nicht über toISOString(), das
+   in UTC umrechnet und östlich von Greenwich einen Tag zurückspringt. */
+function toIso(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
-function pillNum(dateStr){const d=new Date(dateStr+'T12:00:00');return String(d.getDate()).padStart(2,'0')}
+function daysAgoIso(n){const d=new Date();d.setDate(d.getDate()-n);return toIso(d)}
 
-// Vollständiges Label für die Überschrift, z.B. "Diese Woche (07.–13. September)" oder "24.–30. August 2026"
-function fmtWeekFull(dateStr){
-  const start=new Date(dateStr+'T12:00:00')
-  const end=weekEnd(dateStr)
-  const sameMonth=start.getMonth()===end.getMonth()
-  const startStr=sameMonth?String(start.getDate()).padStart(2,'0'):`${String(start.getDate()).padStart(2,'0')}. ${MONTHS_SHORT[start.getMonth()]}`
-  const endStr=`${String(end.getDate()).padStart(2,'0')}. ${MONTHS_FULL[end.getMonth()]} ${end.getFullYear()}`
-  const range=`${startStr}.–${endStr}`
-  if(isThisWeek(dateStr))return`Diese Woche (${range})`
-  if(isLastWeek(dateStr))return`Letzte Woche (${range})`
-  return`Woche vom ${range}`
+// Überschrift der Seite, z.B. "Diese Woche · 7.–13. September"
+function weekRangeLabel(){
+  const start=getWeekStartLocal(new Date())
+  const end=new Date(start); end.setDate(end.getDate()+6)
+  const startStr=start.getMonth()===end.getMonth()
+    ? `${start.getDate()}.`
+    : `${start.getDate()}. ${MONTHS_FULL[start.getMonth()]}`
+  return `Diese Woche · ${startStr}–${end.getDate()}. ${MONTHS_FULL[end.getMonth()]}`
+}
+
+// Tagesüberschrift, z.B. "Heute · Sonntag, 13. September" oder "Donnerstag, 11. September"
+function dayHeading(dateStr){
+  const d=new Date(dateStr+'T12:00:00')
+  const wd=WEEKDAYS_FULL[d.getDay()]
+  const full=`${wd}, ${d.getDate()}. ${MONTHS_FULL[d.getMonth()]}`
+  if(dateStr===toIso(new Date()))return `Heute · ${full}`
+  if(dateStr===daysAgoIso(1))return `Gestern · ${wd}`
+  return full
 }
 
 /* View-lokaler Zustand, entspricht dem `state` der alten Seite */
@@ -4320,41 +4326,32 @@ async function renderDigest(area, ctx){
 
   area.innerHTML = `
   <div class="view-digest">
-    <div class="page-header"><div class="page-title">Creator News</div><div class="page-sub" id="digest-sub">Was diese Woche in der Creator-Welt passiert.</div></div>
-    <div id="nl-box-wrap"></div>
-    <div class="date-scroll" id="date-scroll"></div>
+    <div class="page-header">
+      <div class="page-title">Creator News</div>
+      <div class="page-sub" id="digest-sub">${escHtml(weekRangeLabel())}</div>
+    </div>
     <div class="filter-row" id="filter-row"><button class="f-pill active" data-filter="alle">Alle</button></div>
     <div id="skeleton-area" style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div class="skeleton" style="height:180px;border-radius:16px"></div><div class="skeleton" style="height:140px;border-radius:16px"></div></div>
     <div class="cards-list hidden" id="cards-list"></div>
-    <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">${icon('inbox',30)}</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Wird jeden Montag aktualisiert.</div></div>
+    <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">${icon('inbox',30)}</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Sobald es etwas Neues gibt, steht es hier.</div></div>
   </div>`
 
-  dgv = { uid, ctx, digests:[], activeDate:null, activeFilter:'alle' }
-  ctx.onCleanup(() => { dgv = null; nlv = null })
+  dgv = { uid, ctx, digests:[], activeFilter:'alle' }
+  ctx.onCleanup(() => { dgv = null })
 
-  const{data:p}=await sb.from('users').select('newsletter_subscribed,email,contact_email').eq('id',uid).single()
-  if(ctx.stale)return
-  nlv = { uid, isSubscribed: p?.newsletter_subscribed||false,
-          email: p?.contact_email||p?.email||state.session.user.email||'' }
-  renderNewsletterBox()
   await loadDigests()
 }
 
 async function loadDigests(){
-  const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at').gte('date',WEEKLY_SWITCH_DATE).order('date',{ascending:false}).limit(10)
+  const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at')
+    .gte('date',daysAgoIso(DIGEST_WINDOW_DAYS-1)).order('date',{ascending:false}).limit(DIGEST_WINDOW_DAYS)
   if(!dgv||dgv.ctx.stale)return
   document.getElementById('skeleton-area').classList.add('hidden')
   if(!data?.length){document.getElementById('empty-state').classList.remove('hidden');return}
-  dgv.digests=data;dgv.activeDate=data[0].date;renderDatePicker();paintDigest()
+  dgv.digests=data
+  paintDigest()
 }
-function renderDatePicker(){
-  document.getElementById('date-scroll').innerHTML=dgv.digests.map(d=>`<div class="date-pill ${d.date===dgv.activeDate?'active':''}" onclick="selectDate('${d.date}')"><div class="date-pill-day">${pillTopLabel(d.date)}</div><div class="date-pill-num">${pillNum(d.date)}</div><div class="date-pill-dot"></div></div>`).join('')
-}
-window.selectDate=function(date){
-  if(!dgv)return
-  dgv.activeDate=date;dgv.activeFilter='alle';renderDatePicker();paintDigest()
-  setTimeout(()=>document.querySelector('.date-pill.active')?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'}),50)
-}
+
 function buildFilters(cards){
   const platforms=[...new Set(cards.map(c=>c.platform).filter(Boolean))]
   const el=document.getElementById('filter-row')
@@ -4362,21 +4359,73 @@ function buildFilters(cards){
 }
 window.setFilter=function(f){
   if(!dgv)return
-  dgv.activeFilter=f;document.querySelectorAll('.f-pill').forEach(p=>p.classList.toggle('active',p.dataset.filter===f));renderCards(currentCards())
+  dgv.activeFilter=f
+  document.querySelectorAll('.f-pill').forEach(p=>p.classList.toggle('active',p.dataset.filter===f))
+  renderDays()
 }
-function currentCards(){const digest=dgv.digests.find(d=>d.date===dgv.activeDate);if(!digest)return[];let cards=digest.cards||[];if(dgv.activeFilter!=='alle')cards=cards.filter(c=>c.platform===dgv.activeFilter);return cards}
+
+// Alle Karten aller geladenen Tage — Grundlage für die Filter-Pills
+function allCards(){return dgv.digests.flatMap(d=>d.cards||[])}
+// Karten eines Tages, auf den aktiven Filter reduziert
+function cardsOfDay(d){
+  const cards=d.cards||[]
+  return dgv.activeFilter==='alle'?cards:cards.filter(c=>c.platform===dgv.activeFilter)
+}
+
 function paintDigest(){
-  const digest=dgv.digests.find(d=>d.date===dgv.activeDate);if(!digest){document.getElementById('cards-list').classList.add('hidden');document.getElementById('empty-state').classList.remove('hidden');return}
-  document.getElementById('digest-sub').textContent=fmtWeekFull(digest.date)
-  buildFilters(digest.cards||[]);document.getElementById('empty-state').classList.add('hidden');document.getElementById('cards-list').classList.remove('hidden');renderCards(currentCards())
+  document.getElementById('digest-sub').textContent=weekRangeLabel()
+  buildFilters(allCards())
+  renderDays()
 }
-function renderCards(cards){
+
+function renderDays(){
   const el=document.getElementById('cards-list')
-  if(!cards.length){el.innerHTML=`<div class="empty-state" style="margin:0 0 10px"><div class="empty-icon">${icon('search',30)}</div><div class="empty-title">Keine Karten</div><div class="empty-sub">Für diesen Filter gibt es nichts.</div></div>`;return}
-  el.innerHTML=cards.map(c=>digestCardHtml(c)).join('')
+  const empty=document.getElementById('empty-state')
+  const weekStart=toIso(getWeekStartLocal(new Date()))
+  const thisWeek=dgv.digests.filter(d=>d.date>=weekStart)
+  const earlier=dgv.digests.filter(d=>d.date<weekStart)
+
+  /* Läuft über die tatsächlich vorhandenen Tage, nicht über einen
+     erzeugten Kalender: ein Tag ohne Einträge taucht damit gar nicht auf. */
+  let shown=0
+  let hintPlaced=false
+  const section=list=>list.map(d=>{
+    const cards=cardsOfDay(d)
+    if(!cards.length)return ''
+    let html=`<div class="day-head">${escHtml(dayHeading(d.date))}</div>`
+    for(const c of cards){
+      html+=digestCardHtml(c)
+      shown++
+      if(shown===3&&!hintPlaced){ hintPlaced=true; html+=NL_HINT }
+    }
+    return html
+  }).join('')
+
+  let html=section(thisWeek)
+  const earlierHtml=section(earlier)
+  if(earlierHtml)html+=`<details class="earlier-days"><summary>Frühere Tage</summary>${earlierHtml}</details>`
+
+  if(!shown){
+    el.classList.add('hidden')
+    empty.classList.remove('hidden')
+    if(dgv.activeFilter!=='alle'){
+      empty.classList.add('hidden')
+      el.classList.remove('hidden')
+      el.innerHTML=`<div class="empty-state" style="margin:0 0 10px"><div class="empty-icon">${icon('search',30)}</div><div class="empty-title">Keine Karten</div><div class="empty-sub">Für diesen Filter gibt es nichts.</div></div>`
+    }
+    return
+  }
+
+  empty.classList.add('hidden')
+  el.classList.remove('hidden')
+  el.innerHTML=html
   el.querySelectorAll('.digest-card').forEach(card=>dgv.ctx.on(card,'click',()=>card.classList.toggle('expanded')))
   el.querySelectorAll('.card-share').forEach(btn=>dgv.ctx.on(btn,'click',e=>{e.stopPropagation();shareCard(btn.dataset.headline,btn.dataset.summary)}))
 }
+
+/* Einzeiler statt Newsletter-Box: verwaltet wird das Abo im Profil. */
+const NL_HINT=`<a class="nl-hint" href="#/profile">Creator News täglich per Mail — im Profil aktivieren</a>`
+
 function platformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p}
 function platformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta',allgemein:'pb-allgemein'}[p]||'pb-allgemein'}
 function platformEmoji(p){return{tiktok:'🎵',instagram:'📸',youtube:'📺',meta:'🔵',allgemein:'🌐'}[p]||'📰'}
