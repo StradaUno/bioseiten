@@ -107,7 +107,7 @@ html, body {
 .sidebar-item.active { background: var(--text); color: white; }
 .sidebar-item svg { flex-shrink: 0; }
 .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); }
-.sidebar-pro-banner{background:var(--text);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px}
+.sidebar-pro-banner{background:var(--text);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px;color:white}
 .sidebar-pro-banner.show{display:flex}
 .sidebar-pro-title{font-size:var(--t-sm);font-weight:700;color:white;margin-bottom:1px}
 .sidebar-pro-sub{font-size:var(--t-2xs);color:rgba(255,255,255,.55)}
@@ -229,7 +229,7 @@ html, body {
 .modal-backdrop.centered .modal-card{border-radius:var(--r-lg);max-width:400px;margin:0 auto;padding:24px}
 .modal-title{font-size:var(--t-xl);font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
 .modal-sub{font-size:var(--t-sm);color:var(--muted);margin-bottom:20px;line-height:1.5}
-.modal-warn{background:var(--orange-bg);border:1px solid rgba(184,92,0,.2);border-radius:var(--r-sm);padding:12px 14px;font-size:var(--t-sm);color:var(--orange);line-height:1.5;margin-bottom:16px}
+.modal-warn{display:flex;align-items:flex-start;gap:7px;background:var(--orange-bg);border:1px solid rgba(184,92,0,.2);border-radius:var(--r-sm);padding:12px 14px;font-size:var(--t-sm);color:var(--orange);line-height:var(--lh-body);margin-bottom:var(--s-4)}
 .modal-actions{display:flex;gap:8px;margin-top:20px}
 .modal-btn{flex:1;padding:12px;border-radius:var(--r-sm);font-family:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer;border:1px solid var(--border-strong)}
 .modal-btn-cancel{background:var(--surface2);color:var(--text)}
@@ -257,13 +257,13 @@ html, body {
 .dash-platform-badge{font-size:var(--t-2xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.03em}
 .pb-tiktok{background:#f0f9ff;color:#0891b2}.pb-instagram{background:#fdf2f8;color:#9d174d}.pb-youtube{background:#fff7ed;color:#c2410c}.pb-meta{background:#eff6ff;color:#1d4ed8}.pb-allgemein{background:var(--surface2);color:var(--muted)}
 .dash-card-source{font-size:var(--t-xs);color:var(--subtle);margin-left:auto}
-.dash-card-chevron{font-size:var(--t-sm);color:var(--subtle);transition:transform .2s;margin-left:4px}
+.dash-card-chevron{color:var(--subtle);transition:transform .2s;margin-left:4px}
 .dash-card-headline{font-size:var(--t-md);font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.35;margin-bottom:5px}
 .dash-card-summary{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
 .dash-card-body-full{display:none;border-top:1px solid var(--border);padding-top:12px;margin-top:10px}
 .dash-card-full-text{font-size:var(--t-sm);color:var(--muted);line-height:1.7;white-space:pre-line}
 .dash-card-impact{background:var(--surface2);border-radius:var(--r-sm);padding:10px 12px;margin-top:10px}
-.dash-card-impact-label{font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.dash-card-impact-label{display:flex;align-items:center;gap:5px;font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
 .dash-card-impact-text{font-size:var(--t-sm);color:var(--text);line-height:1.5;font-weight:500}
 .dash-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
 .dash-card-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:var(--r-full);border:1px solid var(--border-strong);background:var(--surface)}
@@ -274,11 +274,11 @@ html, body {
 .photo-wrap{position:relative;width:72px;height:72px;flex-shrink:0;cursor:pointer}
 .profile-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong);background:var(--surface2)}
 .profile-photo-fallback{width:72px;height:72px;border-radius:50%;flex-shrink:0;background:var(--text);color:white;display:grid;place-items:center;font-size:26px;font-weight:700;border:2px solid var(--border-strong)}
-.photo-edit-btn{position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;font-size:var(--t-xs);border:2px solid var(--surface);pointer-events:none}
+.photo-edit-btn{position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;border:2px solid var(--surface);pointer-events:none}
 .profile-info{flex:1;min-width:0}
 .profile-name{font-size:var(--t-2xl);font-weight:700;letter-spacing:-.03em;color:var(--text)}
 .profile-handle{font-size:var(--t-sm);color:var(--muted);margin-top:2px}
-.profile-plan{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:var(--t-xs);font-weight:600;padding:3px 10px;border-radius:var(--r-full)}
+.profile-plan{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:var(--t-xs);font-weight:600;padding:3px 10px;border-radius:var(--r-full)}
 .plan-free{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
 .plan-pro{background:#111;color:white}
 .section-label{font-size:var(--t-2xs);font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
@@ -337,7 +337,7 @@ html, body {
 .check-card-title{font-size:var(--t-sm);font-weight:600;color:var(--text);padding:14px 16px 10px}
 .check-card-sub{font-size:var(--t-sm);color:var(--muted);padding:0 16px 12px;line-height:1.5}
 .check-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-top:1px solid var(--border)}
-.check-dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:var(--t-2xs);font-weight:700;flex-shrink:0}
+.check-dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}
 .check-dot.ok{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
 .check-dot.miss{background:var(--surface2);border:1.5px solid var(--border-strong);color:var(--subtle)}
 .check-label{font-size:var(--t-sm);flex:1}
@@ -420,7 +420,7 @@ html, body {
 .edit-action-body{flex:1;min-width:0}
 .edit-action-label{font-size:var(--t-md);font-weight:500;color:var(--text);flex:1}
 .edit-action-sub{font-size:var(--t-xs);color:var(--muted);margin-top:1px}
-.edit-action-arrow{font-size:var(--t-md);color:var(--subtle)}
+.edit-action-arrow{display:grid;place-items:center;color:var(--subtle)}
 .modal-btn-danger{background:var(--red);color:white;border-color:var(--red)}
 
 /* ═══ VIEW: MEDIA KIT (aus /mediakit/) ═══ */
@@ -450,7 +450,7 @@ html, body {
 .autofill-button:hover{opacity:.92}
 .autofill-button:active{opacity:.85}
 .autofill-button:disabled{opacity:.5;cursor:not-allowed}
-.autofill-icon{font-size:16px}
+
 .autofill-hint{text-align:center;font-size:var(--t-xs);color:var(--muted);margin-top:6px;line-height:1.4}
 .edit-action-status{font-size:var(--t-xs);font-weight:600;padding:2px 8px;border-radius:var(--r-full);flex-shrink:0}
 .edit-action-status.ok{background:var(--green-bg);color:var(--green)}
@@ -491,7 +491,7 @@ html, body {
 .kpi-delta.up{color:var(--green)}.kpi-delta.down{color:var(--red)}.kpi-delta.flat{color:var(--muted)}
 .timing-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .timing-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px;text-align:center}
-.timing-icon{font-size:20px;margin-bottom:6px}
+.timing-icon{display:flex;justify-content:center;color:var(--muted);margin-bottom:var(--s-2)}
 .timing-label{font-size:var(--t-xs);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .timing-value{font-size:var(--t-lg);font-weight:700;color:var(--text);letter-spacing:-.02em}
 .spinner-dark{width:13px;height:13px;border:2px solid rgba(0,0,0,.12);border-top-color:var(--muted);border-radius:50%;animation:spin .6s linear infinite;display:inline-block;vertical-align:middle}
@@ -532,7 +532,7 @@ html, body {
 .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
 .insight-row{padding:14px 16px;border-bottom:1px solid var(--border)}
 .insight-row:last-child{border-bottom:none}
-.insight-tag{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.insight-tag{display:inline-flex;align-items:center;gap:5px;font-size:var(--t-xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
 .tag-good{background:var(--green-bg);color:var(--green)}
 .tag-improve{background:var(--orange-bg);color:var(--orange)}
 .tag-tip{background:var(--surface2);color:var(--muted)}
@@ -550,10 +550,10 @@ html, body {
 .top-post-rank.first{background:var(--text);color:white}
 .top-post-body{flex:1;min-width:0}
 .top-post-why{font-size:var(--t-sm);color:var(--text);line-height:1.4;margin-bottom:3px}
-.top-post-stat{font-size:var(--t-sm);color:var(--muted)}
-.top-post-arrow{color:var(--subtle);font-size:var(--t-md)}
+.top-post-stat{display:flex;align-items:center;gap:5px;font-size:var(--t-sm);color:var(--muted)}
+.top-post-arrow{color:var(--subtle);flex-shrink:0}
 .empty-state{text-align:center;padding:48px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
-.empty-icon{font-size:32px;margin-bottom:10px}
+.empty-icon{display:flex;justify-content:center;color:var(--subtle);margin-bottom:var(--s-3)}
 .empty-title{font-size:var(--t-lg);font-weight:600;margin-bottom:4px}
 .empty-sub{font-size:var(--t-md);color:var(--muted);line-height:1.5;margin-bottom:16px}
 .btn-empty{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--text);color:white;border:none;border-radius:var(--r-sm);font-family:inherit;font-size:var(--t-sm);font-weight:600;cursor:pointer}
@@ -599,13 +599,13 @@ html, body {
 .card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
 .platform-badge{font-size:var(--t-2xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.04em}
 .card-source{font-size:var(--t-xs);color:var(--subtle);margin-left:auto}
-.card-chevron{font-size:var(--t-sm);color:var(--subtle);transition:transform .2s;margin-left:4px}
+.card-chevron{color:var(--subtle);transition:transform .2s;margin-left:4px}
 .card-headline{font-size:var(--t-lg);font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.35;margin-bottom:6px}
 .card-summary{font-size:var(--t-sm);color:var(--muted);line-height:1.55}
 .card-body-full{display:none;border-top:1px solid var(--border);padding-top:12px;margin-top:12px}
 .card-full-text{font-size:var(--t-sm);color:var(--muted);line-height:1.7;white-space:pre-line}
 .card-impact{background:var(--surface2);border-radius:var(--r-sm);padding:10px 12px;margin-top:12px}
-.card-impact-label{font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.card-impact-label{display:flex;align-items:center;gap:5px;font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
 .card-impact-text{font-size:var(--t-sm);color:var(--text);line-height:1.5;font-weight:500}
 .card-actions{display:flex;align-items:center;gap:8px;margin-top:12px}
 .card-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--text);text-decoration:none;padding:7px 14px;border-radius:var(--r-full);border:1px solid var(--border-strong);background:var(--surface)}
@@ -613,7 +613,7 @@ html, body {
 .card-share:hover{color:var(--text);border-color:var(--border-strong)}
 .nl-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;margin:var(--s-3) var(--page-x) 0;display:flex;align-items:flex-start;gap:12px}
 .nl-checkbox-input{width:20px;height:20px;flex-shrink:0;accent-color:var(--text);cursor:pointer;margin-top:1px}
-.nl-title{font-size:var(--t-sm);font-weight:700;color:var(--text);margin-bottom:2px}
+.nl-title{display:flex;align-items:center;gap:6px;font-size:var(--t-sm);font-weight:700;color:var(--text);margin-bottom:2px}
 .nl-sub{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
 
 /* ═══ VIEW: ANFRAGEN (aus /requests/) ═══ */
@@ -653,14 +653,14 @@ html, body {
 .detail-section{padding:var(--s-4) var(--page-x) 0}
 .detail-label{font-size:var(--t-2xs);font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
 .detail-pills{display:flex;gap:8px;flex-wrap:wrap}
-.detail-pill{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);padding:6px 12px;font-size:var(--t-sm);font-weight:500;color:var(--text);text-decoration:none}
+.detail-pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-full);padding:6px 12px;font-size:var(--t-sm);font-weight:500;color:var(--text);text-decoration:none}
 .detail-message{background:var(--surface2);border-radius:var(--r-sm);padding:12px 14px;font-size:var(--t-sm);color:var(--text);line-height:1.6}
 .detail-divider{height:1px;background:var(--border);margin:var(--s-5) var(--page-x) 0}
 .timeline{padding:0 var(--page-x)}
 .timeline-item{display:flex;gap:12px;padding:10px 0;position:relative}
 .timeline-item::before{content:'';position:absolute;left:16px;top:32px;bottom:-6px;width:1px;background:var(--border)}
 .timeline-item:last-child::before{display:none}
-.timeline-icon{width:32px;height:32px;border-radius:var(--r-full);flex-shrink:0;background:var(--surface2);border:1px solid var(--border);display:grid;place-items:center;font-size:var(--t-md);z-index:1}
+.timeline-icon{width:32px;height:32px;border-radius:var(--r-full);flex-shrink:0;background:var(--surface2);border:1px solid var(--border);display:grid;place-items:center;color:var(--muted);z-index:1}
 .timeline-body{flex:1;padding-top:4px}
 .timeline-text{font-size:var(--t-sm);color:var(--text);line-height:1.5}
 .timeline-time{font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
@@ -678,7 +678,7 @@ html, body {
 .empty-cta{display:flex;flex-direction:column;gap:10px;margin-top:16px}
 .empty-cta-link{display:flex;align-items:center;gap:10px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);text-decoration:none;transition:border-color .15s}
 .empty-cta-link:hover{border-color:var(--border-strong)}
-.empty-cta-icon{font-size:var(--t-2xl);flex-shrink:0}
+.empty-cta-icon{flex-shrink:0;display:grid;place-items:center;color:var(--muted)}
 .empty-cta-text{font-size:var(--t-sm);font-weight:600;color:var(--text)}
 .empty-cta-sub{font-size:var(--t-xs);color:var(--muted);margin-top:1px}
 
@@ -741,7 +741,7 @@ html, body {
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
-      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+      <button class="sidebar-close" onclick="closeSidebar()" aria-label="Menü schließen"><svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
     </div>
     <nav class="sidebar-nav" id="sidebar-nav">
       <div class="sidebar-section">Übersicht</div>
@@ -778,7 +778,7 @@ html, body {
     </nav>
     <div class="sidebar-footer">
       <div class="sidebar-pro-banner" id="sidebar-pro-banner">
-        <span style="font-size:18px">⭐</span>
+        <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
         <div><div class="sidebar-pro-title">viuno Pro</div><div class="sidebar-pro-sub">Managed Creator</div></div>
       </div>
       <div class="sidebar-user" id="sidebar-user-email"></div>
@@ -865,6 +865,28 @@ const ICONS = {
   mail:        '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
   barChart:    '<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>',
   clapperboard:'<path d="M4 11v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8Z"/><path d="m4 11-.88-2.87a2 2 0 0 1 1.33-2.5l11.48-3.5a2 2 0 0 1 2.5 1.32l.87 2.87L4 11.01Z"/><path d="m6.6 4.99 3.38 4.2"/><path d="m11.86 3.38 3.38 4.2"/>',
+  atSign:      '<circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-3.92 7.94"/>',
+  search:      '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  inbox:       '<polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+  pencil:      '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/>',
+  trash:       '<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  share:       '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>',
+  chevronDown: '<path d="m6 9 6 6 6-6"/>',
+  chevronRight:'<path d="m9 18 6-6-6-6"/>',
+  x:           '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  check:       '<path d="M20 6 9 17l-5-5"/>',
+  arrowLeft:   '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+  arrowUpRight:'<path d="M7 7h10v10"/><path d="M7 17 17 7"/>',
+  plus:        '<path d="M5 12h14"/><path d="M12 5v14"/>',
+  zap:         '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  star:        '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
+  clock:       '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  calendar:    '<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/>',
+  trendingUp:  '<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>',
+  heart:       '<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  euro:        '<path d="M4 10h12"/><path d="M4 14h9"/><path d="M19 6a7.7 7.7 0 0 0-5.2-2A7.9 7.9 0 0 0 6 12c0 4.4 3.5 8 7.8 8 2 0 3.8-.8 5.2-2"/>',
+  pin:         '<path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/>',
+  alert:       '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
   briefcase:   '<rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>'
 }
 
@@ -930,7 +952,7 @@ window.showModal = function(title, body, confirmLabel, onConfirm, warnText) {
   el.innerHTML = `<div class="modal-card">
     <div class="modal-title">${escHtml(title)}</div>
     ${body?`<div class="modal-sub">${body}</div>`:''}
-    ${warnText?`<div class="modal-warn">⚠️ ${escHtml(warnText)}</div>`:''}
+    ${warnText?`<div class="modal-warn">${icon('alert',14)} ${escHtml(warnText)}</div>`:''}
     <div class="modal-actions">
       <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Abbrechen</button>
       <button class="modal-btn modal-btn-confirm" id="modal-confirm-btn">${escHtml(confirmLabel)}</button>
@@ -1753,7 +1775,7 @@ async function renderDashboard(area, ctx) {
     ${d&&cards.length?`<div class="section">
       <div class="section-header">
         <div class="section-title">Creator News</div>
-        <a class="section-link" href="#/digest">Alle →</a>
+        <a class="section-link" href="#/digest">Alle ${icon('chevronRight',14)}</a>
       </div>
       <div id="dash-cards-list">${cards.map(c=>dashCardHtml(c)).join('')}</div>
     </div>`:''}
@@ -1779,26 +1801,25 @@ async function renderDashboard(area, ctx) {
 // ── Digest card helpers ──
 function dashPlatformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p||'News'}
 function dashPlatformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta'}[p]||'pb-allgemein'}
-function dashPlatformEmoji(p){return{tiktok:'🎵',instagram:'📸',youtube:'📺',meta:'🔵'}[p]||'📰'}
 
 function dashCardHtml(c){
   const hasFull=c.full_content?.trim()
   const hasExtra=hasFull||c.impact||c.source_url
-  const shareBtn=`<button class="dash-card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">↗ Teilen</button>`
+  const shareBtn=`<button class="dash-card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">${icon('share',14)} Teilen</button>`
   return`<div class="dash-digest-card">
     <div class="dash-card-inner">
       <div class="dash-card-meta">
         <span class="dash-platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
         <span class="dash-card-source">${escHtml(c.source||'')}</span>
-        ${hasExtra?'<span class="dash-card-chevron">▼</span>':''}
+        ${hasExtra?icon('chevronDown',14,'dash-card-chevron'):''}
       </div>
       <div class="dash-card-headline">${escHtml(c.headline||'')}</div>
       <div class="dash-card-summary">${escHtml(c.summary||'')}</div>
       ${hasExtra?`<div class="dash-card-body-full">
         ${hasFull?`<div class="dash-card-full-text">${escHtml(c.full_content)}</div>`:''}
-        ${c.impact?`<div class="dash-card-impact"><div class="dash-card-impact-label">⚡ Was das für dich bedeutet</div><div class="dash-card-impact-text">${escHtml(c.impact)}</div></div>`:''}
+        ${c.impact?`<div class="dash-card-impact"><div class="dash-card-impact-label">${icon('zap',12)} Was das für dich bedeutet</div><div class="dash-card-impact-text">${escHtml(c.impact)}</div></div>`:''}
         <div class="dash-card-actions">
-          ${c.source_url?`<a class="dash-card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ↗</a>`:''}
+          ${c.source_url?`<a class="dash-card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ${icon('arrowUpRight',13)}</a>`:''}
           ${shareBtn}
         </div>
       </div>`:''}
@@ -1914,7 +1935,7 @@ async function renderBiolink(area, ctx){
     <!-- EDIT PAGE (Vollseite, gleiche Mechanik wie im Media Kit) -->
     <div class="edit-page" id="edit-page">
       <div class="edit-page-topbar">
-        <button class="edit-page-back" onclick="closeEditPage()" aria-label="Zurück">←</button>
+        <button class="edit-page-back" onclick="closeEditPage()" aria-label="Zurück">${icon('arrowLeft',19)}</button>
         <div class="edit-page-title">Bearbeiten</div>
       </div>
       <div class="edit-page-content">
@@ -1932,7 +1953,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Profil</div>
             <div class="sheet-sub">Dein Name und Bio erscheinen auf deiner BioLink-Seite.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Profilbild</label>
@@ -1965,7 +1986,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Social Kanäle</div>
             <div class="sheet-sub">Verbinde deine Kanäle. Nur ausgefüllte werden angezeigt.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Instagram</label>
@@ -1999,11 +2020,11 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Custom Links</div>
             <div class="sheet-sub">Bis zu 10 Links. Werbungs-Flag zeigt einen kleinen Hinweis auf der Seite.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <div class="links-list" id="links-list"></div>
-          <button class="btn-add-link" id="btn-add-link" onclick="openAddLink()">+ Link hinzufügen</button>
+          <button class="btn-add-link" id="btn-add-link" onclick="openAddLink()">${icon('plus',15)} Link hinzufügen</button>
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="saveLinks()">Speichern</button>
@@ -2046,7 +2067,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Design & Sprache</div>
             <div class="sheet-sub">Design der BioLink-Seite. Sprache wird als Standard gesetzt (User kann wechseln).</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div style="padding:0 20px 8px">
           <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Design</div>
@@ -2090,7 +2111,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Impressum</div>
             <div class="sheet-sub">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Name, Adresse, Kontakt.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
@@ -2211,7 +2232,7 @@ function paintBiolink(){
     ?`<div class="status-banner active"><div class="status-dot active"></div>
         <div><div class="status-text">Seite ist live<span>Deine Seite ist öffentlich erreichbar</span></div></div></div>
        ${bioUrl?`<div class="link-bar">
-         <a class="link-url" href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ↗</a>
+         <a class="link-url" href="${bioFullUrl}" target="_blank" rel="noopener">${bioUrl} ${icon('arrowUpRight',13)}</a>
          <button class="link-action-btn" onclick="copyLink('${bioFullUrl}')">Kopieren</button>
        </div>`:''}
        <div class="section">
@@ -2234,14 +2255,14 @@ function paintBiolink(){
       <div class="check-card-title">Checkliste</div>
       <div class="check-card-sub">Das Impressum ist gesetzlich vorgeschrieben.</div>
       ${checks.map(c=>`<div class="check-item">
-        <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'·'}</div>
+        <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?icon('check',12):''}</div>
         <span class="check-label ${c.ok?'ok':'miss'}">${c.label}</span>
       </div>`).join('')}
     </div>
   </div>`:''
 
   const termsHtml=!isActive?`<div class="action-stack">
-    <button class="action-btn action-btn-secondary" onclick="openBioEditMenu()">✎ Bearbeiten</button>
+    <button class="action-btn action-btn-secondary" onclick="openBioEditMenu()">${icon('pencil',16)} Bearbeiten</button>
   </div>
   <div class="section">
     <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
@@ -2255,12 +2276,12 @@ function paintBiolink(){
     </button>
   </div>`
   :`<div class="action-stack">
-    <button class="action-btn action-btn-primary" onclick="openBioEditMenu()">✎ Bearbeiten</button>
+    <button class="action-btn action-btn-primary" onclick="openBioEditMenu()">${icon('pencil',16)} Bearbeiten</button>
   </div>`
 
   const deleteHtml=isActive
     ?`<div class="action-stack" style="padding-top:20px;padding-bottom:calc(8px + var(--safe-bottom))">
-        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">🗑 BioLink-Seite löschen</button>
+        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">${icon('trash',16)} BioLink-Seite löschen</button>
       </div>`
     :''
 
@@ -2333,7 +2354,7 @@ function renderBioEditMenu(){
         <div class="edit-action-sub">${escHtml(it.sub)}</div>
       </div>
       ${it.statusLabel?`<span class="edit-action-status ${it.status}">${escHtml(it.statusLabel)}</span>`:''}
-      <span class="edit-action-arrow">›</span>
+      <span class="edit-action-arrow">${icon('chevronRight',16)}</span>
     </button>`).join('')
 }
 
@@ -2381,7 +2402,7 @@ window.generatePage=async function(){
     hideLoadingOverlay(loadingTimer)
     showToast('Fehler: '+err.message,5000)
     const b=document.getElementById('btn-generate')
-    if(b){b.disabled=false;b.textContent=blv?.profile?.bio_active?'↻ Seite neu generieren':'✨ BioLink-Seite erstellen'}
+    if(b){b.disabled=false;b.textContent=blv?.profile?.bio_active?'Seite neu generieren':'BioLink-Seite erstellen'}
   }
 }
 
@@ -2528,7 +2549,7 @@ function renderLinksSheet(){
           <div class="link-row-url">${escHtml(l.url)}</div>
         </div>
         ${l.is_paid?'<span class="link-paid-badge">Werbung</span>':''}
-        <button class="link-del-btn" onclick="deleteLink('${escHtml(l.id)}')">✕</button>
+        <button class="link-del-btn" onclick="deleteLink('${escHtml(l.id)}')" aria-label="Link löschen">${icon('x',15)}</button>
       </div>`).join('')
   }
   const addBtn=document.getElementById('btn-add-link')
@@ -2610,7 +2631,7 @@ async function renderMediakit(area, ctx){
     <!-- EDIT PAGE (Vollseite, gleiche Mechanik wie im BioLink) -->
     <div class="edit-page" id="edit-page">
       <div class="edit-page-topbar">
-        <button class="edit-page-back" onclick="closeEditPage()" aria-label="Zurück">←</button>
+        <button class="edit-page-back" onclick="closeEditPage()" aria-label="Zurück">${icon('arrowLeft',19)}</button>
         <div class="edit-page-title">Bearbeiten</div>
       </div>
       <div class="edit-page-content">
@@ -2628,7 +2649,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Profil</div>
             <div class="sheet-sub" style="padding-bottom:16px">Diese Daten erscheinen oben auf deinem Media Kit.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Profilbild</label>
@@ -2670,7 +2691,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Kontakt</div>
             <div class="sheet-sub" style="padding-bottom:16px">Diese E-Mail-Adresse erscheint auf deinem Media Kit. Marken senden Anfragen direkt dorthin.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Anfrage-E-Mail</label>
@@ -2693,11 +2714,11 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Kennzahlen</div>
             <div class="sheet-sub" style="padding-bottom:16px">Engagement Rate, durchschnittliche Likes/Views und Follower-Zahlen.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="autofill-wrap hidden" id="autofill-wrap">
           <button class="autofill-button" onclick="doAutofill()">
-            <span class="autofill-icon">⚡</span>
+            ${icon('zap',16)}
             <span>Aus Analyse übernehmen</span>
           </button>
           <div class="autofill-hint">Engagement, Likes/Views & Follower aus deiner letzten Analyse vorausfüllen</div>
@@ -2758,7 +2779,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Weitere Plattformen</div>
             <div class="sheet-sub" style="padding-bottom:16px">YouTube und Threads. Trage Handle ein — Follower-Zahl erscheint dann.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">YouTube Handle</label>
@@ -2793,7 +2814,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Zielgruppe</div>
             <div class="sheet-sub" style="padding-bottom:16px">Geschlechterverteilung in % und deine zwei stärksten Länder.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Weiblich</label>
@@ -2834,7 +2855,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Content Angebote</div>
             <div class="sheet-sub" style="padding-bottom:16px">Was möchtest du Marken anbieten? Tippe zum Auswählen.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="offer-list">
           <button class="offer-row" data-offer="ugc_video" onclick="toggleOffer('ugc_video')">
@@ -2869,7 +2890,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Marken Kooperationen</div>
             <div class="sheet-sub" style="padding-bottom:16px">Bis zu 10 Marken mit denen du gearbeitet hast. URL ist optional.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <div class="brands-list" id="brands-list"></div>
@@ -2889,7 +2910,7 @@ async function renderMediakit(area, ctx){
           <div class="sheet-header-text">
             <div class="sheet-title">Brand hinzufügen</div>
           </div>
-          <button class="sheet-close" onclick="closeSheet('add-brand-sheet')" aria-label="Zurück">✕</button>
+          <button class="sheet-close" onclick="closeSheet('add-brand-sheet')" aria-label="Zurück">${icon('x',17)}</button>
         </div>
         <div style="height:8px"></div>
         <div class="sheet-field">
@@ -2917,7 +2938,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Impressum</div>
             <div class="sheet-sub" style="padding-bottom:16px">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Wird über das Impressum-Sheet auf deiner Live-Seite angezeigt.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
@@ -2938,7 +2959,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Standard-Sprache</div>
             <div class="sheet-sub" style="padding-bottom:16px">In welcher Sprache wird dein Media Kit standardmäßig angezeigt? Besucher können später auf der Live-Seite umschalten.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">✕</button>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="lang-options">
           <button class="lang-opt" data-lang="de" onclick="mkSelectLang('de')">DE</button>
@@ -3091,7 +3112,7 @@ function paintMediakit(){
     ?`<div class="status-banner active"><div class="status-dot active"></div>
         <div class="status-text">Media Kit ist live<span>Deine Seite ist öffentlich erreichbar</span></div></div>
        <div class="link-bar">
-         <a class="link-url" href="${kitFullUrl}" target="_blank" rel="noopener">${kitUrl} ↗</a>
+         <a class="link-url" href="${kitFullUrl}" target="_blank" rel="noopener">${kitUrl} ${icon('arrowUpRight',13)}</a>
          <button class="link-action-btn" onclick="copyLink('${kitFullUrl}')">Kopieren</button>
        </div>
        <div class="section">
@@ -3108,7 +3129,7 @@ function paintMediakit(){
 
   const drift=getAnalysisDrift()
   const driftHtml=drift?`<div class="link-bar" style="border-color:rgba(184,92,0,.3);background:#fdf3e7;cursor:pointer" onclick="openStatsSheet()">
-     <span style="flex:1;font-size:13px;font-weight:600;color:#b85c00">⚡ Neue Analyse verfügbar (${escHtml(drift)}) — Zahlen aktualisieren?</span>
+     <span style="flex:1;font-size:13px;font-weight:600;color:#b85c00">${icon('zap',14)} Neue Analyse verfügbar (${escHtml(drift)}) — Zahlen aktualisieren?</span>
    </div>`:''
 
   const previewHtml=!isActive?`<div class="preview-wrap">
@@ -3122,14 +3143,14 @@ function paintMediakit(){
       <div class="check-card-title">Voraussetzungen</div>
       <div class="check-card-sub">Mindest-Angaben damit dein Media Kit veröffentlicht werden kann.</div>
       ${checks.map(c=>`<div class="check-item">
-        <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?'✓':'·'}</div>
+        <div class="check-dot ${c.ok?'ok':'miss'}">${c.ok?icon('check',12):''}</div>
         <span class="check-label ${c.ok?'ok':'miss'}">${c.label}</span>
       </div>`).join('')}
     </div>
   </div>`:''
 
   const editAndCreateHtml=!isActive?`<div class="action-stack">
-    <button class="action-btn action-btn-secondary" onclick="openEditMenu()">✎ Bearbeiten</button>
+    <button class="action-btn action-btn-secondary" onclick="openEditMenu()">${icon('pencil',16)} Bearbeiten</button>
   </div>
   <div class="section">
     <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
@@ -3141,12 +3162,12 @@ function paintMediakit(){
     <button class="action-btn action-btn-primary" id="btn-create" disabled onclick="generateMK()">Media Kit erstellen</button>
   </div>`
   :`<div class="action-stack">
-    <button class="action-btn action-btn-primary" onclick="openEditMenu()">✎ Bearbeiten</button>
+    <button class="action-btn action-btn-primary" onclick="openEditMenu()">${icon('pencil',16)} Bearbeiten</button>
   </div>`
 
   const deleteHtml=isActive
     ?`<div class="action-stack" style="padding-top:24px;padding-bottom:calc(8px + var(--safe-bottom))">
-        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">🗑 Media Kit löschen</button>
+        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">${icon('trash',16)} Media Kit löschen</button>
       </div>`
     :''
 
@@ -3226,7 +3247,7 @@ function renderEditMenu(){
         <div class="edit-action-sub">${escHtml(it.sub)}</div>
       </div>
       ${it.statusLabel?`<span class="edit-action-status ${it.status}">${escHtml(it.statusLabel)}</span>`:''}
-      <span class="edit-action-arrow">›</span>
+      <span class="edit-action-arrow">${icon('chevronRight',16)}</span>
     </button>`).join('')
 }
 
@@ -3552,7 +3573,7 @@ function renderBrandsList(){
           <div class="brand-row-name">${escHtml(b.name)}</div>
           ${b.url?`<div class="brand-row-url">${escHtml(b.url)}</div>`:''}
         </div>
-        <button class="brand-del" onclick="deleteBrand('${escHtml(b.id)}')">✕</button>
+        <button class="brand-del" onclick="deleteBrand('${escHtml(b.id)}')" aria-label="Marke löschen">${icon('x',15)}</button>
       </div>`).join('')
   }
   const addBtn=document.getElementById('btn-add-brand')
@@ -3915,17 +3936,17 @@ function renderFlow(run){
 
   document.getElementById('flow-steps').innerHTML=steps.map(st=>`
     <div class="flow-step">
-      <div class="step-dot ${st.state}">${st.state==='done'?'✓':st.state==='active'?'<span class="spinner" style="width:8px;height:8px;border-width:1.5px"></span>':''}</div>
+      <div class="step-dot ${st.state}">${st.state==='done'?icon('check',11):st.state==='active'?'<span class="spinner" style="width:8px;height:8px;border-width:1.5px"></span>':''}</div>
       <div class="step-label ${st.state}">${st.label}</div>
     </div>`).join('')
 
   const isDone=s==='done', isFailed=s==='failed'
-  const icon=document.getElementById('flow-icon')
+  const iconEl=document.getElementById('flow-icon')
   const title=document.getElementById('flow-title')
   const sub=document.getElementById('flow-sub')
-  if(isDone){icon.innerHTML='✓';icon.className='flow-icon done';title.textContent='Analyse abgeschlossen';sub.textContent='Deine Ergebnisse wurden aktualisiert'}
-  else if(isFailed){icon.innerHTML='✕';icon.className='flow-icon error';title.textContent='Analyse fehlgeschlagen';sub.textContent=run.error||'Bitte versuche es erneut'}
-  else{icon.innerHTML='<span class="spinner-dark"></span>';icon.className='flow-icon running';title.textContent='Analyse läuft';sub.textContent=s==='analyzing'?'Auswertung läuft…':'Daten werden abgerufen…'}
+  if(isDone){iconEl.innerHTML=icon('check',16);iconEl.className='flow-icon done';title.textContent='Analyse abgeschlossen';sub.textContent='Deine Ergebnisse wurden aktualisiert'}
+  else if(isFailed){iconEl.innerHTML=icon('x',16);iconEl.className='flow-icon error';title.textContent='Analyse fehlgeschlagen';sub.textContent=run.error||'Bitte versuche es erneut'}
+  else{iconEl.innerHTML='<span class="spinner-dark"></span>';iconEl.className='flow-icon running';title.textContent='Analyse läuft';sub.textContent=s==='analyzing'?'Auswertung läuft…':'Daten werden abgerufen…'}
 }
 
 // ── Polling ──
@@ -4034,7 +4055,7 @@ function renderAnalyticsContent(){
 
   if(!hasHandle){
     el.innerHTML=`<div class="section" style="margin-top:12px"><div class="empty-state">
-      <div class="empty-icon">${pl==='instagram'?'📸':'🎵'}</div>
+      <div class="empty-icon">${icon('atSign',30)}</div>
       <div class="empty-title">Kein ${label}-Handle</div>
       <div class="empty-sub">Verknüpfe deinen Kanal um die Analyse nutzen zu können.</div>
       <button class="btn-empty" onclick="openHandleModal()">Kanal verknüpfen</button>
@@ -4043,7 +4064,7 @@ function renderAnalyticsContent(){
   }
   if(!ki){
     el.innerHTML=`<div class="section" style="margin-top:12px"><div class="empty-state">
-      <div class="empty-icon">🔍</div>
+      <div class="empty-icon">${icon('barChart',30)}</div>
       <div class="empty-title">Noch keine Analyse</div>
       <div class="empty-sub">Starte deine erste Analyse um deine ${label}-Performance zu sehen.</div>
     </div></div>`
@@ -4090,16 +4111,16 @@ function renderAnalyticsContent(){
       if(st.best_posting_day||st.best_posting_hour!=null){
         const timeStr=st.best_posting_hour!=null?`${st.best_posting_hour}:00 Uhr`:'–'
         const dayStr=st.best_posting_day||''
-        h+=`<div class="timing-card"><div class="timing-icon">⏰</div><div class="timing-label">Beste Zeit</div><div class="timing-value">${dayStr}${dayStr&&timeStr?' · ':''}${timeStr}</div></div>`
+        h+=`<div class="timing-card"><div class="timing-icon">${icon('clock',19)}</div><div class="timing-label">Beste Zeit</div><div class="timing-value">${dayStr}${dayStr&&timeStr?' · ':''}${timeStr}</div></div>`
       }
       if(st.top_format){
-        h+=`<div class="timing-card"><div class="timing-icon">🎬</div><div class="timing-label">Top Format</div><div class="timing-value">${escHtml(st.top_format)}</div></div>`
+        h+=`<div class="timing-card"><div class="timing-icon">${icon('clapperboard',19)}</div><div class="timing-label">Top Format</div><div class="timing-value">${escHtml(st.top_format)}</div></div>`
       }
       if(st.posts_per_week!=null){
-        h+=`<div class="timing-card"><div class="timing-icon">📅</div><div class="timing-label">Posts / Woche</div><div class="timing-value">${(+st.posts_per_week).toFixed(1)}</div></div>`
+        h+=`<div class="timing-card"><div class="timing-icon">${icon('calendar',19)}</div><div class="timing-label">Posts / Woche</div><div class="timing-value">${(+st.posts_per_week).toFixed(1)}</div></div>`
       }
       if(st.avg_shares!=null&&+st.avg_shares>0){
-        h+=`<div class="timing-card"><div class="timing-icon">↗</div><div class="timing-label">⌀ Shares</div><div class="timing-value">${fmt(st.avg_shares)}</div></div>`
+        h+=`<div class="timing-card"><div class="timing-icon">${icon('share',19)}</div><div class="timing-label">⌀ Shares</div><div class="timing-value">${fmt(st.avg_shares)}</div></div>`
       }
       h+=`</div></div>`
     }
@@ -4118,9 +4139,9 @@ function renderAnalyticsContent(){
         <div class="top-post-rank ${i===0?'first':''}">${i+1}</div>
         <div class="top-post-body">
           <div class="top-post-why">${escHtml(post.warum_top||'')}</div>
-          <div class="top-post-stat">❤️ ${fmt(post.likes)} Likes</div>
+          <div class="top-post-stat">${icon('heart',13)} ${fmt(post.likes)} Likes</div>
         </div>
-        ${post.url?'<div class="top-post-arrow">↗</div>':''}
+        ${post.url?icon('arrowUpRight',15,'top-post-arrow'):''}
       </a>`
     })
     h+=`</div></div>`
@@ -4128,15 +4149,15 @@ function renderAnalyticsContent(){
 
   if(ki.was_gut_lief||ki.verbesserungspotenzial){
     h+=`<div class="section"><div class="section-label">Auswertung</div><div class="insight-card">`
-    if(ki.was_gut_lief)h+=`<div class="insight-row"><div class="insight-tag tag-good">✓ Was gut läuft</div><div class="insight-text">${escHtml(ki.was_gut_lief)}</div></div>`
-    if(ki.verbesserungspotenzial)h+=`<div class="insight-row"><div class="insight-tag tag-improve">↑ Wo du wachsen kannst</div><div class="insight-text">${escHtml(ki.verbesserungspotenzial)}</div></div>`
+    if(ki.was_gut_lief)h+=`<div class="insight-row"><div class="insight-tag tag-good">${icon('check',12)} Was gut läuft</div><div class="insight-text">${escHtml(ki.was_gut_lief)}</div></div>`
+    if(ki.verbesserungspotenzial)h+=`<div class="insight-row"><div class="insight-tag tag-improve">${icon('trendingUp',12)} Wo du wachsen kannst</div><div class="insight-text">${escHtml(ki.verbesserungspotenzial)}</div></div>`
     h+=`</div></div>`
   }
 
   if(ki.top_posts_gemeinsamkeiten||ki.caption_struktur){
     h+=`<div class="section"><div class="section-label">Content-Muster</div><div class="insight-card">`
-    if(ki.top_posts_gemeinsamkeiten)h+=`<div class="insight-row"><div class="insight-tag tag-tip">🔍 Was deine Top-Posts gemeinsam haben</div><div class="insight-text">${escHtml(ki.top_posts_gemeinsamkeiten)}</div></div>`
-    if(ki.caption_struktur)h+=`<div class="insight-row"><div class="insight-tag tag-tip">✍️ Caption-Struktur</div><div class="insight-text">${escHtml(ki.caption_struktur)}</div></div>`
+    if(ki.top_posts_gemeinsamkeiten)h+=`<div class="insight-row"><div class="insight-tag tag-tip">${icon('search',12)} Was deine Top-Posts gemeinsam haben</div><div class="insight-text">${escHtml(ki.top_posts_gemeinsamkeiten)}</div></div>`
+    if(ki.caption_struktur)h+=`<div class="insight-row"><div class="insight-tag tag-tip">${icon('pencil',12)} Caption-Struktur</div><div class="insight-text">${escHtml(ki.caption_struktur)}</div></div>`
     h+=`</div></div>`
   }
 
@@ -4153,7 +4174,7 @@ function renderAnalyticsContent(){
 
   if(ki.vergleich_vorherige?.trim()){
     h+=`<div class="section"><div class="section-label">Entwicklung</div><div class="insight-card">
-      <div class="insight-row"><div class="insight-tag tag-dev">📈 Vergleich zur letzten Analyse</div>
+      <div class="insight-row"><div class="insight-tag tag-dev">${icon('trendingUp',12)} Vergleich zur letzten Analyse</div>
       <div class="insight-text">${escHtml(ki.vergleich_vorherige)}</div></div></div></div>`
   }
 
@@ -4218,14 +4239,14 @@ function renderNewsletterBox(){
     wrap.innerHTML=`<div class="nl-box" style="align-items:center">
       <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" checked onchange="toggleDigestEmail()"/>
       <label for="nl-checkbox" style="cursor:pointer;flex:1">
-        <div class="nl-title" style="margin-bottom:0">📬 Creator News wöchentlich abonniert</div>
+        <div class="nl-title" style="margin-bottom:0">${icon('mail',14)} Creator News wöchentlich abonniert</div>
       </label>
     </div>`
   } else {
     wrap.innerHTML=`<div class="nl-box">
       <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" onchange="toggleDigestEmail()"/>
       <label for="nl-checkbox" style="cursor:pointer;flex:1">
-        <div class="nl-title">📬 Creator News wöchentlich abonnieren</div>
+        <div class="nl-title">${icon('mail',14)} Creator News wöchentlich abonnieren</div>
         <div class="nl-sub">Schick mir die Creator News jede Woche an ${escHtml(nlv.email||'meine Account-E-Mail')}.</div>
       </label>
     </div>`
@@ -4305,7 +4326,7 @@ async function renderDigest(area, ctx){
     <div class="filter-row" id="filter-row"><button class="f-pill active" data-filter="alle">Alle</button></div>
     <div id="skeleton-area" style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div class="skeleton" style="height:180px;border-radius:16px"></div><div class="skeleton" style="height:140px;border-radius:16px"></div></div>
     <div class="cards-list hidden" id="cards-list"></div>
-    <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">📭</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Wird jeden Montag aktualisiert.</div></div>
+    <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">${icon('inbox',30)}</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Wird jeden Montag aktualisiert.</div></div>
   </div>`
 
   dgv = { uid, ctx, digests:[], activeDate:null, activeFilter:'alle' }
@@ -4351,7 +4372,7 @@ function paintDigest(){
 }
 function renderCards(cards){
   const el=document.getElementById('cards-list')
-  if(!cards.length){el.innerHTML=`<div class="empty-state" style="margin:0 0 10px"><div class="empty-icon">🔍</div><div class="empty-title">Keine Karten</div><div class="empty-sub">Für diesen Filter gibt es nichts.</div></div>`;return}
+  if(!cards.length){el.innerHTML=`<div class="empty-state" style="margin:0 0 10px"><div class="empty-icon">${icon('search',30)}</div><div class="empty-title">Keine Karten</div><div class="empty-sub">Für diesen Filter gibt es nichts.</div></div>`;return}
   el.innerHTML=cards.map(c=>digestCardHtml(c)).join('')
   el.querySelectorAll('.digest-card').forEach(card=>dgv.ctx.on(card,'click',()=>card.classList.toggle('expanded')))
   el.querySelectorAll('.card-share').forEach(btn=>dgv.ctx.on(btn,'click',e=>{e.stopPropagation();shareCard(btn.dataset.headline,btn.dataset.summary)}))
@@ -4366,12 +4387,12 @@ async function shareCard(headline,summary){
 }
 function digestCardHtml(c){
   const hasImg=c.image_url?.trim(),hasFull=c.full_content?.trim()
-  const shareBtn=`<button class="card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">↗ Teilen</button>`
+  const shareBtn=`<button class="card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">${icon('share',14)} Teilen</button>`
   return`<div class="digest-card"><${hasImg?`img class="card-image" src="${escHtml(c.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot;>${platformEmoji(c.platform)}</div>'"`:`div class="card-image-fallback"`}>${hasImg?'</img>':platformEmoji(c.platform)+'</div>'}
-    <div class="card-inner"><div class="card-meta"><span class="platform-badge ${platformClass(c.platform)}">${platformLabel(c.platform)}</span><span class="card-source">${escHtml(c.source||'')}</span>${(hasFull||c.impact)?'<span class="card-chevron">▼</span>':''}</div>
+    <div class="card-inner"><div class="card-meta"><span class="platform-badge ${platformClass(c.platform)}">${platformLabel(c.platform)}</span><span class="card-source">${escHtml(c.source||'')}</span>${(hasFull||c.impact)?icon('chevronDown',14,'card-chevron'):''}</div>
       <div class="card-headline">${escHtml(c.headline||'')}</div><div class="card-summary">${escHtml(c.summary||'')}</div>
-      ${(hasFull||c.impact||c.source_url)?`<div class="card-body-full">${hasFull?`<div class="card-full-text">${escHtml(c.full_content)}</div>`:''}${c.impact?`<div class="card-impact"><div class="card-impact-label">⚡ Was das für dich bedeutet</div><div class="card-impact-text">${escHtml(c.impact)}</div></div>`:''}
-        <div class="card-actions">${c.source_url?`<a class="card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ↗</a>`:''}${shareBtn}</div>
+      ${(hasFull||c.impact||c.source_url)?`<div class="card-body-full">${hasFull?`<div class="card-full-text">${escHtml(c.full_content)}</div>`:''}${c.impact?`<div class="card-impact"><div class="card-impact-label">${icon('zap',12)} Was das für dich bedeutet</div><div class="card-impact-text">${escHtml(c.impact)}</div></div>`:''}
+        <div class="card-actions">${c.source_url?`<a class="card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ${icon('arrowUpRight',13)}</a>`:''}${shareBtn}</div>
       </div>`:''}
     </div></div>`
 }
@@ -4410,17 +4431,17 @@ async function renderRequests(area, ctx){
       <div id="skeleton-area" style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div class="skeleton" style="height:96px;border-radius:16px"></div><div class="skeleton" style="height:96px;border-radius:16px"></div><div class="skeleton" style="height:96px;border-radius:16px"></div></div>
       <div class="req-list hidden" id="req-list"></div>
       <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0">
-        <div class="empty-icon">📭</div>
+        <div class="empty-icon">${icon('inbox',30)}</div>
         <div class="empty-title">Noch keine Anfragen</div>
         <div class="empty-sub">Erstelle deine Präsenz, damit Brands dich finden können.</div>
         <div class="empty-cta">
           <a class="empty-cta-link" href="#/biolink">
-            <div class="empty-cta-icon">🔗</div>
+            <div class="empty-cta-icon">${icon('link',20)}</div>
             <div><div class="empty-cta-text">BioLink-Seite erstellen</div><div class="empty-cta-sub">Deine Visitenkarte für Brands</div></div>
             <div style="margin-left:auto;font-size:14px;color:var(--subtle)">→</div>
           </a>
           <a class="empty-cta-link" href="#/mediakit">
-            <div class="empty-cta-icon">📋</div>
+            <div class="empty-cta-icon">${icon('fileText',20)}</div>
             <div><div class="empty-cta-text">Media Kit erstellen</div><div class="empty-cta-sub">Zeig Brands deine Reichweite & Zahlen</div></div>
             <div style="margin-left:auto;font-size:14px;color:var(--subtle)">→</div>
           </a>
@@ -4483,8 +4504,8 @@ function renderDetail(r,activities){
   const subject=`Re: Kooperationsanfrage von ${r.sender_name}`
   const body=`Hallo ${r.sender_name},\n\nVielen Dank für deine Anfrage. Ich freue mich über dein Interesse an einer Zusammenarbeit.\n\n\n\n------- Deine ursprüngliche Anfrage -------\n${r.message||''}`
   const mailtoHref=`mailto:${r.sender_email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-  document.getElementById('detail-content').innerHTML=`<div class="detail-header"><div class="detail-initial">${escHtml(r.sender_initial||r.sender_name?.[0]||'?')}</div><div><div class="detail-name">${escHtml(r.sender_name)}</div><div class="detail-email">${escHtml(r.sender_email)}</div></div><button class="detail-close" onclick="closeDetail()">✕</button></div>
-    <div class="detail-section"><div class="detail-pills"><span class="detail-pill"><span class="req-type-badge ${typeClass(r.request_type)}" style="margin:0">${typeLabel(r.request_type)}</span></span>${r.budget?`<span class="detail-pill">💰 € ${Number(r.budget).toLocaleString('de-DE')}</span>`:''}${r.sender_website?`<a class="detail-pill" href="${escHtml(r.sender_website)}" target="_blank" rel="noopener">🌐 Website ↗</a>`:''}<span class="detail-pill">📅 ${fmtFull(r.created_at)}</span></div></div>
+  document.getElementById('detail-content').innerHTML=`<div class="detail-header"><div class="detail-initial">${escHtml(r.sender_initial||r.sender_name?.[0]||'?')}</div><div><div class="detail-name">${escHtml(r.sender_name)}</div><div class="detail-email">${escHtml(r.sender_email)}</div></div><button class="detail-close" onclick="closeDetail()" aria-label="Schließen">${icon('x',17)}</button></div>
+    <div class="detail-section"><div class="detail-pills"><span class="detail-pill"><span class="req-type-badge ${typeClass(r.request_type)}" style="margin:0">${typeLabel(r.request_type)}</span></span>${r.budget?`<span class="detail-pill">${icon('euro',13)} € ${Number(r.budget).toLocaleString('de-DE')}</span>`:''}${r.sender_website?`<a class="detail-pill" href="${escHtml(r.sender_website)}" target="_blank" rel="noopener">${icon('globe',13)} Website ${icon('arrowUpRight',12)}</a>`:''}<span class="detail-pill">${icon('calendar',13)} ${fmtFull(r.created_at)}</span></div></div>
     ${r.message?`<div class="detail-section"><div class="detail-label">Nachricht</div><div class="detail-message">${escHtml(r.message)}</div></div>`:''}
     <div class="detail-actions"><a class="btn-action btn-primary-action" href="${mailtoHref}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Per E-Mail antworten</a></div>
     <div class="detail-section"><div class="detail-label">Status</div></div>
@@ -4494,7 +4515,7 @@ function renderDetail(r,activities){
     <div class="note-area"><textarea class="note-field" id="note-field-${r.id}" rows="3" placeholder="Interne Notiz hinzufügen…">${escHtml(r.notes||'')}</textarea><button class="btn-save-note" onclick="saveNote('${r.id}')">Notiz speichern</button></div>
     <div class="detail-divider"></div>
     <div class="detail-section" style="padding-bottom:4px"><div class="detail-label">Verlauf</div></div>
-    <div class="timeline">${activities.map(a=>`<div class="timeline-item"><div class="timeline-icon">${a.icon||'📌'}</div><div class="timeline-body"><div class="timeline-text">${escHtml(a.content)}</div><div class="timeline-time">${fmtFull(a.created_at)}</div></div></div>`).join()||'<div style="font-size:13px;color:var(--subtle);padding:8px 0">Kein Verlauf.</div>'}</div>
+    <div class="timeline">${activities.map(a=>`<div class="timeline-item"><div class="timeline-icon">${icon('pin',15)}</div><div class="timeline-body"><div class="timeline-text">${escHtml(a.content)}</div><div class="timeline-time">${fmtFull(a.created_at)}</div></div></div>`).join()||'<div style="font-size:13px;color:var(--subtle);padding:8px 0">Kein Verlauf.</div>'}</div>
     <div class="detail-section" style="padding-bottom:4px"><button class="btn-action btn-secondary-action" style="width:100%;color:var(--red);border-color:rgba(192,57,43,.2)" onclick="deleteRequest('${r.id}')">Anfrage löschen</button></div>`
 }
 window.saveNote=async function(id){
@@ -4614,11 +4635,11 @@ function paintProfile(){
   const photoInner=p.profile_image_url?`<img class="profile-photo" src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;profile-photo-fallback&quot;>${initial}</div>'">`:`<div class="profile-photo-fallback">${initial}</div>`
   document.getElementById('profile-content').innerHTML=`
     <div class="profile-hero">
-      <div class="photo-wrap" onclick="document.getElementById('photo-input').click()" title="Foto ändern">${photoInner}<div class="photo-edit-btn">✎</div></div>
+      <div class="photo-wrap" onclick="document.getElementById('photo-input').click()" title="Foto ändern">${photoInner}<div class="photo-edit-btn">${icon('pencil',11)}</div></div>
       <div class="profile-info">
         <div class="profile-name">${escHtml(p.display_name||p.full_name||'–')}</div>
         <div class="profile-handle">${p.email?escHtml(p.email):''}</div>
-        <div class="profile-plan ${p.subscription_type==='pro'?'plan-pro':'plan-free'}">${p.subscription_type==='pro'?'⭐ Pro':'Free Plan'}</div>
+        <div class="profile-plan ${p.subscription_type==='pro'?'plan-pro':'plan-free'}">${p.subscription_type==='pro'?icon('star',12)+' Pro':'Free Plan'}</div>
       </div>
     </div>
     <div class="section"><div class="section-label">Profil bearbeiten</div>
@@ -4778,10 +4799,10 @@ window.checkUsernameAvailability=async function(){
       btn.disabled=true;btn.style.opacity='.5';return
     }
     if(result==='reserved'){
-      status.style.color='var(--red)';status.textContent='❌ Dieser Username ist reserviert.'
+      status.style.color='var(--red)';status.textContent='Dieser Username ist reserviert.'
       btn.disabled=true;btn.style.opacity='.5'
     } else if(result==='taken'){
-      status.style.color='var(--red)';status.textContent='❌ Leider vergeben.'
+      status.style.color='var(--red)';status.textContent='Leider vergeben.'
       btn.disabled=true;btn.style.opacity='.5'
     } else if(result==='invalid_format'){
       status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.'
