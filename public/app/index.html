@@ -533,6 +533,46 @@ html, body {
 .btn-menue:active{background:var(--surface2)}
 .btn-menue-pfeil{opacity:.5}
 .plat-done{display:flex;align-items:center;justify-content:center;gap:6px;font-size:var(--t-sm);color:var(--green);font-weight:600;margin-bottom:10px}
+/* ══ Analyse-Route: dunkler Grund ═══════════════════════════════════════════
+   Die Analyse ist das bezahlte Produkt und bekommt eine eigene Umgebung. Statt
+   das Ergebnis als dunkle Insel in eine helle Seite zu setzen, kippt die ganze
+   Route auf die Palette von Theme B. Gesetzt werden nur die Tokens -- alle
+   Bauteile der App lesen ohnehin aus ihnen und ziehen mit. Ausnahmen sind die
+   wenigen Stellen, die "background:var(--text)" mit hart weisser Schrift
+   kombinieren: dort muss die Schrift auf den Grund umschlagen, sonst steht
+   Weiss auf Hellgrau. */
+body.analyse-dunkel{
+  --bg:#0B0E13;
+  --surface:#141922;
+  --surface2:#1B212C;
+  --border:#262E3B;
+  --border-strong:#36404F;
+  --text:#EDF1F7;
+  --muted:#9AA6B8;
+  --subtle:#6B7789;
+  --green:#34D399; --green-bg:#0C2A21; --green-border:#17513E;
+  --red:#FB7185;   --red-bg:#2B1219;
+  --orange:#FBBF24; --orange-bg:#2A2008;
+  --blue:#60A5FA;  --blue-bg:#0E1D33;
+}
+body.analyse-dunkel .topbar{background:rgba(11,14,19,.92)}
+/* Umgekehrtes Paar: heller Grund, dunkle Schrift. */
+body.analyse-dunkel .sidebar-logo-mark,
+body.analyse-dunkel .sidebar-item.active,
+body.analyse-dunkel .sidebar-pro-banner,
+body.analyse-dunkel .topbar-avatar,
+body.analyse-dunkel .btn-plat,
+body.analyse-dunkel .plat-btn.active,
+body.analyse-dunkel .btn-save,
+body.analyse-dunkel .niche-btn.active,
+body.analyse-dunkel .modal-btn-confirm{color:var(--bg)}
+body.analyse-dunkel .kpi-card.dark .kpi-value{color:var(--bg)}
+body.analyse-dunkel .kpi-card.dark .kpi-label,
+body.analyse-dunkel .kpi-card.dark .kpi-delta{color:rgba(11,14,19,.6)}
+/* Der helle Spinner war fuer hellen Grund gezeichnet. */
+body.analyse-dunkel .spinner-dark{border-color:rgba(255,255,255,.16);border-top-color:var(--muted)}
+body.analyse-dunkel .result-head-inner{background:var(--surface2)}
+
 /* ══ Analyse-Ergebnis: "Cockpit" ══════════════════════════════════════════
    Bewusst durchgehend dunkel und gegen den Rest der App abgesetzt. Das
    Ergebnis ist das bezahlte Produkt -- es soll sich wie ein Instrument lesen
@@ -545,10 +585,10 @@ html, body {
   --c-bad:#FB7185; --c-bad-bg:#2B1219; --c-bad-line:#5A222E;
   --c-cool:#60A5FA; --c-cool-bg:#0E1D33; --c-cool-line:#1D3A5F;
   --c-amber:#FBBF24; --c-amber-bg:#2A2008; --c-amber-line:#54401A;
-  background:var(--c-bg); color:var(--c-fg);
+  color:var(--c-fg);
   font-family:"Inter",-apple-system,BlinkMacSystemFont,Arial,sans-serif;
-  line-height:1.6; margin:12px var(--page-x) 0; border-radius:20px;
-  padding:18px 16px calc(24px + var(--safe-bottom));
+  line-height:1.6; margin:12px 0 0;
+  padding:4px var(--page-x) calc(24px + var(--safe-bottom));
   display:flex; flex-direction:column; gap:16px;
 }
 .ckpt h1,.ckpt h2,.ckpt h3,.ckpt .c-num,.ckpt .c-big{font-family:"Outfit","Inter",sans-serif;text-wrap:balance;margin:0}
@@ -3924,6 +3964,11 @@ let anv = null
 
 async function renderAnalytics(area, ctx){
   const uid = state.session.user.id
+
+  /* Die Route faerbt die ganze Seite um. ctx.onCleanup nimmt es beim Verlassen
+     zurueck -- ohne das bliebe die App dunkel, sobald man einmal hier war. */
+  document.body.classList.add('analyse-dunkel')
+  ctx.onCleanup(()=>document.body.classList.remove('analyse-dunkel'))
 
   area.innerHTML = `
   <div class="view-analytics">
