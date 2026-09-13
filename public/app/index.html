@@ -669,6 +669,15 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 .c-cmp-fill{height:100%;border-radius:99px;background:var(--c-cool)}
 .c-cmp-val{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--c-fg);font-variant-numeric:tabular-nums}
 
+.c-rang-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.c-rang-tab{font:inherit;font-size:12px;font-weight:600;padding:7px 12px;border-radius:99px;cursor:pointer;
+  border:1px solid var(--c-line);background:var(--c-panel2);color:var(--c-fg2)}
+.c-rang-tab.aktiv{background:var(--c-fg);color:var(--c-bg);border-color:var(--c-fg)}
+.c-rang-nr{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:6px;margin-right:8px;
+  background:var(--c-panel2);color:var(--c-fg3);font-family:"Outfit",sans-serif;font-size:11px;font-weight:800;vertical-align:-3px}
+.c-rang-zusatz{font-size:12px;color:var(--c-fg3);white-space:nowrap}
+.c-datum{color:inherit;text-decoration:none;border-bottom:1px dotted var(--c-line2)}
+.c-datum:hover{border-bottom-style:solid;color:var(--c-fg)}
 .c-foot{border-top:1px solid var(--c-line);padding-top:14px;font-size:12px;color:var(--c-fg3);line-height:1.55}
 .c-foot a{color:var(--c-fg2)}
 .c-share{width:100%;font:inherit;font-weight:600;font-size:13px;padding:12px 16px;border-radius:12px;
@@ -4193,6 +4202,13 @@ async function waitForPurchaseAfterPayment(platform){
 }
 
 // ── Kauf-Bereich nach einer fertigen Analyse aufklappen (Punkt 5) ──
+/* Schaltet zwischen den vier Ranglisten um. Alle vier stehen schon im DOM --
+   umgeschaltet wird nur die Sichtbarkeit, damit nichts neu gerendert werden muss. */
+window.ckptRang=function(id){
+  document.querySelectorAll('.c-rang-liste').forEach(el=>{ el.hidden = el.dataset.rang !== id })
+  document.querySelectorAll('.c-rang-tab').forEach(el=>{ el.classList.toggle('aktiv', el.dataset.rang === id) })
+}
+
 window.kaufKlappe=function(){
   if(!anv)return
   anv.kaufOffen=!anv.kaufOffen
@@ -4496,8 +4512,36 @@ function renderAnalyticsContent(){
   /* Deutsche Schreibweise, eine Stelle. Gerechnet wird hier nichts mehr --
      alle Werte kommen fertig aus analyse_stats. */
   const deN=(n,k=0)=>(n==null||isNaN(+n))?'–':(+n).toLocaleString('de-DE',{minimumFractionDigits:k,maximumFractionDigits:k})
-  const absatz=t=>String(t||'').split(/\n{2,}/).map(x=>x.trim()).filter(Boolean).map(x=>`<p>${escHtml(x)}</p>`).join('')
-  const tag=(d)=>d?new Date(d).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):'–'
+  /* Fest auf Berliner Zeit, nicht auf die Zeitzone des Geräts. Der Prompt rechnet
+     serverseitig ebenfalls in Berliner Zeit -- nur wenn beide dieselbe Uhrzeit
+     nennen, findet die Verlinkung den Beitrag, den der Text meint. */
+  const TZ={timeZone:'Europe/Berlin'}
+  const tag=(d)=>d?new Date(d).toLocaleDateString('de-DE',{...TZ,day:'2-digit',month:'2-digit'}):'–'
+  const uhr=(d)=>d?new Date(d).toLocaleTimeString('de-DE',{...TZ,hour:'2-digit',minute:'2-digit'}):''
+
+  /* Punkt 5: Im Text steht "der Beitrag vom 09.09." -- bei drei Beiträgen an
+     einem Tag weiß niemand, welcher gemeint ist. Deshalb wird jede Datumsangabe
+     anklickbar gemacht. Mit Uhrzeit ist sie eindeutig; ohne Uhrzeit nur dann,
+     wenn an dem Tag genau ein Beitrag erschienen ist. Sonst bleibt es Text --
+     lieber kein Link als einer auf den falschen Beitrag. */
+  const proTag={}
+  ;(Array.isArray(st?.post_resonanz)?st.post_resonanz:[]).forEach(x=>{
+    if(!x.datum||!x.url)return
+    const k=tag(x.datum)
+    ;(proTag[k]=proTag[k]||[]).push({url:x.url,zeit:uhr(x.datum)})
+  })
+  const verlinke=t=>escHtml(String(t||'')).replace(
+    /(\d{2}\.\d{2}\.)(\s+um\s+(\d{1,2})[:.](\d{2})(\s*Uhr)?)?/g,
+    (treffer,datum,_rest,hh,mm)=>{
+      const liste=proTag[datum]
+      if(!liste)return treffer
+      let ziel=null
+      if(hh!=null){const z=String(hh).padStart(2,'0')+':'+mm; ziel=liste.find(x=>x.zeit===z)}
+      else if(liste.length===1)ziel=liste[0]
+      if(!ziel)return treffer
+      return '<a class="c-datum" href="'+escHtml(ziel.url)+'" target="_blank" rel="noopener">'+treffer+'</a>'
+    })
+  const absatz=t=>String(t||'').split(/\n{2,}/).map(x=>x.trim()).filter(Boolean).map(x=>`<p>${verlinke(x)}</p>`).join('')
 
   let h='<div class="ckpt">'
 
@@ -4547,7 +4591,7 @@ function renderAnalyticsContent(){
       const maxV=Math.max(...d.map(x=>x.views),1)
       const maxR=Math.max(...d.map(x=>x.resonanz),1)
       const stark=st.resonanz_top??maxR, schwach=st.resonanz_flop??0
-      const W=760,PADL=8,PADR=8,TOP=14,MID=140,BOT=222
+      const W=760,PADL=8,PADR=8,TOP=14,MID=140,BOT=216
       const slot=(W-PADL-PADR)/d.length, bw=slot*0.6, off=(slot-bw)/2
       /* Ein Datum braucht rund 36 px. Passen nicht alle nebeneinander, wird nur
          jedes n-te beschriftet; die Zahl ueber dem Balken faellt ganz weg,
@@ -4568,16 +4612,22 @@ function renderAnalyticsContent(){
           svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${MID+11}" text-anchor="middle" font-size="10" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${deN(x.resonanz,1)}</text>`
       })
       svg+=`<line x1="${PADL}" y1="${MID+2}" x2="${W-PADR}" y2="${MID+2}" stroke="var(--c-line)" stroke-width="1"></line>`
-      svg+=`<text x="${PADL}" y="${TOP-2}" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${fmt(maxV)} Aufrufe</text>`
+      /* Beide Haelften haben einen eigenen Maßstab. Ohne diese zwei Beschriftungen
+         liest man einen kurzen Balken oben ueber einem langen Balken unten als
+         Fehler -- tatsaechlich heißt es: wenig Reichweite, starke Reaktion. */
+      svg+=`<text x="${PADL}" y="${TOP-2}" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${fmt(maxV)} Aufrufe \u2500 h\u00f6chster Wert oben</text>`
+      svg+=`<text x="${PADL}" y="${BOT+8}" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${deN(maxR,1)} Likes je 1.000 Aufrufe \u2500 h\u00f6chster Wert unten</text>`
       h+=`<div class="c-panel">
         <h2>Jeder Beitrag einzeln</h2>
-        <p class="c-lede">Oben die Aufrufe, unten wie viele davon reagiert haben. Chronologisch von links.</p>
+        <p class="c-lede">Oben die Aufrufe, unten wie viele davon reagiert haben. Chronologisch von links.
+          Beide Hälften haben einen eigenen Maßstab — ein kurzer Balken oben über einem langen unten
+          heißt: wenig Reichweite, aber starke Reaktion.</p>
         <div class="c-legend">
           <span><i style="background:var(--c-cool)"></i>Aufrufe</span>
           <span><i style="background:var(--c-ok)"></i>starke Resonanz</span>
           <span><i style="background:var(--c-bad)"></i>schwache Resonanz</span>
         </div>
-        <div class="c-chart" style="--c-chart-min:${Math.max(520,d.length*22)}px"><svg viewBox="0 0 ${W} 252" width="100%" role="img" aria-label="Aufrufe und Resonanz je Beitrag">${svg}</svg></div>
+        <div class="c-chart" style="--c-chart-min:${Math.max(520,d.length*22)}px"><svg viewBox="0 0 ${W} 248" width="100%" role="img" aria-label="Aufrufe und Resonanz je Beitrag">${svg}</svg></div>
       </div>`
     }
   }
@@ -4658,7 +4708,7 @@ function renderAnalyticsContent(){
       <div class="c-tbl-wrap"><table class="c-tbl"><thead><tr><th>Datum</th><th>Warum</th><th class="n">Likes</th></tr></thead><tbody>`
     ki.top_posts.forEach(post=>{
       const datum=post.datum||(post.url?'':'–')
-      const text=escHtml(post.warum_top||'')
+      const text=verlinke(post.warum_top||'')
       const zelle=post.url?`<a href="${escHtml(post.url)}" target="_blank" rel="noopener">${text}</a>`:text
       h+=`<tr><td class="c-mono" style="white-space:nowrap">${escHtml(datum)}</td><td>${zelle}</td><td class="n">${deN(post.likes)}</td></tr>`
     })
@@ -4684,14 +4734,16 @@ function renderAnalyticsContent(){
       <div class="c-cmp-val">${fmt(z.wert)}</div></div>`).join('')
   })()}</div>`
 
+  /* Verglichen wird nur innerhalb derselben Metrik. Formate, für die die Plattform
+     keine Aufrufe ausweist (Karussells, Bilder), fallen aus dem Vergleich heraus --
+     sie gegen Videos auf Likes zu stellen bevorzugt strukturell das Video. */
   const fs=Array.isArray(st?.format_stats)?st.format_stats:[]
-  if(fs.length>1){
-    const mitViews=fs.filter(f=>f.avg_views!=null)
-    const nutzeViews=mitViews.length>1
-    const quelle=nutzeViews?mitViews:fs
+  const fsMitAufrufen=fs.filter(f=>f.avg_views!=null)
+  const fsOhne=fs.filter(f=>f.avg_views==null)
+  if(fsMitAufrufen.length>1){
     h+=`<div class="c-panel"><h2>Welches Format trägt</h2>
-      <p class="c-lede">Ø ${nutzeViews?'Aufrufe':'Likes'} je Beitrag dieses Formats.${nutzeViews?'':` Für diese Formate weist ${label} keine Aufrufe aus.`}</p>
-      ${cmpBalken(quelle.map(f=>({label:`${f.typ} (${deN(f.n)}×)`,wert:nutzeViews?f.avg_views:f.avg_likes})))}</div>`
+      <p class="c-lede">Ø Aufrufe je Beitrag dieses Formats.${fsOhne.length?` ${fsOhne.map(f=>f.typ).join(' und ')} ${fsOhne.length>1?'fehlen':'fehlt'} hier, weil ${label} dafür keine Aufrufe ausweist.`:''}</p>
+      ${cmpBalken(fsMitAufrufen.map(f=>({label:`${f.typ} (${deN(f.n)}×)`,wert:f.avg_views})))}</div>`
   }
 
   const ds=Array.isArray(st?.duration_stats)?st.duration_stats:[]
@@ -4712,7 +4764,7 @@ function renderAnalyticsContent(){
   if(ki.tipps_zukunft?.length){
     h+=`<div class="c-panel"><h2>Was du als Nächstes tun kannst</h2>
       <p class="c-lede">${deN(ki.tipps_zukunft.length)} Schritte, direkt aus den Zahlen oben.</p>
-      <ol class="c-steps">${ki.tipps_zukunft.map(t=>`<li>${escHtml(t)}</li>`).join('')}</ol></div>`
+      <ol class="c-steps">${ki.tipps_zukunft.map(t=>`<li>${verlinke(t)}</li>`).join('')}</ol></div>`
   }
 
   if(ki.weitere_insights?.trim()){
@@ -4723,6 +4775,48 @@ function renderAnalyticsContent(){
   if(ki.vergleich_vorherige?.trim()){
     h+=`<div class="c-box cool"><span class="c-chip">Entwicklung</span>
       <h3>Verglichen mit der letzten Analyse</h3>${absatz(ki.vergleich_vorherige)}</div>`
+  }
+
+
+  /* Punkt 4: Ranglisten zum Nachschlagen. Vier Sortierungen derselben Beiträge --
+     die Resonanz-Liste dreht dabei die Reihenfolge um, die man auf der Plattform
+     selbst sieht, und genau das ist ihr Wert. Jede Zeile öffnet den Beitrag. */
+  const alleBeitraege=Array.isArray(st?.post_resonanz)?st.post_resonanz:[]
+  if(alleBeitraege.length>=3){
+    const listen=[
+      {id:'likes', titel:'Likes', hinweis:'So sortiert es auch die Plattform selbst.',
+       wert:x=>x.likes, zeige:x=>deN(x.likes), zusatz:x=>x.views?`${deN(x.views)} Aufrufe`:''},
+      {id:'aufrufe', titel:'Aufrufe', hinweis:'Wie weit ein Beitrag hinausgetragen wurde.',
+       wert:x=>x.views, zeige:x=>deN(x.views), zusatz:x=>x.resonanz!=null?`Resonanz ${deN(x.resonanz,1)}`:''},
+      {id:'resonanz', titel:'Resonanz', hinweis:'Likes je 1.000 Aufrufe — unabhängig davon, wie weit der Beitrag lief.',
+       wert:x=>x.resonanz, zeige:x=>deN(x.resonanz,1), zusatz:x=>`${deN(x.likes)} Likes`},
+      {id:'kommentare', titel:'Kommentare', hinweis:'Wo wirklich geantwortet wurde.',
+       wert:x=>x.comments, zeige:x=>deN(x.comments), zusatz:x=>x.kommentarrate!=null?`${deN(x.kommentarrate,1)} je 1.000 Aufrufe`:''}
+    ].filter(l=>alleBeitraege.filter(x=>l.wert(x)!=null&&l.wert(x)>0).length>=3)
+
+    if(listen.length){
+      h+=`<div class="c-panel"><h2>Zum Nachschlagen</h2>
+        <p class="c-lede">Dieselben Beiträge, vier Mal anders sortiert. Klick öffnet den Beitrag.</p>
+        <div class="c-rang-tabs">${listen.map((l,i)=>
+          `<button class="c-rang-tab${i===0?' aktiv':''}" data-rang="${l.id}" onclick="ckptRang('${l.id}')">Top 5 nach ${l.titel}</button>`).join('')}</div>`
+      listen.forEach((l,i)=>{
+        const zeilen=alleBeitraege.filter(x=>l.wert(x)!=null&&l.wert(x)>0)
+          .sort((a,b)=>l.wert(b)-l.wert(a)).slice(0,5)
+        h+=`<div class="c-rang-liste" data-rang="${l.id}"${i===0?'':' hidden'}>
+          <p class="c-lede" style="margin:0 0 10px">${escHtml(l.hinweis)}</p>
+          <div class="c-tbl-wrap"><table class="c-tbl"><thead><tr>
+            <th>Beitrag</th><th class="n">${escHtml(l.titel)}</th><th>&nbsp;</th></tr></thead><tbody>
+          ${zeilen.map((x,r)=>{
+            const wann=`${tag(x.datum)} um ${uhr(x.datum)}`
+            const zelle=x.url?`<a href="${escHtml(x.url)}" target="_blank" rel="noopener">${escHtml(wann)}</a>`:escHtml(wann)
+            return `<tr><td><span class="c-rang-nr">${r+1}</span> ${zelle}</td>
+              <td class="n">${l.zeige(x)}</td>
+              <td class="c-rang-zusatz">${escHtml(l.zusatz(x)||'')}</td></tr>`
+          }).join('')}
+          </tbody></table></div></div>`
+      })
+      h+=`</div>`
+    }
   }
 
   /* P7: Die Media-Kit-Uebernahme existiert seit jeher (loadMediakit liest
