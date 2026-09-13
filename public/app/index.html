@@ -2447,6 +2447,29 @@ window.pickThemeCard=async function(theme){
   if(blv.biolink){blv.biolink.theme=theme}else{blv.biolink={user_id:blv.uid,theme,default_language:blv.lang}}
 }
 
+/* Name, Bio und Profilbild stehen seit dem Template-Umbau fest im HTML der
+   oeffentlichen Seite (fuer Link-Vorschauen in WhatsApp, LinkedIn & Co.).
+   Aendert sich eines davon, muss die Seite neu erzeugt werden — im
+   Hintergrund, ohne das Vollbild-Overlay von generatePage(). bio_active wird
+   frisch gelesen: die Function wuerde eine Seite sonst neu anlegen und
+   veroeffentlichen, die der User nie erstellt hat. */
+async function regenerateBioPageQuietly(uid){
+  try{
+    const{data}=await sb.from('users').select('bio_active').eq('id',uid).single()
+    if(data?.bio_active!==true)return
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session)return
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-biolink`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json().catch(()=>({}))
+    if(!res.ok||body.success!==true)throw new Error(body.error||`HTTP ${res.status}`)
+  }catch(err){
+    showToast('Öffentliche Seite nicht aktualisiert: '+err.message,5000)
+  }
+}
+
 window.generatePage=async function(flow='biolinkCreate'){
   const btn=document.getElementById('btn-generate')
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Wird generiert…'}
@@ -2525,11 +2548,13 @@ async function onBioPhotoPicked(e){
   showToast('Profilbild gespeichert ✓')
   if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
   e.target.value=''
+  regenerateBioPageQuietly(uid)
 }
 
 window.saveBioProfile=async function(){
   if(!blv)return
   const bio=document.getElementById('s-bio')?.value.trim()||null
+  const bioChanged=(blv.profile?.bio||null)!==bio
   const btn=document.getElementById('btn-save-profile')
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   await sb.from('users').update({bio,updated_at:new Date().toISOString()}).eq('id',blv.uid)
@@ -2539,6 +2564,7 @@ window.saveBioProfile=async function(){
   backToEditMenu('profile-sheet')
   showToast('Profil gespeichert ✓')
   paintBiolink()
+  if(bioChanged)regenerateBioPageQuietly(blv.uid)
 }
 
 window.saveHandles=async function(){
@@ -3405,6 +3431,7 @@ async function onMkPhotoPicked(e){
   showToast('Profilbild gespeichert ✓')
   if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
   e.target.value=''
+  regenerateBioPageQuietly(uid)
 }
 
 // ── Save Profile ──
@@ -3417,6 +3444,8 @@ window.mkSaveProfile=async function(){
     city:document.getElementById('s-city').value.trim()||null,
     updated_at:new Date().toISOString()
   }
+  const bioChanged=(mkv.profile?.bio||null)!==patch.bio
+  const uid=mkv.uid
   const{error}=await sb.from('users').update(patch).eq('id',mkv.uid)
   if(!mkv)return
   btn.disabled=false;btn.textContent='Speichern'
@@ -3425,6 +3454,7 @@ window.mkSaveProfile=async function(){
   showToast('Profil gespeichert ✓')
   paintMediakit()
   backToEditMenu('profile-sheet')
+  if(bioChanged)regenerateBioPageQuietly(uid)
 }
 
 // ── Save Contact ──
@@ -5016,7 +5046,10 @@ window.saveProfile=async function(){
   if(!pv||!document.getElementById('btn-save'))return
   btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
+  const bioChanged=(pv.profile?.bio||null)!==patch.bio
+  const uid=pv.uid
   Object.assign(pv.profile,patch);successEl.classList.remove('hidden');setTimeout(()=>document.getElementById('save-success')?.classList.add('hidden'),3000);showToast('Profil gespeichert ✓')
+  if(bioChanged)regenerateBioPageQuietly(uid)
 }
 
 async function onPhotoPicked(e){
@@ -5035,6 +5068,7 @@ async function onPhotoPicked(e){
   /* Avatar in der Topbar mitziehen — die alte Seite lud die Seite dafuer neu */
   if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
   showToast('Profilbild gespeichert ✓');e.target.value=''
+  regenerateBioPageQuietly(uid)
 }
 
 /* ─────────────────────────────────────────────
