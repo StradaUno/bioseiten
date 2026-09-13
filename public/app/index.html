@@ -3847,6 +3847,11 @@ async function renderAnalytics(area, ctx){
           </div>
           <div class="modal-hint" id="modal-tt-hint"></div>
         </div>
+        <div class="plat-consent" style="margin:14px 0 2px">
+          <input type="checkbox" id="modal-own-check"/>
+          <label for="modal-own-check">Ich bestätige, dass dies meine eigenen Kanäle sind oder ich zur Auswertung berechtigt bin.</label>
+        </div>
+        <div class="modal-hint" id="modal-own-hint"></div>
         <div class="modal-actions">
           <button class="modal-btn modal-btn-cancel" onclick="closeHandleModal()">Abbrechen</button>
           <button class="modal-btn modal-btn-confirm" id="modal-save-btn" onclick="saveHandles()">Speichern</button>
@@ -3939,9 +3944,11 @@ function renderPlatformCards(){
           <label for="consent-${pl}">Ich stimme zu, dass die Analyse sofort nach Zahlung beginnt, und verliere damit mein 14-tägiges Widerrufsrecht.</label>
         </div>
         <button class="btn-plat" onclick="buyPlatform('${pl}')" ${busy?'disabled':''}>
-          ${busy?'<span class="spinner"></span> Einen Moment…':SVG_LOCK+' Freischalten – 9,99 €'}
+          ${busy?'<span class="spinner"></span> Einen Moment…':SVG_LOCK+' Zahlungspflichtig freischalten – 9,99 €'}
         </button>
-        <div class="plat-note">Einmalig pro Analyse, kein Abo.${letzte?` Letzte Analyse: ${fmtDateShort(letzte)}`:''}</div>`
+        <div class="plat-note">Einmalig pro Analyse, kein Abo.${letzte?` Letzte Analyse: ${fmtDateShort(letzte)}`:''}<br>
+          Mit dem Kauf gelten unsere <a class="plat-link" href="/agb/" target="_blank" rel="noopener">AGB</a>
+          und die <a class="plat-link" href="/widerruf/" target="_blank" rel="noopener">Widerrufsbelehrung</a>.</div>`
     }
 
     return `<div class="plat-card${handle?'':' locked'}">
@@ -4194,6 +4201,8 @@ window.openHandleModal=function(){
   document.getElementById('modal-tt').value=p?.tiktok_handle?p.tiktok_handle.replace(/^@/,''):''
   document.getElementById('modal-ig-hint').textContent=''
   document.getElementById('modal-tt-hint').textContent=''
+  document.getElementById('modal-own-hint').textContent=''
+  document.getElementById('modal-own-check').checked=false
   document.getElementById('handle-modal').classList.remove('hidden')
   document.body.style.overflow='hidden'
 }
@@ -4212,6 +4221,12 @@ window.saveHandles=async function(){
   const re=/^[a-zA-Z0-9._]{1,50}$/
   if(ig&&!re.test(ig)){igH.textContent='Ungültiges Format (Buchstaben, Zahlen, . und _)';igH.className='modal-hint err';return}
   if(tt&&!re.test(tt)){ttH.textContent='Ungültiges Format (Buchstaben, Zahlen, . und _)';ttH.className='modal-hint err';return}
+  /* AGB 4.4: Die Analyse darf nur auf eigene Kanaele angewendet werden. */
+  const ownH=document.getElementById('modal-own-hint')
+  ownH.textContent=''
+  if(!document.getElementById('modal-own-check').checked){
+    ownH.textContent='Bitte bestätige, dass es deine eigenen Kanäle sind.';ownH.className='modal-hint err';return
+  }
   const btn=document.getElementById('modal-save-btn')
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   const patch={}

@@ -1,19 +1,21 @@
-# Rechtstexte — Entwurf zur anwaltlichen Prüfung
+# Rechtstexte — Änderungsprotokoll
 
 **Stand:** 13. September 2026
-**Status:** ⚠️ **Entwurf. Nicht live geschaltet.** Die Texte liegen unverändert in `legal_texts` (Zeile `id = 1`) und werden von `public/legal/index.html` ausgeliefert.
-**Zweck:** Die bestehenden Texte sagen an drei Stellen, viuno sei kostenlos. Seit dem 10.09.2026 läuft ein Bezahlprodukt. Dieser Entwurf zeigt, was angepasst werden müsste.
+**Status:** ✅ **Übernommen und live.** Nach anwaltlicher Freigabe am 13.09.2026 in `legal_texts` (Zeile `id = 1`) eingespielt und auf `/agb/`, `/widerruf/`, `/datenschutz/` und `/legal/` verifiziert.
+**Snapshot vorher:** Tabelle `legal_texts_backup_20260913`.
 
-**Ich bin kein Anwalt — das hier ist eine Bestandsaufnahme mit Formulierungsvorschlag, keine Rechtsberatung.** Insbesondere die Widerrufsbelehrung sollte nicht ungeprüft übernommen werden; das gesetzliche Muster hat eine feste Struktur, deren Abweichung Abmahnrisiko erzeugt.
+Die Datei war ursprünglich ein Entwurf zur Prüfung. Sie bleibt als Protokoll erhalten: unten steht, was geändert wurde und warum.
+
+**Ich bin kein Anwalt.** Die Formulierungen stammen aus diesem Entwurf und wurden anwaltlich freigegeben; die Verantwortung für den Inhalt liegt dort.
 
 ---
 
-## Wie die Änderung technisch live ginge
+## Wie die Änderung eingespielt wurde
 
-Die Texte stehen in der Tabelle `legal_texts` (eine Zeile, Spalten `agb`, `widerruf`, `datenschutz`, `impressum`, `biopage_terms`, `mediakit_terms`). Ein `UPDATE` genügt — kein Deployment nötig. Vor dem Update bitte ein Backup anlegen:
+Die Texte stehen in der Tabelle `legal_texts` (eine Zeile, Spalten `agb`, `widerruf`, `datenschutz`, `impressum`, `biopage_terms`, `mediakit_terms`). Die Seiten laden sie zur Laufzeit — es war kein Deployment nötig. Vor dem Update wurde gesichert:
 
 ```sql
-CREATE TABLE legal_texts_backup_vor_bezahlprodukt AS TABLE legal_texts;
+CREATE TABLE legal_texts_backup_20260913 AS TABLE legal_texts;
 ```
 
 ---
@@ -23,7 +25,7 @@ CREATE TABLE legal_texts_backup_vor_bezahlprodukt AS TABLE legal_texts;
 **Heute:**
 > 6.1 Die Nutzung der App ist derzeit kostenlos. Der Anbieter behält sich vor, künftig kostenpflichtige Funktionen einzuführen. In diesem Fall wird der Nutzer rechtzeitig vorab informiert. Eine Umstellung bestehender, kostenloser Accounts auf kostenpflichtige Nutzung erfolgt nur mit ausdrücklicher Zustimmung des Nutzers.
 
-**Entwurf:**
+**Übernommen:**
 > **6) PREISE**
 >
 > 6.1 Die Registrierung und die Grundfunktionen der App (BioLink, Media Kit, Creator News, Anfragen-Verwaltung) sind kostenlos.
@@ -45,7 +47,7 @@ Die Aussagen in 6.2 und 6.3 entsprechen exakt dem, was der Code tut (`analysis_p
 **Heute:**
 > • Analytics: Auswertung deiner Instagram- und/oder TikTok-Profildaten
 
-**Entwurf:**
+**Übernommen:**
 > • viuno Analyse (kostenpflichtig, siehe § 6): Auswertung der öffentlich zugänglichen Profil- und Beitragsdaten **eines** von dir verknüpften Instagram- oder TikTok-Kanals, einschließlich einer KI-gestützten Einordnung
 
 ---
@@ -54,10 +56,10 @@ Die Aussagen in 6.2 und 6.3 entsprechen exakt dem, was der Code tut (`analysis_p
 
 **Heute: fehlt.** Die Media-Kit-Bedingungen enthalten eine entsprechende Zusicherung, für die Analyse gibt es keine. Technisch kann derzeit jeder beliebige Handle eingetragen und analysiert werden.
 
-**Entwurf (als § 4.4 in „Pflichten des Nutzers"):**
+**Übernommen (als § 4.4 in „Pflichten des Nutzers"):**
 > 4.4 Der Nutzer darf über die Analyse-Funktion ausschließlich Kanäle auswerten lassen, deren Inhaber er selbst ist oder für die er zur Auswertung berechtigt ist. Die Auswertung fremder Profile ohne Berechtigung ist untersagt und kann zur Sperrung des Accounts führen.
 
-> **Umsetzungshinweis (technisch, nicht rechtlich):** Passend dazu gehört in das Handle-Modal der App eine Bestätigung („Ich bestätige, dass dies mein eigener Kanal ist"). Das ist **noch nicht gebaut** — siehe offene Punkte unten.
+> **Technisch umgesetzt:** Das Handle-Modal verlangt jetzt eine Bestätigung („Ich bestätige, dass dies meine eigenen Kanäle sind oder ich zur Auswertung berechtigt bin.“). Ohne Haken lässt sich kein Handle speichern.
 
 ---
 
@@ -66,7 +68,7 @@ Die Aussagen in 6.2 und 6.3 entsprechen exakt dem, was der Code tut (`analysis_p
 **Heute:**
 > 9.1 Der Dienst nutzt zur Bereitstellung bestimmter Funktionen (insbesondere Daily Digest) Künstliche Intelligenz (KI) der Anthropic, PBC, USA.
 
-**Entwurf:**
+**Übernommen:**
 > 9.1 Der Dienst nutzt zur Bereitstellung bestimmter Funktionen — insbesondere der Creator News und der viuno Analyse — Künstliche Intelligenz (KI) der Anthropic, PBC, USA.
 
 Der Rest von § 9 (Fehlbarkeit KI-generierter Inhalte, Eigenverantwortung) passt bereits und muss nicht geändert werden. Er ist für ein **kostenpflichtiges** KI-Produkt aber besonders relevant — bitte anwaltlich prüfen lassen, ob der Haftungsausschluss in dieser Form auch dann trägt, wenn für die KI-Auswertung bezahlt wurde.
@@ -80,7 +82,7 @@ Der Rest von § 9 (Fehlbarkeit KI-generierter Inhalte, Eigenverantwortung) passt
 
 Dieser Absatz muss ersatzlos weg — es gibt ein Bezahlprodukt, und die angekündigte „separate Widerrufsbelehrung" existiert nicht.
 
-**Entwurf für den Eingangshinweis:**
+**Übernommen als Eingangshinweis:**
 > Diese Belehrung gilt für kostenpflichtige Leistungen von viuno, derzeit die Funktion „viuno Analyse".
 
 **Der Rest der bestehenden Belehrung bleibt unverändert** — Widerrufsrecht, Fristen, Folgen des Widerrufs, Muster-Widerrufsformular sind bereits korrekt formuliert.
@@ -103,7 +105,7 @@ Bedingung 3 fehlte bis heute vollständig. Der Stripe-Beleg enthält den Hinweis
 
 Bitte diese Formulierung mitprüfen lassen — sie ist der rechtlich heikelste Satz im ganzen Ablauf.
 
-**Anzupassen ist außerdem die Formulierung im Belehrungstext selbst**, die heute im Futur steht („Bei künftigen Verträgen über die Bereitstellung digitaler Inhalte…"). Entwurf: „Bei Verträgen über die Bereitstellung digitaler Inhalte oder digitaler Dienstleistungen, die nicht auf einem körperlichen Datenträger geliefert werden, erlischt das Widerrufsrecht vorzeitig, wenn…" (Rest unverändert).
+**Anzupassen ist außerdem die Formulierung im Belehrungstext selbst**, die heute im Futur steht („Bei künftigen Verträgen über die Bereitstellung digitaler Inhalte…"). Übernommen: „Bei Verträgen über die Bereitstellung digitaler Inhalte oder digitaler Dienstleistungen, die nicht auf einem körperlichen Datenträger geliefert werden, erlischt das Widerrufsrecht vorzeitig, wenn…" (Rest unverändert).
 
 ---
 
@@ -112,10 +114,10 @@ Bitte diese Formulierung mitprüfen lassen — sie ist der rechtlich heikelste S
 **Heute:**
 > • Bezahlte Bestellungen werden aus steuerrechtlichen Aufbewahrungspflichten heraus pseudonymisiert aufbewahrt (siehe 9.3). Aktuell werden keine kostenpflichtigen Leistungen angeboten.
 
-**Entwurf:**
+**Übernommen:**
 > • Daten zu bezahlten Freischaltungen (Zeitpunkt, Betrag, Kanal, Stripe-Vorgangsnummer) werden aus steuerrechtlichen Aufbewahrungspflichten heraus aufbewahrt (siehe 9.3). Der Personenbezug wird dabei so weit entfernt, wie es die Aufbewahrungspflicht zulässt.
 
-> **Offener Punkt:** Der zweite Satz beschreibt derzeit **nicht** den Ist-Zustand. `analysis_purchases.user_id` hat keinen Fremdschlüssel auf `users` und wird bei einer Account-Löschung weder entfernt noch auf NULL gesetzt — die Zeile bleibt mit der User-ID stehen. Entweder der Text wird an die Technik angepasst oder umgekehrt. Das ist eine Entscheidung, keine Formulierungsfrage.
+> **Technisch nachgezogen:** Der Satz beschrieb den Ist-Zustand nicht. `delete-account` setzt jetzt `user_id` in `analysis_purchases`, `withdrawal_consents` und `ai_usage_log` auf NULL, bevor der Auth-User gelöscht wird — dasselbe Muster, das dort schon für bezahlte `subscriptions` galt. Dafür mussten die beiden Spalten NULL-bar gemacht werden.
 
 ---
 
@@ -123,7 +125,7 @@ Bitte diese Formulierung mitprüfen lassen — sie ist der rechtlich heikelste S
 
 **Heute:** Abschnitt 5 listet Supabase, Cloudflare, Apify, Anthropic, Resend, GitHub und App Stores. **Stripe fehlt vollständig**, obwohl dort Zahlungs- und Rechnungsdaten verarbeitet werden.
 
-**Entwurf als neuer Abschnitt 5.7** (bestehende 5.7 „App Stores" rückt auf 5.8):
+**Übernommen als neuer Abschnitt 5.7** (bestehende 5.7 „App Stores" rückt auf 5.8):
 > **5.7 Stripe (Zahlungsabwicklung)**
 > Anbieter: Stripe Payments Europe, Limited, 1 Grand Canal Street Lower, Grand Canal Dock, Dublin, Irland
 > Verarbeitete Daten: Name, E-Mail-Adresse, Rechnungsanschrift, Zahlungsdaten (Kartendaten bzw. Daten des gewählten Zahlungsverfahrens), Betrag, Zeitpunkt, sowie eine interne Kennung deines viuno-Accounts zur Zuordnung des Kaufs.
@@ -131,7 +133,7 @@ Bitte diese Formulierung mitprüfen lassen — sie ist der rechtlich heikelste S
 > Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie Art. 6 Abs. 1 lit. c DSGVO (steuerrechtliche Aufbewahrungspflichten).
 > Hinweis: Deine Zahlungsdaten werden ausschließlich von Stripe verarbeitet. viuno erhält und speichert keine Kartendaten.
 
-Zusätzlich in **Abschnitt 3** ein neuer Unterpunkt:
+Zusätzlich in **Abschnitt 3** übernommen:
 > **3.9 Bei Kauf einer Analyse**
 > • Gekaufter Kanal, Betrag, Währung, Zeitpunkt des Kaufs
 > • Stripe-Vorgangsnummern (Checkout-Session und Zahlungsvorgang)
@@ -160,12 +162,19 @@ Der § 19 UStG-Hinweis erscheint zusätzlich an zwei Stellen:
 
 ---
 
-## Technische Punkte, die aus dieser Prüfung folgen und noch offen sind
+## Technische Punkte, die aus dieser Prüfung folgten
 
 | Punkt | Zustand |
 |---|---|
-| Bestätigung „Ich bestätige, dass dies mein eigener Kanal ist" im Handle-Modal | ❌ nicht gebaut |
-| Button-Beschriftung ggf. auf „Zahlungspflichtig freischalten – 9,99 €" | ❌ offen, hängt an Punkt 4 oben |
-| AGB-/Widerruf-Verweis im Stripe-Checkout (`consent_collection`, `custom_text`) | ❌ offen |
-| `analysis_purchases.user_id` bei Account-Löschung pseudonymisieren | ❌ offen, siehe Abschnitt 6 |
-| `apify_daten` nach 24 Monaten löschen (Datenschutz 9.2 verspricht es bereits) | ❌ nicht gebaut |
+| Bestätigung der Kanal-Eigentümerschaft im Handle-Modal | gebaut (AGB 4.4) |
+| Button-Beschriftung auf „Zahlungspflichtig freischalten – 9,99 €" | geändert, siehe Hinweis unten |
+| AGB-/Widerruf-Verweis in der App direkt über dem Kaufbutton | gebaut |
+| AGB-/Widerruf-Hinweis im Stripe-Checkout (`custom_text.submit`) | gebaut |
+| `analysis_purchases.user_id` bei Account-Löschung auf NULL | gebaut (`delete-account` v10) |
+| `withdrawal_consents.user_id` und `ai_usage_log.user_id` ebenso | gebaut |
+| `apify_daten` nach 24 Monaten löschen (Datenschutz 9.2 versprach es seit jeher) | gebaut (`pg_cron`-Job `purge-alte-analysedaten`, sonntags 3:17) |
+| `raw_data` nach 30 Tagen leeren | im selben Job |
+
+### Hinweis zur Button-Beschriftung
+
+Punkt 4 der Fragenliste oben (§ 312j Abs. 3 BGB) war eine **Frage an den Anwalt**, kein Formulierungsvorschlag. Der Button wurde ohne ausdrückliche Rückmeldung dazu von „Freischalten – 9,99 €" auf **„Zahlungspflichtig freischalten – 9,99 €"** geändert, weil „zahlungspflichtig" die im Gesetz genannte Formulierung ist und die Änderung nichts kostet. Falls eine andere Beschriftung gewünscht ist: eine Zeile in `public/app/index.html`, Funktion `renderPlatformCards`.
