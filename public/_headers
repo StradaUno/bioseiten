@@ -14,3 +14,8 @@
   X-Content-Type-Options: nosniff
   # Suchmaschinen haben hier nichts zu holen.
   X-Robots-Tag: noindex, nofollow
+  # Cloudflare liefert statische Dateien sonst mit vier Stunden
+  # Haltbarkeit aus. Bei einer internen Seite, die ich mehrmals am Tag
+  # neu baue, heisst das: Ich schaue auf den Stand von vorgestern und
+  # suche einen Knopf, der laengst da ist. Jeder Aufruf holt frisch.
+  Cache-Control: no-cache, must-revalidate
