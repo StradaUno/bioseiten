@@ -4238,7 +4238,7 @@ window.teilenLinkErzeugen=async function(runId){
     })
     const d=await res.json()
     if(!d.success)throw new Error(d.error||'Fehlgeschlagen')
-    const url=location.origin+'/analyse/'+d.token
+    const url=location.origin+'/analyse/?a='+d.token
     const bis=new Date(d.expires_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})
     ziel.innerHTML=`<div class="c-link-feld">
         <input type="text" readonly value="${escHtml(url)}" onclick="this.select()" aria-label="Öffentlicher Link"/>

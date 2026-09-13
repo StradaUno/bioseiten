@@ -130,8 +130,20 @@ const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 const de=(n,k=0)=>n==null||isNaN(+n)?'–':(+n).toLocaleString('de-DE',{minimumFractionDigits:k,maximumFractionDigits:k})
 const kurz=n=>n==null?'–':n>=1e6?(n/1e6).toFixed(1).replace('.',',')+'M':n>=1e3?Math.round(n/1e3)+'k':String(n)
 
-// /analyse/<token> — der Token ist das letzte Segment, Schrägstrich am Ende egal.
-const token=(location.pathname.split('/').filter(Boolean).pop()||'').trim()
+/* Der Token kommt aus der Abfrage: /analyse/?a=<token>.
+   Der schoenere Pfad /analyse/<token> braeuchte eine 200-Umschreibung in
+   _redirects. Die greift auf dieser Domain nicht -- unbekannte Pfade werden von
+   etwas vor Cloudflare Pages auf die Startseite gelegt, die 301-Regeln derselben
+   Datei funktionieren dagegen. Der Pfad wird trotzdem gelesen: sobald die
+   Umschreibung eingerichtet ist, funktionieren beide Formen ohne Codeaenderung. */
+function tokenAusUrl(){
+  const ausAbfrage=new URLSearchParams(location.search).get('a')
+  if(ausAbfrage)return ausAbfrage.trim()
+  const segmente=location.pathname.split('/').filter(Boolean)
+  const letztes=segmente[segmente.length-1]||''
+  return letztes==='analyse'||letztes==='index.html'?'':letztes.trim()
+}
+const token=tokenAusUrl()
 
 function zeigeWeg(){
   document.getElementById('laden').hidden=true
@@ -221,7 +233,7 @@ function zeige(d){
   document.title=`${handle} · Analyse-Ausschnitt`
 }
 
-if(!token||token==='analyse'){ zeigeWeg() }
+if(!token){ zeigeWeg() }
 else{
   fetch(`${FUNKTION}?token=${encodeURIComponent(token)}`)
     .then(r=>r.ok?r.json():Promise.reject())
