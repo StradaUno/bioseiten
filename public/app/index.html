@@ -526,6 +526,28 @@ html, body {
 .btn-plat.ghost{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
 .plat-note{font-size:var(--t-xs);color:var(--muted);line-height:1.5;margin-top:8px;text-align:center}
 .plat-link{color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
+.plat-done{display:flex;align-items:center;justify-content:center;gap:6px;font-size:var(--t-sm);color:var(--green);font-weight:600;margin-bottom:10px}
+/* Ergebnis-Kopf: der Moment nach dem Warten gehoert dem Ergebnis, nicht dem Verkauf */
+.result-head{padding:var(--s-4) var(--page-x) 0}
+.result-head-inner{background:var(--text);border-radius:var(--r-md);padding:16px 18px}
+.result-head-kicker{font-size:var(--t-2xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.result-head-title{font-size:var(--t-lg);font-weight:700;color:#fff;letter-spacing:-.02em;margin-top:3px}
+.result-head-sub{font-size:var(--t-xs);color:rgba(255,255,255,.6);margin-top:4px}
+/* Balken: macht die Streuung sichtbar, die eine Ø-Zahl verschluckt */
+.bars-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
+.bars-row{display:flex;align-items:flex-end;gap:4px;height:88px;margin-bottom:8px}
+.bar{flex:1;background:var(--border-strong);border-radius:3px 3px 0 0;min-height:3px;transition:background .15s}
+.bar.best{background:var(--text)}
+.bars-legend{display:flex;justify-content:space-between;font-size:var(--t-xs);color:var(--muted)}
+/* Vergleichstabelle fuer Formate und Video-Laengen */
+.cmp-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.cmp-row{display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--border)}
+.cmp-row:last-child{border-bottom:none}
+.cmp-label{flex:0 0 40%;font-size:var(--t-sm);color:var(--text);font-weight:600}
+.cmp-track{flex:1;height:7px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.cmp-fill{height:100%;background:var(--text);border-radius:99px}
+.cmp-val{flex:0 0 auto;font-size:var(--t-sm);color:var(--muted);min-width:62px;text-align:right}
+.cmp-note{font-size:var(--t-xs);color:var(--subtle);padding:9px 16px 0;line-height:1.5}
 .pay-confirm{margin:var(--s-3) var(--page-x) 0;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-md);display:flex;align-items:center;gap:10px;font-size:var(--t-sm);color:var(--muted)}
 .status-flow{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);margin:var(--s-3) var(--page-x) 0;overflow:hidden}
 .status-flow-head{padding:14px 16px 12px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
@@ -833,10 +855,10 @@ html, body {
     <!-- FOOTER -->
     <footer class="app-footer">
       <div class="footer-links">
-        <a href="/impressum.html">Impressum</a>
-        <a href="/datenschutz.html">Datenschutz</a>
-        <a href="/agb.html">AGB</a>
-        <a href="/widerruf.html">Widerruf</a>
+        <a href="/legal#impressum">Impressum</a>
+        <a href="/legal#datenschutz">Datenschutz</a>
+        <a href="/legal#agb">AGB</a>
+        <a href="/legal#widerruf">Widerruf</a>
         <a href="/legal/">Legal</a>
       </div>
       <div class="footer-copy">© <span id="footer-year"></span> viuno</div>
@@ -890,6 +912,7 @@ const state = {
    zurueck, das Farbe (currentColor) und Groesse vom Aufrufer erbt.
    ───────────────────────────────────────────── */
 const ICONS = {
+  instagram: '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
   user:        '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   users:       '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   link:        '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/>',
@@ -3871,6 +3894,8 @@ async function renderAnalytics(area, ctx){
     /* Option C: Guthaben und laufende Analyse haengen je an EINER Plattform. */
     purchases:{instagram:false,tiktok:false},
     lastDone:{instagram:null,tiktok:null},
+    posts:{instagram:[],tiktok:[]},
+    expandBuy:{instagram:false,tiktok:false},
     activeRun:null,
     busy:null
   }
@@ -3938,6 +3963,11 @@ function renderPlatformCards(){
           ${busy?'<span class="spinner"></span> Wird gestartet…':SVG_REFRESH+' Analyse starten'}
         </button>
         <div class="plat-note">Freigeschaltet ✓ — dauert etwa 1–2 Minuten.</div>`
+    } else if(letzte&&!anv.expandBuy[pl]){
+      /* Punkt 5: Direkt nach einer Analyse wirkte ein schwarzer Kaufbutton wie eine
+         Aufforderung, gleich nochmal zu zahlen. Hier steht erst der Abschluss. */
+      body=`<div class="plat-done">${icon('check',13)} Analyse vom ${fmtDateShort(letzte)} liegt vor</div>
+        <button class="btn-plat ghost" onclick="expandBuy('${pl}')">Neue Analyse – 9,99 €</button>`
     } else {
       body=`<div class="plat-consent">
           <input type="checkbox" id="consent-${pl}"/>
@@ -3947,13 +3977,13 @@ function renderPlatformCards(){
           ${busy?'<span class="spinner"></span> Einen Moment…':SVG_LOCK+' Zahlungspflichtig freischalten – 9,99 €'}
         </button>
         <div class="plat-note">Einmalig pro Analyse, kein Abo.${letzte?` Letzte Analyse: ${fmtDateShort(letzte)}`:''}<br>
-          Mit dem Kauf gelten unsere <a class="plat-link" href="/agb/" target="_blank" rel="noopener">AGB</a>
-          und die <a class="plat-link" href="/widerruf/" target="_blank" rel="noopener">Widerrufsbelehrung</a>.</div>`
+          Mit dem Kauf gelten unsere <a class="plat-link" href="/legal#agb" target="_blank" rel="noopener">AGB</a>
+          und die <a class="plat-link" href="/legal#widerruf" target="_blank" rel="noopener">Widerrufsbelehrung</a>.</div>`
     }
 
     return `<div class="plat-card${handle?'':' locked'}">
       <div class="plat-card-head">
-        ${icon(pl==='instagram'?'atSign':'clapperboard',18)}
+        ${icon(pl==='instagram'?'instagram':'clapperboard',18)}
         <span class="plat-card-name">${label}</span>
       </div>
       <div class="plat-card-handle${handle?'':' missing'}">${handle?escHtml(handle):'nicht verknüpft'}</div>
@@ -3995,6 +4025,13 @@ async function waitForPurchaseAfterPayment(platform){
      das muss der Text sagen, sonst wirkt es wie ein Fehlkauf. */
   if(banner)banner.innerHTML='<span>Deine Zahlung ist eingegangen, die Freischaltung dauert noch einen Moment. Lade die Seite gleich noch einmal neu.</span>'
   await refreshPurchaseState()
+}
+
+// ── Kauf-Bereich nach einer fertigen Analyse aufklappen (Punkt 5) ──
+window.expandBuy=function(platform){
+  if(!anv)return
+  anv.expandBuy[platform]=true
+  renderPlatformCards()
 }
 
 // ── Freischalten: Checkout-Session serverseitig erzeugen ──
@@ -4103,6 +4140,20 @@ async function loadKi(){
       anv.prevStats[pl]=rows[1]||null
       anv.lastDone[pl]=rows[0]?.created_at||null
     }
+    /* Punkt 8: die Einzel-Beitraege des neuesten Laufs -- eine Ø-Zahl verschluckt,
+       dass die Spanne hier von 312 bis 21.735 Likes reicht. */
+    const runIds=['instagram','tiktok'].map(pl=>anv.stats[pl]?.analysis_run_id).filter(Boolean)
+    if(runIds.length){
+      const{data:pd}=await sb.from('apify_daten')
+        .select('platform,analysis_run_id,likes,views,posted_at,post_url')
+        .in('analysis_run_id',runIds)
+      if(!anv||anv.ctx.stale)return
+      for(const pl of ['instagram','tiktok']){
+        const rid=anv.stats[pl]?.analysis_run_id
+        anv.posts[pl]=rid?(pd||[]).filter(r=>r.analysis_run_id===rid&&r.platform===pl)
+          .sort((x,y)=>new Date(x.posted_at||0)-new Date(y.posted_at||0)):[]
+      }
+    }
   }
   renderPlatformCards()
   renderAnalyticsContent()
@@ -4175,6 +4226,7 @@ function poll(runId){
       clearInterval(anv.pollTimer);anv.pollTimer=null
       anv.activeRun=null
       if(run.status==='done'){
+        anv.expandBuy={instagram:false,tiktok:false}
         const{data:p}=await sb.from('users').select('instagram_handle,tiktok_handle,subscription_type').eq('id',anv.uid).single()
         if(!anv||anv.ctx.stale)return
         if(p)anv.profile={...anv.profile,...p}
@@ -4274,6 +4326,14 @@ function renderAnalyticsContent(){
   let h=''
   const date=fmtDateDMY(ki.created_at)
   const st=anv.stats[pl]
+  const posts=anv.posts[pl]||[]
+
+  /* Punkt 5: Das Erste nach dem Warten ist das Ergebnis, nicht der naechste Kauf. */
+  h+=`<div class="result-head"><div class="result-head-inner">
+    <div class="result-head-kicker">Deine ${label}-Analyse</div>
+    <div class="result-head-title">${escHtml(st?.username?'@'+String(st.username).replace(/^@/,''):label)}</div>
+    <div class="result-head-sub">${date}${posts.length?` · ${posts.length} Beiträge ausgewertet`:''}</div>
+  </div></div>`
 
   if(st){
     const follDelta=st.followers_change
@@ -4285,19 +4345,33 @@ function renderAnalyticsContent(){
       ? `<div class="kpi-delta flat">Handle geändert – kein Vergleich</div>` : null
     const follDeltaStr=follDelta!=null?(follDelta>=0?`↑ +${fmt(follDelta)}`:`↓ ${fmt(follDelta)}`):null
     const erDeltaStr=erDelta!=null?(erDelta>=0?`↑ +${(+erDelta).toFixed(2)}%`:`↓ ${Math.abs(+erDelta).toFixed(2)}%`):null
+    /* Punkt 6: Engagement pro View steht vorn. Die Follower-ER kann bei stark
+       ausgespielten Beitraegen weit ueber 30 % liegen -- rechnerisch richtig, aber
+       keine Marke glaubt die Zahl. Die belastbare Groesse ist die pro Aufruf. */
+    const epv=st.engagement_per_view
     h+=`<div class="section" style="margin-top:12px"><div class="kpi-grid">
       <div class="kpi-card dark">
         <div class="kpi-label">Follower</div>
         <div class="kpi-value">${fmt(st.followers)}</div>
         ${follDeltaStr?`<div class="kpi-delta ${follDelta>=0?'up':'down'}">${follDeltaStr} ${escHtml(seit)}</div>`:(handleHinweis||'<div class="kpi-delta flat">Erste Messung</div>')}
       </div>
+      ${epv!=null?`<div class="kpi-card">
+        <div class="kpi-label">Engagement</div>
+        <div class="kpi-value">${(+epv).toFixed(2)}%</div>
+        <div class="kpi-delta flat">Je Aufruf</div>
+      </div>`:''}
       <div class="kpi-card">
         <div class="kpi-label">⌀ Likes</div>
         <div class="kpi-value">${fmt(st.avg_likes)}</div>
         <div class="kpi-delta flat">Pro Beitrag</div>
       </div>
+      ${epv==null?`<div class="kpi-card">
+        <div class="kpi-label">⌀ Kommentare</div>
+        <div class="kpi-value">${fmt(st.avg_comments)}</div>
+        <div class="kpi-delta flat">Pro Beitrag</div>
+      </div>`:''}
       <div class="kpi-card">
-        <div class="kpi-label">Engagement Rate</div>
+        <div class="kpi-label">Je Follower</div>
         <div class="kpi-value">${st.engagement_rate!=null?(+st.engagement_rate).toFixed(2)+'%':'–'}</div>
         ${erDeltaStr?`<div class="kpi-delta ${erDelta>=0?'up':'down'}">${erDeltaStr} ${escHtml(seit)}</div>`:(handleHinweis||'<div class="kpi-delta flat">Erste Messung</div>')}
       </div>
@@ -4305,18 +4379,34 @@ function renderAnalyticsContent(){
         <div class="kpi-label">⌀ Views</div>
         <div class="kpi-value">${fmt(st.avg_views)}</div>
         <div class="kpi-delta flat">Pro Beitrag</div>
-      </div>`:`<div class="kpi-card">
-        <div class="kpi-label">⌀ Kommentare</div>
-        <div class="kpi-value">${fmt(st.avg_comments)}</div>
-        <div class="kpi-delta flat">Pro Beitrag</div>
-      </div>`}
+      </div>`:''}
     </div></div>`
-    if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null||st.engagement_per_view!=null){
+
+    /* Punkt 8: Balken je Beitrag. Der Ø verschweigt, dass ein einziger Ausreisser
+       den Schnitt traegt -- hier sieht man es auf einen Blick. */
+    if(posts.length>=4){
+      const maxL=Math.max(...posts.map(x=>x.likes??0),1)
+      const bestIdx=posts.reduce((bi,x,i)=>(x.likes??0)>(posts[bi].likes??0)?i:bi,0)
+      h+=`<div class="section"><div class="section-label">Beiträge im Vergleich</div>
+        <div class="bars-card">
+          <div class="bars-row">${posts.map((x,i)=>{
+            const hh=Math.max(3,Math.round(((x.likes??0)/maxL)*100))
+            const t=`${fmt(x.likes)} Likes${x.posted_at?' · '+fmtDateShort(x.posted_at):''}`
+            return `<div class="bar${i===bestIdx?' best':''}" style="height:${hh}%" title="${escHtml(t)}"></div>`
+          }).join('')}</div>
+          <div class="bars-legend"><span>älteste</span><span>stärkster: ${fmt(posts[bestIdx].likes)} Likes</span><span>neueste</span></div>
+        </div></div>`
+    }
+    if(st.best_posting_day||st.best_posting_hour!=null||st.top_format||st.posts_per_week!=null||(st.avg_shares!=null&&+st.avg_shares>0)){
       h+=`<div class="section"><div class="timing-grid">`
       if(st.best_posting_day||st.best_posting_hour!=null){
         const timeStr=st.best_posting_hour!=null?`${st.best_posting_hour}:00 Uhr`:'–'
         const dayStr=st.best_posting_day||''
-        h+=`<div class="timing-card"><div class="timing-icon">${icon('clock',19)}</div><div class="timing-label">Beste Zeit</div><div class="timing-value">${dayStr}${dayStr&&timeStr?' · ':''}${timeStr}</div></div>`
+        /* Punkt 12: Bei kleiner Stichprobe ist das eine Tendenz, keine Regel --
+           das muss dranstehen, sonst liest es sich wie ein Gesetz. */
+        const n=st.best_time_sample
+        const zusatz=n!=null?(n<20?`Tendenz aus ${n} Beiträgen`:`aus ${n} Beiträgen`):''
+        h+=`<div class="timing-card"><div class="timing-icon">${icon('clock',19)}</div><div class="timing-label">Beste Zeit</div><div class="timing-value">${dayStr}${dayStr&&timeStr?' · ':''}${timeStr}</div>${zusatz?`<div class="cmp-note" style="padding:4px 0 0;text-align:center">${escHtml(zusatz)}</div>`:''}</div>`
       }
       if(st.top_format){
         h+=`<div class="timing-card"><div class="timing-icon">${icon('clapperboard',19)}</div><div class="timing-label">Top Format</div><div class="timing-value">${escHtml(st.top_format)}</div></div>`
@@ -4329,10 +4419,44 @@ function renderAnalyticsContent(){
       }
       /* B2: Zweitkennzahl, bewusst nicht als Headline. Zaehler und Nenner kommen
          hier aus derselben Post-Menge -- nur Beitraege, die Views ausweisen. */
-      if(st.engagement_per_view!=null){
-        h+=`<div class="timing-card"><div class="timing-icon">${icon('trendingUp',19)}</div><div class="timing-label">Engagement / View</div><div class="timing-value">${(+st.engagement_per_view).toFixed(2)}%</div></div>`
-      }
       h+=`</div></div>`
+    }
+
+    /* Punkt 9: Format und Video-Laenge gegen die Wirkung. Beides wird seit jeher
+       erfasst und war nirgends sichtbar. Verglichen wird nur innerhalb derselben
+       Metrik -- Views gegen Views, Likes gegen Likes. */
+    const balken=(zeilen,einheit)=>{
+      const max=Math.max(...zeilen.map(z=>z.wert),1)
+      return `<div class="cmp-card">${zeilen.map(z=>`
+        <div class="cmp-row">
+          <div class="cmp-label">${escHtml(z.label)}</div>
+          <div class="cmp-track"><div class="cmp-fill" style="width:${Math.max(4,Math.round(z.wert/max*100))}%"></div></div>
+          <div class="cmp-val">${fmt(z.wert)}${einheit}</div>
+        </div>`).join('')}</div>`
+    }
+
+    const fs=Array.isArray(st.format_stats)?st.format_stats:[]
+    if(fs.length>1){
+      const mitViews=fs.filter(f=>f.avg_views!=null)
+      const nutzeViews=mitViews.length>1
+      const quelle=nutzeViews?mitViews:fs
+      h+=`<div class="section"><div class="section-label">Welches Format trägt</div>
+        ${balken(quelle.map(f=>({label:`${f.typ} (${f.n}×)`,wert:nutzeViews?f.avg_views:f.avg_likes})),'')}
+        <div class="cmp-card" style="border:none;background:none"><div class="cmp-note" style="padding:8px 2px 0">
+          Ø ${nutzeViews?'Views':'Likes'} je Beitrag dieses Formats.${nutzeViews?'':' Für diese Formate weist die Plattform keine Views aus.'}
+        </div></div></div>`
+    }
+
+    const ds=Array.isArray(st.duration_stats)?st.duration_stats:[]
+    if(ds.length>1){
+      const best=ds.reduce((b,x)=>x.avg_views>b.avg_views?x:b,ds[0])
+      const schwach=ds.reduce((b,x)=>x.avg_views<b.avg_views?x:b,ds[0])
+      const faktor=schwach.avg_views>0?(best.avg_views/schwach.avg_views):null
+      h+=`<div class="section"><div class="section-label">Videolänge und Reichweite</div>
+        ${balken(ds.map(d=>({label:`${d.bucket} (${d.n}×)`,wert:d.avg_views})),'')}
+        <div class="cmp-card" style="border:none;background:none"><div class="cmp-note" style="padding:8px 2px 0">
+          Ø Views je Länge.${faktor&&faktor>=1.3?` Deine Videos ${escHtml(best.bucket)} holen im Schnitt das ${faktor.toFixed(1).replace('.',',')}-Fache der Videos ${escHtml(schwach.bucket)}.`:''}
+        </div></div></div>`
     }
   }
 

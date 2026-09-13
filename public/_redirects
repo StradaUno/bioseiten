@@ -7,10 +7,11 @@
 # /app/irgendwas ab, damit dort kein 404 entsteht.
 /app/*        /app/index.html        200
 
-# ── Legal-Seiten: .html-Pfade auf die bestehenden Ordner mappen ──
-# Die Seiten liegen als /impressum/index.html usw. im Repo,
-# der App-Footer verlinkt sie als /impressum.html.
-/impressum.html     /impressum/       301
-/datenschutz.html   /datenschutz/     301
-/agb.html           /agb/             301
-/widerruf.html      /widerruf/        301
+# ── Legal-Seiten: alles auf /legal mit Anker ──────────────────────
+# Die Texte stehen in legal_texts und werden von /legal ausgeliefert.
+# Die frueheren Einzelseiten zogen ihren Inhalt aus itrk.legal und waren
+# durch ein 404 dort dauerhaft leer.
+/impressum.html     /legal#impressum      301
+/datenschutz.html   /legal#datenschutz    301
+/agb.html           /legal#agb            301
+/widerruf.html      /legal#widerruf       301
