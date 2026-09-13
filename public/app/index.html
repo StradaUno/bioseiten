@@ -1903,53 +1903,15 @@ async function renderBiolink(area, ctx){
       <div style="padding:60px 20px;text-align:center;color:var(--muted)">Wird geladen…</div>
     </div>
 
-    <!-- EDIT ACTIONS SHEET -->
-    <div class="sheet-backdrop hidden" id="edit-actions-sheet" onclick="closeSheet('edit-actions-sheet')">
-      <div class="sheet" onclick="event.stopPropagation()">
-        <div class="sheet-handle"></div>
-        <div class="sheet-title">Bearbeiten</div>
-        <div class="edit-action-list">
-          <button class="edit-action-row" onclick="openSheet('profile-sheet')">
-            <span class="edit-action-icon">👤</span>
-            <div class="edit-action-body">
-              <div class="edit-action-label">Profil</div>
-              <div class="edit-action-sub">Name, Bio, Profilbild</div>
-            </div>
-            <span class="edit-action-arrow">›</span>
-          </button>
-          <button class="edit-action-row" onclick="openSheet('handles-sheet')">
-            <span class="edit-action-icon">🔗</span>
-            <div class="edit-action-body">
-              <div class="edit-action-label">Social Kanäle</div>
-              <div class="edit-action-sub">Instagram, TikTok, YouTube, Threads</div>
-            </div>
-            <span class="edit-action-arrow">›</span>
-          </button>
-          <button class="edit-action-row" onclick="openSheet('links-sheet')">
-            <span class="edit-action-icon">🌐</span>
-            <div class="edit-action-body">
-              <div class="edit-action-label">Custom Links</div>
-              <div class="edit-action-sub">Bis zu 10 eigene Links</div>
-            </div>
-            <span class="edit-action-arrow">›</span>
-          </button>
-          <button class="edit-action-row" onclick="openSheet('theme-sheet')">
-            <span class="edit-action-icon">🎨</span>
-            <div class="edit-action-body">
-              <div class="edit-action-label">Design & Sprache</div>
-              <div class="edit-action-sub" id="current-theme-lang">Color · Deutsch</div>
-            </div>
-            <span class="edit-action-arrow">›</span>
-          </button>
-          <button class="edit-action-row" onclick="openSheet('impressum-sheet')">
-            <span class="edit-action-icon">📄</span>
-            <div class="edit-action-body">
-              <div class="edit-action-label">Impressum</div>
-              <div class="edit-action-sub">Gesetzlich vorgeschrieben</div>
-            </div>
-            <span class="edit-action-arrow">›</span>
-          </button>
-        </div>
+    <!-- EDIT PAGE (Vollseite, gleiche Mechanik wie im Media Kit) -->
+    <div class="edit-page" id="edit-page">
+      <div class="edit-page-topbar">
+        <button class="edit-page-back" onclick="closeEditPage()" aria-label="Zurück">←</button>
+        <div class="edit-page-title">Bearbeiten</div>
+      </div>
+      <div class="edit-page-content">
+        <div class="edit-page-intro">Tippe auf einen Bereich um die Daten einzutragen oder zu ändern.</div>
+        <div class="edit-action-list" id="edit-action-list"></div>
       </div>
     </div>
 
@@ -2233,9 +2195,7 @@ function paintBiolink(){
   const chartHtml=viewsTotal>0?`<div class="chart-wrap"><div class="chart-row">${chartBars}</div></div>`
     :`<div class="chart-empty">Noch keine Aufrufe in den letzten 7 Tagen.</div>`
 
-  const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
-  const langLabels={de:'Deutsch',en:'English',it:'Italiano'}
-  document.getElementById('current-theme-lang').textContent=`${themeLabels[blv.theme]||'Color'} · ${langLabels[blv.lang]||'Deutsch'}`
+  renderBioEditMenu()
 
   const page=document.getElementById('page-content')
 
@@ -2273,7 +2233,7 @@ function paintBiolink(){
   </div>`:''
 
   const termsHtml=!isActive?`<div class="action-stack">
-    <button class="action-btn action-btn-secondary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
+    <button class="action-btn action-btn-secondary" onclick="openBioEditMenu()">✎ Bearbeiten</button>
   </div>
   <div class="section">
     <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
@@ -2287,7 +2247,7 @@ function paintBiolink(){
     </button>
   </div>`
   :`<div class="action-stack">
-    <button class="action-btn action-btn-primary" onclick="openSheet('edit-actions-sheet')">✎ Bearbeiten</button>
+    <button class="action-btn action-btn-primary" onclick="openBioEditMenu()">✎ Bearbeiten</button>
   </div>`
 
   const deleteHtml=isActive
@@ -2319,6 +2279,56 @@ function paintBiolink(){
   initBioSheets()
 }
 
+/* Edit-Menue der BioLink-Vollseite — gleiche Struktur wie renderEditMenu()
+   im Media Kit, damit sich beide Features identisch anfuehlen. */
+window.openBioEditMenu=function(){
+  renderBioEditMenu()
+  openEditPage()
+}
+
+function renderBioEditMenu(){
+  const list=document.getElementById('edit-action-list')
+  if(!list||!blv)return
+  const p=blv.profile||{}
+  const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
+  const langLabels={de:'Deutsch',en:'English',it:'Italiano'}
+
+  const profileOk=!!(p.profile_image_url&&p.bio&&p.bio.trim())
+  const socials=[
+    p.instagram_handle?'Instagram':null, p.tiktok_handle?'TikTok':null,
+    p.youtube_handle?'YouTube':null,     p.threads_handle?'Threads':null
+  ].filter(Boolean)
+  const impOk=!!(p.impressum_text&&p.impressum_text.trim())
+  const linkCount=blv.customLinks.length
+
+  const items=[
+    {id:'profile-sheet',icon:'👤',label:'Profil',
+     sub:profileOk?'Bild und Bio vollständig':'Bild oder Bio fehlt',
+     status:profileOk?'ok':'miss',statusLabel:profileOk?'OK':'Pflicht'},
+    {id:'handles-sheet',icon:'🔗',label:'Social Kanäle',
+     sub:socials.length?socials.join(' · '):'Instagram, TikTok, YouTube, Threads',
+     status:socials.length?'ok':'miss',statusLabel:socials.length?'OK':'Pflicht'},
+    {id:'links-sheet',icon:'🌐',label:'Custom Links',
+     sub:linkCount?`${linkCount} / 10`:'Bis zu 10 eigene Links',status:'',statusLabel:''},
+    {id:'theme-sheet',icon:'🎨',label:'Design & Sprache',
+     sub:`${themeLabels[blv.theme]||'Color'} · ${langLabels[blv.lang]||'Deutsch'}`,status:'',statusLabel:''},
+    {id:'impressum-sheet',icon:'📄',label:'Impressum',
+     sub:impOk?'Hinterlegt':'Gesetzlich vorgeschrieben',
+     status:impOk?'ok':'miss',statusLabel:impOk?'OK':'Pflicht'}
+  ]
+
+  list.innerHTML=items.map(it=>`
+    <button class="edit-action-row" onclick="openSheet('${it.id}')">
+      <span class="edit-action-icon">${it.icon}</span>
+      <div class="edit-action-body">
+        <div class="edit-action-label">${escHtml(it.label)}</div>
+        <div class="edit-action-sub">${escHtml(it.sub)}</div>
+      </div>
+      ${it.statusLabel?`<span class="edit-action-status ${it.status}">${escHtml(it.statusLabel)}</span>`:''}
+      <span class="edit-action-arrow">›</span>
+    </button>`).join('')
+}
+
 function buildThemeCards(){
   const cards=THEMES.map(t=>`
     <button class="theme-card ${blv.theme===t.key?'selected':''}" data-theme-card="${t.key}" onclick="pickThemeCard('${t.key}')">
@@ -2338,10 +2348,7 @@ window.pickThemeCard=async function(theme){
   document.querySelectorAll('[data-theme-card]').forEach(el=>{
     el.classList.toggle('selected',el.getAttribute('data-theme-card')===theme)
   })
-  const themeLabels={color:'Color',dark:'Dark',clean:'Clean'}
-  const langLabels={de:'Deutsch',en:'English',it:'Italiano'}
-  const lblEl=document.getElementById('current-theme-lang')
-  if(lblEl)lblEl.textContent=`${themeLabels[theme]||'Color'} · ${langLabels[blv.lang]||'Deutsch'}`
+  renderBioEditMenu()
   await sb.from('biolink_viuno').upsert({user_id:blv.uid,theme,default_language:blv.lang,updated_at:new Date().toISOString()},{onConflict:'user_id'})
   if(!blv)return
   if(blv.biolink){blv.biolink.theme=theme}else{blv.biolink={user_id:blv.uid,theme,default_language:blv.lang}}
@@ -2494,10 +2501,8 @@ window.saveThemeLang=async function(){
     showToast('Design gespeichert — Seite wird neu generiert…')
     await generatePage()
   } else {
-    backToEditMenu('theme-sheet')
+    backToEditMenu('theme-sheet')   // rendert das Menue mit dem neuen Label neu
     showToast('Design gespeichert ✓')
-    const lbl=document.getElementById('current-theme-lang')
-    if(lbl&&blv)lbl.textContent=`${blv.theme==='color'?'Color':blv.theme==='dark'?'Dark':'Clean'} · ${blv.lang==='de'?'Deutsch':blv.lang==='en'?'English':'Italiano'}`
   }
   if(blv)document.querySelectorAll('.lang-opt').forEach(b=>b.classList.toggle('selected',b.dataset.lang===blv.lang))
 }
@@ -2594,7 +2599,7 @@ async function renderMediakit(area, ctx){
       <div style="padding:60px 20px;text-align:center;color:var(--muted)">Wird geladen…</div>
     </div>
 
-    <!-- EDIT PAGE (Vollseite, ersetzt das alte edit-actions-sheet) -->
+    <!-- EDIT PAGE (Vollseite, gleiche Mechanik wie im BioLink) -->
     <div class="edit-page" id="edit-page">
       <div class="edit-page-topbar">
         <button class="edit-page-back" onclick="closeEditPage()" aria-label="Zurück">←</button>
@@ -3021,8 +3026,9 @@ window.closeAllSheets=function(){
 // Schließt aktuelles Sub-Sheet, Edit-Page bleibt offen (Save/Cancel)
 window.backToEditMenu=function(currentSheetId){
   document.getElementById(currentSheetId).classList.add('hidden')
-  // Edit-Page neu rendern damit Status-Badges aktuell sind
-  setTimeout(()=>{ if(mkv) renderEditMenu() },50)
+  // Edit-Page neu rendern damit Status-Badges aktuell sind — je nachdem,
+  // welche View gerade gemountet ist (immer nur eine).
+  setTimeout(()=>{ if(mkv) renderEditMenu(); else if(blv) renderBioEditMenu() },50)
   // Body-Scroll bleibt gesperrt weil Edit-Page noch offen ist
   document.body.style.overflow='hidden'
 }
