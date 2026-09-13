@@ -1268,6 +1268,7 @@ async function runsZeichnen() {
 
 const PHASEN = [
   { name: "accounts", titel: "Accounts" },
+  { name: "news", titel: "News" },
   { name: "keywords", titel: "Keywords" },
   { name: "enrich", titel: "Enrichment" },
   { name: "analyze", titel: "Analyse" },
@@ -1361,6 +1362,12 @@ async function holen(knopf) {
 function phasenText(phase, e) {
   if (!e) return "fertig";
   if (phase === "accounts") return `${zahl(e.neu)} neu, ${zahl(e.uebersprungen)} übersprungen`;
+  if (phase === "news") {
+    const n = e.news ?? {};
+    return `${zahl(n.neu)} neu von ${zahl(n.konten)} Quellen${
+      n.offen ? `, ${n.offen} offen` : ""
+    }`;
+  }
   if (phase === "keywords") {
     const summe = (e.ergebnisse ?? []).reduce((s, k) => s + Number(k.neu ?? 0), 0);
     return `${e.keywords ?? 0} Begriffe, ${zahl(summe)} neu`;
