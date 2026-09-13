@@ -239,6 +239,33 @@ html, body {
 .greeting-hi{font-size:var(--t-2xl);font-weight:700;letter-spacing:-.04em}
 .greeting-date{font-size:var(--t-sm);color:var(--muted);margin-top:3px}
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* Einzelne Kachel laesst sonst eine leere Haelfte stehen */
+.dash-grid-single{grid-template-columns:1fr}
+/* Begruessungskarte */
+.greeting-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px}
+/* Einrichten-Karten: gestapelte Liste statt halbleerer Kacheln */
+.setup-list{display:flex;flex-direction:column;gap:var(--s-2)}
+.setup-card{display:flex;align-items:center;gap:var(--s-3);padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);text-decoration:none;transition:border-color .15s}
+.setup-card:hover{border-color:var(--border-strong)}
+.setup-card:active{transform:scale(.99)}
+.setup-card-icon{flex-shrink:0;display:grid;place-items:center;color:var(--muted)}
+.setup-card-body{flex:1;min-width:0;display:flex;flex-direction:column}
+.setup-card-title{font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text)}
+.setup-card-sub{font-size:var(--t-xs);color:var(--muted);margin-top:1px}
+.setup-card-arrow{flex-shrink:0;display:grid;place-items:center;color:var(--subtle)}
+/* News-Teaser: zwei Schlagzeilen, nicht aufklappbar, fuehrt auf die News-Seite */
+.news-teaser{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);text-decoration:none;overflow:hidden;transition:border-color .15s}
+.news-teaser:hover{border-color:var(--border-strong)}
+.news-teaser-row{display:block;padding:13px 16px}
+.news-teaser-row+.news-teaser-row{border-top:1px solid var(--border)}
+.news-teaser-meta{display:flex;align-items:center;gap:var(--s-2);margin-bottom:6px}
+.news-teaser-source{font-size:var(--t-xs);color:var(--subtle);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.news-teaser-headline{display:block;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text);line-height:var(--lh-tight)}
+/* Ab Tablet reihen sich Kacheln und Einrichten-Karten auf, statt sich zu dehnen */
+@media (min-width: 900px) {
+  .dash-grid, .dash-grid-single { grid-template-columns: repeat(auto-fit, minmax(175px, 230px)); justify-content: start; }
+  .setup-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 340px)); justify-content: start; }
+}
 .dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 16px;text-decoration:none;display:flex;flex-direction:column;gap:4px;transition:border-color .15s,transform .1s;cursor:pointer}
 .dash-card:hover{border-color:var(--border-strong)}
 .dash-card:active{transform:scale(.97)}
@@ -249,25 +276,8 @@ html, body {
 .dash-card-label{font-size:var(--t-2xs);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .dash-card-value{font-size:var(--t-num);font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1.1;margin-top:4px}
 .dash-card-sub{font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
-.dash-digest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:10px;overflow:hidden;cursor:pointer}
-.dash-digest-card.expanded .dash-card-body-full{display:block}
-.dash-digest-card.expanded .dash-card-chevron{transform:rotate(180deg)}
-.dash-card-inner{padding:12px 14px}
-.dash-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:7px}
 .dash-platform-badge{font-size:var(--t-2xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.03em}
 .pb-tiktok{background:#f0f9ff;color:#0891b2}.pb-instagram{background:#fdf2f8;color:#9d174d}.pb-youtube{background:#fff7ed;color:#c2410c}.pb-meta{background:#eff6ff;color:#1d4ed8}.pb-allgemein{background:var(--surface2);color:var(--muted)}
-.dash-card-source{font-size:var(--t-xs);color:var(--subtle);margin-left:auto}
-.dash-card-chevron{color:var(--subtle);transition:transform .2s;margin-left:4px}
-.dash-card-headline{font-size:var(--t-md);font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.35;margin-bottom:5px}
-.dash-card-summary{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
-.dash-card-body-full{display:none;border-top:1px solid var(--border);padding-top:12px;margin-top:10px}
-.dash-card-full-text{font-size:var(--t-sm);color:var(--muted);line-height:1.7;white-space:pre-line}
-.dash-card-impact{background:var(--surface2);border-radius:var(--r-sm);padding:10px 12px;margin-top:10px}
-.dash-card-impact-label{display:flex;align-items:center;gap:5px;font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.dash-card-impact-text{font-size:var(--t-sm);color:var(--text);line-height:1.5;font-weight:500}
-.dash-card-actions{display:flex;align-items:center;gap:8px;margin-top:10px}
-.dash-card-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--text);text-decoration:none;padding:6px 12px;border-radius:var(--r-full);border:1px solid var(--border-strong);background:var(--surface)}
-.dash-card-share{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--muted);padding:6px 12px;border-radius:var(--r-full);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit}
 
 /* ═══ VIEW: PROFIL (aus /profile/) ═══ */
 .profile-hero{padding:24px 20px 0;display:flex;align-items:flex-start;gap:16px}
@@ -614,10 +624,6 @@ html, body {
 .card-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--text);text-decoration:none;padding:7px 14px;border-radius:var(--r-full);border:1px solid var(--border-strong);background:var(--surface)}
 .card-share{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--muted);padding:7px 14px;border-radius:var(--r-full);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit;transition:all .15s}
 .card-share:hover{color:var(--text);border-color:var(--border-strong)}
-.nl-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px;margin:var(--s-3) var(--page-x) 0;display:flex;align-items:flex-start;gap:12px}
-.nl-checkbox-input{width:20px;height:20px;flex-shrink:0;accent-color:var(--text);cursor:pointer;margin-top:1px}
-.nl-title{display:flex;align-items:center;gap:6px;font-size:var(--t-sm);font-weight:700;color:var(--text);margin-bottom:2px}
-.nl-sub{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
 
 /* ═══ VIEW: ANFRAGEN (aus /requests/) ═══ */
 .view-requests .empty-sub{margin-bottom:0}
@@ -1665,178 +1671,140 @@ function confetti(){
 
 /* ═══════════════════════════════════════════════════════════════
    VIEW: DASHBOARD — übernommen aus public/dashboard/index.html
-   Neun Queries in gleicher Reihenfolge, gleiche Feldlisten, gleiche
-   Follower-Fallback-Logik, gleiche Karten und Newsletter-Anmeldung.
-   Angepasst: interne Links auf Hash-Routen. Die Klick-Listener der
-   Digest-Karten haengen an ctx und gehen beim Verlassen weg.
+   Zustandsabhängig: eine Kachel mit Zahlen bekommt nur, wer das
+   Feature eingerichtet hat. Was fehlt, erscheint als Einrichten-Karte
+   mit klarem Ziel. Anfragen steht immer, weil es nichts einzurichten
+   gibt. News nur als Teaser mit den zwei neuesten Schlagzeilen.
    ═══════════════════════════════════════════════════════════════ */
 async function renderDashboard(area, ctx) {
   const uid = state.session.user.id
 
+  /* Das Skeleton bildet das spätere Raster nach — Begrüßung, Kacheln,
+     Liste —, damit beim Umschalten auf die echten Daten nichts springt. */
   area.innerHTML = `
-    <div id="skeleton-area" style="padding:16px 20px;display:flex;flex-direction:column;gap:10px">
-      <div class="skeleton" style="height:30px;width:200px"></div>
-      <div style="display:flex;gap:10px">
-        <div class="skeleton" style="height:76px;min-width:120px;flex:1"></div>
-        <div class="skeleton" style="height:76px;min-width:120px;flex:1"></div>
-        <div class="skeleton" style="height:76px;min-width:120px;flex:1"></div>
-      </div>
-      <div class="skeleton" style="height:140px"></div>
-      <div class="skeleton" style="height:100px"></div>
+    <div id="skeleton-area">
+      <div class="section" style="padding-top:var(--s-4)"><div class="skeleton" style="height:72px;border-radius:var(--r-md)"></div></div>
+      <div class="section"><div class="dash-grid">
+        <div class="skeleton" style="height:104px;border-radius:var(--r-md)"></div>
+        <div class="skeleton" style="height:104px;border-radius:var(--r-md)"></div>
+        <div class="skeleton" style="height:104px;border-radius:var(--r-md)"></div>
+        <div class="skeleton" style="height:104px;border-radius:var(--r-md)"></div>
+      </div></div>
+      <div class="section"><div class="skeleton" style="height:132px;border-radius:var(--r-md)"></div></div>
     </div>
     <div id="dashboard-content" class="hidden"></div>`
 
-  const [profileRes,analyticsRes,digestRes,requestsRes,bioStatsRes,goalsRes,mkRes,dailyTextRes,statsRes] = await Promise.all([
-    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_views_today,bio_views_last_7_days,new_requests_count,newsletter_subscribed,email,contact_email').eq('id',uid).single(),
+  /* users trägt die Aufruf-Zähler selbst (gepflegt aus biolink_aufrufe /
+     mediakit_aufrufe) — dieselbe Quelle, aus der auch die BioLink- und
+     die Media-Kit-View lesen. */
+  const [profileRes,analyticsRes,digestRes,requestsRes,dailyTextRes,statsRes] = await Promise.all([
+    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_active,mediakit_active,bio_views_last_7_days,mediakit_views_last_7_days').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
     sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
-    sb.from('collab_requests').select('id,sender_name,sender_initial,message,status,created_at').eq('creator_id',uid).eq('status','new').is('deleted_at',null).order('created_at',{ascending:false}).limit(3),
-    sb.from('bio_stats').select('views_today,views_last_7_days,views_total').eq('user_id',uid).single(),
-    sb.from('user_goals').select('goal_type,target_value,current_value,deadline,platform,is_active,achieved').eq('user_id',uid).eq('is_active',true).eq('achieved',false).limit(3),
-    sb.from('mediakit_settings').select('views_last_7_days').eq('user_id',uid).single(),
+    sb.from('collab_requests').select('id',{count:'exact',head:true}).eq('creator_id',uid).eq('status','new').is('deleted_at',null),
     sb.rpc('get_daily_text',{p_user_id:uid}),
     sb.from('analyse_stats').select('platform,followers,followers_change').eq('user_id',uid).order('created_at',{ascending:false}).limit(2),
   ])
 
   if (ctx.stale) return
-  ctx.onCleanup(() => { nlv = null })
 
-  const p           = profileRes.data
-  const anRows      = analyticsRes.data || []
-  const an          = anRows[0] || null
-  const d           = digestRes.data
-  const cards       = d?.cards || []
-  const reqs        = requestsRes.data || []
-  const bs          = bioStatsRes.data
-  const goals       = goalsRes.data || []
-  const mk          = mkRes.data
-  const dailyText   = dailyTextRes.data || null
-  const statsRows   = statsRes.data || []
-  const isSubscribed= p?.newsletter_subscribed || false
+  const p         = profileRes.data
+  const an        = (analyticsRes.data||[])[0] || null
+  const cards     = digestRes.data?.cards || []
+  const newReqs   = requestsRes.count ?? 0
+  const dailyText = dailyTextRes.data || null
+  const statsRows = statsRes.data || []
 
-  const name      = p?.display_name||p?.full_name||'Creator'
-  const newReqs   = reqs.filter(r=>r.status==='new').length
+  const name = p?.display_name||p?.full_name||'Creator'
 
   // Follower: neue analyse_stats bevorzugen, Fallback auf users.total_followers
-  const igStats   = statsRows.find(r=>r.platform==='instagram')
-  const ttStats   = statsRows.find(r=>r.platform==='tiktok')
+  const igStats = statsRows.find(r=>r.platform==='instagram')
+  const ttStats = statsRows.find(r=>r.platform==='tiktok')
   const totalFollowers = igStats||ttStats
     ? (igStats?.followers||0)+(ttStats?.followers||0)
     : p?.total_followers
   const follDelta = igStats?.followers_change??an?.followers_change
 
-  // greeting: get_daily_text result or fallback
+  /* Eingerichtet heißt: die Seite ist live bzw. es liegt eine Messung vor.
+     Genau daran hängt, ob eine Kachel Zahlen oder eine Einrichten-Karte zeigt. */
+  const hasAnalyse  = statsRows.length>0
+  const bioActive   = p?.bio_active===true
+  const mkActive    = p?.mediakit_active===true
+
   const greetText = dailyText || (()=>{
     const h=new Date().getHours()
     return h<12?`Guten Morgen, ${name.split(' ')[0]}.`:h<18?`Guten Tag, ${name.split(' ')[0]}.`:`Guten Abend, ${name.split(' ')[0]}.`
   })()
 
-  document.getElementById('skeleton-area').classList.add('hidden')
-  document.getElementById('dashboard-content').classList.remove('hidden')
-  document.getElementById('dashboard-content').innerHTML = `
+  const tiles=[]
+  if(hasAnalyse) tiles.push({dark:true,href:'#/analytics',label:'Follower',value:fmt(totalFollowers),
+    sub:follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' diese Woche':'Gesamt'})
+  tiles.push({href:'#/requests',label:'Anfragen',value:String(newReqs),
+    sub:newReqs===1?'Neue Anfrage':newReqs>1?'Neue Anfragen':'Keine neuen'})
+  if(bioActive) tiles.push({href:'#/biolink',label:'BioLink',value:fmt(p?.bio_views_last_7_days),sub:'Aufrufe · 7 Tage'})
+  if(mkActive)  tiles.push({href:'#/mediakit',label:'Media Kit',value:fmt(p?.mediakit_views_last_7_days),sub:'Aufrufe · 7 Tage'})
 
-    <div class="section" style="padding-top:16px">
-      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
-        <div class="greeting-hi" style="font-size:17px">${escHtml(greetText)}</div>
+  const setup=[]
+  if(!bioActive)  setup.push({icon:'link',href:'#/biolink',title:'BioLink-Seite erstellen',sub:'Deine Visitenkarte für Brands'})
+  if(!hasAnalyse) setup.push({icon:'barChart',href:'#/analytics',title:'Analyse starten',sub:'Sieh, was deine Beiträge leisten'})
+  if(!mkActive)   setup.push({icon:'fileText',href:'#/mediakit',title:'Media Kit erstellen',sub:'Reichweite und Zahlen für Marken'})
+
+  document.getElementById('skeleton-area').classList.add('hidden')
+  const content=document.getElementById('dashboard-content')
+  content.classList.remove('hidden')
+  content.innerHTML = `
+    <div class="section" style="padding-top:var(--s-4)">
+      <div class="greeting-card">
+        <div class="greeting-hi">${escHtml(greetText)}</div>
         <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
       </div>
     </div>
 
-    <!-- Row 1: Follower + Anfragen -->
     <div class="section">
-      <div class="dash-grid">
-        <a class="dash-card dash-card-dark" href="#/analytics">
-          <div class="dash-card-label">Follower</div>
-          <div class="dash-card-value">${fmt(totalFollowers)}</div>
-          <div class="dash-card-sub">${follDelta!=null?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+' diese Woche':'Gesamt'}</div>
-        </a>
-        <a class="dash-card" href="#/requests">
-          <div class="dash-card-label">Anfragen</div>
-          <div class="dash-card-value">${newReqs}</div>
-          <div class="dash-card-sub">${newReqs===1?'Neue Anfrage':newReqs>1?'Neue Anfragen':'Keine neuen'}</div>
-        </a>
+      <div class="dash-grid${tiles.length===1?' dash-grid-single':''}">
+        ${tiles.map(t=>`<a class="dash-card${t.dark?' dash-card-dark':''}" href="${t.href}">
+          <div class="dash-card-label">${escHtml(t.label)}</div>
+          <div class="dash-card-value">${t.value}</div>
+          <div class="dash-card-sub">${escHtml(t.sub)}</div>
+        </a>`).join('')}
       </div>
     </div>
 
-    <!-- Row 2: BioLink + Media Kit -->
-    <div class="section">
-      <div class="dash-grid">
-        <a class="dash-card" href="#/biolink">
-          <div class="dash-card-label">BioLink</div>
-          <div class="dash-card-value">${fmt(bs?.views_last_7_days)}</div>
-          <div class="dash-card-sub">Aufrufe · 7 Tage</div>
-        </a>
-        <a class="dash-card" href="#/mediakit">
-          <div class="dash-card-label">Media Kit</div>
-          <div class="dash-card-value">${fmt(mk?.views_last_7_days)}</div>
-          <div class="dash-card-sub">Aufrufe · 7 Tage</div>
-        </a>
+    ${setup.length?`<div class="section">
+      <div class="section-header"><div class="section-title">Einrichten</div></div>
+      <div class="setup-list">
+        ${setup.map(it=>`<a class="setup-card" href="${it.href}">
+          <span class="setup-card-icon">${icon(it.icon,20)}</span>
+          <span class="setup-card-body">
+            <span class="setup-card-title">${escHtml(it.title)}</span>
+            <span class="setup-card-sub">${escHtml(it.sub)}</span>
+          </span>
+          <span class="setup-card-arrow">${icon('chevronRight',16)}</span>
+        </a>`).join('')}
       </div>
-    </div>
+    </div>`:''}
 
-    <!-- Daily Digest Karten — heute, ausklappbar, teilbar -->
-    ${d&&cards.length?`<div class="section">
+    ${cards.length?`<div class="section" style="padding-bottom:calc(var(--s-6) + var(--safe-bottom))">
       <div class="section-header">
         <div class="section-title">Creator News</div>
         <a class="section-link" href="#/digest">Alle ${icon('chevronRight',14)}</a>
       </div>
-      <div id="dash-cards-list">${cards.map(c=>dashCardHtml(c)).join('')}</div>
-    </div>`:''}
-
-    <!-- Newsletter unten — dieselbe Box wie oben auf Creator News -->
-    <div style="padding-bottom:calc(24px + var(--safe-bottom))">
-      <div id="nl-box-wrap"></div>
-    </div>
+      <a class="news-teaser" href="#/digest">
+        ${cards.slice(0,2).map(c=>`<span class="news-teaser-row">
+          <span class="news-teaser-meta">
+            <span class="platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
+            <span class="news-teaser-source">${escHtml(c.source||'')}</span>
+          </span>
+          <span class="news-teaser-headline">${escHtml(c.headline||'')}</span>
+        </span>`).join('')}
+      </a>
+    </div>`:'<div style="padding-bottom:calc(var(--s-6) + var(--safe-bottom))"></div>'}
   `
-
-  // Wire up card interactions
-  document.getElementById('dash-cards-list')?.querySelectorAll('.dash-digest-card').forEach(card=>{
-    ctx.on(card,'click',()=>card.classList.toggle('expanded'))
-  })
-  document.getElementById('dash-cards-list')?.querySelectorAll('.dash-card-share').forEach(btn=>{
-    ctx.on(btn,'click',e=>{e.stopPropagation();dashShareCard(btn.dataset.headline,btn.dataset.summary)})
-  })
-  // Newsletter-Box wie oben auf Creator News
-  nlv = { uid, isSubscribed, email: p?.contact_email||p?.email||state.session.user.email||'' }
-  renderNewsletterBox()
 }
 
-// ── Digest card helpers ──
+// ── Plattform-Beschriftung der News-Teaser ──
 function dashPlatformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p||'News'}
 function dashPlatformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta'}[p]||'pb-allgemein'}
-
-function dashCardHtml(c){
-  const hasFull=c.full_content?.trim()
-  const hasExtra=hasFull||c.impact||c.source_url
-  const shareBtn=`<button class="dash-card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">${icon('share',14)} Teilen</button>`
-  return`<div class="dash-digest-card">
-    <div class="dash-card-inner">
-      <div class="dash-card-meta">
-        <span class="dash-platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
-        <span class="dash-card-source">${escHtml(c.source||'')}</span>
-        ${hasExtra?icon('chevronDown',14,'dash-card-chevron'):''}
-      </div>
-      <div class="dash-card-headline">${escHtml(c.headline||'')}</div>
-      <div class="dash-card-summary">${escHtml(c.summary||'')}</div>
-      ${hasExtra?`<div class="dash-card-body-full">
-        ${hasFull?`<div class="dash-card-full-text">${escHtml(c.full_content)}</div>`:''}
-        ${c.impact?`<div class="dash-card-impact"><div class="dash-card-impact-label">${icon('zap',12)} Was das für dich bedeutet</div><div class="dash-card-impact-text">${escHtml(c.impact)}</div></div>`:''}
-        <div class="dash-card-actions">
-          ${c.source_url?`<a class="dash-card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ${icon('arrowUpRight',13)}</a>`:''}
-          ${shareBtn}
-        </div>
-      </div>`:''}
-    </div>
-  </div>`
-}
-
-async function dashShareCard(headline,summary){
-  const text=`📰 ${headline}\n\n${summary?summary.slice(0,120)+'…':''}\n\nMehr Creator-News auf viuno.de`
-  if(navigator.share){try{await navigator.share({title:headline,text,url:'https://viuno.de'});return}catch(_){}}
-  try{await navigator.clipboard.writeText(text);showToast('In Zwischenablage kopiert ✓')}catch(_){showToast('Teilen nicht verfügbar')}
-}
-
-
 
 /* ═══════════════════════════════════════════════════════════════
    Geteilte View-Helfer
@@ -4226,46 +4194,6 @@ window.shareAnalytics=function(){
   else navigator.clipboard.writeText(text).then(()=>showToast('Kopiert ✓')).catch(()=>showToast('Teilen nicht verfügbar'))
 }
 
-
-/* ═══════════════════════════════════════════════════════════════
-   Newsletter-Box — aus public/digest/index.html
-   Wird von Creator News und vom Dashboard genutzt, deshalb liegt sie
-   hier statt in einer View. Immer nur eine View ist gemountet.
-   ═══════════════════════════════════════════════════════════════ */
-let nlv = null   // { uid, isSubscribed, email }
-
-// Bei abonniert: nur Haken + kurze Bestaetigung. Bei nicht abonniert: Haken + Titel + Erklaertext.
-function renderNewsletterBox(){
-  const wrap=document.getElementById('nl-box-wrap')
-  if(!wrap||!nlv)return
-  if(nlv.isSubscribed){
-    wrap.innerHTML=`<div class="nl-box" style="align-items:center">
-      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" checked onchange="toggleDigestEmail()"/>
-      <label for="nl-checkbox" style="cursor:pointer;flex:1">
-        <div class="nl-title" style="margin-bottom:0">${icon('mail',14)} Creator News wöchentlich abonniert</div>
-      </label>
-    </div>`
-  } else {
-    wrap.innerHTML=`<div class="nl-box">
-      <input type="checkbox" class="nl-checkbox-input" id="nl-checkbox" onchange="toggleDigestEmail()"/>
-      <label for="nl-checkbox" style="cursor:pointer;flex:1">
-        <div class="nl-title">${icon('mail',14)} Creator News wöchentlich abonnieren</div>
-        <div class="nl-sub">Schick mir die Creator News jede Woche an ${escHtml(nlv.email||'meine Account-E-Mail')}.</div>
-      </label>
-    </div>`
-  }
-}
-
-window.toggleDigestEmail=async function(){
-  if(!nlv)return
-  const checked=document.getElementById('nl-checkbox').checked
-  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',nlv.uid)
-  if(!nlv)return
-  if(error){showToast('Fehler beim Speichern');return}
-  nlv.isSubscribed=checked
-  renderNewsletterBox()
-  showToast(checked?'Abonniert ✓':'Abo beendet')
-}
 
 /* ═══════════════════════════════════════════════════════════════
    VIEW: CREATOR NEWS — übernommen aus public/digest/index.html
