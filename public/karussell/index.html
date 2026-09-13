@@ -136,6 +136,31 @@
     border: 1px solid var(--linie); border-radius: 5px; color: var(--leise);
   }
 
+  /* Feste Quellen: Nadel und ein ruhiger Rahmen, damit sie sich von den
+     lernenden Quellen abheben, ohne zu schreien. */
+  .quelle-karte.fest { border-color: #cbb8f0; background: var(--karte); }
+  .nadel { font-size: 13px; margin-right: 4px; }
+  .fest-hinweis {
+    display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px;
+    border-radius: 99px; background: #ece7f8; color: #5b3fa8;
+  }
+  .quelle-knoepfe { display: flex; gap: 6px; flex: none; }
+  .schalter.loeschen { color: var(--warn); }
+
+  /* Haekchen im Hinzufuegen-Feld */
+  .haekchen {
+    display: flex; align-items: center; gap: 9px; flex: 1 1 100%;
+    font-size: 13px; color: var(--leise); margin-top: 2px; cursor: pointer;
+  }
+  /* Der Attributwaehler ist noetig: ".feld input { flex: 1 1 100% }" steht
+     weiter unten im Stylesheet und haette bei gleicher Spezifitaet das
+     letzte Wort - das Kaestchen wurde dadurch feldbreit. */
+  .haekchen input[type="checkbox"] {
+    flex: 0 0 18px; width: 18px; height: 18px; min-height: 0;
+    padding: 0; margin: 0; accent-color: var(--tinte);
+  }
+  .haekchen span { flex: 1 1 auto; min-width: 0; line-height: 1.35; }
+
   /* Runs-Tab */
   table.runs { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
   table.runs th, table.runs td { padding: 9px 6px; text-align: right; border-bottom: 1px solid var(--linie); }
@@ -150,6 +175,19 @@
     background: var(--linie); color: var(--leise); margin-right: 6px;
   }
   .quelle-badge.keyword { background: #ece7f8; color: #5b3fa8; }
+  /* News fallen auf - bei ihnen zaehlt, dass sie neu sind */
+  .news-badge {
+    display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px;
+    border-radius: 5px; background: var(--warn); color: #fff; margin-right: 6px;
+    letter-spacing: .02em;
+  }
+  .alter-badge {
+    display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 8px;
+    border-radius: 5px; background: var(--karte2); color: var(--tinte); margin-right: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+  .alter-badge.frisch { background: #e4f3ea; color: var(--gut); }
+  .karte.news { border-color: rgba(192, 57, 43, .28); }
   .kennzahl { font-variant-numeric: tabular-nums; }
 
   .karte {
@@ -510,6 +548,11 @@
         <option value="manual">von mir</option>
       </select>
       <select id="filter-keyword"><option value="">Alle Keywords</option></select>
+      <select id="filter-art">
+        <option value="">Alle Arten</option>
+        <option value="news">News</option>
+        <option value="tips">Tipps</option>
+      </select>
       <select id="filter-typ" hidden>
         <option value="">Alle Typen</option>
         <option value="carousel">Karussells</option>

@@ -21,6 +21,7 @@ let aktuelleAnsicht = "analyzed";
 let filterQuelle = "";
 let filterKeyword = "";
 let filterTyp = "";
+let filterArt = "";
 /** Keywords fuer das Auswahlfeld und den Quellen-Tab. */
 let keywordsCache = [];
 
@@ -255,6 +256,7 @@ async function listeLaden() {
   const eigene = aktuelleAnsicht === "funde";
   document.getElementById("filter-quelle").hidden = eigene;
   document.getElementById("filter-keyword").hidden = eigene;
+  document.getElementById("filter-art").hidden = eigene;
   document.getElementById("filter-typ").hidden = !eigene;
   // Einen eigenen Link einreihen ergibt nur in einer Beitragsliste Sinn.
   document.querySelector(".einreihen").hidden = ohneFilter;
@@ -275,6 +277,7 @@ async function listeLaden() {
     } else {
       if (filterQuelle) parameter.set("source", filterQuelle);
       if (filterKeyword) parameter.set("keyword_id", filterKeyword);
+      if (filterArt) parameter.set("kind", filterArt);
     }
 
     const daten = await apiJson(`/posts?${parameter}`);
@@ -347,7 +350,9 @@ function zeichneListe(posts) {
     const karte = document.createElement("article");
     // Im Reiter "Meine Funde" ist ohnehin alles von mir - dort waere die
     // lilafarbene Hervorhebung nur Rauschen.
-    karte.className = post.source === "manual" && aktuelleAnsicht !== "funde"
+    karte.className = post.kind === "news"
+      ? "karte news"
+      : post.source === "manual" && aktuelleAnsicht !== "funde"
       ? "karte manual"
       : "karte";
     karte.dataset.post = post.id;
@@ -371,11 +376,11 @@ function zeichneListe(posts) {
             <span class="handle">@${text(handle)}</span>
             ${badge(analyse.relevance)}
           </div>
-          <p class="meta">${quelle}${typBadge(post)}${datum(post.posted_at)} · ${
-      zahl(post.likes)
-    } Likes · ${zahl(post.comments)} Kommentare${
-      post.type === "carousel" ? ` · ${post.slide_count} Slides` : ""
-    }</p>
+          <p class="meta">${
+      post.kind === "news" ? '<span class="news-badge">News</span>' + alterBadge(post.posted_at) : ""
+    }${quelle}${typBadge(post)}${datum(post.posted_at)} · ${zahl(post.likes)} Likes · ${
+      zahl(post.comments)
+    } Kommentare${post.type === "carousel" ? ` · ${post.slide_count} Slides` : ""}</p>
           <p class="meta">
             ${post.views ? `<span class="views-badge">${zahl(post.views)} Aufrufe</span>` : ""}
             Engagement <b class="kennzahl">${kommazahl(post.engagement)}</b>${
@@ -510,6 +515,18 @@ const LEER = {
   funde: "Noch nichts selbst eingereiht. Instagram-Link oben einfügen – Karussell, Reel oder Bild.",
 };
 
+/**
+ * Bei News ist das Alter die wichtigste Zahl auf der Karte - deshalb steht
+ * es vorn und nicht im Kleingedruckten.
+ */
+function alterBadge(zeitpunkt) {
+  if (!zeitpunkt) return "";
+  const tage = Math.floor((Date.now() - new Date(zeitpunkt).getTime()) / 86_400_000);
+  if (!Number.isFinite(tage) || tage < 0) return "";
+  const text_ = tage === 0 ? "heute" : tage === 1 ? "gestern" : `vor ${tage} Tagen`;
+  return `<span class="alter-badge${tage <= 3 ? " frisch" : ""}">${text_}</span>`;
+}
+
 /** Reel oder Bild werden benannt; ein Karussell ist der Normalfall. */
 function typBadge(post) {
   if (post.type === "reel") return '<span class="typ-badge">Reel</span>';
@@ -566,9 +583,20 @@ function zeichneDetail(post, bilder, kennzahlen = {}) {
       ${a.viuno_hook ? abschnitt("Hook-Vorschlag", `<p class="kopierbar">${text(a.viuno_hook)}</p>`) : ""}
 
       ${
+    post.kind === "news" && a.summary
+      ? abschnitt(
+        "Was ist neu",
+        `<p>${text(a.summary)}</p>${
+          a.absender ? `<p class="meta">Absender: ${text(a.absender)}</p>` : ""
+        }`,
+      )
+      : ""
+  }
+
+      ${
     a.relevance_reason
       ? abschnitt(
-        "Bewertung",
+        post.kind === "news" ? "Warum das für dich zählt" : "Bewertung",
         `<p>${text(a.relevance_reason)}</p>${
           a.structure ? `<p class="meta">Aufbau: ${text(a.structure)}</p>` : ""
         }`,
@@ -585,7 +613,7 @@ function zeichneDetail(post, bilder, kennzahlen = {}) {
       ${
     liste_(a.viuno_fit)
       ? abschnitt(
-        "So baust du es für viuno um",
+        post.kind === "news" ? "Gliederung deines Karussells" : "So baust du es für viuno um",
         `<ul class="punkte">${
           a.viuno_fit.map((f) =>
             `<li><span class="fit-slide">Slide ${zahl(f.slide)}:</span> ${
@@ -965,6 +993,10 @@ async function quellenZeichnen() {
 
   const konten = accounts.accounts ?? [];
   const nachZustand = (zustand) => konten.filter((k) => k.status === zustand);
+  // News-Quellen haben einen eigenen Abschnitt; die Kandidatenliste bleibt
+  // gemeinsam, dort taucht ohnehin nie eine News-Quelle auf.
+  const news = konten.filter((k) => k.kind === "news");
+  const tipps = konten.filter((k) => k.kind !== "news");
 
   liste.innerHTML = `
     <div class="bereich-titel">Mein Konto
@@ -993,16 +1025,28 @@ async function quellenZeichnen() {
       <span class="klein">taufrisch, kleinere Konten · max. 14 Tage, ab 50 Likes</span></div>
     ${keywordsCache.filter((k) => k.kind === "hashtag").map(keywordKarte).join("")}
 
+    <div class="bereich-titel">News-Quellen (fest)
+      <span class="klein">Neuigkeiten statt Vorlagen · alle Beitragsarten, max. 14 Tage · fliegen nie automatisch raus</span></div>
+    <div class="feld">
+      <input id="neue-news" placeholder="handle" autocapitalize="none" autocorrect="off">
+      <button class="primaer" id="news-hinzu">Hinzufügen</button>
+    </div>
+    ${news.map(kontoKarte).join("") || '<p class="leer" style="padding:18px 0">Noch keine News-Quelle.</p>'}
+
     <div class="bereich-titel">Accounts
-      <span class="klein">${nachZustand("active").length} aktiv · ${
+      <span class="klein">${tipps.filter((k) => k.status === "active").length} aktiv · ${
     nachZustand("candidate").length
-  } Kandidaten · ${nachZustand("inactive").length} inaktiv</span>
+  } Kandidaten · ${tipps.filter((k) => k.status === "inactive").length} inaktiv</span>
     </div>
     <div class="feld">
       <input id="neues-konto" placeholder="handle" autocapitalize="none" autocorrect="off">
       <button class="primaer" id="konto-hinzu">Hinzufügen</button>
+      <label class="haekchen">
+        <input type="checkbox" id="neues-konto-fest">
+        <span>Fest – fliegt nie automatisch raus, auch wenn es nichts findet</span>
+      </label>
     </div>
-    ${nachZustand("active").map(kontoKarte).join("")}
+    ${tipps.filter((k) => k.status === "active").map(kontoKarte).join("")}
     ${
     nachZustand("candidate").length > 0
       ? `<div class="bereich-titel">Kandidaten aus dem Schneeball
@@ -1011,9 +1055,9 @@ async function quellenZeichnen() {
       : ""
   }
     ${
-    nachZustand("inactive").length > 0
-      ? `<div class="bereich-titel">Stillgelegt <span class="klein">vier Läufe ohne Treffer</span></div>` +
-        nachZustand("inactive").map(kontoKarte).join("")
+    tipps.filter((k) => k.status === "inactive").length > 0
+      ? `<div class="bereich-titel">Stillgelegt <span class="klein">drei Läufe ohne Fund</span></div>` +
+        tipps.filter((k) => k.status === "inactive").map(kontoKarte).join("")
       : ""
   }`;
 
@@ -1044,14 +1088,23 @@ function keywordKarte(k) {
 
 function kontoKarte(k) {
   const naechster = k.status === "active" ? "inactive" : "active";
-  return `<div class="quelle-karte">
+  return `<div class="quelle-karte${k.pinned ? " fest" : ""}">
     <div class="quelle-kopf">
-      <strong>@${text(k.handle)}</strong>
-      <button class="schalter" data-konto="${k.id}" data-ziel="${naechster}">
-        <span class="${k.status === "active" ? "an" : "aus"}">${
+      <strong>${k.pinned ? '<span class="nadel">📌</span>' : ""}@${text(k.handle)}</strong>
+      <span class="quelle-knoepfe">
+        <button class="schalter" data-konto="${k.id}" data-ziel="${naechster}">
+          <span class="${k.status === "active" ? "an" : "aus"}">${
     k.status === "active" ? "aktiv" : k.status === "candidate" ? "aktivieren" : "stillgelegt"
   }</span>
-      </button>
+        </button>
+        ${
+    k.pinned
+      ? `<button class="schalter loeschen" data-loeschen="${k.id}" data-handle="${
+        text(k.handle)
+      }">Löschen</button>`
+      : ""
+  }
+      </span>
     </div>
     <div class="quelle-zahlen">
       ${k.followers ? `<span>${zahl(k.followers)} Follower</span>` : ""}
@@ -1062,7 +1115,12 @@ function kontoKarte(k) {
       ${k.runs_without_hit > 0 ? `<span>${k.runs_without_hit} Läufe ohne Treffer</span>` : ""}
       ${k.discovered_via ? `<span>gefunden über @${text(k.discovered_via)}</span>` : ""}
     </div>
-    ${bewertungZeile("account", k.id)}
+    ${
+    k.pinned
+      ? `<div class="quelle-lernen"><span class="fest-hinweis">📌 fest</span>
+           <span class="grund">Bleibt aktiv, unabhängig von Funden. Nur hier wieder abschaltbar.</span></div>`
+      : bewertungZeile("account", k.id)
+  }
   </div>`;
 }
 
@@ -1105,10 +1163,48 @@ function quellenAktionen() {
     const feld = liste.querySelector("#neues-konto");
     const handle = feld.value.trim();
     if (!handle) return;
-    await apiJson("/accounts", { method: "POST", body: JSON.stringify({ handle, active: true }) });
+    await apiJson("/accounts", {
+      method: "POST",
+      body: JSON.stringify({
+        handle,
+        active: true,
+        kind: "tips",
+        pinned: liste.querySelector("#neues-konto-fest").checked,
+      }),
+    });
+    feld.value = "";
+    liste.querySelector("#neues-konto-fest").checked = false;
+    await quellenZeichnen();
+  };
+
+  // News-Quellen sind immer fest - dafuer sind sie da.
+  liste.querySelector("#news-hinzu").onclick = async () => {
+    const feld = liste.querySelector("#neue-news");
+    const handle = feld.value.trim();
+    if (!handle) return;
+    await apiJson("/accounts", {
+      method: "POST",
+      body: JSON.stringify({ handle, active: true, kind: "news", pinned: true }),
+    });
     feld.value = "";
     await quellenZeichnen();
   };
+
+  for (const knopf of liste.querySelectorAll("[data-loeschen]")) {
+    knopf.onclick = async () => {
+      const handle = knopf.dataset.handle;
+      if (!confirm(`@${handle} löschen? Die bisherigen Funde dieser Quelle gehen mit.`)) return;
+      knopf.disabled = true;
+      try {
+        await apiJson(`/accounts/${knopf.dataset.loeschen}`, { method: "DELETE" });
+        melde(`@${handle} gelöscht.`);
+        await quellenZeichnen();
+      } catch (fehler) {
+        knopf.disabled = false;
+        melde(fehler.message, true);
+      }
+    };
+  }
 
   for (const knopf of liste.querySelectorAll("[data-keyword]")) {
     knopf.onclick = async () => {
@@ -1624,6 +1720,10 @@ document.getElementById("filter-keyword").onchange = (e) => {
 };
 document.getElementById("filter-typ").onchange = (e) => {
   filterTyp = e.target.value;
+  listeLaden();
+};
+document.getElementById("filter-art").onchange = (e) => {
+  filterArt = e.target.value;
   listeLaden();
 };
 
