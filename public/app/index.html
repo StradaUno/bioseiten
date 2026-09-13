@@ -581,7 +581,7 @@ html, body {
 .c-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--c-fg3);margin-bottom:12px}
 .c-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 .c-chart{overflow-x:auto}
-.c-chart svg{min-width:520px;display:block}
+.c-chart svg{min-width:var(--c-chart-min,520px);display:block}
 
 .c-split{display:grid;gap:10px}
 @media(min-width:600px){.c-split{grid-template-columns:1fr 1fr}}
@@ -4436,7 +4436,7 @@ function renderAnalyticsContent(){
     el.innerHTML=`<div class="section" style="margin-top:12px"><div class="empty-state">
       <div class="empty-icon">${icon('barChart',30)}</div>
       <div class="empty-title">Noch keine ${label}-Analyse</div>
-      <div class="empty-sub">Wir lesen deine letzten 12 Beiträge aus und sagen dir, was sie verbindet:
+      <div class="empty-sub">Wir lesen deine letzten 36 Beiträge aus und sagen dir, was sie verbindet:
         welche Captions ziehen, welches Format trägt, wann du am besten postest — und vier konkrete
         nächste Schritte. Schalte ${label} oben frei, um zu starten.</div>
     </div></div>`
@@ -4504,6 +4504,11 @@ function renderAnalyticsContent(){
       const stark=st.resonanz_top??maxR, schwach=st.resonanz_flop??0
       const W=760,PADL=8,PADR=8,TOP=14,MID=140,BOT=222
       const slot=(W-PADL-PADR)/d.length, bw=slot*0.6, off=(slot-bw)/2
+      /* Ein Datum braucht rund 36 px. Passen nicht alle nebeneinander, wird nur
+         jedes n-te beschriftet; die Zahl ueber dem Balken faellt ganz weg,
+         sobald sie sich mit dem Nachbarn ueberlappen wuerde. */
+      const jedes=Math.max(1,Math.ceil(36/slot))
+      const zeigeWert=slot>=26
       let svg=''
       d.forEach((x,i)=>{
         const bx=PADL+i*slot+off
@@ -4512,8 +4517,10 @@ function renderAnalyticsContent(){
         const hr=Math.max(3,(x.resonanz/maxR)*(BOT-MID-28))
         const farbe=x.resonanz>=stark?'var(--c-ok)':(x.resonanz<=schwach?'var(--c-bad)':'var(--c-line2)')
         svg+=`<rect x="${bx.toFixed(1)}" y="${MID+16}" width="${bw.toFixed(1)}" height="${hr.toFixed(1)}" rx="3" fill="${farbe}"></rect>`
-        svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${BOT+20}" text-anchor="middle" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${escHtml(tag(x.datum))}</text>`
-        svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${MID+11}" text-anchor="middle" font-size="10" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${deN(x.resonanz,1)}</text>`
+        if(i%jedes===0||i===d.length-1)
+          svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${BOT+20}" text-anchor="middle" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${escHtml(tag(x.datum))}</text>`
+        if(zeigeWert)
+          svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${MID+11}" text-anchor="middle" font-size="10" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${deN(x.resonanz,1)}</text>`
       })
       svg+=`<line x1="${PADL}" y1="${MID+2}" x2="${W-PADR}" y2="${MID+2}" stroke="var(--c-line)" stroke-width="1"></line>`
       svg+=`<text x="${PADL}" y="${TOP-2}" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${fmt(maxV)} Aufrufe</text>`
@@ -4525,7 +4532,7 @@ function renderAnalyticsContent(){
           <span><i style="background:var(--c-ok)"></i>starke Resonanz</span>
           <span><i style="background:var(--c-bad)"></i>schwache Resonanz</span>
         </div>
-        <div class="c-chart"><svg viewBox="0 0 ${W} 252" width="100%" role="img" aria-label="Aufrufe und Resonanz je Beitrag">${svg}</svg></div>
+        <div class="c-chart" style="--c-chart-min:${Math.max(520,d.length*22)}px"><svg viewBox="0 0 ${W} 252" width="100%" role="img" aria-label="Aufrufe und Resonanz je Beitrag">${svg}</svg></div>
       </div>`
     }
   }
