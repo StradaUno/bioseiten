@@ -27,8 +27,37 @@
   --orange-bg: #fdf3e7;
   --blue: #3b5bdb;
   --blue-bg: #f0f4ff;
-  --radius: 16px;
-  --radius-sm: 10px;
+
+  /* ── Spacing: 4er-Raster. Alle Abstaende kommen aus dieser Skala. ── */
+  --s-1: 4px;  --s-2: 8px;  --s-3: 12px;
+  --s-4: 16px; --s-5: 20px; --s-6: 24px; --s-8: 32px;
+  --page-x: 20px;            /* horizontaler Seitenrand, ueberall gleich */
+
+  /* ── Typografie: sechs Stufen statt gewachsener Einzelwerte ── */
+  --t-xs: 11px;              /* Labels, Meta, Hints        */
+  --t-sm: 13px;              /* Fliesstext, Buttons, Listen */
+  --t-md: 15px;              /* Karten-Ueberschriften      */
+  --t-lg: 17px;              /* Sheet- und Modal-Titel     */
+  --t-xl: 22px;              /* Seitentitel                */
+  --t-num: 28px;             /* Kennzahlen                 */
+  --lh-tight: 1.35;
+  --lh-body: 1.55;
+  --fw-md: 500; --fw-sb: 600; --fw-b: 700;
+
+  /* ── Radien: drei Stufen plus Pille ── */
+  --r-sm: 10px;              /* Buttons, Inputs, kleine Flaechen */
+  --r-md: 16px;              /* Karten                           */
+  --r-lg: 20px;              /* Sheets, Modals                   */
+  --r-full: 99px;
+  /* Alt-Namen, damit bestehende Regeln unveraendert weiterlaufen */
+  --radius: var(--r-md);
+  --radius-sm: var(--r-sm);
+
+  /* ── Schatten: bewusst nur zwei ── */
+  --sh-card: 0 1px 2px rgba(0,0,0,.04);
+  --sh-over: 0 -4px 24px rgba(0,0,0,.10);
+
+  --field-h: 44px;           /* Touch-Mindesthoehe fuer Eingaben und Buttons */
   --nav-h: 56px;
   --sidebar-w: 272px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
@@ -174,23 +203,11 @@ html, body {
 /* iOS-Zoom-Fix wie in /login/ und /register/ — bewusst nur hier */
 .view-auth input, .view-auth textarea, .view-auth select { font-size: 16px !important; }
 
-/* Onboarding-Zwischenseite nutzt weiter die schlichte Karte */
-.login-card { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; }
-.login-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
-.login-logo-mark { width: 32px; height: 32px; border-radius: 8px; background: var(--text); color: white; display: grid; place-items: center; font-size: 14px; font-weight: 700; }
-.login-logo-text { font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
-.login-title { font-size: 20px; font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
-.login-sub { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
 .field input, .field textarea, .field select { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; color: var(--text); background: var(--bg); outline: none; transition: border-color .15s; }
 .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--text); }
 .field textarea { resize: none; line-height: 1.5; }
-.btn-login { width: 100%; padding: 12px; margin-top: 8px; background: var(--text); color: white; border: none; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; }
-.btn-login:disabled { opacity: .5; cursor: not-allowed; }
-.login-switch { font-size: 12px; color: var(--muted); margin-top: 18px; text-align: center; }
-.login-switch a { color: var(--text); font-weight: 600; text-decoration: none; }
-.login-switch a:hover { text-decoration: underline; }
 
 /* ─── PAGE HEADER / PLACEHOLDER ─── */
 .page-header { padding: 22px 20px 0; }
@@ -199,14 +216,9 @@ html, body {
 .section { padding: 16px 20px 0; }
 .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .section-title { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -.02em; }
-.placeholder-card {
-  background: var(--surface); border: 1px dashed var(--border-strong);
-  border-radius: var(--radius); padding: 40px 24px; text-align: center;
-}
-.placeholder-icon { font-size: 30px; margin-bottom: 10px; }
-.placeholder-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-.placeholder-sub { font-size: 13px; color: var(--muted); line-height: 1.55; }
-.placeholder-route { display: inline-block; margin-top: 12px; font-size: 11px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--subtle); background: var(--surface2); border-radius: 99px; padding: 4px 10px; }
+/* Wurde im Dashboard benutzt, war aber nie definiert — rutschte auf den blauen Browser-Standard */
+.section-link { font-size: var(--t-sm); font-weight: var(--fw-sb); color: var(--muted); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.section-link:hover { color: var(--text); }
 
 /* ─── MODAL (aus /profile/, /biolink/, /mediakit/, /analytics/) ─── */
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:flex-end;padding:0}
@@ -222,7 +234,6 @@ html, body {
 .modal-btn-confirm{background:var(--text);color:white;border-color:var(--text)}
 
 /* ═══ VIEW: DASHBOARD (aus /dashboard/) ═══ */
-.greeting-section{padding:22px 20px 0}
 .greeting-hi{font-size:22px;font-weight:700;letter-spacing:-.04em}
 .greeting-date{font-size:13px;color:var(--muted);margin-top:3px}
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -233,17 +244,12 @@ html, body {
 .dash-card-dark .dash-card-label{color:rgba(255,255,255,.5)}
 .dash-card-dark .dash-card-value{color:white}
 .dash-card-dark .dash-card-sub{color:rgba(255,255,255,.45)}
-.dash-card-dark .dash-card-icon{color:white}
 .dash-card-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
 .dash-card-value{font-size:28px;font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1.1;margin-top:4px}
 .dash-card-sub{font-size:11px;color:var(--subtle);margin-top:2px}
-.dash-card-icon{font-size:24px;margin-bottom:6px}
-.dash-card-icon-only{justify-content:center;align-items:flex-start;padding:20px 16px}
 .dash-digest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;cursor:pointer}
 .dash-digest-card.expanded .dash-card-body-full{display:block}
 .dash-digest-card.expanded .dash-card-chevron{transform:rotate(180deg)}
-.dash-card-image{width:100%;height:120px;object-fit:cover;background:var(--surface2);display:block}
-.dash-card-image-fallback{width:100%;height:120px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:28px}
 .dash-card-inner{padding:12px 14px}
 .dash-card-meta{display:flex;align-items:center;gap:8px;margin-bottom:7px}
 .dash-platform-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;text-transform:uppercase;letter-spacing:.03em}
@@ -1086,23 +1092,6 @@ function paintUser() {
 /* ─────────────────────────────────────────────
    VIEWS
    ───────────────────────────────────────────── */
-
-/* Platzhalter für alle noch nicht gebauten Seiten */
-function placeholder(area, title, sub, icon, route) {
-  area.innerHTML = `
-    <div class="page-header">
-      <div class="page-title">${escHtml(title)}</div>
-      <div class="page-sub">${escHtml(sub)}</div>
-    </div>
-    <div class="section">
-      <div class="placeholder-card">
-        <div class="placeholder-icon">${icon}</div>
-        <div class="placeholder-title">${escHtml(title)}</div>
-        <div class="placeholder-sub">Diese Ansicht ist noch ein Platzhalter.<br>Inhalte folgen im nächsten Schritt.</div>
-        <div class="placeholder-route">#/${escHtml(route)}</div>
-      </div>
-    </div>`
-}
 
 /* ═══════════════════════════════════════════════════════════════
    VIEW: LOGIN — übernommen aus public/login/index.html
