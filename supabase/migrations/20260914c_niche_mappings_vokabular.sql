@@ -1,0 +1,18 @@
+-- Repo-Kopie. Angewendet am 14.09.2026 ueber `apply_migration`
+-- (Migration `niche_mappings_vokabular_erweitern`).
+--
+-- Das Nischen-Vokabular war mit 75 Woertern zu duenn fuer den Bio-Check:
+-- geprueft wird auf TEILSTRING, also trifft "Sportlerin" ueber "sport" und
+-- "Ernaehrungsberatung" ueber "ernaehrung" -- aber "Fussball", "Pilates" oder
+-- "Hautpflege" trafen gar nichts. Eine Bio, die ihr Thema klar benennt, fiel
+-- dadurch durch.
+--
+-- Eine Umschreibung trifft weiterhin NICHT ("ich helfe dir, fitter zu werden"
+-- enthaelt weder "fitness" noch "training"). Das ist Absicht: Bedeutung zu
+-- erkennen waere Modellarbeit, und ein Modell darf im Check nicht urteilen.
+-- Stattdessen nennt der Hinweis zum Kriterium die Woerter, auf die bei der
+-- Nische dieses Creators geprueft wird -- nachvollziehbar statt magisch.
+--
+-- Gegengeprueft vor dem Einfuegen: ausser dem Brand-Ready-Check liest diese
+-- Tabelle nichts -- keine DB-Funktion, keine Seite, keine Edge Function.
+-- Die vollstaendige INSERT-Liste steht in der angewendeten Migration.

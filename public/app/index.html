@@ -1012,9 +1012,13 @@ a.news-quelle:hover{color:var(--text)}
 .br-kopf-txt{flex:1;min-width:0}
 .br-kopf-titel{font-size:var(--t-sm);font-weight:var(--fw-sb)}
 .br-kopf-sub{font-size:var(--t-xs);color:var(--muted);line-height:1.5;margin-top:3px}
-.br-saetze{margin:var(--s-3) var(--page-x) 0;font-size:var(--t-sm);color:var(--text);line-height:var(--lh-body)}
-.br-saetze p{margin:0}
-.br-saetze p+p{margin-top:5px;color:var(--muted)}
+.br-saetze{margin:var(--s-3) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.br-satz{padding:13px 16px;font-size:var(--t-sm);line-height:var(--lh-body);color:var(--muted)}
+.br-satz+.br-satz{border-top:1px solid var(--border)}
+/* Der erste Satz ordnet den Stand ein und traegt die Zahl -- er steht
+   deshalb in Textfarbe, die zwei Belege darunter ruhiger. */
+.br-satz.haupt{color:var(--text);font-weight:var(--fw-md)}
+.br-satz b{font-weight:var(--fw-sb);color:var(--text)}
 .br-tabs{display:flex;gap:6px;margin:var(--s-3) var(--page-x) 0}
 .br-tab{flex:1;min-height:38px;padding:9px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer}
 .br-tab.aktiv{background:var(--text);color:#fff;border-color:var(--text)}
@@ -6576,7 +6580,7 @@ async function renderBrandReady(area, ctx) {
     sb.from('mediakit_content_offers').select('offer_type').eq('user_id', uid),
     sb.from('mediakit_preise').select('offer_type,preis_von').eq('user_id', uid),
     sb.from('brand_ready_angaben').select('kriterium,wert,zahl').eq('user_id', uid),
-    sb.from('niche_mappings').select('keyword')
+    sb.from('niche_mappings').select('keyword,niche_category')
   ])
   if (ctx.stale) return
 
@@ -6605,7 +6609,7 @@ async function renderBrandReady(area, ctx) {
     offers: (offersQ.data || []).length,
     preise: (preiseQ.data || []).filter(x => x.preis_von != null).length,
     posts,
-    keywords: (nischeQ.data || []).map(x => (x.keyword || '').toLowerCase()).filter(Boolean)
+    nischen: (nischeQ.data || []).filter(x => x.keyword)
   }
   brv.angaben = angaben
   brv.kanal = neueste.length ? neueste[0].platform : null
@@ -6634,7 +6638,7 @@ function brErgebnis() {
     posts: d.posts.filter(x => x.analysis_run_id === s.analysis_run_id && x.platform === brv.kanal),
     profil: d.profil, bl: d.bl, mk: d.mk,
     brands: d.brands, offers: d.offers, preise: d.preise,
-    keywords: d.keywords, angaben: brv.angaben
+    nischen: d.nischen, angaben: brv.angaben
   })
 }
 
@@ -6675,7 +6679,7 @@ function brZeichnen() {
       </div>
     </div>
 
-    <div class="br-saetze">${saetze.map(x => `<p>${escHtml(x)}</p>`).join('')}</div>
+    <div class="br-saetze">${saetze.map((x, i) => `<div class="br-satz${i === 0 ? ' haupt' : ''}">${brSatzHtml(x)}</div>`).join('')}</div>
 
     ${kan.length > 1 ? `<div class="br-tabs">${kan.map(pf =>
       `<button class="br-tab${pf === brv.kanal ? ' aktiv' : ''}" onclick="brKanal('${pf}')">${BR_PLAT[pf] || pf}</button>`).join('')}</div>` : ''}
@@ -6697,6 +6701,14 @@ function brZeichnen() {
       sind gekennzeichnet und nicht geprüft. Kriterien, zu denen keine Daten vorliegen, fallen aus der
       Wertung — sie kosten dich keine Punkte. Benchmarks: HypeAuditor-Engagement-Daten nach Kanalgröße.
     </div>`
+}
+
+/* "Am staerksten: Engagement — 23,91 % ..." -> das Etikett vor dem
+   Gedankenstrich wird fett. Drei gleich aussehende Kaesten liest niemand;
+   mit Etikett sieht man in einer Sekunde, was worin steht. */
+function brSatzHtml(satz) {
+  const m = String(satz).match(/^([^—]{3,40}:)\s*(.*)$/s)
+  return m ? `<b>${escHtml(m[1])}</b> ${escHtml(m[2])}` : escHtml(satz)
 }
 
 let brIdZaehler = 0

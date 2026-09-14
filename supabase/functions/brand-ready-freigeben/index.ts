@@ -81,14 +81,14 @@ Deno.serve(async (req) => {
     const uid = user.id
     const [statsQ, profilQ, blQ, mkQ, brandsQ, offersQ, preiseQ, angabenQ, nischeQ] = await Promise.all([
       supabase.from('analyse_stats').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-      supabase.from('users').select('bio,contact_email,impressum_text,niche_custom,bio_active,mediakit_active,display_name').eq('id', uid).maybeSingle(),
+      supabase.from('users').select('bio,contact_email,impressum_text,niche_category,niche_custom,bio_active,mediakit_active,display_name,profile_image_url').eq('id', uid).maybeSingle(),
       supabase.from('biolink_settings').select('is_active,impressum_text').eq('user_id', uid).maybeSingle(),
       supabase.from('mediakit_viuno').select('*').eq('user_id', uid).maybeSingle(),
       supabase.from('mediakit_brands').select('id', { count: 'exact', head: true }).eq('user_id', uid),
       supabase.from('mediakit_content_offers').select('offer_type').eq('user_id', uid),
       supabase.from('mediakit_preise').select('offer_type,preis_von').eq('user_id', uid),
       supabase.from('brand_ready_angaben').select('kriterium,wert,zahl').eq('user_id', uid),
-      supabase.from('niche_mappings').select('keyword')
+      supabase.from('niche_mappings').select('keyword,niche_category')
     ])
 
     const alle = statsQ.data || []
@@ -114,7 +114,7 @@ Deno.serve(async (req) => {
       brands: brandsQ.count || 0,
       offers: (offersQ.data || []).length,
       preise: (preiseQ.data || []).filter((x: any) => x.preis_von !== null).length,
-      keywords: (nischeQ.data || []).map((x: any) => String(x.keyword || '').toLowerCase()).filter(Boolean),
+      nischen: (nischeQ.data || []).filter((x: any) => x.keyword),
       angaben
     })
     const saetze = brSaetze(r)
@@ -136,6 +136,7 @@ Deno.serve(async (req) => {
       punkte: r.punkte, max_punkte: r.max, saetze,
       stichtag: st.created_at,
       anzeigename: profilQ.data?.display_name ?? null,
+      profilbild: profilQ.data?.profile_image_url ?? null,
       expires_at: aktiv ? vorhanden.expires_at : laeuftAb,
       revoked_at: null,
       aufrufe: aktiv ? vorhanden.aufrufe : 0,

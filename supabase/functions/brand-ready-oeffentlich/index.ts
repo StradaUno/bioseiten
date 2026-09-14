@@ -31,7 +31,7 @@ Deno.serve(async (req) => {
 
     const { data: frei } = await supabase
       .from('brand_ready_freigaben')
-      .select('id, platform, punkte, max_punkte, saetze, stichtag, anzeigename, expires_at, revoked_at, aufrufe')
+      .select('id, platform, punkte, max_punkte, saetze, stichtag, anzeigename, profilbild, expires_at, revoked_at, aufrufe')
       .eq('token', token).maybeSingle()
 
     /* Abgelaufen, zurueckgezogen und gar nicht vorhanden antworten absichtlich
@@ -48,6 +48,7 @@ Deno.serve(async (req) => {
     return json({
       plattform: frei.platform === 'tiktok' ? 'TikTok' : 'Instagram',
       anzeigename: frei.anzeigename,
+      profilbild: frei.profilbild,
       punkte: frei.punkte,
       max_punkte: frei.max_punkte,
       saetze: Array.isArray(frei.saetze) ? frei.saetze : [],

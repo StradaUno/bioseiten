@@ -234,7 +234,23 @@ export function brBerechnen(d) {
      der Text der viuno-BioLink-Seite; eine Marke liest die Bio im Profil. */
   const bioTxt = (s.bio && s.bio.trim()) ? s.bio : (p.bio || '')
   const bioLow = bioTxt.toLowerCase()
-  const treffer = (d.keywords || []).filter(w => w && bioLow.includes(w))
+  /* Geprueft wird auf TEILSTRING gegen das Nischen-Vokabular: "Sportlerin"
+     trifft ueber "sport", "Ernaehrungsberatung" ueber "ernaehrung". Eine
+     Umschreibung trifft NICHT -- "ich helfe dir, fitter zu werden" enthaelt
+     weder "fitness" noch "training". Das ist Absicht: Bedeutung zu erkennen
+     waere Modellarbeit, und ein Modell darf hier nicht urteilen. Damit das
+     nicht als Willkuer wirkt, nennt der Hinweis unten die Woerter, auf die
+     bei DIESER Nische geprueft wird. */
+  const vok = (d.nischen && d.nischen.length)
+    ? d.nischen
+    : (d.keywords || []).map(w => ({ keyword: w, niche_category: null }))
+  const treffer = vok
+    .filter(x => x.keyword && bioLow.includes(String(x.keyword).toLowerCase()))
+    .map(x => x.keyword)
+  const eigeneNische = String(p.niche_category || '').trim()
+  const beispiele = vok
+    .filter(x => x.niche_category && x.niche_category === eigeneNische && String(x.keyword).length > 3)
+    .map(x => x.keyword).slice(0, 3)
   const eigenes = (p.niche_custom || '').trim().toLowerCase()
   const thema = treffer.length > 0 || (eigenes.length >= 3 && bioLow.includes(eigenes))
   /* Zeichen, nicht UTF-16-Einheiten: eine Bio aus zwanzig Emoji haette sonst
@@ -249,7 +265,9 @@ export function brBerechnen(d) {
       : `${bioLen} Zeichen, ${thema ? 'nennt „' + (treffer[0] || eigenes) + '“ als Thema' : 'nennt kein Thema deiner Nische'}.`,
     tun: (bioTxt && bioPk < 7) ? { art: 'text', label: thema
       ? 'Unter 40 Zeichen bleibt für eine Marke zu wenig übrig. Die Bio änderst du direkt in deinem Kanal.'
-      : 'Nimm ein Wort auf, das dein Thema benennt. Die Bio änderst du direkt in deinem Kanal.' } : null }))
+      : 'Nimm ein Wort auf, das dein Thema benennt'
+        + (beispiele.length ? ' — bei deiner Nische zählt zum Beispiel ' + beispiele.map(w => '„' + w + '“').join(', ') : '')
+        + '. Gesucht wird das Wort selbst: eine Umschreibung erkennt der Check nicht. Die Bio änderst du direkt in deinem Kanal.' } : null }))
 
   /* kennzeichnung (0) — HINWEIS OHNE PUNKTE. Wer noch nie eine bezahlte
      Kooperation hatte, kann hier nichts vorweisen; Punkte dafuer wuerden den

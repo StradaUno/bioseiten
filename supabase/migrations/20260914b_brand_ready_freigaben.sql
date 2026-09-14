@@ -55,3 +55,11 @@ alter table public.brand_ready_angaben
     'account_typ','biolink','impressum','kontakt','kit_vorhanden','kit_aktuell',
     'kit_preise','referenzen','demografie','rechnung'
   ));
+
+-- Nachtrag 14.09.2026 (Migration `brand_ready_freigaben_profilbild`):
+-- Profilbild auf der geteilten Seite. Es ist ohnehin oeffentlich -- dieselbe
+-- URL steht auf der BioLink- und der Media-Kit-Seite -- und ohne Bild wirkt
+-- eine geteilte Seite wie ein Formular statt wie eine Visitenkarte.
+-- Fehlt es, faellt die Seite auf das viuno-V zurueck.
+alter table public.brand_ready_freigaben
+  add column if not exists profilbild text;
