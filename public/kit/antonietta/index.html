@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Antonietta · Media Kit</title>
+<meta name="description" content="Media Kit von Antonietta — Reichweite, Zielgruppe und Leistungen für Marken.">
+<meta name="theme-color" content="#EAEAEE">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="Antonietta · Media Kit">
+<meta property="og:description" content="Reichweite, Zielgruppe und Leistungen für Marken.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E">
+<style>
+html,body{margin:0;background:#EAEAEE}
+.page-loader{position:fixed;inset:0;background:#EAEAEE;display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .25s}
+.page-loader.hide{opacity:0;pointer-events:none}
+.spinner{width:24px;height:24px;border:2px solid rgba(26,26,46,.15);border-top-color:rgba(26,26,46,.6);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#main{visibility:hidden}
+</style>
+</head>
+<body>
+<div class="page-loader" id="page-loader"><div class="spinner"></div></div>
+<div id="main"></div>
+<!-- Aufbau, Stil und Datenabruf: /kit/kit-renderer.js im Repo.
+     Eine Layout-Aenderung braucht deshalb keine Neuerzeugung dieser Datei. -->
+<script type="module" src="/kit/kit-renderer.js"></script>
+</body>
+</html>
