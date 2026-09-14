@@ -372,6 +372,22 @@ html, body {
 .chart-day{font-size:var(--t-2xs);color:var(--muted);margin-top:6px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
 .chart-val{font-size:var(--t-xs);color:var(--text);font-weight:600;margin-top:2px}
 .chart-empty{margin-top:12px;padding:18px;text-align:center;font-size:var(--t-sm);color:var(--muted);background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--r-md)}
+/* Herkunft und Klicks: Liste mit Balken im Hintergrund der Zeile. Der
+   Balken traegt die Groessenordnung, die Zahl den genauen Wert. */
+.rang{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.rang-zeile{position:relative;display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)}
+.rang-zeile:last-child{border-bottom:0}
+.rang-balken{position:absolute;left:0;top:0;bottom:0;background:var(--surface2);z-index:0}
+.rang-text{position:relative;z-index:1;flex:1;min-width:0;font-size:var(--t-md);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rang-wert{position:relative;z-index:1;font-size:var(--t-md);font-weight:600;flex-shrink:0}
+.rang-anteil{position:relative;z-index:1;font-size:var(--t-xs);color:var(--muted);flex-shrink:0;width:38px;text-align:right}
+/* 24 schmale Balken. Beschriftet werden nur 0, 6, 12 und 18 Uhr —
+   24 Uhrzeiten nebeneinander liest ohnehin niemand. */
+.uhr{display:flex;align-items:flex-end;gap:2px;height:70px;margin-top:12px;padding:12px 10px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
+.uhr-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
+.uhr-bar{width:100%;background:var(--border-strong);border-radius:2px 2px 0 0;min-height:2px}
+.uhr-bar.has{background:var(--text)}
+.uhr-lbl{font-size:9px;color:var(--muted);margin-top:4px;height:11px}
 .action-stack{padding:var(--s-3) var(--page-x) 0;display:flex;flex-direction:column;gap:8px}
 .action-btn{width:100%;padding:13px 16px;border-radius:var(--r-sm);font-family:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;transition:opacity .15s}
 .action-btn-primary{background:var(--text);color:white;border-color:var(--text)}
@@ -2458,7 +2474,7 @@ async function renderBiolink(area, ctx){
     </div>
   </div>`
 
-  blv = { uid, ctx, profile:null, biolink:null, customLinks:[], viewsTotal:0, viewsToday:0, views7Days:0, viewsDaily:[], theme:'color', lang:'de', editingLinkId:null }
+  blv = { uid, ctx, profile:null, biolink:null, customLinks:[], viewsTotal:0, viewsToday:0, views7Days:0, viewsDaily:[], herkunft:[], stunden:[], klicks:[], theme:'color', lang:'de', editingLinkId:null }
 
   /* Die alte Seite haengt eine Theme-Init an openSheet — hier genauso,
      beim Verlassen der Route wird der Original-Helfer wiederhergestellt. */
@@ -2484,11 +2500,17 @@ async function renderBiolink(area, ctx){
 
 async function loadBiolink(){
   const uid = blv.uid
-  const[profileRes,biolinkRes,linksRes,viewsDailyRes]=await Promise.all([
+  const[profileRes,biolinkRes,linksRes,viewsDailyRes,herkunftRes,stundenRes,klickRes]=await Promise.all([
     sb.from('users').select('display_name,full_name,profile_image_url,bio,bio_active,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,contact_email,subscription_type,bio_views_total,bio_views_today,bio_views_last_7_days').eq('id',uid).single(),
     sb.from('biolink_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('biolink_custom_links').select('*').eq('user_id',uid).order('position',{ascending:true}),
-    sb.rpc('get_biolink_views_last_7_days_daily',{p_user_id:uid})
+    sb.rpc('get_biolink_views_last_7_days_daily',{p_user_id:uid}),
+    /* Herkunft und Stunde liegen seit April in biolink_aufrufe, wurden
+       aber nie angezeigt. Klicks kommen aus biolink_klicks. Alle drei
+       Funktionen lesen ueber auth.uid(), nicht ueber einen Parameter. */
+    sb.rpc('biolink_herkunft',{p_tage:30}),
+    sb.rpc('biolink_stunden',{p_tage:30}),
+    sb.rpc('biolink_klick_zahlen',{p_tage:30})
   ])
   if(!blv||blv.ctx.stale)return
   blv.profile=profileRes.data
@@ -2498,6 +2520,9 @@ async function loadBiolink(){
   blv.viewsToday=blv.profile?.bio_views_today||0
   blv.views7Days=blv.profile?.bio_views_last_7_days||0
   blv.viewsDaily=viewsDailyRes.data||[]
+  blv.herkunft=herkunftRes.data||[]
+  blv.stunden=stundenRes.data||[]
+  blv.klicks=klickRes.data||[]
   blv.theme=blv.biolink?.theme||'color'
   blv.lang=blv.biolink?.default_language||'de'
   paintBiolink()
@@ -2538,6 +2563,43 @@ function paintBiolink(){
   const chartHtml=viewsTotal>0?`<div class="chart-wrap"><div class="chart-row">${chartBars}</div></div>`
     :`<div class="chart-empty">Noch keine Aufrufe in den letzten 7 Tagen.</div>`
 
+  /* ── Auswertungen, 30 Tage ──────────────────────────────────────────
+     Herkunft und Stunde lagen seit April ungenutzt in der Tabelle.
+     Klicks kommen aus biolink_klicks und beginnen erst mit der Seite,
+     die den Zaehler enthaelt — deshalb der Hinweis im leeren Zustand. */
+  const ARTLABEL={instagram:'Instagram',tiktok:'TikTok',youtube:'YouTube',threads:'Threads',kontakt:'Kontakt',custom:'Link'}
+  const aufrufe30=blv.herkunft.reduce((a,h)=>a+Number(h.anzahl||0),0)
+  const klicks30=blv.klicks.reduce((a,k)=>a+Number(k.anzahl||0),0)
+  /* Kann ueber 100% liegen: ein Besucher klickt manchmal mehrere Links. */
+  const klickrate=aufrufe30>0?Math.round(klicks30/aufrufe30*100):0
+
+  const rangHtml=(zeilen,gesamt)=>{
+    const max=Math.max(...zeilen.map(z=>z.wert),1)
+    return `<div class="rang">${zeilen.map(z=>`
+      <div class="rang-zeile">
+        <div class="rang-balken" style="width:${Math.round(z.wert/max*100)}%"></div>
+        <span class="rang-text">${escHtml(z.text)}</span>
+        <span class="rang-wert">${fmtNum(z.wert)}</span>
+        <span class="rang-anteil">${gesamt>0?Math.round(z.wert/gesamt*100):0}%</span>
+      </div>`).join('')}</div>`
+  }
+
+  const herkunftHtml=aufrufe30>0
+    ? rangHtml(blv.herkunft.slice(0,6).map(h=>({text:h.quelle,wert:Number(h.anzahl)})),aufrufe30)
+    : `<div class="chart-empty">Noch keine Aufrufe in den letzten 30 Tagen.</div>`
+
+  const maxStd=Math.max(...blv.stunden.map(x=>Number(x.anzahl||0)),1)
+  const uhrHtml=blv.stunden.length?`<div class="uhr">${blv.stunden.map(x=>{
+      const v=Number(x.anzahl||0)
+      return `<div class="uhr-col" title="${x.stunde} Uhr · ${v} Aufrufe">
+        <div class="uhr-bar ${v>0?'has':''}" style="height:${Math.max(v/maxStd*100,v>0?6:2)}%"></div>
+        <div class="uhr-lbl">${[0,6,12,18].includes(Number(x.stunde))?x.stunde:''}</div>
+      </div>`}).join('')}</div>`:''
+
+  const klickHtml=klicks30>0
+    ? rangHtml(blv.klicks.slice(0,8).map(k=>({text:k.label||ARTLABEL[k.art]||k.art,wert:Number(k.anzahl)})),klicks30)
+    : `<div class="chart-empty">Noch keine Klicks. Gezählt wird, seit die Seite das letzte Mal erzeugt wurde.</div>`
+
   renderBioEditMenu()
 
   const page=document.getElementById('page-content')
@@ -2557,6 +2619,22 @@ function paintBiolink(){
            <div class="stat-box"><div class="stat-box-value">${fmtNum(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
          </div>
          ${chartHtml}
+       </div>
+       <div class="section">
+         <div class="section-label">Klicks · 30 Tage</div>
+         <div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
+           <div class="stat-box"><div class="stat-box-value">${fmtNum(klicks30)}</div><div class="stat-box-label">Klicks</div></div>
+           <div class="stat-box"><div class="stat-box-value">${klickrate}%</div><div class="stat-box-label">Klickrate</div></div>
+         </div>
+         ${klickHtml}
+       </div>
+       <div class="section">
+         <div class="section-label">Woher die Aufrufe kommen · 30 Tage</div>
+         ${herkunftHtml}
+       </div>
+       <div class="section">
+         <div class="section-label">Wann deine Seite geöffnet wird · Ortszeit der Besucher</div>
+         ${uhrHtml}
        </div>`
     :slug?`<div class="status-banner inactive"><div class="status-dot inactive"></div>
         <div><div class="status-text">Seite ist inaktiv<span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span></div></div></div>`

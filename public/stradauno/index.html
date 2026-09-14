@@ -42,10 +42,25 @@ ICONS.zap='<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.
 ICONS.news='<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/>'
 ICONS.plus='<path d="M5 12h14"/><path d="M12 5v14"/>'
 
-function knopf(href,label,name){
+/* Zaehlt einen Klick, ohne das Weiterspringen aufzuhalten — gleiche
+   Bauweise wie im generierten Template: sendBeacon gibt die Seite sofort
+   frei, der Body geht als text/plain raus und loest keinen Preflight aus.
+   Kein Cookie, keine Kennung. */
+function klickZaehlen(el,art,label){
+  el.addEventListener('click',()=>{
+    try{
+      const daten=JSON.stringify({user_id:creatorData.user_id,art,label,link_id:null,hour_of_day:new Date().getHours()})
+      const ziel=SUPABASE_URL+'/functions/v1/track-biolink-click'
+      if(navigator.sendBeacon){navigator.sendBeacon(ziel,new Blob([daten],{type:'text/plain;charset=UTF-8'}))}
+      else{fetch(ziel,{method:'POST',headers:{'Content-Type':'text/plain'},body:daten,keepalive:true}).catch(()=>{})}
+    }catch(_){}
+  })
+}
+function knopf(href,label,name,art){
   const a=document.createElement('a')
   a.className='btn btn-secondary'; a.href=href; a.target='_blank'; a.rel='noopener'
   a.innerHTML=btnInner(icon(name), label, null)
+  klickZaehlen(a, art||'custom', label)
   return a
 }
 function baueSeite(){
@@ -55,11 +70,12 @@ function baueSeite(){
   karte.className='karte'; karte.href='https://viuno.de'
   karte.innerHTML='<span class="karte-kopf">'+icon('zap',22)+'<span>viuno</span></span>'
     +'<span class="karte-text">Deine Creator-Toolbox. Ohne Schnickschnack.</span>'
+  klickZaehlen(karte,'custom','viuno')
   c.appendChild(karte)
 
   c.appendChild(knopf('https://viuno.de/news','Creator News','news'))
   c.appendChild(knopf('https://viuno.de','Kostenlos starten','plus'))
-  c.appendChild(knopf('https://instagram.com/viuno.pro','viuno auf Instagram','instagram'))
+  c.appendChild(knopf('https://instagram.com/viuno.pro','viuno auf Instagram','instagram','instagram'))
 
   /* Kontakt-Button: direkter mailto:-Link auf die im BioLink hinterlegte
      Adresse. Ist keine hinterlegt, erscheint der Button gar nicht. */
@@ -69,13 +85,11 @@ function baueSeite(){
     inq.className='btn btn-primary'; inq.id='btn-inquiry'
     inq.href='mailto:'+kontaktMail+'?subject='+encodeURIComponent(t('mail_subject'))
     inq.innerHTML=btnInner(icon('mail'), t('inquiry_btn'), null)
+    klickZaehlen(inq,'kontakt','Kontakt')
     c.appendChild(inq)
   }
 }
 
-document.addEventListener('keydown',(e)=>{
-  if(e.key==='Escape' && overlay.classList.contains('open')) closeInquiry()
-})
 baueSeite()
 document.getElementById('main').style.visibility='visible'
 document.getElementById('footer').style.visibility='visible'

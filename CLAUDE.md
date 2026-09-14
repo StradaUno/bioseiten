@@ -136,7 +136,55 @@ Consequences worth knowing:
   its source now lives in `supabase/functions/generate-biolink/` — same
   deal as the Creator-News functions: the repo copy is documentation, the
   dashboard is the deployment source. **Edit one, deploy it; change it in the
-  dashboard, copy it back.** Deployed version at the time of writing: v16.
+  dashboard, copy it back.** Deployed version at the time of writing: v17.
+
+## BioLink-Auswertungen
+
+Die oeffentlichen Seiten zaehlen **ohne Einwilligung und ohne Banner**: kein
+Cookie, kein localStorage, keine IP, kein User-Agent, keine Geraetekennung.
+Gespeichert wird nur, *was* passiert ist — Herkunft, Stunde, Sprache, Art des
+Links. Ohne Wiedererkennung gibt es keinen Personenbezug, und genau deshalb
+braucht keine BioLink-Seite einen Cookie-Banner. **Wer hier etwas ergaenzt,
+das einen Besucher ueber zwei Aufrufe hinweg wiedererkennbar macht, macht den
+Banner noetig.** Das ist die Grenze, nicht eine Vorliebe.
+
+Zwei Tabellen, beide nur ueber den Service Role beschreibbar (keine
+Insert-Policy), lesbar nur vom eigenen Account (`auth.uid() = user_id`):
+
+- `biolink_aufrufe` — ein Aufruf. `referrer_source`, `hour_of_day`, `language`.
+- `biolink_klicks` — ein Klick. `art` (instagram, tiktok, youtube, threads,
+  kontakt, custom), `label`, `link_id` (FK auf `biolink_custom_links`,
+  `ON DELETE SET NULL`), `hour_of_day`.
+
+Zwei Edge Functions schreiben sie, beide `verify_jwt: false`, beide mit
+Repo-Kopie unter `supabase/functions/`: `track-biolink-view` und
+`track-biolink-click`. Beide pruefen, dass die `user_id` existiert — sie steht
+im Quelltext jeder oeffentlichen Seite, ohne die Pruefung liesse sich die
+Tabelle mit beliebigen UUIDs vollschreiben. `track-biolink-click` uebernimmt
+eine `link_id` nur, wenn der Link demselben Account gehoert.
+
+**Der Body wird mit `req.text()` + `JSON.parse` gelesen, nicht mit
+`req.json()`.** Klicks kommen per `navigator.sendBeacon`, und sendBeacon kann
+keine Header setzen: der Body geht als `text/plain` raus. Das ist Absicht —
+`text/plain` loest keinen CORS-Preflight aus, ein Klick bleibt genau ein
+Request und haelt das Weiterspringen zum Ziel nicht auf.
+
+Die Anzeige in der SPA (`renderBiolink`) liest drei SECURITY-INVOKER-RPCs, alle
+mit `p_tage` und **ohne** `user_id`-Parameter — sie filtern selbst auf
+`auth.uid()`, damit eine fremde UUID nichts herausgibt: `biolink_herkunft`,
+`biolink_stunden` (linker Join auf `generate_series(0,23)`, damit leere Stunden
+als Luecke erscheinen) und `biolink_klick_zahlen`. Rohe Referrer werden von
+`biolink_quelle(roh text)` auf Namen abgebildet (Instagram, Threads, TikTok,
+YouTube, Facebook, LinkedIn, X, WhatsApp, Pinterest, Google, viuno, Direkt,
+Andere) — `l.instagram.com` und `instagram.com` landen dadurch im selben Topf.
+
+Gezaehlt wird der Aufruf **nach** `applyLanguage()`, nicht davor: vorher stand
+`currentLang` noch auf dem Startwert und die Spalte `language` enthielt
+ausnahmslos `'de'`.
+
+`public/stradauno/` ist handgebaut und zaehlt auf denselben Account mit. Deshalb
+prueft `track-biolink-view` bewusst **nicht** auf `bio_active` — der generierte
+BioLink dieses Accounts ist aus.
 
 ## The Profil view
 

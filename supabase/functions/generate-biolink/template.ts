@@ -421,11 +421,13 @@ async function loadBioPage(){
   const {data:links}=await supabase.from('biolink_links_public').select('*').eq('user_id',data.user_id).order('position',{ascending:true})
   customLinks=links??[]
   renderHeader(data); renderLinks()
-  try{const referrer=document.referrer||'direct'; const hour=new Date().getHours()
-    fetch(SUPABASE_URL+'/functions/v1/track-biolink-view',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:data.user_id,referrer_source:referrer,hour_of_day:hour,language:currentLang})}).catch(()=>{})}
-  catch(_){}
   const lang=['de','en','it'].includes(data.default_language)?data.default_language:'de'
   applyLanguage(lang)
+  /* Erst jetzt zaehlen: vorher stand currentLang noch auf dem Startwert
+     und die Spalte language enthielt ausnahmslos 'de'. */
+  try{fetch(SUPABASE_URL+'/functions/v1/track-biolink-view',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({user_id:data.user_id,referrer_source:document.referrer||'direct',hour_of_day:new Date().getHours(),language:currentLang})}).catch(()=>{})}
+  catch(_){}
   document.getElementById('main').style.visibility='visible'
   document.getElementById('footer').style.visibility='visible'
   const ld=document.getElementById('page-loader'); ld.classList.add('hide'); setTimeout(()=>ld.remove(),250)
@@ -444,6 +446,20 @@ function renderHeader(u){
   if(u.is_verified) document.getElementById('verified').style.display='inline-flex'
   if(u.bio) document.getElementById('bio').textContent=u.bio
 }
+/* Zaehlt einen Klick, ohne das Weiterspringen aufzuhalten: sendBeacon
+   gibt die Seite sofort frei und schickt im Hintergrund. Der Body geht
+   als text/plain raus — das ist ein einfacher Request ohne Preflight,
+   ein Klick bleibt also genau eine Anfrage. Kein Cookie, keine Kennung. */
+function klickZaehlen(el,art,label,linkId){
+  el.addEventListener('click',()=>{
+    try{
+      const daten=JSON.stringify({user_id:creatorData&&creatorData.user_id,art,label,link_id:linkId||null,hour_of_day:new Date().getHours()})
+      const ziel=SUPABASE_URL+'/functions/v1/track-biolink-click'
+      if(navigator.sendBeacon){navigator.sendBeacon(ziel,new Blob([daten],{type:'text/plain;charset=UTF-8'}))}
+      else{fetch(ziel,{method:'POST',headers:{'Content-Type':'text/plain'},body:daten,keepalive:true}).catch(()=>{})}
+    }catch(_){}
+  })
+}
 function renderLinks(){
   const c=document.getElementById('links'); c.innerHTML=''
   const s=document.getElementById('socials'); s.innerHTML=''
@@ -458,14 +474,21 @@ function renderLinks(){
     a.href=href; a.target='_blank'; a.rel='noopener'; a.tabIndex=-1
     a.title=label
     a.innerHTML=icon(name)
+    klickZaehlen(a,name,label,null)
     s.appendChild(a)
-    c.appendChild(makeBtn({href, label, icon:icon(name)}))
+    const b=makeBtn({href, label, icon:icon(name)})
+    klickZaehlen(b,name,label,null)
+    c.appendChild(b)
   }
   kanal(u.instagram_handle,'https://instagram.com/','Instagram','instagram')
   kanal(u.tiktok_handle,'https://tiktok.com/@','TikTok','tiktok')
   kanal(u.youtube_handle,'https://youtube.com/@','YouTube','youtube')
   kanal(u.threads_handle,'https://threads.net/@','Threads','threads')
-  for(const link of customLinks) c.appendChild(makeBtn({href:normalizeUrl(link.url), label:link.title, icon:icon('link'), adLabel:link.is_paid?t('ad_label'):null}))
+  for(const link of customLinks){
+    const b=makeBtn({href:normalizeUrl(link.url), label:link.title, icon:icon('link'), adLabel:link.is_paid?t('ad_label'):null})
+    klickZaehlen(b,'custom',link.title,link.id)
+    c.appendChild(b)
+  }
   /* Kontakt-Button: direkter mailto:-Link auf die im BioLink hinterlegte
      Adresse. Ist keine hinterlegt, erscheint der Button gar nicht. */
   const kontaktMail=(creatorData?.contact_email||'').trim()
@@ -474,6 +497,7 @@ function renderLinks(){
     inq.className='btn btn-primary'; inq.id='btn-inquiry'
     inq.href='mailto:'+kontaktMail+'?subject='+encodeURIComponent(t('mail_subject'))
     inq.innerHTML=btnInner(icon('mail'), t('inquiry_btn'), null)
+    klickZaehlen(inq,'kontakt','Kontakt',null)
     c.appendChild(inq)
   }
 }
