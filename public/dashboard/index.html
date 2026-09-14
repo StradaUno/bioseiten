@@ -572,12 +572,16 @@ window.subscribeNewsletter=async function(pos,uid){
   const email=document.getElementById(inputId)?.value?.trim()
   if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Bitte gültige E-Mail eingeben.');return}
   const btn=event.target;btn.disabled=true;btn.textContent='…'
-  // Upsert into newsletter_subscribers
-  const{error}=await sb.from('newsletter_subscribers').upsert({
-    email,user_id:uid||null,source:pos==='top'?'dashboard_top':'dashboard_bottom',status:'active',subscribed_at:new Date().toISOString()
-  },{onConflict:'email'})
-  // Update users table flag
-  if(uid)await sb.from('users').update({newsletter_subscribed:true}).eq('id',uid)
+  /* Laeuft ueber die Edge Function. Ohne Konto legt sie die Zeile auf
+     "pending" und schickt eine Bestaetigungsmail - erst deren Link schaltet
+     den Versand frei. */
+  const{data:{session}}=await sb.auth.getSession()
+  const res=await fetch('https://bzejndghppuipnedasuv.supabase.co/functions/v1/newsletter-subscribe',{
+    method:'POST',
+    headers:{'Content-Type':'application/json',...(session?{Authorization:'Bearer '+session.access_token}:{})},
+    body:JSON.stringify({email,source:pos==='top'?'dashboard_top':'dashboard_bottom'})
+  })
+  const error=res.ok?null:true
   btn.disabled=false;btn.textContent='Anmelden'
   if(error){showToast('Fehler beim Anmelden.');return}
   const successEl=document.getElementById(successId)

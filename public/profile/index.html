@@ -447,21 +447,18 @@ window.saveNewPassword=async function(){
 
 // ── Newsletter Toggle ──
 window.toggleNewsletter=async function(subscribe){
-  if(subscribe){
-    const email=state.user.email
-    if(!email){showToast('Keine E-Mail-Adresse gefunden.');return}
-    await sb.from('newsletter_subscribers').upsert({
-      email,user_id:state.user.id,source:'profile',status:'active',subscribed_at:new Date().toISOString()
-    },{onConflict:'email'})
-    await sb.from('users').update({newsletter_subscribed:true}).eq('id',state.user.id)
-    state.isSubscribed=true
-    showToast('Newsletter abonniert ✓')
-  } else {
-    await sb.from('newsletter_subscribers').update({status:'unsubscribed',unsubscribed_at:new Date().toISOString()}).eq('user_id',state.user.id)
-    await sb.from('users').update({newsletter_subscribed:false}).eq('id',state.user.id)
-    state.isSubscribed=false
-    showToast('Newsletter abgemeldet')
-  }
+  /* Laeuft ueber die Edge Function - der Browser darf nicht mehr direkt in
+     newsletter_subscribers schreiben, sonst waere die Bestaetigung per REST
+     zu umgehen. */
+  const{data:{session}}=await sb.auth.getSession()
+  const res=await fetch('https://bzejndghppuipnedasuv.supabase.co/functions/v1/newsletter-subscribe',{
+    method:'POST',
+    headers:{'Content-Type':'application/json',...(session?{Authorization:'Bearer '+session.access_token}:{})},
+    body:JSON.stringify(subscribe?{source:'profil'}:{abmelden:true})
+  })
+  if(!res.ok){showToast('Konnte nicht gespeichert werden');return}
+  state.isSubscribed=subscribe
+  showToast(subscribe?'Newsletter abonniert ✓':'Newsletter abgemeldet')
   // Re-render profile to update button state
   renderProfile()
 }

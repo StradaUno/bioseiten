@@ -861,6 +861,17 @@ a.news-quelle:hover{color:var(--text)}
 .nl-line-text{font-size:var(--t-sm);color:var(--muted)}
 .nl-line:has(.nl-line-check:checked) .nl-line-text{color:var(--text)}
 
+/* Produkt-Hinweis: leiser als eine Meldung, damit klar bleibt, was hier
+   die Hauptsache ist. */
+.news-hinweis{display:flex;align-items:center;gap:var(--s-3);padding:12px 14px;background:var(--surface);
+  border:1px solid var(--border);border-radius:var(--r-md);text-decoration:none;color:inherit;transition:border-color .15s}
+.news-hinweis:hover{border-color:var(--border-strong)}
+.news-hinweis-icon{width:30px;height:30px;border-radius:var(--r-sm);background:var(--surface2);display:grid;place-items:center;flex-shrink:0;color:var(--muted)}
+.news-hinweis-text{flex:1;min-width:0}
+.news-hinweis-t{display:block;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text)}
+.news-hinweis-u{display:block;font-size:var(--t-xs);color:var(--muted);margin-top:1px}
+.news-hinweis-pfeil{flex-shrink:0;color:var(--subtle)}
+
 /* Frueher erschienene Ausgaben. */
 .news-frueher{margin-top:var(--s-6)}
 .news-frueher-titel{font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:var(--s-3)}
@@ -5096,6 +5107,22 @@ function newsZaehlen(page,source,slug){
   }catch(_){}
 }
 
+/* Newsletter laeuft seit dem Umbau ausschliesslich ueber die Edge Function.
+   Der Browser darf nicht mehr direkt in newsletter_subscribers schreiben -
+   sonst liesse sich per REST einfach status='active' setzen und die
+   Bestaetigung ueberspringen. */
+async function newsletterSetzen(anmelden, quelle){
+  const { data:{ session } } = await sb.auth.getSession()
+  const res = await fetch('https://bzejndghppuipnedasuv.supabase.co/functions/v1/newsletter-subscribe', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', ...(session ? { Authorization:'Bearer '+session.access_token } : {}) },
+    body: JSON.stringify(anmelden ? { source: quelle } : { abmelden: true }),
+  })
+  const daten = await res.json().catch(()=>({}))
+  if(!res.ok) throw new Error(daten.error || 'Fehler')
+  return daten.status
+}
+
 /* Punkt in der Seitenleiste, solange die juengste Ausgabe neuer ist als der
    letzte Besuch der News-Seite. Grundlage ist page_views — dieselbe Tabelle,
    die auch die Reichweite zaehlt. */
@@ -5140,14 +5167,17 @@ async function renderDigest(area, ctx){
   dgv = { uid, ctx, aktuell:[], frueher:[], offene:new Set(), subscribed:false }
   ctx.onCleanup(() => { dgv = null })
 
-  const [profil, aktuell, frueher] = await Promise.all([
-    sb.from('users').select('newsletter_subscribed').eq('id',uid).single(),
+  const [profil, aktuell, frueher, analysen] = await Promise.all([
+    sb.from('users').select('newsletter_subscribed,bio_active,mediakit_active').eq('id',uid).single(),
     sb.from('digest_cards_today').select('*').order('relevance_score',{ascending:false}),
     sb.from('digest_cards_past').select('*').order('date',{ascending:false}).order('relevance_score',{ascending:false}).limit(NEWS_ARCHIV_KARTEN),
+    sb.from('analysis_runs').select('id',{count:'exact',head:true}).eq('user_id',uid).eq('status','done'),
   ])
   if(ctx.stale)return
 
   dgv.subscribed = profil?.data?.newsletter_subscribed || false
+  dgv.profil     = profil?.data || {}
+  dgv.hatAnalyse = (analysen?.count ?? 0) > 0
   dgv.aktuell    = aktuell?.data || []
   dgv.frueher    = frueher?.data || []
   newsZaehlen('news','app')
@@ -5179,12 +5209,36 @@ function paintDigest(){
     if(i+1===nlNach) html += nlLineHtml()
   })
 
+  html += hinweisHtml()
   html += frueherHtml()
 
   leer.classList.add('hidden')
   el.classList.remove('hidden')
   el.innerHTML = html
   bindeNews(el)
+}
+
+/* Ein einziger Produkt-Hinweis, ganz unten, und nur wenn wirklich etwas
+   fehlt — dieselben Regeln wie die Einrichtungskarten auf dem Dashboard.
+   Wer BioLink, Analyse und Media Kit hat, sieht hier nichts. Die News
+   sollen News bleiben. */
+function hinweisHtml(){
+  const p = dgv.profil || {}
+  const offen = []
+  if(!p.bio_active)      offen.push({icon:'link',     href:'#/biolink',  t:'BioLink-Seite erstellen', u:'Deine Visitenkarte für Marken'})
+  if(!dgv.hatAnalyse)    offen.push({icon:'barChart', href:'#/analytics',t:'Analyse starten',         u:'Was deine Top-Beiträge verbindet — 9,99 € je Kanal'})
+  if(!p.mediakit_active) offen.push({icon:'fileText', href:'#/mediakit', t:'Media Kit erstellen',     u:'Reichweite und Zahlen für Marken'})
+  if(!offen.length) return ''
+
+  const it = offen[0]
+  return `<a class="news-hinweis" href="${it.href}">
+    <span class="news-hinweis-icon">${icon(it.icon,16)}</span>
+    <span class="news-hinweis-text">
+      <span class="news-hinweis-t">${escHtml(it.t)}</span>
+      <span class="news-hinweis-u">${escHtml(it.u)}</span>
+    </span>
+    ${icon('chevronRight',16,'news-hinweis-pfeil')}
+  </a>`
 }
 
 /* Archiv: eine Zeile je frueherer Ausgabe, aufklappbar. */
@@ -5309,10 +5363,10 @@ async function newsTeilen(slug){
   catch(_){ showToast('Teilen nicht verfügbar') }
 }
 
-/* Einzeiler zum Newsletter. Schreibt dieselben zwei Stellen wie das Profil:
-   users.newsletter_subscribed steuert den Versand, newsletter_subscribers
-   ist die Liste. Vorher schrieb diese Zeile nur die erste — wer sich hier
-   abmeldete, stand in der Liste weiter als aktiv. */
+/* Einzeiler zum Newsletter. Geht wie jeder andere Weg ueber die Edge
+   Function; users.newsletter_subscribed wird von einem Trigger nachgefuehrt
+   und nur noch gelesen. Vorher schrieb jede Seite eine andere Teilmenge -
+   deshalb stand eine Abonnentin gleichzeitig als an- und abgemeldet da. */
 function nlLineHtml(){
   const on = !!dgv?.subscribed
   return `<label class="nl-line">
@@ -5324,24 +5378,16 @@ function nlLineHtml(){
 window.toggleNewsMail=async function(el){
   if(!dgv)return
   const checked=el.checked
-  const uid=dgv.uid
   el.disabled=true
-  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',uid)
-  if(!dgv)return
-  el.disabled=false
-  if(error){ el.checked=!checked; showToast('Konnte nicht gespeichert werden'); return }
-
-  if(checked){
-    const mail=state.session?.user?.email
-    if(mail){
-      await sb.from('newsletter_subscribers').upsert({
-        email:mail,user_id:uid,source:'news',status:'active',subscribed_at:new Date().toISOString()
-      },{onConflict:'email'})
-    }
-  }else{
-    await sb.from('newsletter_subscribers').update({status:'unsubscribed',unsubscribed_at:new Date().toISOString()}).eq('user_id',uid)
+  try{
+    await newsletterSetzen(checked,'news_app')
+  }catch(_){
+    if(!dgv)return
+    el.disabled=false; el.checked=!checked
+    showToast('Konnte nicht gespeichert werden'); return
   }
   if(!dgv)return
+  el.disabled=false
 
   dgv.subscribed=checked
   const label=el.parentElement?.querySelector('.nl-line-text')
@@ -5693,23 +5739,14 @@ window.saveNewPassword=async function(){
 // ── Newsletter Toggle ──
 window.toggleNewsletter=async function(subscribe){
   if(!pv)return
-  if(subscribe){
-    const email=pv.user.email
-    if(!email){showToast('Keine E-Mail-Adresse gefunden.');return}
-    await sb.from('newsletter_subscribers').upsert({
-      email,user_id:pv.uid,source:'profile',status:'active',subscribed_at:new Date().toISOString()
-    },{onConflict:'email'})
-    await sb.from('users').update({newsletter_subscribed:true}).eq('id',pv.uid)
-    if(!pv)return
-    pv.isSubscribed=true
-    showToast('Newsletter abonniert ✓')
-  } else {
-    await sb.from('newsletter_subscribers').update({status:'unsubscribed',unsubscribed_at:new Date().toISOString()}).eq('user_id',pv.uid)
-    await sb.from('users').update({newsletter_subscribed:false}).eq('id',pv.uid)
-    if(!pv)return
-    pv.isSubscribed=false
-    showToast('Newsletter abgemeldet')
+  try{
+    await newsletterSetzen(subscribe,'profil')
+  }catch(_){
+    showToast('Konnte nicht gespeichert werden');return
   }
+  if(!pv)return
+  pv.isSubscribed=subscribe
+  showToast(subscribe?'Newsletter abonniert ✓':'Newsletter abgemeldet')
   // Re-render profile to update button state
   paintProfile()
 }
