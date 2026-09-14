@@ -106,6 +106,10 @@ html, body {
 .sidebar-item:hover { background: var(--surface2); color: var(--text); }
 .sidebar-item.active { background: var(--text); color: white; }
 .sidebar-item svg { flex-shrink: 0; }
+/* Punkt neben "Creator News", solange die juengste Ausgabe neuer ist als
+   der letzte Besuch der Seite. Der einzige Wiederkehr-Ausloeser in der App. */
+.sidebar-punkt{width:7px;height:7px;border-radius:50%;background:#c2410c;margin-left:auto;flex-shrink:0}
+.sidebar-item.active .sidebar-punkt{background:#fff}
 .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); }
 .sidebar-pro-banner{background:var(--text);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px;color:white}
 .sidebar-pro-banner.show{display:flex}
@@ -786,37 +790,48 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 .modal-btn-confirm:disabled{opacity:.45;cursor:not-allowed}
 
 /* ═══ VIEW: CREATOR NEWS ═══
-   Eine Karte fuehrt, der Rest ist ruhig. Keine Bilder: die Stockfotos lagen
-   bei rund 1 MB pro Stueck und sagten nichts ueber die Meldung. Keine
-   Plattform-Filter: bei fuenf Karten pro Woche steht hinter jeder Pille
-   eine Karte, und hinter manchen keine. */
+   Aufbau wie ein Briefing: die Meldung fuehrt, die Handlung steht darunter,
+   die Quelle ganz unten. Die Dringlichkeit ist Form, nicht nur Wort — ein
+   Streifen links, eine Farbe je Stufe, abgeleitet aus relevance_score.
+   Kein Plattform-Filter: bei fuenf Karten pro Woche steht hinter jeder
+   Pille eine Karte und hinter manchen keine. */
 .view-digest .empty-sub{margin-bottom:0}
 .cards-list{padding:var(--s-4) var(--page-x) 0}
 
-.news-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.news-card{
+  position:relative;background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r-md);margin-bottom:10px;cursor:pointer;overflow:hidden;
+  transition:border-color .15s;
+}
 .news-card:hover{border-color:var(--border-strong)}
-/* Der Aufmacher. Die staerkste Meldung steht oben und sieht auch so aus. */
-.news-card.gross{padding:20px 18px 16px;margin-bottom:14px}
-.news-card.gross .news-headline{font-size:var(--t-2xl);line-height:1.2}
-.news-card.gross .news-summary{font-size:var(--t-base)}
+/* Der Dringlichkeitsstreifen laeuft ueber die volle Kartenhoehe, auch
+   neben dem Bild. */
+.news-card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--stufe);z-index:2}
+.news-card.st-jetzt{--stufe:#b03a22}
+.news-card.st-bald{--stufe:#8a6114}
+.news-card.st-info{--stufe:#3c5fa8}
 
-.news-chip{display:inline-block;font-size:var(--t-2xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text);border:1px solid var(--border-strong);border-radius:var(--r-full);padding:2px 9px;margin-bottom:10px}
+.news-bild{width:100%;height:132px;object-fit:cover;display:block;background:var(--surface2)}
+.news-card.gross .news-bild{height:168px}
+.news-inner{padding:14px 16px 13px 18px}
+.news-card.gross .news-inner{padding:17px 18px 15px 20px}
+
+.news-stufe{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:var(--t-2xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--stufe);margin-bottom:7px;
+}
+.news-stufe::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
 .news-headline{font-size:var(--t-lg);font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.3;margin:0 0 6px}
+.news-card.gross .news-headline{font-size:var(--t-2xl);line-height:1.2}
 .news-summary{font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin:0}
-
-/* Fusszeile: Plattform, Quelle und Alter in einer Zeile. Die Quelle bleibt
-   sichtbar, beansprucht aber nicht mehr den Platz ueber der Schlagzeile. */
-.news-foot{display:flex;align-items:center;gap:var(--s-2);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
-.news-quelle{flex:1;min-width:0;font-size:var(--t-xs);color:var(--subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-a.news-quelle-link{display:flex;align-items:center;gap:4px;text-decoration:none;transition:color .15s}
-a.news-quelle-link:hover{color:var(--text)}
-.news-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
-.news-card.offen .news-chevron{transform:rotate(180deg)}
+.news-card.gross .news-summary{font-size:var(--t-base)}
 
 .news-body{display:none;margin-top:14px}
 .news-card.offen .news-body{display:block}
-/* Der Impact steht vor dem Volltext: er ist der Grund, warum jemand die
-   Karte aufklappt - der Artikel ist die Begruendung, nicht die Antwort. */
+/* Die Handlung steht vor dem Volltext: sie ist der Grund, warum jemand die
+   Karte aufklappt — der Artikel ist die Begruendung, nicht die Antwort.
+   Faellt weg, wenn die Quelle keinen konkreten Schritt hergibt. */
 .card-impact{background:var(--surface2);border-radius:var(--r-sm);padding:11px 13px}
 .card-impact-label{display:flex;align-items:center;gap:5px;font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
 .card-impact-text{font-size:var(--t-sm);color:var(--text);line-height:1.5;font-weight:500}
@@ -825,11 +840,19 @@ a.news-quelle-link:hover{color:var(--text)}
 .news-disclaimer{font-size:var(--t-xs);color:var(--subtle);line-height:1.5;margin:12px 0 0;font-style:italic}
 
 .news-actions{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
-.news-btn{display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);font-weight:600;padding:7px 14px;border-radius:var(--r-full);background:var(--surface);font-family:inherit;cursor:pointer}
-.news-btn{color:var(--muted);border:1px solid var(--border);transition:color .15s,border-color .15s}
+.news-btn{display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);font-weight:600;padding:7px 14px;border-radius:var(--r-full);background:var(--surface);font-family:inherit;cursor:pointer;color:var(--muted);border:1px solid var(--border);transition:color .15s,border-color .15s}
 .news-btn:hover{color:var(--text);border-color:var(--border-strong)}
-.news-btn.aktiv{color:var(--text);border-color:var(--border-strong)}
-.news-btn.aktiv svg{fill:currentColor}
+
+/* Fusszeile: Plattform, Quelle, Alter. Zugeklappt reiner Text, aufgeklappt
+   der Link zur Meldung — so wird erst beim Lesen angeboten, wegzugehen. */
+.news-foot{display:flex;align-items:center;gap:var(--s-2);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.news-quelle{flex:1;min-width:0;font-size:var(--t-xs);color:var(--subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.news-quelle{display:flex;align-items:center;gap:4px;text-decoration:none;transition:color .15s}
+a.news-quelle:hover{color:var(--text)}
+/* display:flex wuerde das hidden-Attribut sonst ueberstimmen. */
+.news-quelle[hidden]{display:none}
+.news-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
+.news-card.offen .news-chevron{transform:rotate(180deg)}
 
 /* Einzeiler zum Newsletter - direkt zwischen den Karten anklickbar. */
 .nl-line{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);margin-bottom:10px;border:1px dashed var(--border-strong);border-radius:var(--r-md);cursor:pointer;transition:border-color .15s}
@@ -838,8 +861,7 @@ a.news-quelle-link:hover{color:var(--text)}
 .nl-line-text{font-size:var(--t-sm);color:var(--muted)}
 .nl-line:has(.nl-line-check:checked) .nl-line-text{color:var(--text)}
 
-/* Frueher erschienene Ausgaben. Vorher war das eine graue Textzeile ohne
-   Pfeil, die nicht nach Bedienelement aussah - jetzt eine eigene Karte. */
+/* Frueher erschienene Ausgaben. */
 .news-frueher{margin-top:var(--s-6)}
 .news-frueher-titel{font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:var(--s-3)}
 .news-ausgabe{display:flex;align-items:center;gap:var(--s-3);width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:13px 16px;margin-bottom:10px;font-family:inherit;cursor:pointer;transition:border-color .15s}
@@ -849,7 +871,6 @@ a.news-quelle-link:hover{color:var(--text)}
 .news-ausgabe-sub{display:block;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
 .news-ausgabe-pfeil{flex-shrink:0;color:var(--subtle);transition:transform .2s}
 .news-ausgabe.offen .news-ausgabe-pfeil{transform:rotate(90deg)}
-.news-ausgabe-karten{padding-left:0}
 
 /* ═══ VIEW: ANFRAGEN (aus /requests/) ═══ */
 /* Die Filterzeile stand frueher im News-Block und galt global mit. Die News
@@ -994,6 +1015,7 @@ a.news-quelle-link:hover{color:var(--text)}
       <a class="sidebar-item" data-route="digest" href="#/digest">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
         Creator News
+        <span class="sidebar-punkt hidden" id="news-punkt" title="Neue Ausgabe"></span>
       </a>
       <a class="sidebar-item" data-route="biolink" href="#/biolink">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
@@ -5074,6 +5096,30 @@ function newsZaehlen(page,source,slug){
   }catch(_){}
 }
 
+/* Punkt in der Seitenleiste, solange die juengste Ausgabe neuer ist als der
+   letzte Besuch der News-Seite. Grundlage ist page_views — dieselbe Tabelle,
+   die auch die Reichweite zaehlt. */
+async function newsPunktPruefen(){
+  const punkt = document.getElementById('news-punkt')
+  const uid = state.session?.user?.id
+  if(!punkt || !uid) return
+
+  const [neueste, besuch] = await Promise.all([
+    sb.from('digest_cards_today').select('date').limit(1),
+    sb.from('page_views').select('created_at').eq('user_id',uid).eq('page','news')
+      .order('created_at',{ascending:false}).limit(1),
+  ])
+
+  const ausgabe = neueste?.data?.[0]?.date
+  if(!ausgabe){ punkt.classList.add('hidden'); return }
+
+  const zuletzt = besuch?.data?.[0]?.created_at
+  /* Die Ausgabe traegt nur ein Datum, keine Uhrzeit — deshalb gegen das
+     Ende ihres Tages vergleichen. */
+  const ungelesen = !zuletzt || new Date(ausgabe + 'T23:59:59') > new Date(zuletzt)
+  punkt.classList.toggle('hidden', !ungelesen)
+}
+
 /* View-lokaler Zustand */
 let dgv = null
 
@@ -5091,23 +5137,21 @@ async function renderDigest(area, ctx){
     <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">${icon('inbox',30)}</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Sobald es etwas Neues gibt, steht es hier.</div></div>
   </div>`
 
-  dgv = { uid, ctx, aktuell:[], frueher:[], merkliste:new Set(), offene:new Set(), subscribed:false }
+  dgv = { uid, ctx, aktuell:[], frueher:[], offene:new Set(), subscribed:false }
   ctx.onCleanup(() => { dgv = null })
 
-  const [profil, aktuell, frueher, merk] = await Promise.all([
+  const [profil, aktuell, frueher] = await Promise.all([
     sb.from('users').select('newsletter_subscribed').eq('id',uid).single(),
     sb.from('digest_cards_today').select('*').order('relevance_score',{ascending:false}),
     sb.from('digest_cards_past').select('*').order('date',{ascending:false}).order('relevance_score',{ascending:false}).limit(NEWS_ARCHIV_KARTEN),
-    sb.from('digest_bookmarks').select('card_slug').eq('user_id',uid),
   ])
   if(ctx.stale)return
 
   dgv.subscribed = profil?.data?.newsletter_subscribed || false
   dgv.aktuell    = aktuell?.data || []
   dgv.frueher    = frueher?.data || []
-  for(const b of (merk?.data||[]))dgv.merkliste.add(b.card_slug)
-
   newsZaehlen('news','app')
+  document.getElementById('news-punkt')?.classList.add('hidden')
   paintDigest()
 }
 
@@ -5166,35 +5210,41 @@ function frueherHtml(){
   return html + `</div>`
 }
 
+/* Dringlichkeit aus relevance_score. Das Feld `level` des Modells waere
+   naheliegender, ist aber unzuverlaessig: es stand schon auf "hoch" bei
+   einer Shop-Meldung mit Score 7 und auf "info" bei Score 5. */
+function newsStufe(c){
+  const s = c.relevance_score || 0
+  if(s >= 8) return { klasse:'st-jetzt', text:'Diese Woche erledigen' }
+  if(s >= 6) return { klasse:'st-bald',  text:'Bald ansehen' }
+  return        { klasse:'st-info',  text:'Zur Kenntnis' }
+}
+
 function newsKarteHtml(c, gross){
-  const wichtig     = (c.relevance_score||0) >= 8
-  const gemerkt     = dgv.merkliste.has(c.slug)
+  const stufe       = newsStufe(c)
   const aufklappbar = !!(c.full_content || c.impact)
   const quelle      = [c.platform_label, c.source, newsAlter(c.published_date || c.date)].filter(Boolean).join(' · ')
-  /* Die Quellenzeile ist der Link zur Meldung. Ein eigener "Quelle lesen"-
-     Knopf stand vorher im aufgeklappten Bereich und wiederholte nur, was
-     hier ohnehin steht — jetzt ist die Angabe selbst anklickbar und auch
-     bei zugeklappter Karte erreichbar. */
-  const quelleHtml  = c.source_url
-    ? `<a class="news-quelle news-quelle-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener">${escHtml(quelle)} ${icon('arrowUpRight',11)}</a>`
-    : `<span class="news-quelle">${escHtml(quelle)}</span>`
+  const bild        = (c.image_url || '').trim()
 
-  return `<article class="news-card${gross?' gross':''}" data-slug="${escHtml(c.slug||'')}">
-    ${wichtig?`<div class="news-chip">Wichtig</div>`:''}
-    <h3 class="news-headline">${escHtml(c.headline||'')}</h3>
-    <p class="news-summary">${escHtml(c.summary||'')}</p>
-    ${aufklappbar?`<div class="news-body">
-      ${c.impact?`<div class="card-impact"><div class="card-impact-label">${icon('zap',12)} Was das für dich bedeutet</div><div class="card-impact-text">${escHtml(c.impact)}</div></div>`:''}
-      ${c.full_content?`<div class="news-full">${mitFettung(c.full_content)}</div>`:''}
-      ${newsRechtshinweis(c)}
-      <div class="news-actions">
-        <button class="news-btn news-share" type="button">${icon('share',14)} Teilen</button>
-        <button class="news-btn news-merk${gemerkt?' aktiv':''}" type="button"><span class="news-merk-icon">${icon('star',14)}</span> <span class="news-merk-text">${gemerkt?'Gemerkt':'Merken'}</span></button>
+  return `<article class="news-card ${stufe.klasse}${gross?' gross':''}" data-slug="${escHtml(c.slug||'')}">
+    ${bild?`<img class="news-bild" src="${escHtml(bild)}" alt="" loading="lazy" onerror="this.remove()">`:''}
+    <div class="news-inner">
+      <span class="news-stufe">${escHtml(stufe.text)}</span>
+      <h3 class="news-headline">${escHtml(c.headline||'')}</h3>
+      <p class="news-summary">${escHtml(c.summary||'')}</p>
+      ${aufklappbar?`<div class="news-body">
+        ${c.impact?`<div class="card-impact"><div class="card-impact-label">${icon('zap',12)} Was du tun kannst</div><div class="card-impact-text">${escHtml(c.impact)}</div></div>`:''}
+        ${c.full_content?`<div class="news-full">${mitFettung(c.full_content)}</div>`:''}
+        ${newsRechtshinweis(c)}
+        <div class="news-actions">
+          <button class="news-btn news-share" type="button">${icon('share',14)} Teilen</button>
+        </div>
+      </div>`:''}
+      <div class="news-foot">
+        <span class="news-quelle news-quelle-zu">${escHtml(quelle)}</span>
+        ${c.source_url?`<a class="news-quelle news-quelle-auf" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" hidden>${escHtml(quelle)} ${icon('arrowUpRight',11)}</a>`:''}
+        ${aufklappbar?icon('chevronDown',14,'news-chevron'):''}
       </div>
-    </div>`:''}
-    <div class="news-foot">
-      ${quelleHtml}
-      ${aufklappbar?icon('chevronDown',14,'news-chevron'):''}
     </div>
   </article>`
 }
@@ -5207,17 +5257,20 @@ function newsKarte(slug){
 function bindeNews(el){
   el.querySelectorAll('.news-card').forEach(karte => {
     dgv.ctx.on(karte, 'click', e => {
-      if(e.target.closest('.news-quelle-link') || e.target.closest('.news-btn')) return
+      if(e.target.closest('.news-quelle-auf') || e.target.closest('.news-btn')) return
       if(!karte.querySelector('.news-body')) return
       const offen = karte.classList.toggle('offen')
+      /* Die Quelle wird erst beim Aufklappen zum Link. Zugeklappt ist sie
+         reine Angabe — ein Weg nach draussen gehoert ans Ende des Textes,
+         nicht an den Anfang. */
+      const zu  = karte.querySelector('.news-quelle-zu')
+      const auf = karte.querySelector('.news-quelle-auf')
+      if(auf){ auf.hidden = !offen; if(zu) zu.hidden = offen }
       if(offen) newsZaehlen('news_card', 'app', karte.dataset.slug)
     })
   })
   el.querySelectorAll('.news-share').forEach(btn => {
     dgv.ctx.on(btn, 'click', e => { e.stopPropagation(); newsTeilen(btn.closest('.news-card')?.dataset.slug) })
-  })
-  el.querySelectorAll('.news-merk').forEach(btn => {
-    dgv.ctx.on(btn, 'click', e => { e.stopPropagation(); newsMerken(btn.closest('.news-card')?.dataset.slug, btn) })
   })
   el.querySelectorAll('.news-ausgabe').forEach(btn => {
     dgv.ctx.on(btn, 'click', () => {
@@ -5254,29 +5307,6 @@ async function newsTeilen(slug){
   }
   try{ await navigator.clipboard.writeText(`${text}\n\n${url}`); showToast('In Zwischenablage kopiert ✓') }
   catch(_){ showToast('Teilen nicht verfügbar') }
-}
-
-/* Merken — der Wiederkehrgrund, der bisher fehlte. */
-async function newsMerken(slug, btn){
-  if(!dgv || !slug)return
-  const gemerkt = dgv.merkliste.has(slug)
-  btn.disabled = true
-  const { error } = gemerkt
-    ? await sb.from('digest_bookmarks').delete().eq('user_id',dgv.uid).eq('card_slug',slug)
-    : await sb.from('digest_bookmarks').insert({ user_id:dgv.uid, card_slug:slug })
-  if(!dgv)return
-  btn.disabled = false
-  if(error){ showToast('Konnte nicht gespeichert werden'); return }
-
-  if(gemerkt) dgv.merkliste.delete(slug); else dgv.merkliste.add(slug)
-  /* Alle Knoepfe zu diesem Slug mitziehen — eine Karte kann in der
-     aktuellen Ausgabe und im aufgeklappten Archiv gleichzeitig stehen. */
-  document.querySelectorAll(`.news-card[data-slug="${CSS.escape(slug)}"] .news-merk`).forEach(b => {
-    b.classList.toggle('aktiv', !gemerkt)
-    const t = b.querySelector('.news-merk-text')
-    if(t) t.textContent = gemerkt ? 'Merken' : 'Gemerkt'
-  })
-  showToast(gemerkt ? 'Aus den Merkzetteln entfernt' : 'Gemerkt ✓')
 }
 
 /* Einzeiler zum Newsletter. Schreibt dieselben zwei Stellen wie das Profil:
@@ -5889,6 +5919,7 @@ window.addEventListener('hashchange', router)
   document.getElementById('shell').classList.add('visible')
   state.booted = true
   await router()
+  newsPunktPruefen()
 })()
 
 /* Session-Wechsel in einem anderen Tab spiegeln */

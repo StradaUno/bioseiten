@@ -57,14 +57,23 @@ nav.top{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.85);backdr
 /* Karten. Kein Bild: die Stockfotos in der Datenbank waren rund 1 MB gross
    und sagten nichts ueber die Meldung. */
 .cards{display:flex;flex-direction:column;gap:14px;max-width:760px;margin:0 auto}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
 .card:hover{border-color:var(--border-strong);box-shadow:0 12px 28px rgba(17,17,16,.08);transform:translateY(-2px)}
-.card-inner{padding:18px 20px 20px}
+/* Dringlichkeit ist Form, nicht nur Wort: ein Streifen ueber die volle
+   Kartenhoehe, die Farbe kommt aus relevance_score. */
+.card::before{content:"";position:absolute;inset:0 auto 0 0;width:5px;background:var(--stufe);z-index:2}
+.card.st-jetzt{--stufe:#b03a22}
+.card.st-bald{--stufe:#8a6114}
+.card.st-info{--stufe:#3c5fa8}
+.card-bild{width:100%;height:190px;object-fit:cover;display:block;background:var(--surface2)}
+.card.gross .card-bild{height:260px}
+.card-inner{padding:18px 20px 20px 24px}
+.card-stufe{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--stufe);margin-bottom:9px}
+.card-stufe::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
 /* Aufmacher: die staerkste Meldung fuehrt und sieht auch so aus. */
-.card.gross .card-inner{padding:24px 24px 24px}
+.card.gross .card-inner{padding:24px 24px 24px 28px}
 .card.gross .card-headline{font-size:24px;line-height:1.2}
 .card.gross .card-summary{font-size:15px}
-.chip{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border-strong);border-radius:99px;padding:3px 10px;margin-bottom:10px}
 .card-headline{font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.3;margin-bottom:6px}
 .card-summary{font-size:13.5px;color:var(--muted);line-height:1.55}
 .card-body-full{display:none;margin-top:14px}
@@ -82,8 +91,9 @@ nav.top{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.85);backdr
 /* Fusszeile: Plattform, Quelle und Datum in einer Zeile, unter dem Text. */
 .card-foot{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .card-quelle{flex:1;min-width:0;font-size:12px;color:var(--subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-a.card-quelle-link{transition:color .15s}
-a.card-quelle-link:hover{color:var(--text)}
+a.card-quelle{transition:color .15s}
+a.card-quelle:hover{color:var(--text)}
+.card-quelle[hidden]{display:none}
 .card-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
 .card.open .card-chevron{transform:rotate(180deg)}
 
@@ -114,8 +124,10 @@ footer{margin-top:64px;border-top:1px solid var(--border);padding:28px 0 40px}
 
 @media(max-width:600px){
   .hero{padding:44px 0 4px}
-  .card-inner{padding:16px 16px 18px}
-  .card.gross .card-inner{padding:20px 18px}
+  .card-inner{padding:16px 16px 18px 20px}
+  .card.gross .card-inner{padding:20px 18px 20px 22px}
+  .card-bild{height:150px}
+  .card.gross .card-bild{height:190px}
   .mailbox{padding:18px}
 }
 </style>
@@ -259,31 +271,36 @@ function zaehlen(page, slug) {
   } catch (_) {}
 }
 
+/* Dringlichkeit aus relevance_score. Das Feld `level` des Modells ist
+   unzuverlaessig: es stand schon auf "hoch" bei einer Shop-Meldung mit
+   Score 7 und auf "info" bei Score 5. */
+function stufe(c) {
+  const s = c.relevance_score || 0
+  if (s >= 8) return { klasse: 'st-jetzt', text: 'Diese Woche erledigen' }
+  if (s >= 6) return { klasse: 'st-bald',  text: 'Bald ansehen' }
+  return        { klasse: 'st-info',  text: 'Zur Kenntnis' }
+}
+
 /* ohneKopf: in der Einzelansicht traegt schon die Seitenueberschrift die
    Schlagzeile und die Zusammenfassung — die Karte wuerde sie sonst direkt
    darunter ein zweites Mal wiederholen. */
 function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = false } = {}) {
   const voll = (c.full_content || '').trim()
   const aufklappbar = voll || c.impact
-  const wichtig = (c.relevance_score || 0) >= 8
+  const st = stufe(c)
+  const bild = (c.image_url || '').trim()
   const quelle = [c.platform_label, c.source, mitDatum ? datum(c.date) : alter(c.published_date || c.date)]
     .filter(Boolean).join(' · ')
-  /* Die Quellenzeile ist der Link zur Meldung. Ein eigener "Quelle lesen"-
-     Knopf stand vorher im aufgeklappten Bereich und wiederholte nur, was
-     hier ohnehin steht — jetzt ist die Angabe selbst anklickbar und auch
-     bei zugeklappter Karte erreichbar. */
-  const quelleHtml = c.source_url
-    ? `<a class="card-quelle card-quelle-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(quelle)} ↗</a>`
-    : `<span class="card-quelle">${esc(quelle)}</span>`
 
-  return `<article class="card${gross ? ' gross' : ''}${offen ? ' open' : ''}${aufklappbar && !ohneKopf ? '' : ' fix'}" data-slug="${esc(c.slug || '')}">
+  return `<article class="card ${st.klasse}${gross ? ' gross' : ''}${offen ? ' open' : ''}${aufklappbar && !ohneKopf ? '' : ' fix'}" data-slug="${esc(c.slug || '')}">
+    ${bild ? `<img class="card-bild" src="${esc(bild)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
     <div class="card-inner">
-      ${wichtig ? `<div class="chip">Wichtig</div>` : ''}
+      <span class="card-stufe">${esc(st.text)}</span>
       ${ohneKopf ? '' : `<div class="card-headline">${esc(c.headline || '')}</div>
       <div class="card-summary">${esc(c.summary || '')}</div>`}
       ${aufklappbar ? `<div class="card-body-full">
         ${c.impact ? `<div class="card-impact">
-          <div class="card-impact-label">Was das für dich bedeutet</div>
+          <div class="card-impact-label">Was du tun kannst</div>
           <div class="card-impact-text">${esc(c.impact)}</div></div>` : ''}
         ${voll ? `<div class="card-full-text">${escMitFett(voll)}</div>` : ''}
         ${hinweis(c)}
@@ -292,7 +309,8 @@ function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = f
         </div>
       </div>` : ''}
       <div class="card-foot">
-        ${quelleHtml}
+        <span class="card-quelle card-quelle-zu"${offen ? ' hidden' : ''}>${esc(quelle)}</span>
+        ${c.source_url ? `<a class="card-quelle card-quelle-auf" href="${esc(c.source_url)}" target="_blank" rel="noopener"${offen ? '' : ' hidden'}>${esc(quelle)} ↗</a>` : ''}
         ${aufklappbar && !ohneKopf ? CHEVRON : ''}
       </div>
     </div>
@@ -301,7 +319,7 @@ function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = f
 
 /* Aufklappen: Klick auf die Karte, ausser auf Quelle-Link und Knoepfe. */
 document.addEventListener('click', e => {
-  if (e.target.closest('.card-quelle-link')) return
+  if (e.target.closest('.card-quelle-auf')) return
   if (e.target.closest('.card-share')) {
     e.preventDefault()
     const k = e.target.closest('.card')
@@ -311,6 +329,11 @@ document.addEventListener('click', e => {
   const k = e.target.closest('.card')
   if (k && !k.classList.contains('fix')) {
     const offen = k.classList.toggle('open')
+    /* Die Quelle wird erst beim Aufklappen zum Link. Zugeklappt ist sie
+       reine Angabe — ein Weg nach draussen gehoert ans Ende des Textes. */
+    const zu  = k.querySelector('.card-quelle-zu')
+    const auf = k.querySelector('.card-quelle-auf')
+    if (auf) { auf.hidden = !offen; if (zu) zu.hidden = offen }
     if (offen) zaehlen('news_card', k.dataset.slug)
   }
 })

@@ -61,6 +61,51 @@ const ERLAUBTE_QUELLEN = [
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
+// ── Bilder ─────────────────────────────────────────────────────────────
+// Die 61 Stockbilder lagen bei durchschnittlich 2,2 MB und waren deshalb
+// zwischenzeitlich abgeschaltet. Sie sind inzwischen auf 900 px und im
+// Schnitt 85 kB heruntergerechnet, also wieder tragbar.
+function bildKategorie(platform: string, headline: string): string {
+  const p = (platform || '').toLowerCase()
+  const h = (headline || '').toLowerCase()
+  if (p === 'instagram') return 'instagram'
+  if (p === 'tiktok') return 'tiktok'
+  if (p === 'youtube') return 'youtube'
+  if (p === 'meta') return 'meta'
+  if (h.match(/geld|budget|verdien|einnahm|deal|monetar|auszahl|honorar|bonus|revenue|cpm|rpm/)) return 'money'
+  if (h.match(/recht|dsgvo|\beu\b|gesetz|kennzeichn|pflicht|regulier|datenschutz|urteil|gericht/)) return 'legal'
+  if (h.match(/canva|capcut|tool|app|software|later|notion|hootsuite|buffer/)) return 'tools'
+  if (h.match(/trend|viral|hashtag|fyp|challenge|sound|audio/)) return 'trends'
+  return 'creator'
+}
+
+async function naechstesBild(platform: string, headline: string, schonBenutzt: string[]): Promise<string | null> {
+  const heute = new Date().toISOString().split('T')[0]
+
+  const holen = async (kategorie: string) => {
+    const { data } = await supabase
+      .from('news_images')
+      .select('id, url, last_used_date, use_count')
+      .eq('category', kategorie)
+      .order('last_used_date', { ascending: true, nullsFirst: true })
+      .limit(20)
+    return data ?? []
+  }
+
+  let bilder = await holen(bildKategorie(platform, headline))
+  if (bilder.length === 0) bilder = await holen('creator')
+  if (bilder.length === 0) return null
+
+  const frei = bilder.filter((b) => !schonBenutzt.includes(b.url))
+  const gewaehlt = frei.find((b) => b.last_used_date !== heute) ?? frei[0] ?? bilder[0]
+
+  await supabase.from('news_images')
+    .update({ last_used_date: heute, use_count: (gewaehlt.use_count ?? 0) + 1 })
+    .eq('id', gewaehlt.id)
+
+  return gewaehlt.url
+}
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -215,6 +260,17 @@ QUELLEN: Nimm die Primaerquelle, wenn es sie gibt — also das Newsroom oder den
 
 Bei Rechtsthemen: ausschliesslich deutschsprachige Rechts- oder Fachquellen. Nenne die Rechtsgrundlage genau (Artikel, Paragraph, Gericht, Datum) und ordne Bussgeldhoehen dem richtigen Tatbestand zu — nicht die hoechste Zahl aus dem Gesetz an den erstbesten Verstoss haengen.
 
+TREUE ZUR QUELLE — das ist die wichtigste Regel hier:
+Du gibst wieder, was in der Quelle steht. Du ergaenzt nichts.
+
+- Schreibe keine Aussage, die nicht in der Quelle belegt ist. Kein Hintergrundwissen, keine Einordnung aus dem Gedaechtnis, keine Verknuepfung mit anderen Regelwerken, die die Quelle nicht herstellt.
+- Schreibe "laut Instagram", "Meta teilte mit", "TikTok begruendet" NUR, wenn die Quelle eine solche Aeusserung tatsaechlich zitiert. Gibt es kein Zitat, schreibe nicht, die Plattform habe etwas gesagt.
+- Wenn die Quelle einen Geltungsbereich EINSCHRAENKT, gib die Einschraenkung wieder. Mache aus einer Ausnahme keine Warnung. Beispiel: Steht in der Quelle, eine Kennzeichnungspflicht gelte NICHT fuer Bildbearbeitung und Thumbnails, dann darfst du nicht schreiben, Creator mit KI-Thumbnails seien betroffen — du musst schreiben, dass sie es nicht sind.
+- Keine Ausschmueckung. Saetze wie "wurde von Followern kaum wahrgenommen" oder "verschwindet in der Versenkung" gehoeren nur hinein, wenn die Quelle das sagt.
+- Konkrete Bedienschritte, Zahlen, Fristen und Namen aus der Quelle sind wertvoller als jede allgemeine Einordnung. Nimm sie mit, statt sie durch eigene Ueberlegungen zu ersetzen.
+
+Wenn die Quelle wenig hergibt, ist die Karte kurz. Das ist richtig so.
+
 RELEVANCE SCORE:
 10 = betrifft fast alle Creator sofort
 7-9 = sehr relevant fuer viele, klarer Handlungsbedarf
@@ -231,12 +287,16 @@ ${recentBlock}
 FELDER pro Meldung, auf Deutsch:
 - headline: max. 8 Woerter, konkret, keine Frage
 - summary: 1 Satz, was passiert ist
-- impact: 1 Satz, was sie JETZT tun soll. Muss eine Handlung enthalten, die sie heute ausfuehren kann.
-    Schlecht: "Werde spezifischer in deiner Nische."
-    Schlecht: "Beobachte die Funktion und plane, wie du sie nutzen koenntest."
-    Gut: "Oeffne Einstellungen > Konto > Your Algorithm und trage drei Themen ein, bevor die Funktion in DE startet."
+- impact: 1 Satz, was sie jetzt konkret tun soll — ODER null.
+    Setze impact NUR, wenn die Quelle einen konkreten Schritt hergibt: eine Einstellung, die man umlegt, eine Funktion, die man oeffnet, eine Frist, die man einhaelt, eine Pruefung, die man durchfuehrt.
+    Gibt die Quelle keinen Schritt her, schreibe "impact": null. Eine Meldung ohne Handlungsempfehlung ist voellig in Ordnung — eine erfundene Handlungsempfehlung ist es nicht.
+    Der Schritt muss aus der Quelle stammen, nicht aus deiner Vorstellung davon, was sinnvoll waere.
+    Schlecht, weil leer: "Werde spezifischer in deiner Nische."
+    Schlecht, weil leer: "Beobachte die Funktion und plane, wie du sie nutzen koenntest."
+    Schlecht, weil erfunden: ein Bedienweg, den die Quelle nicht beschreibt.
+    Gut: "Oeffne die Registerkarte Markiert, waehle den Beitrag und tippe auf 'Zum Profil hinzufuegen' — laut Artikel geht das auch aus der DM-Benachrichtigung."
     Gut: "Geh deine letzten zehn Kooperationen durch und pruefe, ob bei Geschenken ohne Bezahlung eine Kennzeichnung fehlt."
-- full_content: In-App-Artikel, 180 bis 300 Woerter, mindestens 3 Absaetze, mit konkreten Zahlen und Schritten. Kein Fuelltext, keine Wiederholung der summary.
+- full_content: In-App-Artikel, 120 bis 300 Woerter. So lang, wie die Quelle traegt — nicht laenger. Lieber 130 gute Woerter als 280 mit Fuellung. Nimm die konkreten Schritte, Zahlen und Namen aus der Quelle mit. Keine Wiederholung der summary.
 - level: "hoch" | "mittel" | "info"
 - platform: "instagram" | "tiktok" | "youtube" | "meta" | "allgemein"
 - source: Name der Quelle
@@ -248,7 +308,7 @@ FELDER pro Meldung, auf Deutsch:
 - is_repeat: true | false
 
 Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Text davor oder danach:
-{"cards": [{"headline":"...","summary":"...","impact":"...","full_content":"...","level":"...","platform":"...","source":"...","source_url":"...","published_date":"...","relevance_score":8,"score_reason":"...","freshness":"neu","is_repeat":false}]}`
+{"cards": [{"headline":"...","summary":"...","impact":"... oder null","full_content":"...","level":"...","platform":"...","source":"...","source_url":"...","published_date":"...","relevance_score":8,"score_reason":"...","freshness":"neu","is_repeat":false}]}`
 
     const userPrompt = `Heute ist der ${new Date().toISOString().split('T')[0]}, die Ausgabe laeuft unter dem ${weekStart}.
 
@@ -372,11 +432,19 @@ Gib bis zu 5 Karten als JSON zurueck. Weniger ist richtig, wenn nicht mehr taugt
       })
     }
 
+    const benutzteBilder: string[] = []
+    const kartenMitBild = []
+    for (const c of karten) {
+      const bild = await naechstesBild(c.platform || 'allgemein', c.headline || '', benutzteBilder)
+      if (bild) benutzteBilder.push(bild)
+      kartenMitBild.push({ ...c, image_url: bild })
+    }
+
     const { error: upsertError } = await supabase
       .from('daily_digest')
       .upsert({
         date: weekStart,
-        cards: karten,
+        cards: kartenMitBild,
         teaser: null,
         generated_at: new Date().toISOString(),
         model_used: MODEL,
@@ -398,7 +466,7 @@ Gib bis zu 5 Karten als JSON zurueck. Weniger ist richtig, wenn nicht mehr taugt
       },
     })
 
-    console.log(`Erfolg (Woche ${weekStart}): ${karten.length} Karten, ${alle.length - karten.length} verworfen | Kosten $${costUsd}`)
+    console.log(`Erfolg (Woche ${weekStart}): ${kartenMitBild.length} Karten, ${alle.length - karten.length} verworfen | Kosten $${costUsd}`)
 
     return new Response(
       JSON.stringify({
