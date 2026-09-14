@@ -2637,7 +2637,7 @@ function paintBiolink(){
        </div>
        <div class="section">
          <div class="section-label">Klicks · 30 Tage</div>
-         <div class="section-hint">Jede Zeile ist ein Link deiner Seite: wie oft er in den letzten 30 Tagen angetippt wurde und welchen Anteil er an allen Klicks hat. Die Klickrate sind Klicks je Aufruf${rateSeit&&klicks30>0?`, gerechnet ab ${rateSeit}`:''} — über 100 % heißt, Besucher öffnen im Schnitt mehr als einen Link.</div>
+         <div class="section-hint">Klickrate = Klicks je Aufruf${rateSeit&&klicks30>0?`, ab ${rateSeit}`:''}.</div>
          <div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
            <div class="stat-box"><div class="stat-box-value">${fmtNum(klicks30)}</div><div class="stat-box-label">Klicks</div></div>
            <div class="stat-box"><div class="stat-box-value">${klickrate}%</div><div class="stat-box-label">Klickrate</div></div>
@@ -2645,13 +2645,13 @@ function paintBiolink(){
          ${klickHtml}
        </div>
        <div class="section">
-         <div class="section-label">Woher die Aufrufe kommen · 30 Tage</div>
-         <div class="section-hint">Die Seite, von der ein Besucher kam. „Direkt“ heißt: ohne erkennbare Herkunft geöffnet — etwa aus einer Instagram-Bio oder aus einer App heraus.</div>
+         <div class="section-label">Herkunft · 30 Tage</div>
+         <div class="section-hint">„Direkt“ = ohne erkennbare Quelle.</div>
          ${herkunftHtml}
        </div>
        <div class="section">
-         <div class="section-label">Wann deine Seite geöffnet wird · Ortszeit der Besucher</div>
-         <div class="section-hint">Jede Säule ist eine Stunde des Tages, gezählt über die letzten 30 Tage in der Uhrzeit des Besuchers — nicht in deiner.</div>
+         <div class="section-label">Uhrzeit · 30 Tage</div>
+         <div class="section-hint">Ortszeit der Besucher, nicht deine.</div>
          ${uhrHtml}
        </div>`
     :slug?`<div class="status-banner inactive"><div class="status-dot inactive"></div>
