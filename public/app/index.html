@@ -1237,7 +1237,16 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
    nachgerechnet, nicht aus dem Browser uebernommen. Zwei Kopien der Regeln
    wuerden driften -- also gibt es genau eine. Begruendung ausfuehrlich im
    Kopf der Datei. */
-import { brBerechnen, brSaetze, BR_NAME, BR_WARUM, brDatum } from './brand-ready-regeln.js'
+/* Mit Fuenf-Minuten-Fenster statt schlicht './brand-ready-regeln.js':
+   Cloudflare Pages gibt .js-Dateien vier Stunden Cache und laesst sich davon
+   ueber _headers nicht abbringen, waehrend diese HTML-Datei bei jedem Aufruf
+   revalidiert wird. Ohne den Parameter zeigte die App bis zu vier Stunden
+   lang andere Regeln als die Freigabe-Function, die per Commit-SHA gepinnt
+   ist. Der Parameter wechselt alle fuenf Minuten -- kurz genug, dass ein
+   Push ankommt, lang genug, dass die Datei nicht bei jedem Aufruf neu geholt
+   wird. */
+const { brBerechnen, brSaetze, BR_NAME, BR_WARUM, brDatum } =
+  await import('./brand-ready-regeln.js?v=' + Math.floor(Date.now() / 300000))
 
 /* ─────────────────────────────────────────────
    Supabase — identisch zu /trends/, /dashboard/ …

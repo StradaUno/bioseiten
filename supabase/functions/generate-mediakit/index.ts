@@ -97,8 +97,13 @@ html,body{margin:0;background:#EAEAEE}
 <div class="page-loader" id="page-loader"><div class="spinner"></div></div>
 <div id="main"></div>
 <!-- Aufbau, Stil und Datenabruf: /kit/kit-renderer.js im Repo.
-     Eine Layout-Aenderung braucht deshalb keine Neuerzeugung dieser Datei. -->
-<script type="module" src="/kit/kit-renderer.js"></script>
+     Eine Layout-Aenderung braucht deshalb keine Neuerzeugung dieser Datei.
+     Das Fuenf-Minuten-Fenster im Parameter ist noetig, weil Cloudflare Pages
+     .js-Dateien vier Stunden cacht und sich darin ueber _headers nicht
+     dreinreden laesst -- diese Huelle revalidiert dagegen bei jedem Aufruf. -->
+<script type="module">
+import('/kit/kit-renderer.js?v=' + Math.floor(Date.now() / 300000))
+</script>
 </body>
 </html>`
 

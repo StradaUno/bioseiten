@@ -15,14 +15,19 @@
   # Suchmaschinen haben hier nichts zu holen.
   X-Robots-Tag: noindex, nofollow
 
-# Der Media-Kit-Renderer und das Brand-Ready-Regelwerk werden von erzeugten
-# Seiten und von Edge Functions geladen. Cloudflare gibt statischen Dateien
-# sonst vier Stunden Cache -- eine Layout- oder Regel-Aenderung waere dann
-# erst Stunden spaeter ueberall zu sehen, obwohl der Push durch ist.
-# Fuenf Minuten sind kurz genug, um "Push = live" zu halten, und lang genug,
-# damit die Datei nicht bei jedem Seitenaufruf neu geholt wird.
-/kit/kit-renderer.js
-  Cache-Control: public, max-age=300, must-revalidate
-
-/app/brand-ready-regeln.js
-  Cache-Control: public, max-age=300, must-revalidate
+# ── Warum hier KEINE Cache-Regel fuer die zwei geteilten Module steht ──
+# Versucht und verworfen: Cloudflare Pages ignoriert `Cache-Control` aus
+# dieser Datei fuer statische Dateien und setzt fuer .js hart
+# `max-age=14400`. Geprueft mit Cache-Buster -- auch bei cf-cache-status MISS
+# kam die eigene Vorgabe zurueck. (Die Regeln fuer /karussell/* wirken, es
+# liegt also nicht an der Datei, sondern am Header-Namen.)
+#
+# HTML bekommt dagegen `max-age=0, must-revalidate`. Ohne Gegenmassnahme
+# waere die Lage also: index.html sofort neu, das importierte Regelwerk bis
+# zu vier Stunden alt -- und die Edge Function, die per Commit-SHA gepinnt
+# ist, haette laengst die neue Fassung. App und geteilte Seite wuerden sich
+# widersprechen.
+#
+# Geloest wird das deshalb beim Import, nicht beim Ausliefern: beide
+# Verbraucher haengen `?v=<Fuenf-Minuten-Fenster>` an die Modul-URL. Siehe
+# public/app/index.html und die Huelle in generate-mediakit.
