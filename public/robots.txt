@@ -1,0 +1,17 @@
+# viuno — was Suchmaschinen sehen duerfen
+User-agent: *
+Allow: /
+# Interne Seiten: die App selbst, das Swipe-File und die Admin-Oberflaeche.
+Disallow: /app/
+Disallow: /admin/
+Disallow: /admina/
+Disallow: /karussell/
+Disallow: /digest/
+Disallow: /dashboard/
+Disallow: /profile/
+Disallow: /requests/
+Disallow: /onboarding/
+Disallow: /analytics/
+Disallow: /reset-password/
+
+Sitemap: https://viuno.de/sitemap.xml

@@ -7,9 +7,11 @@
 <meta name="description" content="Was sich bei Instagram, TikTok und Meta fuer Creator aendert. Jede Woche zusammengefasst, ohne Anmeldung lesbar.">
 <link rel="canonical" href="https://viuno.de/news">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="viuno">
 <meta property="og:url" content="https://viuno.de/news">
 <meta property="og:title" content="Creator News — viuno">
 <meta property="og:description" content="Was sich bei Instagram, TikTok und Meta fuer Creator aendert. Jede Woche zusammengefasst.">
+<meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#f5f4f2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,29 +54,37 @@ nav.top{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.85);backdr
 .section-title{font-size:15px;font-weight:600;letter-spacing:-.02em}
 .section-date{font-size:13px;color:var(--muted)}
 
-/* Karten — Aufbau wie im Digest der App, Optik wie die Startseite */
+/* Karten. Kein Bild: die Stockfotos in der Datenbank waren rund 1 MB gross
+   und sagten nichts ueber die Meldung. */
 .cards{display:flex;flex-direction:column;gap:14px;max-width:760px;margin:0 auto}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
 .card:hover{border-color:var(--border-strong);box-shadow:0 12px 28px rgba(17,17,16,.08);transform:translateY(-2px)}
 .card-inner{padding:18px 20px 20px}
-.card-meta{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.platform-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;letter-spacing:.02em;background:var(--surface2);border:1px solid var(--border);border-radius:99px;padding:4px 10px}
-.platform-badge img{width:13px;height:13px;border-radius:3px}
-.card-date{font-size:12px;color:var(--subtle);flex-shrink:0}
-.card-source{font-size:12px;color:var(--subtle);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.card-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
-.card.open .card-chevron{transform:rotate(180deg)}
+/* Aufmacher: die staerkste Meldung fuehrt und sieht auch so aus. */
+.card.gross .card-inner{padding:24px 24px 24px}
+.card.gross .card-headline{font-size:24px;line-height:1.2}
+.card.gross .card-summary{font-size:15px}
+.chip{display:inline-block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border-strong);border-radius:99px;padding:3px 10px;margin-bottom:10px}
 .card-headline{font-size:17px;font-weight:600;letter-spacing:-.02em;line-height:1.3;margin-bottom:6px}
 .card-summary{font-size:13.5px;color:var(--muted);line-height:1.55}
 .card-body-full{display:none;margin-top:14px}
 .card.open .card-body-full{display:block}
-.card-full-text{font-size:13.5px;line-height:1.65;color:var(--text);white-space:pre-line;margin-bottom:14px}
 .card-impact{background:var(--surface2);border-radius:12px;padding:12px 14px}
 .card-impact-label{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:5px}
 .card-impact-text{font-size:13.5px;line-height:1.55}
-.card-actions{margin-top:14px}
-.card-link{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;border-bottom:1px solid var(--border-strong);padding-bottom:1px}
-.card-link:hover{opacity:.7}
+.card-full-text{font-size:13.5px;line-height:1.7;color:var(--muted);white-space:pre-line;margin-top:14px}
+.card-full-text strong{color:var(--text);font-weight:600}
+.card-disclaimer{font-size:12px;color:var(--subtle);line-height:1.5;margin-top:12px;font-style:italic}
+.card-actions{margin-top:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.card-link,.card-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;padding:8px 16px;border-radius:99px;background:var(--surface);font-family:inherit;cursor:pointer}
+.card-link{border:1px solid var(--border-strong);color:var(--text)}
+.card-btn{border:1px solid var(--border);color:var(--muted);transition:color .15s,border-color .15s}
+.card-btn:hover{color:var(--text);border-color:var(--border-strong)}
+/* Fusszeile: Plattform, Quelle und Datum in einer Zeile, unter dem Text. */
+.card-foot{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.card-quelle{flex:1;min-width:0;font-size:12px;color:var(--subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
+.card.open .card-chevron{transform:rotate(180deg)}
 
 /* Archiv */
 .more-wrap{max-width:760px;margin:20px auto 0;text-align:center}
@@ -91,6 +101,8 @@ nav.top{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.85);backdr
 .mailbox-cta:hover{opacity:.85}
 
 .status{max-width:760px;margin:0 auto;text-align:center;color:var(--muted);font-size:14px;padding:28px 0}
+.zurueck{max-width:760px;margin:0 auto 14px;font-size:13.5px;color:var(--muted)}
+.zurueck:hover{color:var(--text)}
 
 /* FUSS — wie auf der Startseite */
 footer{margin-top:64px;border-top:1px solid var(--border);padding:28px 0 40px}
@@ -102,6 +114,7 @@ footer{margin-top:64px;border-top:1px solid var(--border);padding:28px 0 40px}
 @media(max-width:600px){
   .hero{padding:44px 0 4px}
   .card-inner{padding:16px 16px 18px}
+  .card.gross .card-inner{padding:20px 18px}
   .mailbox{padding:18px}
 }
 </style>
@@ -120,13 +133,18 @@ footer{margin-top:64px;border-top:1px solid var(--border);padding:28px 0 40px}
 
 <div class="container">
   <section class="hero">
-    <h1>Creator News</h1>
-    <p class="hero-sub">Was sich bei Instagram, TikTok und Meta wirklich ändert — zusammengefasst, mit einer Einordnung, was es für dich heißt. Ohne Anmeldung.</p>
+    <h1 id="titel">Creator News</h1>
+    <p class="hero-sub" id="untertitel">Was sich bei Instagram, TikTok und Meta wirklich ändert — zusammengefasst, mit einer Einordnung, was es für dich heißt. Ohne Anmeldung.</p>
   </section>
 
-  <section class="section" id="aktuell">
+  <!-- Einzelne Meldung, wenn die Seite unter /news/<slug> aufgerufen wurde -->
+  <section class="section" id="einzel-section" hidden>
+    <div class="cards" id="einzel-karte"></div>
+  </section>
+
+  <section class="section" id="aktuell-section">
     <div class="section-head">
-      <span class="section-title">Aktuelle Ausgabe</span>
+      <span class="section-title" id="aktuell-titel">Aktuelle Ausgabe</span>
       <span class="section-date" id="aktuell-datum"></span>
     </div>
     <div class="cards" id="aktuell-karten"></div>
@@ -143,7 +161,7 @@ footer{margin-top:64px;border-top:1px solid var(--border);padding:28px 0 40px}
   <div class="mailbox">
     <div class="mailbox-text">
       <div class="mailbox-title">Lieber per Mail?</div>
-      <div class="mailbox-sub">Mit einem kostenlosen viuno-Konto bekommst du die Ausgabe wöchentlich ins Postfach.</div>
+      <div class="mailbox-sub">Mit einem kostenlosen viuno-Konto bekommst du die Ausgabe jede Woche ins Postfach.</div>
     </div>
     <a class="mailbox-cta" href="/app/">Konto anlegen</a>
   </div>
@@ -168,74 +186,185 @@ footer{margin-top:64px;border-top:1px solid var(--border);padding:28px 0 40px}
 
 <script>
 /* Die Karten kommen aus zwei Views, die oeffentlich lesbar sind — kein Login,
-   kein supabase-js, nur zwei REST-Abfragen mit dem publishable Key. */
+   kein supabase-js, nur REST-Abfragen mit dem publishable Key.
+   Die Views liefern bereits nach relevance_score sortiert und enthalten den
+   slug, der auch in den Maillinks und im Teilen-Text steht. */
 const REST = 'https://bzejndghppuipnedasuv.supabase.co/rest/v1'
 const KEY  = 'sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI'
 const PRO_SEITE = 18
 let offset = 0
+
+/* /news/<slug> wird von der Pages Function functions/news/[slug].js auf diese
+   Seite geleitet, die den Slug aus dem Pfad liest. Dieselbe Mechanik wie bei
+   den geteilten Analysen unter /analyse/<token>. */
+const SLUG = (location.pathname.match(/^\/news\/([^/]+)\/?$/) || [])[1] || null
+const HERKUNFT = new URLSearchParams(location.search).get('s') || 'public'
 
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
 /* Der Volltext aus der Datenbank enthaelt **Fettungen** in Markdown.
    Erst escapen, dann die Sternchen aufloesen — in der Reihenfolge kann
    aus dem Text kein Markup mehr entstehen. */
 const escMitFett = s => esc(s).replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>')
+
+const MONATE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
 const datum = d => {
-  const t = new Date(d + 'T00:00:00')
-  return isNaN(t) ? d : t.toLocaleDateString('de-DE', { day:'numeric', month:'long', year:'numeric' })
+  const t = new Date(d + 'T12:00:00')
+  return isNaN(t) ? d : `${t.getDate()}. ${MONATE[t.getMonth()]} ${t.getFullYear()}`
 }
-const EMOJI = { instagram:'📸', tiktok:'🎬', meta:'🔵', youtube:'▶️', linkedin:'💼' }
+const alter = d => {
+  const t = new Date(d + 'T12:00:00')
+  if (isNaN(t)) return d || ''
+  const heute = new Date(); heute.setHours(12,0,0,0)
+  const tage = Math.round((heute - t) / 86400000)
+  if (tage <= 0) return 'heute'
+  if (tage === 1) return 'gestern'
+  if (tage < 28) return `vor ${tage} Tagen`
+  return datum(d)
+}
+/* Montags-Ausgaben decken eine Woche ab. Die Altbestaende aus dem frueheren
+   Tagesrhythmus liegen auf beliebigen Wochentagen und bekommen ihr Datum. */
+const ausgabeTitel = d => {
+  const a = new Date(d + 'T12:00:00')
+  if (isNaN(a)) return d || ''
+  if (a.getDay() !== 1) return `Ausgabe vom ${datum(d)}`
+  const b = new Date(a); b.setDate(b.getDate() + 6)
+  const links = a.getMonth() === b.getMonth() ? `${a.getDate()}.` : `${a.getDate()}. ${MONATE[a.getMonth()]}`
+  return `Woche ${links}–${b.getDate()}. ${MONATE[b.getMonth()]}`
+}
+
+/* Rechtsthemen sind das wichtigste und zugleich heikelste Material hier. */
+const RECHT = /recht|gesetz|kennzeichn|dsgvo|\bdsa\b|ai act|urteil|gericht|bußgeld|bussgeld|abmahn|regulier|richtlinie|verordnung/i
+const hinweis = c => RECHT.test(`${c.headline || ''} ${c.summary || ''}`)
+  ? `<p class="card-disclaimer">Zusammenfassung, keine Rechtsberatung. Im Zweifel anwaltlich prüfen lassen.</p>`
+  : ''
+
+const CHEVRON = `<svg class="card-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>`
 
 async function hole(view, params) {
-  const res = await fetch(`${REST}/${view}?${params}`, { headers:{ apikey:KEY } })
+  const res = await fetch(`${REST}/${view}?${params}`, { headers: { apikey: KEY } })
   if (!res.ok) throw new Error('HTTP ' + res.status)
   return res.json()
 }
 
-/* Ohne Fotos: die Bilder in der Datenbank sind Unsplash-Originale mit
-   ~2,5 MB pro Stueck, und weder Supabase noch Cloudflare skalieren sie hier.
-   Die Plattform-Kachel traegt die Karte genauso. */
-function karte(c, mitDatum) {
+/* Reichweitenmessung, absichtlich fire-and-forget und ohne IP oder Cookie. */
+function zaehlen(page, slug) {
+  try {
+    fetch(`${REST}/page_views`, {
+      method: 'POST',
+      headers: { apikey: KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ page, source: HERKUNFT, card_slug: slug || null }),
+      keepalive: true,
+    }).catch(() => {})
+  } catch (_) {}
+}
+
+function karte(c, { gross = false, offen = false, mitDatum = false } = {}) {
   const voll = (c.full_content || '').trim()
   const aufklappbar = voll || c.impact || c.source_url
-  return `<article class="card${aufklappbar ? '' : ' fix'}">
+  const wichtig = (c.relevance_score || 0) >= 8
+  const quelle = [c.platform_label, c.source, mitDatum ? datum(c.date) : alter(c.published_date || c.date)]
+    .filter(Boolean).join(' · ')
+
+  return `<article class="card${gross ? ' gross' : ''}${offen ? ' open' : ''}${aufklappbar ? '' : ' fix'}" data-slug="${esc(c.slug || '')}">
     <div class="card-inner">
-      <div class="card-meta">
-        <span class="platform-badge">${c.icon_url ? `<img src="${esc(c.icon_url)}" alt="" loading="lazy">` : (EMOJI[c.platform] || '')}${esc(c.platform_label || c.platform || '')}</span>
-        <span class="card-source">${esc(c.source || '')}</span>
-        ${mitDatum ? `<span class="card-date">${esc(datum(c.date))}</span>` : ''}
-        ${aufklappbar ? `<svg class="card-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>` : ''}
-      </div>
+      ${wichtig ? `<div class="chip">Wichtig</div>` : ''}
       <div class="card-headline">${esc(c.headline || '')}</div>
       <div class="card-summary">${esc(c.summary || '')}</div>
       ${aufklappbar ? `<div class="card-body-full">
-        ${voll ? `<div class="card-full-text">${escMitFett(voll)}</div>` : ''}
         ${c.impact ? `<div class="card-impact">
           <div class="card-impact-label">Was das für dich bedeutet</div>
           <div class="card-impact-text">${esc(c.impact)}</div></div>` : ''}
-        ${c.source_url ? `<div class="card-actions"><a class="card-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">Quelle lesen ↗</a></div>` : ''}
+        ${voll ? `<div class="card-full-text">${escMitFett(voll)}</div>` : ''}
+        ${hinweis(c)}
+        <div class="card-actions">
+          ${c.source_url ? `<a class="card-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">Quelle lesen ↗</a>` : ''}
+          <button class="card-btn card-share" type="button">Teilen</button>
+        </div>
       </div>` : ''}
+      <div class="card-foot">
+        <span class="card-quelle">${esc(quelle)}</span>
+        ${aufklappbar ? CHEVRON : ''}
+      </div>
     </div>
   </article>`
 }
 
-/* Aufklappen: Klick auf die Karte, ausser auf den Quelle-Link */
+/* Aufklappen: Klick auf die Karte, ausser auf Quelle-Link und Knoepfe. */
 document.addEventListener('click', e => {
   if (e.target.closest('.card-link')) return
+  if (e.target.closest('.card-share')) {
+    e.preventDefault()
+    const k = e.target.closest('.card')
+    if (k) teilen(k.dataset.slug)
+    return
+  }
   const k = e.target.closest('.card')
-  if (k && !k.classList.contains('fix')) k.classList.toggle('open')
+  if (k && !k.classList.contains('fix')) {
+    const offen = k.classList.toggle('open')
+    if (offen) zaehlen('news_card', k.dataset.slug)
+  }
 })
+
+/* Teilen als Textnachricht: Schlagzeile, ein Satz, Link auf genau diese
+   Meldung. Der Empfaenger landet damit auf dem Text und nicht auf der
+   Startseite. */
+const alleKarten = new Map()
+async function teilen(slug) {
+  const c = alleKarten.get(slug)
+  if (!c) return
+  const url = `https://viuno.de/news/${encodeURIComponent(slug)}?s=share`
+  const text = `${c.headline || ''}\n\n${(c.summary || '').trim()}`
+  if (navigator.share) {
+    try { await navigator.share({ title: c.headline || 'Creator News', text, url }); return } catch (_) {}
+  }
+  try { await navigator.clipboard.writeText(`${text}\n\n${url}`) } catch (_) {}
+}
+
+function merken(liste) { for (const c of liste) if (c.slug) alleKarten.set(c.slug, c) }
 
 async function start() {
   const status = document.getElementById('status')
+  zaehlen(SLUG ? 'news_card' : 'news', SLUG)
+
   try {
-    const heute = await hole('digest_cards_today', 'select=*&order=card_index.asc')
-    if (heute.length) {
-      document.getElementById('aktuell-datum').textContent = datum(heute[0].date)
-      document.getElementById('aktuell-karten').innerHTML = heute.map(karte).join('')
-      status.textContent = ''
-    } else {
-      status.textContent = 'Zurzeit keine Ausgabe verfügbar.'
+    /* Bei /news/<slug> zuerst genau diese Meldung holen — sie kann aus der
+       aktuellen Ausgabe oder aus dem Archiv stammen. */
+    if (SLUG) {
+      const treffer = (await Promise.all([
+        hole('digest_cards_today', `select=*&slug=eq.${encodeURIComponent(SLUG)}`),
+        hole('digest_cards_past',  `select=*&slug=eq.${encodeURIComponent(SLUG)}`),
+      ])).flat()
+
+      if (treffer.length) {
+        const c = treffer[0]
+        merken([c])
+        document.getElementById('titel').textContent = c.headline || 'Creator News'
+        document.getElementById('untertitel').textContent = c.summary || ''
+        document.getElementById('einzel-karte').innerHTML =
+          `<div class="zurueck"><a href="/news">← Alle Creator News</a></div>` +
+          karte(c, { gross: true, offen: true, mitDatum: true })
+        document.getElementById('einzel-section').hidden = false
+        document.getElementById('aktuell-titel').textContent = 'Weitere News'
+      }
     }
+
+    const heute = await hole('digest_cards_today', 'select=*&order=relevance_score.desc')
+    const rest = SLUG ? heute.filter(c => c.slug !== SLUG) : heute
+    merken(heute)
+
+    if (rest.length) {
+      document.getElementById('aktuell-datum').textContent =
+        `${ausgabeTitel(rest[0].date)} · aktualisiert ${alter(rest[0].date)}`
+      document.getElementById('aktuell-karten').innerHTML =
+        rest.map((c, i) => karte(c, { gross: !SLUG && i === 0 })).join('')
+      status.textContent = ''
+    } else if (!SLUG) {
+      status.textContent = 'Zurzeit keine Ausgabe verfügbar.'
+    } else {
+      document.getElementById('aktuell-section').hidden = true
+      status.textContent = ''
+    }
+
     await mehr()
   } catch (err) {
     status.textContent = 'Die News konnten gerade nicht geladen werden.'
@@ -247,10 +376,12 @@ async function mehr() {
   btn.disabled = true
   try {
     const alt = await hole('digest_cards_past',
-      `select=*&order=date.desc,card_index.asc&limit=${PRO_SEITE}&offset=${offset}`)
+      `select=*&order=date.desc,relevance_score.desc&limit=${PRO_SEITE}&offset=${offset}`)
     if (alt.length) {
+      merken(alt)
       document.getElementById('archiv-section').hidden = false
-      document.getElementById('archiv-karten').insertAdjacentHTML('beforeend', alt.map(c => karte(c, true)).join(''))
+      document.getElementById('archiv-karten').insertAdjacentHTML('beforeend',
+        alt.filter(c => c.slug !== SLUG).map(c => karte(c, { mitDatum: true })).join(''))
       offset += alt.length
     }
     if (alt.length < PRO_SEITE) {

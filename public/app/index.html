@@ -256,6 +256,7 @@ html, body {
 /* News-Teaser: zwei Schlagzeilen, nicht aufklappbar, fuehrt auf die News-Seite */
 .news-teaser{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);text-decoration:none;overflow:hidden;transition:border-color .15s}
 .news-teaser:hover{border-color:var(--border-strong)}
+.news-teaser-datum{font-size:var(--t-xs);color:var(--subtle);margin-bottom:var(--s-2)}
 .news-teaser-row{display:block;padding:13px 16px}
 .news-teaser-row+.news-teaser-row{border-top:1px solid var(--border)}
 .news-teaser-meta{display:flex;align-items:center;gap:var(--s-2);margin-bottom:6px}
@@ -784,57 +785,79 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 .modal-divider{height:1px;background:var(--border);margin:16px 0}
 .modal-btn-confirm:disabled{opacity:.45;cursor:not-allowed}
 
-/* ═══ VIEW: CREATOR NEWS (aus /digest/) ═══
-   Die pb-Badges weichen von /dashboard/ ab und sind deshalb begrenzt. */
+/* ═══ VIEW: CREATOR NEWS ═══
+   Eine Karte fuehrt, der Rest ist ruhig. Keine Bilder: die Stockfotos lagen
+   bei rund 1 MB pro Stueck und sagten nichts ueber die Meldung. Keine
+   Plattform-Filter: bei fuenf Karten pro Woche steht hinter jeder Pille
+   eine Karte, und hinter manchen keine. */
 .view-digest .empty-sub{margin-bottom:0}
-.view-digest .pb-tiktok{background:#f0f0f0;color:#111}
-.view-digest .pb-instagram{background:#fce4ec;color:#880e4f}
-.view-digest .pb-youtube{background:#ffebee;color:#b71c1c}
-.view-digest .pb-meta{background:#e3f2fd;color:#0d47a1}
-.view-digest .pb-allgemein{background:var(--surface2);color:var(--muted)}
-/* Tagesblock-Ueberschrift: kleine Versalie mit Trennlinie nach rechts */
-.day-head{display:flex;align-items:center;gap:var(--s-3);margin:var(--s-5) 0 var(--s-3);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em}
-.day-head::after{content:'';flex:1;height:1px;background:var(--border)}
-.cards-list>.day-head:first-child{margin-top:var(--s-2)}
-/* Einzeiler zum Newsletter — direkt zwischen den Karten anklickbar */
-.nl-line{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);margin-bottom:var(--s-3);border:1px dashed var(--border-strong);border-radius:var(--r-md);cursor:pointer;transition:border-color .15s}
+.cards-list{padding:var(--s-4) var(--page-x) 0}
+
+.news-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.news-card:hover{border-color:var(--border-strong)}
+/* Der Aufmacher. Die staerkste Meldung steht oben und sieht auch so aus. */
+.news-card.gross{padding:20px 18px 16px;margin-bottom:14px}
+.news-card.gross .news-headline{font-size:var(--t-2xl);line-height:1.2}
+.news-card.gross .news-summary{font-size:var(--t-base)}
+
+.news-chip{display:inline-block;font-size:var(--t-2xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text);border:1px solid var(--border-strong);border-radius:var(--r-full);padding:2px 9px;margin-bottom:10px}
+.news-headline{font-size:var(--t-lg);font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.3;margin:0 0 6px}
+.news-summary{font-size:var(--t-sm);color:var(--muted);line-height:1.55;margin:0}
+
+/* Fusszeile: Plattform, Quelle und Alter in einer Zeile. Die Quelle bleibt
+   sichtbar, beansprucht aber nicht mehr den Platz ueber der Schlagzeile. */
+.news-foot{display:flex;align-items:center;gap:var(--s-2);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
+.news-quelle{flex:1;min-width:0;font-size:var(--t-xs);color:var(--subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.news-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
+.news-card.offen .news-chevron{transform:rotate(180deg)}
+
+.news-body{display:none;margin-top:14px}
+.news-card.offen .news-body{display:block}
+/* Der Impact steht vor dem Volltext: er ist der Grund, warum jemand die
+   Karte aufklappt - der Artikel ist die Begruendung, nicht die Antwort. */
+.card-impact{background:var(--surface2);border-radius:var(--r-sm);padding:11px 13px}
+.card-impact-label{display:flex;align-items:center;gap:5px;font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.card-impact-text{font-size:var(--t-sm);color:var(--text);line-height:1.5;font-weight:500}
+.news-full{font-size:var(--t-sm);color:var(--muted);line-height:1.7;white-space:pre-line;margin-top:14px}
+.news-full strong{color:var(--text);font-weight:600}
+.news-disclaimer{font-size:var(--t-xs);color:var(--subtle);line-height:1.5;margin:12px 0 0;font-style:italic}
+
+.news-actions{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
+.news-link,.news-btn{display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);font-weight:600;padding:7px 14px;border-radius:var(--r-full);background:var(--surface);font-family:inherit;cursor:pointer}
+.news-link{color:var(--text);text-decoration:none;border:1px solid var(--border-strong)}
+.news-btn{color:var(--muted);border:1px solid var(--border);transition:color .15s,border-color .15s}
+.news-btn:hover{color:var(--text);border-color:var(--border-strong)}
+.news-btn.aktiv{color:var(--text);border-color:var(--border-strong)}
+.news-btn.aktiv svg{fill:currentColor}
+
+/* Einzeiler zum Newsletter - direkt zwischen den Karten anklickbar. */
+.nl-line{display:flex;align-items:center;gap:var(--s-3);padding:var(--s-3) var(--s-4);margin-bottom:10px;border:1px dashed var(--border-strong);border-radius:var(--r-md);cursor:pointer;transition:border-color .15s}
 .nl-line:hover{border-color:var(--muted)}
 .nl-line-check{width:18px;height:18px;flex-shrink:0;accent-color:var(--text);cursor:pointer}
 .nl-line-text{font-size:var(--t-sm);color:var(--muted)}
 .nl-line:has(.nl-line-check:checked) .nl-line-text{color:var(--text)}
-.earlier-days{margin-top:var(--s-6)}
-.earlier-days>summary{cursor:pointer;list-style:none;padding:var(--s-3) 0;text-align:center;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted)}
-.earlier-days>summary::-webkit-details-marker{display:none}
-.earlier-days>summary:hover{color:var(--text)}
-.earlier-days[open]>summary{color:var(--subtle)}
+
+/* Frueher erschienene Ausgaben. Vorher war das eine graue Textzeile ohne
+   Pfeil, die nicht nach Bedienelement aussah - jetzt eine eigene Karte. */
+.news-frueher{margin-top:var(--s-6)}
+.news-frueher-titel{font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:var(--s-3)}
+.news-ausgabe{display:flex;align-items:center;gap:var(--s-3);width:100%;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:13px 16px;margin-bottom:10px;font-family:inherit;cursor:pointer;transition:border-color .15s}
+.news-ausgabe:hover{border-color:var(--border-strong)}
+.news-ausgabe-text{flex:1;min-width:0}
+.news-ausgabe-titel{display:block;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text)}
+.news-ausgabe-sub{display:block;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.news-ausgabe-pfeil{flex-shrink:0;color:var(--subtle);transition:transform .2s}
+.news-ausgabe.offen .news-ausgabe-pfeil{transform:rotate(90deg)}
+.news-ausgabe-karten{padding-left:0}
+
+/* ═══ VIEW: ANFRAGEN (aus /requests/) ═══ */
+/* Die Filterzeile stand frueher im News-Block und galt global mit. Die News
+   haben keinen Filter mehr, deshalb liegt sie jetzt bei ihrem einzigen
+   verbliebenen Nutzer. */
 .filter-row{display:flex;gap:6px;padding:var(--s-3) var(--page-x) 0;overflow-x:auto;scrollbar-width:none}
 .filter-row::-webkit-scrollbar{display:none}
 .f-pill{padding:6px 14px;border-radius:var(--r-full);white-space:nowrap;font-size:var(--t-sm);font-weight:500;font-family:inherit;flex-shrink:0;border:1px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s}
 .f-pill.active{background:var(--text);color:white;border-color:var(--text)}
-.cards-list{padding:var(--s-3) var(--page-x) 0}
-.digest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);margin-bottom:10px;overflow:hidden;cursor:pointer}
-.digest-card.expanded .card-body-full{display:block}
-.digest-card.expanded .card-chevron{transform:rotate(180deg)}
-.card-image{width:100%;height:130px;object-fit:cover;background:var(--surface2);display:block}
-.card-image-fallback{width:100%;height:130px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:32px}
-.card-inner{padding:14px 16px}
-.card-meta{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.platform-badge{font-size:var(--t-2xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.04em}
-.card-source{font-size:var(--t-xs);color:var(--subtle);margin-left:auto}
-.card-chevron{color:var(--subtle);transition:transform .2s;margin-left:4px}
-.card-headline{font-size:var(--t-lg);font-weight:600;color:var(--text);letter-spacing:-.02em;line-height:1.35;margin-bottom:6px}
-.card-summary{font-size:var(--t-sm);color:var(--muted);line-height:1.55}
-.card-body-full{display:none;border-top:1px solid var(--border);padding-top:12px;margin-top:12px}
-.card-full-text{font-size:var(--t-sm);color:var(--muted);line-height:1.7;white-space:pre-line}
-.card-impact{background:var(--surface2);border-radius:var(--r-sm);padding:10px 12px;margin-top:12px}
-.card-impact-label{display:flex;align-items:center;gap:5px;font-size:var(--t-2xs);font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
-.card-impact-text{font-size:var(--t-sm);color:var(--text);line-height:1.5;font-weight:500}
-.card-actions{display:flex;align-items:center;gap:8px;margin-top:12px}
-.card-link{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--text);text-decoration:none;padding:7px 14px;border-radius:var(--r-full);border:1px solid var(--border-strong);background:var(--surface)}
-.card-share{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);font-weight:600;color:var(--muted);padding:7px 14px;border-radius:var(--r-full);border:1px solid var(--border);background:var(--surface);cursor:pointer;font-family:inherit;transition:all .15s}
-.card-share:hover{color:var(--text);border-color:var(--border-strong)}
-
-/* ═══ VIEW: ANFRAGEN (aus /requests/) ═══ */
 .view-requests .empty-sub{margin-bottom:0}
 .list-view{flex:1;padding-bottom:calc(32px + var(--safe-bottom));overflow-y:auto}
 .page-top{padding:var(--s-5) var(--page-x) 0;display:flex;align-items:center;justify-content:space-between}
@@ -1920,7 +1943,11 @@ async function renderDashboard(area, ctx) {
   const [profileRes,analyticsRes,digestRes,requestsRes,dailyTextRes,statsRes] = await Promise.all([
     sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_active,mediakit_active,bio_views_last_7_days,mediakit_views_last_7_days').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
-    sb.from('daily_digest').select('date,teaser,cards').order('date',{ascending:false}).limit(1).single(),
+    /* Aus derselben View wie die News-Seite: nach relevance_score sortiert.
+       Vorher stand hier cards.slice(0,2) auf dem rohen jsonb — der Teaser
+       zeigte damit die beiden Karten, die das Modell zufaellig zuerst
+       geschrieben hatte, nicht die beiden wichtigsten. */
+    sb.from('digest_cards_today').select('slug,headline,source,platform,date').order('relevance_score',{ascending:false}).limit(2),
     sb.from('collab_requests').select('id',{count:'exact',head:true}).eq('creator_id',uid).eq('status','new').is('deleted_at',null),
     sb.rpc('get_daily_text',{p_user_id:uid}),
     sb.from('analyse_stats').select('platform,followers,followers_change,handle_changed,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(20),
@@ -1930,7 +1957,14 @@ async function renderDashboard(area, ctx) {
 
   const p         = profileRes.data
   const an        = (analyticsRes.data||[])[0] || null
-  const cards     = digestRes.data?.cards || []
+  /* Alterssperre: waehrend des Ausfalls vom 21.05. bis 06.09. zeigte das
+     Dashboard 109 Tage lang die Karten vom 20. Mai — ohne Datum, ohne
+     Hinweis. Aelter als drei Wochen wird der Abschnitt jetzt weggelassen. */
+  const newsRoh   = digestRes.data || []
+  const newsAlterTage = newsRoh.length
+    ? Math.round((Date.now() - new Date(newsRoh[0].date + 'T12:00:00')) / 86400000)
+    : null
+  const cards     = (newsAlterTage !== null && newsAlterTage <= 21) ? newsRoh : []
   const newReqs   = requestsRes.count ?? 0
   const dailyText = dailyTextRes.data || null
   const statsRows = statsRes.data || []
@@ -2015,10 +2049,11 @@ async function renderDashboard(area, ctx) {
         <div class="section-title">Creator News</div>
         <a class="section-link" href="#/digest">Alle ${icon('chevronRight',14)}</a>
       </div>
+      <div class="news-teaser-datum">${escHtml(dashNewsAlter(newsAlterTage))}</div>
       <a class="news-teaser" href="#/digest">
-        ${cards.slice(0,2).map(c=>`<span class="news-teaser-row">
+        ${cards.map(c=>`<span class="news-teaser-row">
           <span class="news-teaser-meta">
-            <span class="platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
+            <span class="dash-platform-badge ${dashPlatformClass(c.platform)}">${dashPlatformLabel(c.platform)}</span>
             <span class="news-teaser-source">${escHtml(c.source||'')}</span>
           </span>
           <span class="news-teaser-headline">${escHtml(c.headline||'')}</span>
@@ -2026,6 +2061,15 @@ async function renderDashboard(area, ctx) {
       </a>
     </div>`:'<div style="padding-bottom:calc(var(--s-6) + var(--safe-bottom))"></div>'}
   `
+}
+
+/* Sagt, wie frisch der Teaser ist. Ohne diese Zeile war nicht erkennbar,
+   ob die beiden Meldungen von heute oder aus dem Vormonat stammen. */
+function dashNewsAlter(tage){
+  if(tage===null)return''
+  if(tage<=0)return'Heute aktualisiert'
+  if(tage===1)return'Gestern aktualisiert'
+  return`Vor ${tage} Tagen aktualisiert`
 }
 
 // ── Plattform-Beschriftung der News-Teaser ──
@@ -4962,57 +5006,74 @@ window.shareAnalytics=function(){
 
 
 /* ═══════════════════════════════════════════════════════════════
-   VIEW: CREATOR NEWS — übernommen aus public/digest/index.html
-   Die Karten, das Aufklappen, der Plattform-Filter und das Teilen sind
-   unverändert. Neu ist die Gliederung: der Digest erscheint täglich,
-   deshalb zeigt die Seite die laufende Woche als Tagesblöcke — heute
-   oben, darunter die vorherigen Tage. Tage ohne Einträge bekommen keine
-   Überschrift und keine Meldung, sie fehlen einfach.
+   VIEW: CREATOR NEWS
+   Liest aus denselben beiden Views wie die oeffentliche Seite /news:
+   digest_cards_today (juengste Ausgabe) und digest_cards_past (Archiv).
+   Damit stimmen Reihenfolge, Slugs und Inhalt zwischen App, Mail und
+   oeffentlicher Seite ueberein — vorher las die App das rohe jsonb und
+   zeigte die Karten in der Reihenfolge, in der das Modell sie ausgab.
    ═══════════════════════════════════════════════════════════════ */
 const MONTHS_FULL=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
-const WEEKDAYS_FULL=['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag']
-/* Wie weit zurück die Liste reicht: laufende Woche plus die davor.
-   Ein rollierendes Fenster statt einer festen Cutoff-Konstante — alte
-   Ausgaben fallen von selbst heraus, ohne dass jemand ein Datum pflegt. */
-const DIGEST_WINDOW_DAYS=14
+/* Wie weit das Archiv zurueckreicht. */
+const NEWS_ARCHIV_KARTEN=40
 
-// Montag der aktuellen ISO-Woche (lokale Zeit) — identische Logik wie im Backend
-function getWeekStartLocal(d){
-  const day=d.getDay()
-  const diff=day===0?-6:1-day
-  const monday=new Date(d)
-  monday.setDate(d.getDate()+diff)
-  monday.setHours(0,0,0,0)
-  return monday
-}
-/* Lokales Datum als YYYY-MM-DD. Bewusst nicht über toISOString(), das
-   in UTC umrechnet und östlich von Greenwich einen Tag zurückspringt. */
-function toIso(d){
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
-}
-function daysAgoIso(n){const d=new Date();d.setDate(d.getDate()-n);return toIso(d)}
-
-// Überschrift der Seite, z.B. "Diese Woche · 7.–13. September"
-function weekRangeLabel(){
-  const start=getWeekStartLocal(new Date())
-  const end=new Date(start); end.setDate(end.getDate()+6)
-  const startStr=start.getMonth()===end.getMonth()
-    ? `${start.getDate()}.`
-    : `${start.getDate()}. ${MONTHS_FULL[start.getMonth()]}`
-  return `Diese Woche · ${startStr}–${end.getDate()}. ${MONTHS_FULL[end.getMonth()]}`
-}
-
-// Tagesüberschrift, z.B. "Heute · Sonntag, 13. September" oder "Donnerstag, 11. September"
-function dayHeading(dateStr){
+/* Relative Altersangabe. Sie beantwortet die Frage, die jemand beim
+   Oeffnen hat — anders als die fruehere Zeile "Diese Woche · 14.–20.
+   September", die auch dann stehenblieb, wenn gar nichts erschienen war. */
+function newsAlter(dateStr){
+  if(!dateStr)return''
   const d=new Date(dateStr+'T12:00:00')
-  const wd=WEEKDAYS_FULL[d.getDay()]
-  const full=`${wd}, ${d.getDate()}. ${MONTHS_FULL[d.getMonth()]}`
-  if(dateStr===toIso(new Date()))return `Heute · ${full}`
-  if(dateStr===daysAgoIso(1))return `Gestern · ${wd}`
-  return full
+  if(isNaN(d))return dateStr
+  const heute=new Date();heute.setHours(12,0,0,0)
+  const tage=Math.round((heute-d)/86400000)
+  if(tage<=0)return'heute'
+  if(tage===1)return'gestern'
+  if(tage<28)return`vor ${tage} Tagen`
+  return`${d.getDate()}. ${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`
+}
+function newsDatumLang(dateStr){
+  const d=new Date(dateStr+'T12:00:00')
+  if(isNaN(d))return dateStr||''
+  return`${d.getDate()}. ${MONTHS_FULL[d.getMonth()]} ${d.getFullYear()}`
+}
+/* Beschriftung einer Ausgabe. Montags-Ausgaben decken die Woche ab und
+   heissen "Woche 7.–13. September". Die Altbestaende aus dem frueheren
+   Tagesrhythmus liegen auf beliebigen Wochentagen — sie als Woche zu
+   beschriften waere schlicht falsch, sie bekommen ihr Datum. */
+function newsAusgabeTitel(dateStr){
+  const a=new Date(dateStr+'T12:00:00')
+  if(isNaN(a))return dateStr||''
+  if(a.getDay()!==1)return newsDatumLang(dateStr)
+  const b=new Date(a);b.setDate(b.getDate()+6)
+  const links=a.getMonth()===b.getMonth()?`${a.getDate()}.`:`${a.getDate()}. ${MONTHS_FULL[a.getMonth()]}`
+  return`Woche ${links}–${b.getDate()}. ${MONTHS_FULL[b.getMonth()]}`
+}
+/* Das Modell schreibt **Fettungen** in Markdown. Erst escapen, dann die
+   Sternchen aufloesen — in der Reihenfolge kann aus dem Text kein Markup
+   mehr entstehen. Die oeffentliche Seite macht das seit jeher, die App
+   zeigte die Sternchen bisher im Klartext an. */
+function mitFettung(s){return escHtml(s).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')}
+
+/* Rechtsthemen sind das relevanteste und zugleich heikelste Material.
+   Eine Zusammenfassung im Imperativ ("Pruefe JETZT …") an Gewerbetreibende
+   braucht die Klarstellung, was sie nicht ist. */
+const NEWS_RECHT=/recht|gesetz|kennzeichn|dsgvo|\bdsa\b|ai act|urteil|gericht|bußgeld|bussgeld|abmahn|regulier|richtlinie|verordnung/i
+function newsRechtshinweis(c){
+  if(!NEWS_RECHT.test(`${c.headline||''} ${c.summary||''}`))return''
+  return`<p class="news-disclaimer">Zusammenfassung, keine Rechtsberatung. Im Zweifel anwaltlich prüfen lassen.</p>`
 }
 
-/* View-lokaler Zustand, entspricht dem `state` der alten Seite */
+/* Reichweitenmessung. Ohne sie laesst sich nicht beantworten, ob die News
+   ueberhaupt geoeffnet werden — und damit nicht, ob das Feature sein Ziel
+   erfuellt. Absichtlich fire-and-forget: ein Fehler hier darf die Ansicht
+   nicht stoeren. */
+function newsZaehlen(page,source,slug){
+  try{
+    sb.from('page_views').insert({user_id:dgv?.uid??null,page,source,card_slug:slug??null}).then(()=>{},()=>{})
+  }catch(_){}
+}
+
+/* View-lokaler Zustand */
 let dgv = null
 
 async function renderDigest(area, ctx){
@@ -5022,147 +5083,233 @@ async function renderDigest(area, ctx){
   <div class="view-digest">
     <div class="page-header">
       <div class="page-title">Creator News</div>
-      <div class="page-sub" id="digest-sub">${escHtml(weekRangeLabel())}</div>
+      <div class="page-sub" id="digest-sub">Lädt …</div>
     </div>
-    <div class="filter-row" id="filter-row"><button class="f-pill active" data-filter="alle">Alle</button></div>
-    <div id="skeleton-area" style="padding:12px 20px 0;display:flex;flex-direction:column;gap:10px"><div class="skeleton" style="height:180px;border-radius:16px"></div><div class="skeleton" style="height:140px;border-radius:16px"></div></div>
+    <div id="skeleton-area" style="padding:16px 20px 0;display:flex;flex-direction:column;gap:10px"><div class="skeleton" style="height:150px;border-radius:16px"></div><div class="skeleton" style="height:96px;border-radius:16px"></div></div>
     <div class="cards-list hidden" id="cards-list"></div>
     <div class="empty-state hidden" id="empty-state" style="margin:12px 20px 0"><div class="empty-icon">${icon('inbox',30)}</div><div class="empty-title">Noch keine News</div><div class="empty-sub">Sobald es etwas Neues gibt, steht es hier.</div></div>
   </div>`
 
-  dgv = { uid, ctx, digests:[], activeFilter:'alle', subscribed:false }
+  dgv = { uid, ctx, aktuell:[], frueher:[], merkliste:new Set(), offene:new Set(), subscribed:false }
   ctx.onCleanup(() => { dgv = null })
 
-  const{data:p}=await sb.from('users').select('newsletter_subscribed').eq('id',uid).single()
+  const [profil, aktuell, frueher, merk] = await Promise.all([
+    sb.from('users').select('newsletter_subscribed').eq('id',uid).single(),
+    sb.from('digest_cards_today').select('*').order('relevance_score',{ascending:false}),
+    sb.from('digest_cards_past').select('*').order('date',{ascending:false}).order('relevance_score',{ascending:false}).limit(NEWS_ARCHIV_KARTEN),
+    sb.from('digest_bookmarks').select('card_slug').eq('user_id',uid),
+  ])
   if(ctx.stale)return
-  dgv.subscribed=p?.newsletter_subscribed||false
 
-  await loadDigests()
-}
+  dgv.subscribed = profil?.data?.newsletter_subscribed || false
+  dgv.aktuell    = aktuell?.data || []
+  dgv.frueher    = frueher?.data || []
+  for(const b of (merk?.data||[]))dgv.merkliste.add(b.card_slug)
 
-async function loadDigests(){
-  const{data}=await sb.from('daily_digest').select('date,teaser,cards,generated_at')
-    .gte('date',daysAgoIso(DIGEST_WINDOW_DAYS-1)).order('date',{ascending:false}).limit(DIGEST_WINDOW_DAYS)
-  if(!dgv||dgv.ctx.stale)return
-  document.getElementById('skeleton-area').classList.add('hidden')
-  if(!data?.length){document.getElementById('empty-state').classList.remove('hidden');return}
-  dgv.digests=data
+  newsZaehlen('news','app')
   paintDigest()
 }
 
-function buildFilters(cards){
-  const platforms=[...new Set(cards.map(c=>c.platform).filter(Boolean))]
-  const el=document.getElementById('filter-row')
-  el.innerHTML=`<button class="f-pill ${dgv.activeFilter==='alle'?'active':''}" data-filter="alle" onclick="setFilter('alle')">Alle</button>`+platforms.map(p=>`<button class="f-pill ${dgv.activeFilter===p?'active':''}" data-filter="${p}" onclick="setFilter('${p}')">${platformLabel(p)}</button>`).join('')
-}
-window.setFilter=function(f){
-  if(!dgv)return
-  dgv.activeFilter=f
-  document.querySelectorAll('.f-pill').forEach(p=>p.classList.toggle('active',p.dataset.filter===f))
-  renderDays()
-}
-
-// Alle Karten aller geladenen Tage — Grundlage für die Filter-Pills
-function allCards(){return dgv.digests.flatMap(d=>d.cards||[])}
-// Karten eines Tages, auf den aktiven Filter reduziert
-function cardsOfDay(d){
-  const cards=d.cards||[]
-  return dgv.activeFilter==='alle'?cards:cards.filter(c=>c.platform===dgv.activeFilter)
-}
-
 function paintDigest(){
-  document.getElementById('digest-sub').textContent=weekRangeLabel()
-  buildFilters(allCards())
-  renderDays()
-}
+  const sub  = document.getElementById('digest-sub')
+  const el   = document.getElementById('cards-list')
+  const leer = document.getElementById('empty-state')
+  document.getElementById('skeleton-area')?.classList.add('hidden')
 
-function renderDays(){
-  const el=document.getElementById('cards-list')
-  const empty=document.getElementById('empty-state')
-  const weekStart=toIso(getWeekStartLocal(new Date()))
-  const thisWeek=dgv.digests.filter(d=>d.date>=weekStart)
-  const earlier=dgv.digests.filter(d=>d.date<weekStart)
-
-  /* Läuft über die tatsächlich vorhandenen Tage, nicht über einen
-     erzeugten Kalender: ein Tag ohne Einträge taucht damit gar nicht auf. */
-  let shown=0
-  let hintPlaced=false
-  const section=list=>list.map(d=>{
-    const cards=cardsOfDay(d)
-    if(!cards.length)return ''
-    let html=`<div class="day-head">${escHtml(dayHeading(d.date))}</div>`
-    for(const c of cards){
-      html+=digestCardHtml(c)
-      shown++
-      if(shown===3&&!hintPlaced){ hintPlaced=true; html+=nlLineHtml() }
-    }
-    return html
-  }).join('')
-
-  let html=section(thisWeek)
-  const earlierHtml=section(earlier)
-  if(earlierHtml)html+=`<details class="earlier-days"><summary>Frühere Tage</summary>${earlierHtml}</details>`
-
-  if(!shown){
-    el.classList.add('hidden')
-    empty.classList.remove('hidden')
-    if(dgv.activeFilter!=='alle'){
-      empty.classList.add('hidden')
-      el.classList.remove('hidden')
-      el.innerHTML=`<div class="empty-state" style="margin:0 0 10px"><div class="empty-icon">${icon('search',30)}</div><div class="empty-title">Keine Karten</div><div class="empty-sub">Für diesen Filter gibt es nichts.</div></div>`
-    }
+  if(!dgv.aktuell.length){
+    sub.textContent = 'Zurzeit keine Ausgabe'
+    leer.classList.remove('hidden')
     return
   }
 
-  empty.classList.add('hidden')
+  const n = dgv.aktuell.length
+  sub.textContent = `${n} ${n===1?'Meldung':'Meldungen'} · aktualisiert ${newsAlter(dgv.aktuell[0].date)}`
+
+  /* Die Newsletter-Zeile steht nach der dritten Karte, bei kuerzeren
+     Ausgaben am Ende — nie vor der ersten Meldung. */
+  const nlNach = Math.min(3, n)
+  let html = ''
+  dgv.aktuell.forEach((c,i) => {
+    html += newsKarteHtml(c, i===0)
+    if(i+1===nlNach) html += nlLineHtml()
+  })
+
+  html += frueherHtml()
+
+  leer.classList.add('hidden')
   el.classList.remove('hidden')
-  el.innerHTML=html
-  el.querySelectorAll('.digest-card').forEach(card=>dgv.ctx.on(card,'click',()=>card.classList.toggle('expanded')))
-  el.querySelectorAll('.card-share').forEach(btn=>dgv.ctx.on(btn,'click',e=>{e.stopPropagation();shareCard(btn.dataset.headline,btn.dataset.summary)}))
+  el.innerHTML = html
+  bindeNews(el)
 }
 
-/* Einzeiler zwischen den Karten: direkt an- und abwaehlbar.
-   Schreibt dieselbe Spalte wie die Newsletter-Zeile im Profil. */
+/* Archiv: eine Zeile je frueherer Ausgabe, aufklappbar. */
+function frueherHtml(){
+  if(!dgv.frueher.length)return''
+  const proDatum = new Map()
+  for(const c of dgv.frueher){
+    if(!proDatum.has(c.date))proDatum.set(c.date,[])
+    proDatum.get(c.date).push(c)
+  }
+  let html = `<div class="news-frueher"><div class="news-frueher-titel">Frühere Ausgaben</div>`
+  for(const [datum,karten] of proDatum){
+    const offen = dgv.offene.has(datum)
+    html += `<button class="news-ausgabe${offen?' offen':''}" data-ausgabe="${escHtml(datum)}">
+      <span class="news-ausgabe-text">
+        <span class="news-ausgabe-titel">${escHtml(newsAusgabeTitel(datum))}</span>
+        <span class="news-ausgabe-sub">${karten.length} ${karten.length===1?'Meldung':'Meldungen'}</span>
+      </span>
+      <span class="news-ausgabe-pfeil">${icon('chevronRight',16)}</span>
+    </button>
+    <div class="news-ausgabe-karten${offen?'':' hidden'}" data-karten="${escHtml(datum)}">${offen?karten.map(c=>newsKarteHtml(c,false)).join(''):''}</div>`
+  }
+  return html + `</div>`
+}
+
+function newsKarteHtml(c, gross){
+  const wichtig     = (c.relevance_score||0) >= 8
+  const gemerkt     = dgv.merkliste.has(c.slug)
+  const aufklappbar = !!(c.full_content || c.impact)
+  const quelle      = [c.platform_label, c.source, newsAlter(c.published_date || c.date)].filter(Boolean).join(' · ')
+
+  return `<article class="news-card${gross?' gross':''}" data-slug="${escHtml(c.slug||'')}">
+    ${wichtig?`<div class="news-chip">Wichtig</div>`:''}
+    <h3 class="news-headline">${escHtml(c.headline||'')}</h3>
+    <p class="news-summary">${escHtml(c.summary||'')}</p>
+    ${aufklappbar?`<div class="news-body">
+      ${c.impact?`<div class="card-impact"><div class="card-impact-label">${icon('zap',12)} Was das für dich bedeutet</div><div class="card-impact-text">${escHtml(c.impact)}</div></div>`:''}
+      ${c.full_content?`<div class="news-full">${mitFettung(c.full_content)}</div>`:''}
+      ${newsRechtshinweis(c)}
+      <div class="news-actions">
+        ${c.source_url?`<a class="news-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener">Quelle lesen ${icon('arrowUpRight',13)}</a>`:''}
+        <button class="news-btn news-share" type="button">${icon('share',14)} Teilen</button>
+        <button class="news-btn news-merk${gemerkt?' aktiv':''}" type="button"><span class="news-merk-icon">${icon('star',14)}</span> <span class="news-merk-text">${gemerkt?'Gemerkt':'Merken'}</span></button>
+      </div>
+    </div>`:''}
+    <div class="news-foot">
+      <span class="news-quelle">${escHtml(quelle)}</span>
+      ${aufklappbar?icon('chevronDown',14,'news-chevron'):''}
+    </div>
+  </article>`
+}
+
+/* Eine Karte je Slug finden — die aktuelle Ausgabe und das Archiv. */
+function newsKarte(slug){
+  return dgv.aktuell.find(c=>c.slug===slug) || dgv.frueher.find(c=>c.slug===slug) || null
+}
+
+function bindeNews(el){
+  el.querySelectorAll('.news-card').forEach(karte => {
+    dgv.ctx.on(karte, 'click', e => {
+      if(e.target.closest('.news-link') || e.target.closest('.news-btn')) return
+      if(!karte.querySelector('.news-body')) return
+      const offen = karte.classList.toggle('offen')
+      if(offen) newsZaehlen('news_card', 'app', karte.dataset.slug)
+    })
+  })
+  el.querySelectorAll('.news-share').forEach(btn => {
+    dgv.ctx.on(btn, 'click', e => { e.stopPropagation(); newsTeilen(btn.closest('.news-card')?.dataset.slug) })
+  })
+  el.querySelectorAll('.news-merk').forEach(btn => {
+    dgv.ctx.on(btn, 'click', e => { e.stopPropagation(); newsMerken(btn.closest('.news-card')?.dataset.slug, btn) })
+  })
+  el.querySelectorAll('.news-ausgabe').forEach(btn => {
+    dgv.ctx.on(btn, 'click', () => {
+      const datum = btn.dataset.ausgabe
+      const box = el.querySelector(`[data-karten="${CSS.escape(datum)}"]`)
+      if(!box) return
+      if(dgv.offene.has(datum)){
+        dgv.offene.delete(datum)
+        btn.classList.remove('offen')
+        box.classList.add('hidden')
+        box.innerHTML = ''
+      } else {
+        dgv.offene.add(datum)
+        btn.classList.add('offen')
+        box.innerHTML = dgv.frueher.filter(c=>c.date===datum).map(c=>newsKarteHtml(c,false)).join('')
+        box.classList.remove('hidden')
+        bindeNews(box)
+      }
+    })
+  })
+}
+
+/* Teilen als Textnachricht: Schlagzeile, ein Satz, Link auf die oeffentliche
+   Seite der Meldung. Kein "Mehr Creator-News auf viuno.de" mehr — Werbung im
+   geteilten Text senkt die Weiterleitung, und der frueher mitgegebene Link
+   auf die Startseite fuehrte den Empfaenger nirgendwohin. */
+async function newsTeilen(slug){
+  const c = newsKarte(slug)
+  if(!c)return
+  const url  = `https://viuno.de/news/${encodeURIComponent(c.slug)}?s=share`
+  const text = `${c.headline||''}\n\n${(c.summary||'').trim()}`
+  if(navigator.share){
+    try{ await navigator.share({ title:c.headline||'Creator News', text, url }); return }catch(_){ }
+  }
+  try{ await navigator.clipboard.writeText(`${text}\n\n${url}`); showToast('In Zwischenablage kopiert ✓') }
+  catch(_){ showToast('Teilen nicht verfügbar') }
+}
+
+/* Merken — der Wiederkehrgrund, der bisher fehlte. */
+async function newsMerken(slug, btn){
+  if(!dgv || !slug)return
+  const gemerkt = dgv.merkliste.has(slug)
+  btn.disabled = true
+  const { error } = gemerkt
+    ? await sb.from('digest_bookmarks').delete().eq('user_id',dgv.uid).eq('card_slug',slug)
+    : await sb.from('digest_bookmarks').insert({ user_id:dgv.uid, card_slug:slug })
+  if(!dgv)return
+  btn.disabled = false
+  if(error){ showToast('Konnte nicht gespeichert werden'); return }
+
+  if(gemerkt) dgv.merkliste.delete(slug); else dgv.merkliste.add(slug)
+  /* Alle Knoepfe zu diesem Slug mitziehen — eine Karte kann in der
+     aktuellen Ausgabe und im aufgeklappten Archiv gleichzeitig stehen. */
+  document.querySelectorAll(`.news-card[data-slug="${CSS.escape(slug)}"] .news-merk`).forEach(b => {
+    b.classList.toggle('aktiv', !gemerkt)
+    const t = b.querySelector('.news-merk-text')
+    if(t) t.textContent = gemerkt ? 'Merken' : 'Gemerkt'
+  })
+  showToast(gemerkt ? 'Aus den Merkzetteln entfernt' : 'Gemerkt ✓')
+}
+
+/* Einzeiler zum Newsletter. Schreibt dieselben zwei Stellen wie das Profil:
+   users.newsletter_subscribed steuert den Versand, newsletter_subscribers
+   ist die Liste. Vorher schrieb diese Zeile nur die erste — wer sich hier
+   abmeldete, stand in der Liste weiter als aktiv. */
 function nlLineHtml(){
-  const on=!!dgv?.subscribed
+  const on = !!dgv?.subscribed
   return `<label class="nl-line">
     <input type="checkbox" class="nl-line-check" ${on?'checked':''} onchange="toggleNewsMail(this)"/>
-    <span class="nl-line-text">${on?'Kommt täglich per Mail':'Creator News täglich per Mail bekommen'}</span>
+    <span class="nl-line-text">${on?'Kommt jede Woche per Mail':'Creator News jede Woche per Mail bekommen'}</span>
   </label>`
 }
 
 window.toggleNewsMail=async function(el){
   if(!dgv)return
   const checked=el.checked
+  const uid=dgv.uid
   el.disabled=true
-  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',dgv.uid)
+  const{error}=await sb.from('users').update({newsletter_subscribed:checked}).eq('id',uid)
   if(!dgv)return
   el.disabled=false
   if(error){ el.checked=!checked; showToast('Konnte nicht gespeichert werden'); return }
+
+  if(checked){
+    const mail=state.session?.user?.email
+    if(mail){
+      await sb.from('newsletter_subscribers').upsert({
+        email:mail,user_id:uid,source:'news',status:'active',subscribed_at:new Date().toISOString()
+      },{onConflict:'email'})
+    }
+  }else{
+    await sb.from('newsletter_subscribers').update({status:'unsubscribed',unsubscribed_at:new Date().toISOString()}).eq('user_id',uid)
+  }
+  if(!dgv)return
+
   dgv.subscribed=checked
   const label=el.parentElement?.querySelector('.nl-line-text')
-  if(label)label.textContent=checked?'Kommt täglich per Mail':'Creator News täglich per Mail bekommen'
+  if(label)label.textContent=checked?'Kommt jede Woche per Mail':'Creator News jede Woche per Mail bekommen'
   showToast(checked?'Abonniert ✓':'Abo beendet')
-}
-
-function platformLabel(p){return{tiktok:'TikTok',instagram:'Instagram',youtube:'YouTube',meta:'Meta',allgemein:'Allgemein'}[p]||p}
-function platformClass(p){return{tiktok:'pb-tiktok',instagram:'pb-instagram',youtube:'pb-youtube',meta:'pb-meta',allgemein:'pb-allgemein'}[p]||'pb-allgemein'}
-function platformEmoji(p){return{tiktok:'🎵',instagram:'📸',youtube:'📺',meta:'🔵',allgemein:'🌐'}[p]||'📰'}
-async function shareCard(headline,summary){
-  const text=`📰 ${headline}\n\n${summary?summary.slice(0,120)+'…':''}\n\nMehr Creator-News auf viuno.de`
-  if(navigator.share){try{await navigator.share({title:headline,text,url:'https://viuno.de'});return}catch(_){}}
-  try{await navigator.clipboard.writeText(text);showToast('In Zwischenablage kopiert ✓')}catch(_){showToast('Teilen nicht verfügbar')}
-}
-function digestCardHtml(c){
-  const hasImg=c.image_url?.trim(),hasFull=c.full_content?.trim()
-  const shareBtn=`<button class="card-share" data-headline="${escHtml(c.headline||'')}" data-summary="${escHtml(c.summary||'')}">${icon('share',14)} Teilen</button>`
-  return`<div class="digest-card"><${hasImg?`img class="card-image" src="${escHtml(c.image_url)}" alt="" loading="lazy" onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot;>${platformEmoji(c.platform)}</div>'"`:`div class="card-image-fallback"`}>${hasImg?'</img>':platformEmoji(c.platform)+'</div>'}
-    <div class="card-inner"><div class="card-meta"><span class="platform-badge ${platformClass(c.platform)}">${platformLabel(c.platform)}</span><span class="card-source">${escHtml(c.source||'')}</span>${(hasFull||c.impact)?icon('chevronDown',14,'card-chevron'):''}</div>
-      <div class="card-headline">${escHtml(c.headline||'')}</div><div class="card-summary">${escHtml(c.summary||'')}</div>
-      ${(hasFull||c.impact||c.source_url)?`<div class="card-body-full">${hasFull?`<div class="card-full-text">${escHtml(c.full_content)}</div>`:''}${c.impact?`<div class="card-impact"><div class="card-impact-label">${icon('zap',12)} Was das für dich bedeutet</div><div class="card-impact-text">${escHtml(c.impact)}</div></div>`:''}
-        <div class="card-actions">${c.source_url?`<a class="card-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener" onclick="event.stopPropagation()">Quelle lesen ${icon('arrowUpRight',13)}</a>`:''}${shareBtn}</div>
-      </div>`:''}
-    </div></div>`
 }
 
 
