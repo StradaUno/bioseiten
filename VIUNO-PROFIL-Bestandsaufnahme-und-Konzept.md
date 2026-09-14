@@ -7,7 +7,30 @@ Dialoge, das Pro-Banner in der Seitenleiste, die Edge Functions
 `users` samt Triggern und RLS, und die Stellen, an denen dieselben Felder
 außerhalb des Profils bearbeitet werden.
 
-Am Code wurde nichts geändert.
+Der Konzeptteil (Phase 2 und 3) ist Entwurf und **nicht** umgesetzt.
+Die Befunde aus Phase 1, die sofort schadeten, sind erledigt — siehe unten.
+
+---
+
+## Umgesetzt am 14.09.2026
+
+| # | Was | Wo | Nachweis |
+|---|---|---|---|
+| 1 | Signaturprüfung in `delete-account`, `change-username`, `admin-dashboard` | Edge Functions v11 / v7 / v8 | gefälschtes Token liefert `invalid_token: rejected`, `Ungültiger Token`, `Auth fehlgeschlagen` |
+| 1b | `cleanup-user-pages` leitet den Slug aus `display_name` ab | Edge Function v24 | — |
+| 1c | Verwaiste Seiten `public/stradi`, `public/antika`, `public/kit/stradi` entfernt | Commit `427d29e` | liefern die Landingpage statt der Creator-Seite |
+| 2 | Spalten-Grants auf `users` eingeschränkt | Migration `users_spalten_grants_einschraenken` | `authenticated` hat 14 statt 41 Spalten; `is_admin`, `display_name`, `subscription_type`, `is_verified`, `email`, `bio_active` nicht mehr schreibbar |
+| 3 | Storage-UPDATE-Policy auf den eigenen Ordner | Migration `profile_images_update_policy_auf_eigenen_ordner` | `using` und `with check` prüfen beide `foldername(name)[1] = auth.uid()` |
+| 5 | `saveBioHandles` statt doppeltem `saveHandles` | Commit `b921129` | kein doppelter `window.*`-Name mehr in der Datei |
+| 6 | `--radius-sm` → `--r-sm`, sechs Stellen | Commit `b921129` | `radius-sm` kommt in der ausgelieferten Datei nicht mehr vor |
+| 7 | Trigger `on_auth_user_email_changed` zieht `users.email` nach | Migrationen `sync_user_email_funktion` / `trigger_user_email_nachziehen` | Trigger hängt an `auth.users`; heute weichen 0 von 5 Adressen ab, kein Nachtragen nötig |
+
+`verify_jwt` bleibt bei allen vier Functions auf `false` — mit `true` weist das
+Gateway den CORS-Preflight ab. Die Prüfung passiert jetzt im Code, genau wie in
+`generate-biolink` und `start-analysis`, die seit jeher so laufen.
+
+Nicht angefasst: alles aus „Verbesserung" ab #8 und alle
+Geschäftsentscheidungen.
 
 ---
 
