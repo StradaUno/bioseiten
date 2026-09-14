@@ -13,7 +13,7 @@
 <meta property="og:type" content="website"/>
 <meta name="robots" content="noindex, nofollow"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Geteilter Analyse-Ausschnitt.
    Aufbau und Sprache aus Entwurf B: eine einzelne Karte, dritte Person, damit es
@@ -21,28 +21,33 @@
    dem Produkt selbst, damit der Empfaenger sieht, wie seine eigene aussehen wuerde. */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --bg:#0B0E13; --panel:#141922; --panel2:#1B212C; --line:#262E3B; --line2:#36404F;
-  --fg:#EDF1F7; --fg2:#9AA6B8; --fg3:#6B7789;
-  --ok:#34D399; --ok-bg:#0C2A21; --ok-line:#17513E;
-  --bad:#FB7185; --bad-bg:#2B1219; --bad-line:#5A222E;
-  --cool:#60A5FA; --cool-bg:#0E1D33; --cool-line:#1D3A5F;
+  /* Hell, mit denselben Werten wie das Cockpit in der App: die geteilte
+     Seite ist ein Ausschnitt derselben Auswertung und soll nicht aussehen
+     wie ein anderes Produkt. --cool ist die Signaturfarbe. */
+  --bg:#f6f5fa; --panel:#ffffff; --panel2:#f2f0f8; --line:rgba(27,24,38,.09); --line2:#d7d3e3;
+  --fg:#17151f; --fg2:#4e4a5e; --fg3:#817c92;
+  --ok:#15784b; --ok-bg:#eaf4ef; --ok-line:rgba(21,120,75,.22);
+  --bad:#c23a31; --bad-bg:#fbeeed; --bad-line:rgba(194,58,49,.22);
+  --cool:#6b3fe8; --cool-bg:rgba(107,63,232,.10); --cool-line:rgba(107,63,232,.24);
+  --sh-card:0 2px 10px rgba(27,24,38,.05);
   --safe-b: env(safe-area-inset-bottom, 0px);
 }
 html,body{background:var(--bg);min-height:100%}
 body{color:var(--fg);font-family:Inter,-apple-system,BlinkMacSystemFont,Arial,sans-serif;
   line-height:1.6;-webkit-font-smoothing:antialiased}
-h1,h2,h3,.num{font-family:Outfit,Inter,sans-serif;text-wrap:balance}
-.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums}
+h1,h2,h3{font-family:Outfit,Inter,sans-serif;text-wrap:balance}
+.num{font-variant-numeric:tabular-nums}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.02em}
 
 .buehne{min-height:100dvh;display:flex;flex-direction:column;align-items:center;
   gap:16px;padding:24px 16px calc(40px + var(--safe-b))}
 
 .absender{display:flex;align-items:center;gap:9px;color:var(--fg3);font-size:13px;font-weight:500}
-.absender i{width:24px;height:24px;border-radius:7px;background:var(--fg);color:var(--bg);
+.absender i{width:24px;height:24px;border-radius:7px;background:var(--fg);color:#fff;
   display:grid;place-items:center;font-style:normal;font-weight:800;font-size:12px;font-family:Outfit,sans-serif}
 
 .karte{width:100%;max-width:580px;background:var(--panel);border:1px solid var(--line);
-  border-radius:20px;overflow:hidden}
+  box-shadow:var(--sh-card);border-radius:20px;overflow:hidden}
 
 .kopf{padding:26px 24px 22px;border-bottom:1px solid var(--line);
   background:linear-gradient(180deg,var(--panel2),var(--panel))}
@@ -72,7 +77,7 @@ h1,h2,h3,.num{font-family:Outfit,Inter,sans-serif;text-wrap:balance}
 .probe{position:relative}
 .probe .t{font-size:14.5px;color:var(--fg2);max-height:132px;overflow:hidden}
 .probe::after{content:"";position:absolute;left:0;right:0;bottom:0;height:88px;
-  background:linear-gradient(180deg,rgba(20,25,34,0),var(--panel) 86%);pointer-events:none}
+  background:linear-gradient(180deg,rgba(255,255,255,0),var(--panel) 86%);pointer-events:none}
 
 .riegel{padding:24px;border-top:1px solid var(--line);background:var(--panel2);text-align:center}
 .riegel .k{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--fg3);font-weight:700;margin-bottom:9px}
@@ -87,9 +92,9 @@ h1,h2,h3,.num{font-family:Outfit,Inter,sans-serif;text-wrap:balance}
 
 .fuss{width:100%;max-width:580px;text-align:center;font-size:12px;color:var(--fg3);line-height:1.8}
 .fuss a{color:var(--fg2)}
-.fuss .marke{display:inline-flex;align-items:center;gap:7px;color:var(--fg2);font-weight:600;margin-bottom:6px}
-.fuss .marke i{width:20px;height:20px;border-radius:6px;background:var(--fg2);color:var(--bg);
-  display:grid;place-items:center;font-style:normal;font-weight:800;font-size:10px;font-family:Outfit,sans-serif}
+.fuss .powered{font-size:12px;color:var(--fg3);margin-bottom:6px}
+.fuss .powered a{font-weight:600;color:var(--fg)}
+.fuss .powered a:hover{text-decoration:underline}
 
 .laden,.weg{width:100%;max-width:580px;text-align:center;padding:60px 24px;color:var(--fg3);font-size:14px}
 .weg h2{font-size:21px;font-weight:700;color:var(--fg);margin-bottom:10px}
@@ -116,8 +121,7 @@ h1,h2,h3,.num{font-family:Outfit,Inter,sans-serif;text-wrap:balance}
   <div class="karte" id="karte" hidden></div>
 
   <div class="fuss" id="fuss" hidden>
-    <div class="marke"><i>v</i> viuno</div><br>
-    Analyse für Instagram und TikTok · <a href="/">viuno.de</a><br>
+    <div class="powered">powered by <a href="/?quelle=analyse">viuno</a></div>
     <a href="/legal#impressum">Impressum</a> ·
     <a href="/legal#datenschutz">Datenschutz</a> ·
     <a href="/legal#agb">AGB</a>
@@ -171,11 +175,11 @@ function balkenSvg(D){
     const f=p.r>=stark?'var(--ok)':(p.r<=schwach?'var(--bad)':'var(--line2)')
     s+=`<rect x="${x}" y="${MID+14}" width="${bw.toFixed(1)}" height="${hr.toFixed(1)}" rx="3" fill="${f}"></rect>`
     if(i%jedes===0||i===D.length-1)
-      s+=`<text x="${(+x+bw/2).toFixed(1)}" y="${BOT+20}" text-anchor="middle" font-size="10" fill="var(--fg3)" font-family="JetBrains Mono, monospace">${esc(p.d)}</text>`
+      s+=`<text x="${(+x+bw/2).toFixed(1)}" y="${BOT+20}" text-anchor="middle" font-size="10" fill="var(--fg3)" font-family="Inter, sans-serif">${esc(p.d)}</text>`
   })
   s+=`<line x1="${PADL}" y1="${MID+2}" x2="${W-PADR}" y2="${MID+2}" stroke="var(--line)" stroke-width="1"></line>`
-  s+=`<text x="${PADL}" y="${TOP-3}" font-size="10" fill="var(--fg3)" font-family="JetBrains Mono, monospace">${kurz(maxV)} Aufrufe — höchster Wert oben</text>`
-  s+=`<text x="${PADL}" y="${BOT+7}" font-size="10" fill="var(--fg3)" font-family="JetBrains Mono, monospace">${de(maxR,1)} Likes je 1.000 Aufrufe — höchster Wert unten</text>`
+  s+=`<text x="${PADL}" y="${TOP-3}" font-size="10" fill="var(--fg3)" font-family="Inter, sans-serif">${kurz(maxV)} Aufrufe — höchster Wert oben</text>`
+  s+=`<text x="${PADL}" y="${BOT+7}" font-size="10" fill="var(--fg3)" font-family="Inter, sans-serif">${de(maxR,1)} Likes je 1.000 Aufrufe — höchster Wert unten</text>`
   return `<div class="chart" style="--min:${Math.max(520,D.length*22)}px"><svg viewBox="0 0 ${W} 216" width="100%" role="img" aria-label="Aufrufe und Resonanz je Beitrag">${s}</svg></div>`
 }
 
