@@ -10,11 +10,14 @@ const MODEL = 'claude-sonnet-5'
 const PROVIDER = 'Anthropic'
 const PRICE_INPUT_PER_MTOK = 2.00
 const PRICE_OUTPUT_PER_MTOK = 10.00
-// Sechs statt zehn Suchen. Bei serverseitigen Suchen geht die komplette
-// bisherige Unterhaltung in jede weitere Runde mit ein, die Eingabemenge
-// waechst also ueberproportional: 10 Suchen ergaben 479k Input-Token und
-// $1,11 pro Lauf. Sechs halten den Lauf unter einem halben Dollar.
-const WEB_SEARCH_MAX_USES = 6
+// Bei serverseitiger Suche geht die komplette bisherige Unterhaltung in
+// jede weitere Runde mit ein. Die Eingabemenge waechst deshalb quadratisch:
+// gemessen 136k Token bei 5 Suchen, 479k bei 10. Daraus
+//     Input  ~  20.000 + 4.585 * n^2
+// was beide Messpunkte auf ein Prozent genau trifft. Bei zwoelf Suchen
+// landet ein Lauf bei rund $1,55 und damit knapp unter der Grenze von
+// 1,50 Euro. Dreizehn waeren schon $1,77 - nicht erhoehen.
+const WEB_SEARCH_MAX_USES = 12
 const WEB_SEARCH_PRICE_PER_CALL = 10 / 1000
 
 // Ohne Whitelist sucht das Modell frei und landet bei englischsprachigen
@@ -32,6 +35,10 @@ const ERLAUBTE_QUELLEN = [
   'blog.youtube',
   'support.google.com',
   'developers.facebook.com',
+  'news.linkedin.com',
+  'newsroom.pinterest.com',
+  'blog.twitch.tv',
+  'substack.com',
   // Deutschsprachige Fach- und Rechtsquellen
   't3n.de',
   'omr.com',
@@ -46,12 +53,19 @@ const ERLAUBTE_QUELLEN = [
   'die-medienanstalten.de',
   'bvdw.org',
   'onlinemarketing.de',
-  'internetworld.de',
   'gruenderszene.de',
-  'allfacebook.de',
+  // allfacebook.de leitet seit dem Umbenennen auf allsocial.de um.
+  // internetworld.de antwortet mit 404 und ist deshalb raus.
+  'allsocial.de',
   'futurebiz.de',
   'basicthinking.de',
   'meedia.de',
+  // Steuern und Abgaben - der folgenreichste Bereich fuer eine
+  // selbstaendige Creatorin und bisher in 237 Karten kein einziges Mal
+  // vorgekommen.
+  'haufe.de',
+  'bzst.de',
+  'gema.de',
   // Internationale Fachpresse, die tatsaechlich berichtet statt zu ranken.
   // reuters.com und theverge.com sperren den Crawler und wurden deshalb
   // von der API abgelehnt - nicht wieder aufnehmen.
@@ -68,13 +82,13 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 function bildKategorie(platform: string, headline: string): string {
   const p = (platform || '').toLowerCase()
   const h = (headline || '').toLowerCase()
-  if (p === 'instagram') return 'instagram'
+  if (p === 'instagram' || p === 'threads') return 'instagram'
   if (p === 'tiktok') return 'tiktok'
-  if (p === 'youtube') return 'youtube'
-  if (p === 'meta') return 'meta'
+  if (p === 'youtube' || p === 'twitch') return 'youtube'
+  if (p === 'meta' || p === 'whatsapp') return 'meta'
   if (h.match(/geld|budget|verdien|einnahm|deal|monetar|auszahl|honorar|bonus|revenue|cpm|rpm/)) return 'money'
-  if (h.match(/recht|dsgvo|\beu\b|gesetz|kennzeichn|pflicht|regulier|datenschutz|urteil|gericht/)) return 'legal'
-  if (h.match(/canva|capcut|tool|app|software|later|notion|hootsuite|buffer/)) return 'tools'
+  if (h.match(/recht|dsgvo|\beu\b|gesetz|kennzeichn|pflicht|regulier|datenschutz|urteil|gericht|steuer|finanzamt|gema/)) return 'legal'
+  if (h.match(/canva|capcut|tool|app|software|later|notion|hootsuite|buffer|\bki\b/)) return 'tools'
   if (h.match(/trend|viral|hashtag|fyp|challenge|sound|audio/)) return 'trends'
   return 'creator'
 }
@@ -198,6 +212,7 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
 
   try {
+    const { ohne_verlauf: ohneVerlauf = false } = await req.json().catch(() => ({}))
     const weekStart = getWeekStart(new Date())
 
     // Kontext aus den letzten 4 Wochen, fuer die is_repeat-Bewertung.
@@ -206,12 +221,19 @@ Deno.serve(async (req) => {
     // Reichweite" verschieden genug aus, dass das Modell is_repeat=false setzte.
     const vierWochen = new Date()
     vierWochen.setDate(vierWochen.getDate() - 28)
-    const { data: recentDigests } = await supabase
-      .from('daily_digest')
-      .select('cards, date')
-      .gte('date', vierWochen.toISOString().split('T')[0])
-      .lt('date', weekStart)
-      .order('date', { ascending: false })
+
+    /* ohne_verlauf uebergeht die Wiederholungspruefung fuer einen Lauf.
+       Gedacht fuer den Fall, dass sich Prompt oder Quellen geaendert haben
+       und man denselben Zeitraum noch einmal sauber abbilden will - ohne
+       dass die alte Ausgabe aus dem Archiv geloescht werden muesste. */
+    const { data: recentDigests } = ohneVerlauf
+      ? { data: [] as any[] }
+      : await supabase
+          .from('daily_digest')
+          .select('cards, date')
+          .gte('date', vierWochen.toISOString().split('T')[0])
+          .lt('date', weekStart)
+          .order('date', { ascending: false })
 
     const recentContext: string[] = []
     if (recentDigests) {
@@ -238,7 +260,7 @@ Selbststaendige Creatorin im deutschsprachigen Raum, 1.000 bis 50.000 Follower a
 
 Alles, was nur fuer Agenturen, Shops, Mediaeinkaeufer oder US-Werbetreibende zaehlt, ist fuer sie wertlos — egal wie gross die Zahl in der Meldung ist.
 
-AUFGABE: Suche News der letzten 7 Tage und waehle bis zu 5 Meldungen aus. Weniger ist ausdruecklich richtig: drei echte Neuigkeiten sind besser als fuenf, von denen zwei Fuellmaterial sind. Wenn nur eine Meldung wirklich taugt, liefere eine.
+AUFGABE: Suche News der letzten 7 Tage und waehle bis zu 7 Meldungen aus. Weniger ist ausdruecklich richtig: drei echte Neuigkeiten sind besser als sieben, von denen vier Fuellmaterial sind. Du durchsuchst zwoelf Bereiche - das heisst nicht, dass aus jedem etwas kommen muss. Aus den meisten kommt in einer gegebenen Woche nichts. Wenn nur eine Meldung wirklich taugt, liefere eine.
 
 RELEVANT:
 - Aenderungen an Algorithmus, Ranking oder Reichweite (Instagram, TikTok, YouTube)
@@ -298,7 +320,7 @@ FELDER pro Meldung, auf Deutsch:
     Gut: "Geh deine letzten zehn Kooperationen durch und pruefe, ob bei Geschenken ohne Bezahlung eine Kennzeichnung fehlt."
 - full_content: In-App-Artikel, 120 bis 300 Woerter. So lang, wie die Quelle traegt — nicht laenger. Lieber 130 gute Woerter als 280 mit Fuellung. Nimm die konkreten Schritte, Zahlen und Namen aus der Quelle mit. Keine Wiederholung der summary.
 - level: "hoch" | "mittel" | "info"
-- platform: "instagram" | "tiktok" | "youtube" | "meta" | "allgemein"
+- platform: "instagram" | "tiktok" | "youtube" | "meta" | "linkedin" | "pinterest" | "threads" | "twitch" | "whatsapp" | "allgemein"
 - source: Name der Quelle
 - source_url: Direktlink auf genau diese Meldung
 - published_date: YYYY-MM-DD
@@ -312,16 +334,33 @@ Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Text davor oder danach:
 
     const userPrompt = `Heute ist der ${new Date().toISOString().split('T')[0]}, die Ausgabe laeuft unter dem ${weekStart}.
 
-Suche News der letzten 7 Tage. Du hast hoechstens ${WEB_SEARCH_MAX_USES} Suchen — setze sie breit an und buendele mehrere Begriffe in einer Anfrage, statt jeden Punkt einzeln zu suchen:
-1. Instagram und TikTok: Algorithmus, Reichweite, neue Funktionen fuer Creator
-2. YouTube Shorts und Creator-Programme
-3. Monetarisierung, Boni und Honorare fuer Creator im DACH-Markt
-4. Kennzeichnungspflicht, Influencer-Recht und aktuelle Urteile in Deutschland
-5. EU-Regulierung fuer Creator: AI Act, DSA, Digital Fairness Act
+Suche News der letzten 7 Tage. Du hast ${WEB_SEARCH_MAX_USES} Suchen — eine je Bereich:
 
-Mindestens eine Karte soll aus Bereich 4 oder 5 kommen, wenn es dort in den letzten 7 Tagen etwas gab.
+PLATTFORM UND REICHWEITE
+1. Instagram: Algorithmus, Ranking, Reichweite, neue Funktionen
+2. TikTok: Algorithmus, Regeln, neue Funktionen fuer Creator
+3. YouTube: Shorts, Creator-Programme, Monetarisierung
+4. Nebenplattformen: LinkedIn, Pinterest, Threads, WhatsApp-Kanaele, Twitch
 
-Gib bis zu 5 Karten als JSON zurueck. Weniger ist richtig, wenn nicht mehr taugt — aber wenn du drei brauchbare Meldungen gefunden hast, liefere auch alle drei. NUR JSON.`
+GELD
+5. Monetarisierungsprogramme und Boni der Plattformen
+6. Honorare, Vertraege und Konditionen bei Marken-Kooperationen im DACH-Markt
+7. Einnahmen ausserhalb der Plattformen: Newsletter, Kurse, Affiliate, eigene Produkte
+
+RECHT UND STEUERN
+8. Kennzeichnungspflicht, Influencer-Urteile und Abmahnungen in DE/AT/CH
+9. Steuern und Abgaben fuer Creator: DAC7 und Plattformen-Steuertransparenzgesetz, Meldungen der Plattformen ans Finanzamt, Umsatzsteuer, Pruefpraxis der Finanzaemter
+10. EU-Regulierung: AI Act, DSA, Digital Fairness Act
+
+WERKZEUGE UND UMFELD
+11. KI-Werkzeuge, die Creator selbst benutzen: Schnitt, Voice, Thumbnails, Sichtbarkeit in KI-Antworten
+12. Account-Sicherheit, Sperren und Wiederherstellung; GEMA und Musiklizenzen
+
+Aus den meisten dieser Bereiche kommt in einer gegebenen Woche nichts. Das ist der Normalfall — such trotzdem, aber erfinde nichts, nur damit ein Bereich vertreten ist.
+
+Wenn es aus Bereich 8, 9 oder 10 etwas gab, nimm es auf: Recht und Steuern sind fuer eine selbstaendige Creatorin folgenreicher als jedes Funktions-Update, kommen aber in der Berichterstattung selten vor.
+
+Gib bis zu 7 Karten als JSON zurueck. NUR JSON.`
 
     const claudeAufrufen = (domains: string[]) => fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -332,7 +371,7 @@ Gib bis zu 5 Karten als JSON zurueck. Weniger ist richtig, wenn nicht mehr taugt
       },
       body: JSON.stringify({
         model: MODEL,
-        max_tokens: 16000,
+        max_tokens: 24000,
         // Mittlere Stufe: weniger und staerker gebuendelte Suchaufrufe, was
         // hier direkt auf die Eingabemenge und damit auf die Kosten wirkt.
         output_config: { effort: 'medium' },
@@ -461,7 +500,7 @@ Gib bis zu 5 Karten als JSON zurueck. Weniger ist richtig, wenn nicht mehr taugt
       cost_usd: costUsd, user_id: null,
       metadata: {
         week_start: weekStart, cards_count: karten.length, verworfen: alle.length - karten.length,
-        web_searches: suchen, gerettet,
+        web_searches: suchen, gerettet, ohne_verlauf: ohneVerlauf,
         token_cost_usd: parseFloat(tokenCost.toFixed(6)), search_cost_usd: parseFloat(searchCost.toFixed(6)),
       },
     })
@@ -471,7 +510,7 @@ Gib bis zu 5 Karten als JSON zurueck. Weniger ist richtig, wenn nicht mehr taugt
     return new Response(
       JSON.stringify({
         success: true, cards_count: karten.length, verworfen: alle.length - karten.length,
-        week_start: weekStart,
+        aussortiert, week_start: weekStart,
         tokens: { input: tokensInput, output: tokensOutput, total: tokensTotal },
         cost: { token_usd: parseFloat(tokenCost.toFixed(6)), search_usd: parseFloat(searchCost.toFixed(6)), total_usd: costUsd, web_searches: suchen },
       }),
