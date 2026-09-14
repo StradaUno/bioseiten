@@ -1281,7 +1281,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
    ist. Der Parameter wechselt alle fuenf Minuten -- kurz genug, dass ein
    Push ankommt, lang genug, dass die Datei nicht bei jedem Aufruf neu geholt
    wird. */
-const { brBerechnen, brSaetze, BR_NAME, BR_WARUM, brDatum } =
+const { brBerechnen, brZusammenfuehren, brSaetze, BR_NAME, BR_WARUM, brDatum } =
   await import('./brand-ready-regeln.js?v=' + Math.floor(Date.now() / 300000))
 
 /* ─────────────────────────────────────────────
@@ -7137,8 +7137,15 @@ async function profilbildHochladen(file, uid, altUrl){
     .update({profile_image_url:publicUrl, updated_at:new Date().toISOString()}).eq('id', uid)
   if(dbErr) return {fehler:'Konnte nicht gespeichert werden: '+dbErr.message}
 
-  /* Alte Datei wegraeumen -- sonst waechst der Bucket mit jedem Upload. */
-  if(altPfad && altPfad!==pfad){ try{ await sb.storage.from('profile-images').remove([altPfad]) }catch(_){} }
+  /* Alte Datei wegraeumen -- sonst waechst der Bucket mit jedem Upload.
+     Der Fehler wird bewusst nicht dem Nutzer gezeigt (sein Bild ist ja da),
+     aber auch nicht mehr verschluckt: bis 15.09.2026 fehlte dem Bucket die
+     DELETE-Regel, der Aufruf schlug jedes Mal fehl und niemand sah es --
+     zehn Fassungen desselben Bilds spaeter. */
+  if(altPfad && altPfad!==pfad){
+    const {error:wegErr} = await sb.storage.from('profile-images').remove([altPfad])
+    if(wegErr) console.warn('Altes Profilbild nicht entfernt:', wegErr.message)
+  }
 
   if(state.profile){ state.profile.profile_image_url = publicUrl; paintUser() }
   return {publicUrl, vorschau:klein.vorschau}
@@ -7222,7 +7229,7 @@ async function renderBrandReady(area, ctx) {
     <div id="br-inhalt"></div>
   </div>`
 
-  brv = { uid, ctx, kanal: null, daten: null, angaben: {}, offen: {}, freigabe: null }
+  brv = { uid, ctx, kanal: null, ansicht: 'gesamt', daten: null, angaben: {}, offen: {}, freigabe: null }
   ctx.onCleanup(() => { brv = null })
 
   const [statsQ, profilQ, blQ, mkQ, brandsQ, offersQ, preiseQ, angabenQ, nischeQ] = await Promise.all([
@@ -7267,6 +7274,7 @@ async function renderBrandReady(area, ctx) {
   }
   brv.angaben = angaben
   brv.kanal = neueste.length ? neueste[0].platform : null
+  brv.ansicht = 'gesamt'
 
   document.getElementById('br-skeleton').classList.add('hidden')
   if (brv.kanal) {
@@ -7283,17 +7291,28 @@ async function renderBrandReady(area, ctx) {
   brZeichnen()
 }
 
-function brErgebnis() {
+function brErgebnisFuer(pf) {
   const d = brv.daten
-  const s = d.stats.find(x => x.platform === brv.kanal)
-  const prev = d.alleStats.filter(x => x.platform === brv.kanal)[1] || null
+  const s = d.stats.find(x => x.platform === pf)
+  if (!s) return null
+  const prev = d.alleStats.filter(x => x.platform === pf)[1] || null
   return brBerechnen({
-    platform: brv.kanal, stats: s, statsPrev: prev,
-    posts: d.posts.filter(x => x.analysis_run_id === s.analysis_run_id && x.platform === brv.kanal),
+    platform: pf, stats: s, statsPrev: prev,
+    posts: d.posts.filter(x => x.analysis_run_id === s.analysis_run_id && x.platform === pf),
     profil: d.profil, bl: d.bl, mk: d.mk,
     brands: d.brands, offers: d.offers, preise: d.preise,
     nischen: d.nischen, angaben: brv.angaben
   })
+}
+
+/* Standardansicht ist das Konto: die Kontokriterien zaehlen einmal, die
+   gemessenen kommen vom staerkeren Kanal. Die Kanal-Pillen bleiben als
+   Detailansicht -- wer wissen will, woran es auf TikTok haengt, schaltet um. */
+function brErgebnis() {
+  if (brv.ansicht === 'gesamt') {
+    return brZusammenfuehren(brv.daten.stats.map(x => brErgebnisFuer(x.platform)))
+  }
+  return brErgebnisFuer(brv.ansicht)
 }
 
 function brZeichnen() {
@@ -7302,8 +7321,11 @@ function brZeichnen() {
   if (!brv.kanal) { el.innerHTML = brSperreHtml(); return }
 
   const r     = brErgebnis()
-  const s     = brv.daten.stats.find(x => x.platform === brv.kanal)
   const kan   = brv.daten.stats.map(x => x.platform)
+  /* Geteilt wird der Stand des staerkeren Kanals -- derselbe, an dem die
+     Gesamtansicht misst. Sonst zeigte die App eine Zahl und der geteilte
+     Link eine andere. */
+  if (brv.ansicht === 'gesamt' && r && r.gemessenAnKey) brv.kanal = r.gemessenAnKey
   const saetze = brSaetze(r)
 
   /* Alles, was Punkte bringen kann: offene Fragen und Luecken in EINER
@@ -7334,14 +7356,17 @@ function brZeichnen() {
         </svg><b>${r.punkte}</b></div>
       <div class="br-kopf-txt">
         <div class="br-kopf-titel">${r.punkte} von ${r.max} bewertbaren Punkten</div>
-        <div class="br-kopf-sub">Analyse vom ${brDatum(s.created_at)}${r.offen ? ' · ' + r.offen + ' ohne Wertung' : ''}</div>
+        <div class="br-kopf-sub">${brv.ansicht === 'gesamt' ? 'Dein Konto' : (BR_PLAT[brv.ansicht] || brv.ansicht)} · Analyse vom ${brDatum(r.stichtag)}${r.offen ? ' · ' + r.offen + ' ohne Wertung' : ''}</div>
       </div>
     </div>
 
     <div class="br-saetze">${saetze.map((x, i) => `<div class="br-satz${i === 0 ? ' haupt' : ''}">${brSatzHtml(x)}</div>`).join('')}</div>
 
-    ${kan.length > 1 ? `<div class="br-tabs">${kan.map(pf =>
-      `<button class="br-tab${pf === brv.kanal ? ' aktiv' : ''}" onclick="brKanal('${pf}')">${BR_PLAT[pf] || pf}</button>`).join('')}</div>` : ''}
+    ${kan.length > 1 ? `<div class="br-tabs">
+      <button class="br-tab${brv.ansicht === 'gesamt' ? ' aktiv' : ''}" onclick="brAnsicht('gesamt')">Gesamt</button>
+      ${kan.map(pf =>
+        `<button class="br-tab${pf === brv.ansicht ? ' aktiv' : ''}" onclick="brAnsicht('${pf}')">${BR_PLAT[pf] || pf}</button>`).join('')}
+    </div>` : ''}
 
     ${tun.length ? `<div class="section">
       <div class="section-label">Was du jetzt gewinnen kannst</div>
@@ -7498,9 +7523,13 @@ window.brFalten = function (id, btn) {
   if (em) em.textContent = auf ? 'zuklappen' : 'ansehen'
 }
 
-window.brKanal = function (pf) {
-  if (!brv || brv.kanal === pf) return
-  brv.kanal = pf
+/* 'gesamt' oder eine Plattform. brv.kanal bleibt daneben stehen: das Teilen
+   erzeugt weiterhin einen Link JE KANAL, und die Freigabe-Function rechnet
+   serverseitig. */
+window.brAnsicht = function (wert) {
+  if (!brv || brv.ansicht === wert) return
+  brv.ansicht = wert
+  if (wert !== 'gesamt') brv.kanal = wert
   brZeichnen()
 }
 

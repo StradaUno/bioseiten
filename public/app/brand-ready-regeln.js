@@ -441,7 +441,81 @@ export function brBerechnen(d) {
     offen: k.filter(x => x.punkte == null && !x.hinweis).length,
     stichtag: s.created_at || null,
     plattform: d.platform === 'tiktok' ? 'TikTok' : 'Instagram',
+    plattformKey: d.platform,
     username: s.username || null
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   Zwei Kanaele, ein Stand
+   Von den 16 Kriterien haengen sieben am Kanal (Engagement, Kommentare,
+   Frequenz, Verlauf, Kontoart, die Kanal-Bio und der Kennzeichnungs-
+   Hinweis, zusammen 45 Punkte). Die uebrigen neun -- BioLink, Impressum,
+   Kontaktweg, Media Kit, Preise, Referenzen, Zielgruppe, Rechnung, aktuelle
+   Zahlen, zusammen 55 Punkte -- gelten fuer das KONTO und sind in jedem
+   Lauf identisch.
+
+   Bis 15.09.2026 stand deshalb "Instagram kommt auf 90 von 93 Punkten",
+   obwohl mehr als die Haelfte davon gar nichts mit Instagram zu tun hat.
+
+   Zusammengefuehrt wird so: Kontokriterien einmal, Kanalkriterien vom
+   staerkeren Kanal. Nicht summiert (das zaehlte die Kontokriterien doppelt)
+   und nicht gemittelt -- ein zweiter, schwaecherer Kanal wuerde den Stand
+   sonst SENKEN, und damit waere die zweite Analyse eine Strafe.
+   ═════════════════════════════════════════════════════════════════ */
+export const BR_KANAL_IDS = new Set(
+  ['engagement', 'kommentare', 'frequenz', 'verlauf', 'account_typ', 'bio', 'kennzeichnung'])
+
+export function brZusammenfuehren(ergebnisse) {
+  const gueltig = (ergebnisse || []).filter(Boolean)
+  if (!gueltig.length) return null
+
+  /* Staerkster Kanal = hoechster Anteil der erreichten an den bewertbaren
+     KANAL-Punkten. Nicht die absolute Summe: ein Kanal, bei dem drei von
+     sieben Kriterien mangels Daten ausfallen, soll nicht deshalb verlieren.
+     Gleichstand entscheidet die groessere bewertbare Basis. */
+  const wert = r => {
+    const ks = r.kriterien.filter(x => BR_KANAL_IDS.has(x.id) && x.punkte != null && x.max > 0)
+    const max = ks.reduce((a, x) => a + x.max, 0)
+    const pk = ks.reduce((a, x) => a + x.punkte, 0)
+    return { max, anteil: max > 0 ? pk / max : -1 }
+  }
+  const sortiert = gueltig
+    .map(r => ({ r, w: wert(r) }))
+    .sort((a, b) => (b.w.anteil - a.w.anteil) || (b.w.max - a.w.max))
+
+  const stark = sortiert[0].r
+  const basis = gueltig[0]   // Kontokriterien sind in allen Laeufen gleich
+
+  const kriterien = [
+    ...stark.kriterien.filter(x => BR_KANAL_IDS.has(x.id)),
+    ...basis.kriterien.filter(x => !BR_KANAL_IDS.has(x.id))
+  ]
+
+  let punkte = 0, max = 0
+  for (const x of kriterien) { if (x.punkte != null) { punkte += x.punkte; max += x.max } }
+
+  /* Fragen koennen aus beiden Laeufen kommen; je id nur einmal, und bei
+     Kanalfragen gilt die des staerkeren Kanals. */
+  const fragen = []
+  const gesehen = new Set()
+  for (const f of [...stark.fragen, ...basis.fragen]) {
+    if (gesehen.has(f.id)) continue
+    gesehen.add(f.id); fragen.push(f)
+  }
+
+  return {
+    kriterien, punkte, max, fragen,
+    offen: kriterien.filter(x => x.punkte == null && !x.hinweis).length,
+    stichtag: stark.stichtag,
+    plattform: stark.plattform,
+    username: stark.username,
+    /* Fuer die Anzeige: woran die gemessenen Kriterien haengen und welche
+       Kanaele ueberhaupt vorlagen. */
+    gemessenAn: stark.plattform,
+    gemessenAnKey: stark.plattformKey,
+    kanaele: gueltig.map(r => r.plattform),
+    mehrkanalig: gueltig.length > 1
   }
 }
 
@@ -456,7 +530,14 @@ export function brSaetze(r) {
   const stand = anteil >= 0.8 ? 'Das meiste, was eine Marke prüft, ist vorhanden.'
     : anteil >= 0.55 ? 'Die Grundlagen stehen, einzelne Bausteine fehlen noch.'
     : 'Mehrere Dinge, auf die Marken zuerst schauen, fehlen noch.'
-  saetze.push(`${r.plattform} kommt auf ${r.punkte} von ${r.max} bewertbaren Punkten. ${stand}`)
+  /* Der Stand gilt dem KONTO, nicht einem Kanal -- mehr als die Haelfte der
+     Punkte haengt an Dingen, die es nur einmal gibt. Woran die gemessenen
+     Kriterien haengen, steht als eigener Halbsatz dahinter, damit die Zahl
+     nachvollziehbar bleibt. */
+  const woran = r.mehrkanalig
+    ? ` Gemessen an ${r.gemessenAn}, deinem stärkeren Kanal.`
+    : (r.plattform ? ` Gemessen an ${r.plattform}.` : '')
+  saetze.push(`Dein Konto kommt auf ${r.punkte} von ${r.max} bewertbaren Punkten. ${stand}${woran}`)
 
   const voll = r.kriterien.filter(x => x.punkte != null && x.punkte >= x.max && x.max >= 6)
     .sort((a, b) => b.max - a.max)[0]

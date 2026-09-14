@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 // @ts-ignore -- dasselbe Regelwerk, das die SPA laedt; siehe Kommentar unten
-import { brBerechnen, brSaetze } from 'https://cdn.jsdelivr.net/gh/StradaUno/bioseiten@893a36a84c9f81aaeb855996871cab7465ab97ac/public/app/brand-ready-regeln.js'
+import { brBerechnen, brZusammenfuehren, brSaetze } from 'https://cdn.jsdelivr.net/gh/StradaUno/bioseiten@SHA_HIER_EINSETZEN/public/app/brand-ready-regeln.js'
 
 /* Erzeugt oder nimmt einen oeffentlichen Link auf den Brand-Ready-Stand zurueck.
 
@@ -97,26 +97,38 @@ Deno.serve(async (req) => {
     const st = neueste.find((x: any) => x.platform === platform)
     if (!st) return json({ success: false, error: 'Für diesen Kanal gibt es noch keine Analyse' }, 400)
 
-    const pq = await supabase.from('apify_daten')
-      .select('caption').eq('analysis_run_id', st.analysis_run_id).eq('platform', platform)
-
     const angaben: Record<string, any> = {}
     for (const a of (angabenQ.data || [])) angaben[a.kriterium] = { wert: a.wert, zahl: a.zahl }
 
-    const r = brBerechnen({
-      platform,
-      stats: st,
-      statsPrev: alle.filter((x: any) => x.platform === platform)[1] || null,
-      posts: pq.data || [],
-      profil: profilQ.data || {},
-      bl: blQ.data || {},
-      mk: mkQ.data || {},
-      brands: brandsQ.count || 0,
-      offers: (offersQ.data || []).length,
-      preise: (preiseQ.data || []).filter((x: any) => x.preis_von !== null).length,
-      nischen: (nischeQ.data || []).filter((x: any) => x.keyword),
-      angaben
-    })
+    /* Seit 15.09.2026 wird der Stand des KONTOS geteilt, nicht der eines
+       Kanals: von den 16 Kriterien haengen sieben am Kanal, neun gelten fuer
+       das Konto und sind in jedem Lauf gleich. Deshalb wird jeder vorhandene
+       Kanal gerechnet und danach zusammengefuehrt -- Kontokriterien einmal,
+       gemessene vom staerkeren Kanal. Genau dieselbe Rechnung wie in der App.
+
+       Der Parameter `platform` bestimmt weiterhin, WELCHE Zeile ueberschrieben
+       wird (ein Link je Kanal, so ist die Tabelle geschluesselt); die Zahl
+       darin ist aber fuer beide dieselbe. */
+    const proKanal = []
+    for (const kandidat of neueste) {
+      const pqK = await supabase.from('apify_daten')
+        .select('caption').eq('analysis_run_id', kandidat.analysis_run_id).eq('platform', kandidat.platform)
+      proKanal.push(brBerechnen({
+        platform: kandidat.platform,
+        stats: kandidat,
+        statsPrev: alle.filter((x: any) => x.platform === kandidat.platform)[1] || null,
+        posts: pqK.data || [],
+        profil: profilQ.data || {},
+        bl: blQ.data || {},
+        mk: mkQ.data || {},
+        brands: brandsQ.count || 0,
+        offers: (offersQ.data || []).length,
+        preise: (preiseQ.data || []).filter((x: any) => x.preis_von !== null).length,
+        nischen: (nischeQ.data || []).filter((x: any) => x.keyword),
+        angaben
+      }))
+    }
+    const r = brZusammenfuehren(proKanal)
     const saetze = brSaetze(r)
 
     const jetzt = new Date()
@@ -134,7 +146,7 @@ Deno.serve(async (req) => {
     const zeile = {
       token, user_id: uid, platform,
       punkte: r.punkte, max_punkte: r.max, saetze,
-      stichtag: st.created_at,
+      stichtag: r.stichtag || st.created_at,
       anzeigename: profilQ.data?.display_name ?? null,
       profilbild: profilQ.data?.profile_image_url ?? null,
       expires_at: aktiv ? vorhanden.expires_at : laeuftAb,
