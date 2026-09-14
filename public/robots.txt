@@ -9,7 +9,6 @@ Disallow: /karussell/
 Disallow: /digest/
 Disallow: /dashboard/
 Disallow: /profile/
-Disallow: /requests/
 Disallow: /onboarding/
 Disallow: /analytics/
 Disallow: /reset-password/

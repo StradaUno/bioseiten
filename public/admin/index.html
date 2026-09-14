@@ -397,9 +397,9 @@ function render(){
           <div class="hero-sub">diesen Monat · ${k.ai_calls_month||0} Calls</div>
         </div>
         <div class="hero-card">
-          <div class="hero-label">Offene Anfragen</div>
-          <div class="hero-value">${k.collab_requests_open||0}</div>
-          <div class="hero-sub">${k.contact_submissions_new||0} Kontaktformular neu</div>
+          <div class="hero-label">Kontaktformular</div>
+          <div class="hero-value">${k.contact_submissions_new||0}</div>
+          <div class="hero-sub">neue Submissions</div>
         </div>
       </div>
     </div>
@@ -418,7 +418,7 @@ function render(){
       ${tabBtn('overview','Übersicht')}
       ${tabBtn('users','User', state.data.users.length)}
       ${tabBtn('ai','AI & Apify')}
-      ${tabBtn('inbox','Inbox', (k.collab_requests_open||0) + (k.contact_submissions_new||0))}
+      ${tabBtn('inbox','Inbox', k.contact_submissions_new||0)}
       ${tabBtn('content','Bio & MK')}
       ${tabBtn('errors','Errors', k.errors_unresolved||0)}
     </div>
@@ -664,22 +664,8 @@ function shortModel(m){
 
 // INBOX (Collab + Contact)
 function renderInbox(){
-  const collabs = state.data.collab_requests || []
   const contacts = state.data.contact_submissions || []
   return `
-    <div class="card" style="margin-bottom:14px">
-      <div class="card-header">
-        <div class="card-title">Collab-Anfragen</div>
-        <div class="card-sub">externe Anfragen an User · ${collabs.length} sichtbar</div>
-      </div>
-      <div class="card-body">
-        ${collabs.length===0
-          ? `<div class="empty"><div class="empty-icon">📭</div>Keine Anfragen</div>`
-          : collabs.map(c=>collabBlock(c)).join('')
-        }
-      </div>
-    </div>
-
     <div class="card">
       <div class="card-header">
         <div class="card-title">Kontaktformular</div>
@@ -693,30 +679,6 @@ function renderInbox(){
       </div>
     </div>
   `
-}
-function collabBlock(c){
-  const statusPill = {
-    new: 'pill-new',
-    replied: 'pill-info',
-    negotiation: 'pill-warn',
-    closed: 'pill-active',
-  }[c.status] || 'pill-muted'
-  return `<div class="msg-block">
-    <div class="msg-head">
-      <span class="row-pill ${statusPill}">${escHtml(c.status||'')}</span>
-      <span class="row-pill pill-muted">${escHtml(c.request_type||'brand')}</span>
-      <span class="msg-name">${escHtml(c.sender_name||'—')}</span>
-      <span class="msg-meta">→ ${escHtml(c.creator_email||c.creator_handle||'?')}</span>
-      <span class="msg-meta" style="margin-left:auto">${fmtAgo(c.created_at)}</span>
-    </div>
-    <div class="msg-body">${escHtml(c.message||'(keine Nachricht)')}</div>
-    <div class="msg-actions">
-      ${c.budget?`<span class="msg-action" style="background:var(--surface2);border-color:var(--border)">💰 ${escHtml(c.budget)} €</span>`:''}
-      ${c.sender_email?`<a class="msg-action" href="mailto:${escHtml(c.sender_email)}">✉ Mail</a>`:''}
-      ${c.sender_website?`<a class="msg-action" href="${escHtml(c.sender_website)}" target="_blank" rel="noopener">↗ Web</a>`:''}
-      <button class="msg-action danger" data-act="del-collab" data-id="${escHtml(c.id)}">🗑 Löschen</button>
-    </div>
-  </div>`
 }
 function contactBlock(c){
   const statusPill = c.status==='new' ? 'pill-new' : 'pill-muted'
