@@ -3,7 +3,6 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || ''
 const FROM_EMAIL = 'noreply@viuno.de'
 const FROM_NAME = 'viuno'
-const SECRET = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -35,10 +34,13 @@ async function mitWiederholung<T>(
   throw new Error(`${was} fehlgeschlagen nach ${versuche} Versuchen: ${letzterFehler?.message ?? 'unbekannt'}`)
 }
 
-async function computeUnsubToken(userId: string): Promise<string> {
-  const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(SECRET), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign'])
-  const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(userId))
-  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('')
+/* Der Abmelde-Link traegt den Token der newsletter_subscribers-Zeile.
+   Hier stand ein HMAC ueber die user_id — digest-unsubscribe wurde laengst auf
+   den Zeilen-Token umgestellt und weist alles andere als 'invalid' ab. Jeder
+   Klick auf "Abmelden" lief damit ins Leere, und Abonnenten ohne Konto hatten
+   ohnehin keine user_id. */
+function unsubUrlFuer(token: string): string {
+  return `https://bzejndghppuipnedasuv.supabase.co/functions/v1/digest-unsubscribe?token=${token}`
 }
 
 // Montag der aktuellen ISO-Woche, als YYYY-MM-DD (identische Logik wie in generate-daily-digest)
@@ -235,8 +237,9 @@ Deno.serve(async (req) => {
       if (!toEmail) throw new Error('Test-User hat keine E-Mail-Adresse')
 
       const creatorName = sub.display_name || sub.full_name || 'Creator'
-      const token = await computeUnsubToken(sub.id)
-      const unsubUrl = `https://bzejndghppuipnedasuv.supabase.co/functions/v1/digest-unsubscribe?uid=${sub.id}&token=${token}`
+      const { data: nlZeile } = await supabase
+        .from('newsletter_subscribers').select('token').eq('user_id', sub.id).maybeSingle()
+      const unsubUrl = unsubUrlFuer(nlZeile?.token || 'test')
       const hasAnalysis = await hasCompletedAnalysis(sub.id)
       const html = buildEmailHtml(creatorName, karten, unsubUrl, hasAnalysis)
 
@@ -257,33 +260,47 @@ Deno.serve(async (req) => {
       })
     }
 
+    /* Empfaenger sind die bestaetigten Eintraege der Newsletter-Tabelle, nicht
+       die Konten. Vorher las diese Stelle users mit newsletter_subscribed=true
+       — wer sich ohne Konto auf der oeffentlichen Seite angemeldet und
+       bestaetigt hatte, stand nirgends in users und bekam deshalb nie eine
+       Mail. Die Doppel-Opt-in-Strecke sammelte Adressen, an die niemand
+       geschrieben hat. */
     const subscribers = await mitWiederholung<any[]>('Abonnenten laden', () =>
       supabase
-        .from('users')
-        .select('id, email, contact_email, display_name, full_name')
-        .eq('newsletter_subscribed', true)
-        .is('deleted_at', null) as any
+        .from('newsletter_subscribers')
+        .select('id, email, user_id, token')
+        .eq('status', 'active') as any
     )
+
+    /* Namen fuer die Anrede nur fuer die, die ein Konto haben. */
+    const kontoIds = (subscribers || []).map((s: any) => s.user_id).filter(Boolean)
+    const namen: Record<string, string> = {}
+    if (kontoIds.length) {
+      const { data: konten } = await supabase
+        .from('users').select('id, display_name, full_name').in('id', kontoIds)
+      for (const k of konten || []) namen[k.id] = k.display_name || k.full_name || 'Creator'
+    }
 
     let sent = 0, skipped = 0, failed = 0
     const errors: string[] = []
 
     for (const sub of subscribers || []) {
-      const toEmail = sub.contact_email || sub.email
-      if (!toEmail) { skipped++; continue }
+      const toEmail = sub.email
+      if (!toEmail || !sub.token) { skipped++; continue }
 
       const { data: already } = await supabase
         .from('digest_email_log')
         .select('id')
-        .eq('user_id', sub.id)
+        .eq('subscriber_id', sub.id)
         .eq('week_start', weekStart)
         .maybeSingle()
       if (already) { skipped++; continue }
 
-      const creatorName = sub.display_name || sub.full_name || 'Creator'
-      const token = await computeUnsubToken(sub.id)
-      const unsubUrl = `https://bzejndghppuipnedasuv.supabase.co/functions/v1/digest-unsubscribe?uid=${sub.id}&token=${token}`
-      const hasAnalysis = await hasCompletedAnalysis(sub.id)
+      const creatorName = sub.user_id ? (namen[sub.user_id] || 'Creator') : 'Creator'
+      const unsubUrl = unsubUrlFuer(sub.token)
+      /* Der Produkt-Hinweis am Ende der Mail passt nur zu jemandem mit Konto. */
+      const hasAnalysis = sub.user_id ? await hasCompletedAnalysis(sub.user_id) : true
       const html = buildEmailHtml(creatorName, karten, unsubUrl, hasAnalysis)
 
       try {
@@ -303,7 +320,7 @@ Deno.serve(async (req) => {
           errors.push(sub.id + ': ' + err)
           continue
         }
-        await supabase.from('digest_email_log').insert({ user_id: sub.id, week_start: weekStart })
+        await supabase.from('digest_email_log').insert({ subscriber_id: sub.id, user_id: sub.user_id ?? null, week_start: weekStart })
         sent++
       } catch (e: any) {
         failed++

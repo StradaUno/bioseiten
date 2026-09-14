@@ -5497,7 +5497,7 @@ async function renderProfile(area, ctx) {
         <div class="sheet-handle"></div>
         <div class="sheet-title">Kanäle</div>
         <div class="sheet-sub">Erscheinen als Buttons auf deinem BioLink und als Kennzahlen im Media Kit.</div>
-        ${[['ig','Instagram','instagram_handle'],['tt','TikTok','tiktok_handle'],['yt','YouTube','youtube_handle'],['th','Threads','threads_handle']].map(([k,label])=>`
+        ${[['ig','Instagram'],['tt','TikTok'],['th','Threads']].map(([k,label])=>`
         <div class="sheet-field">
           <label class="sheet-label">${label}</label>
           <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="pf-${k}" placeholder="dein_handle" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
@@ -5572,7 +5572,7 @@ async function renderProfile(area, ctx) {
         <div class="sheet-sub">Deine Rechte und die Texte, die für viuno gelten.</div>
         <div class="pf-liste" style="margin:0 20px 12px">
           <button class="pf-zeile" id="pf-export-zeile" onclick="pfDatenExport()">
-            <span class="pf-zeile-t"><span class="pf-zeile-label">Meine Daten anfordern</span><span class="pf-zeile-sub" id="pf-export-sub">Alles zu deinem Konto als JSON, per Mail</span></span>
+            <span class="pf-zeile-t"><span class="pf-zeile-label">Meine Daten anfordern</span><span class="pf-zeile-sub" id="pf-export-sub">Auskunft nach Art. 15 DSGVO, innerhalb von 48 Stunden</span></span>
             <span class="pf-pfeil">${icon('chevronRight',16)}</span>
           </button>
           <a class="pf-zeile" href="/legal#agb" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">AGB</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
@@ -5680,9 +5680,10 @@ function paintProfile(){
   const p = pv.profile
   const initial = (p.display_name||'?')[0].toUpperCase()
   const slug = (p.display_name||'').toLowerCase()
+  /* YouTube ist vorerst kein Kanal — die Spalte bleibt, die Auswahl nicht. */
   const kanaele = [
     ['Instagram', p.instagram_handle], ['TikTok', p.tiktok_handle],
-    ['YouTube', p.youtube_handle],     ['Threads', p.threads_handle],
+    ['Threads', p.threads_handle],
   ]
   const gesetzt = kanaele.filter(([,h])=>h && String(h).trim())
   const foto = p.profile_image_url
@@ -5700,24 +5701,19 @@ function paintProfile(){
           <div class="pf-av" onclick="document.getElementById('photo-input').click()" title="Foto ändern">${foto}<div class="pf-av-btn">${icon('pencil',11)}</div></div>
           <div class="pf-name">${escHtml(p.display_name||'–')}</div>
           ${p.niche_category?`<div class="pf-tag">${escHtml(nischeLabel(p.niche_category))}</div>`:''}
-          <div class="pf-bio ${p.bio?'':'leer'}">${p.bio?escHtml(p.bio):'Noch keine Bio — Marken sehen hier nichts über dich.'}</div>
+          ${p.bio?`<div class="pf-bio">${escHtml(p.bio)}</div>`:''}
           <div class="pf-kanaele">
             ${kanaele.map(([label,h])=>h&&String(h).trim()
               ? `<span class="pf-kanal">${label} @${escHtml(String(h).replace(/^@/,''))}</span>`
               : `<span class="pf-kanal leer">${label} +</span>`).join('')}
           </div>
-          <div class="pf-mail ${p.contact_email?'':'leer'}">${p.contact_email
-            ? 'Anfragen an '+escHtml(p.contact_email)
-            : 'Keine Anfrage-Adresse — auf dem BioLink erscheint kein Kontakt-Button'}</div>
         </div>
         <div class="pf-links">
           ${p.bio_active?`<a href="https://viuno.de/${encodeURIComponent(slug)}" target="_blank" rel="noopener">viuno.de/${escHtml(slug)} ${icon('arrowUpRight',12)}</a>`:`<span>BioLink nicht erstellt</span>`}
           ${p.mediakit_active?`<a href="https://viuno.de/kit/${encodeURIComponent(slug)}" target="_blank" rel="noopener">viuno.de/kit/${escHtml(slug)} ${icon('arrowUpRight',12)}</a>`:`<span>Media Kit nicht erstellt</span>`}
         </div>
       </div>
-      <div class="pf-hinweis">${(p.bio_active||p.mediakit_active)
-        ? 'Genau das ist öffentlich abrufbar — von jedem, ohne Anmeldung.'
-        : 'So würde es aussehen. Öffentlich ist noch nichts.'}</div>
+      ${(p.bio_active||p.mediakit_active)?'':'<div class="pf-hinweis">So würde es aussehen. Öffentlich ist noch nichts.</div>'}
       <div id="pf-regen"></div>
     </div>
 
@@ -5727,13 +5723,12 @@ function paintProfile(){
         <button class="pf-zeile" onclick="pfSheetAuf('pf-profil-sheet')">
           <span class="pf-zeile-t"><span class="pf-zeile-label">Profil</span>
             <span class="pf-zeile-sub">Foto · Username · Bio · Nische</span></span>
-          ${p.profile_image_url&&p.bio?'<span class="pf-badge ok">Vollständig</span>':'<span class="pf-badge offen">'+(p.bio?'Foto fehlt':'Bio fehlt')+'</span>'}
           <span class="pf-pfeil">${icon('chevronRight',16)}</span>
         </button>
         <button class="pf-zeile" onclick="pfSheetAuf('pf-kanaele-sheet')">
           <span class="pf-zeile-t"><span class="pf-zeile-label">Kanäle</span>
             <span class="pf-zeile-sub">${gesetzt.length?escHtml(gesetzt.map(([l])=>l).join(' · ')):'Noch kein Kanal hinterlegt'}</span></span>
-          <span class="pf-badge ${gesetzt.length?'ok':'offen'}">${gesetzt.length} von 4</span>
+          <span class="pf-badge ${gesetzt.length?'ok':'offen'}">${gesetzt.length} von 3</span>
           <span class="pf-pfeil">${icon('chevronRight',16)}</span>
         </button>
         <button class="pf-zeile" onclick="pfSheetAuf('pf-kontakt-sheet')">
@@ -5799,8 +5794,7 @@ window.pfSheetAuf=function(id){
     pfBioZaehler()
   } else if(id==='pf-kanaele-sheet'){
     const setz=(k,v)=>{document.getElementById('pf-'+k).value=(v||'').replace(/^@/,'');document.getElementById('pf-'+k+'-hint').textContent='';document.getElementById('pf-'+k+'-hint').className='sheet-hint'}
-    setz('ig',p.instagram_handle); setz('tt',p.tiktok_handle)
-    setz('yt',p.youtube_handle);   setz('th',p.threads_handle)
+    setz('ig',p.instagram_handle); setz('tt',p.tiktok_handle); setz('th',p.threads_handle)
   } else if(id==='pf-kontakt-sheet'){
     document.getElementById('pf-kontakt').value=p.contact_email||''
     const h=document.getElementById('pf-kontakt-hint')
@@ -5851,7 +5845,7 @@ window.pfSpeichereProfil=async function(){
 window.pfSpeichereKanaele=async function(){
   if(!pv)return
   const lies=(k)=>document.getElementById('pf-'+k).value.trim().replace(/^@/,'')
-  const felder=[['ig','instagram_handle'],['tt','tiktok_handle'],['yt','youtube_handle'],['th','threads_handle']]
+  const felder=[['ig','instagram_handle'],['tt','tiktok_handle'],['th','threads_handle']]
   let fehler=false
   for(const [k] of felder){
     const h=document.getElementById('pf-'+k+'-hint'); h.textContent=''; h.className='sheet-hint'
@@ -5888,9 +5882,11 @@ async function pfKanaeleSchreiben(){
   if(!pv)return
   const btn=document.getElementById('pf-kanaele-btn')
   const val=(k)=>{const v=document.getElementById('pf-'+k).value.trim().replace(/^@/,'');return v?'@'+v:null}
+  /* youtube_handle bleibt unangetastet: der Kanal wird vorerst nicht
+     angeboten, vorhandene Werte sollen aber nicht stillschweigend verschwinden. */
   const patch={
     instagram_handle:val('ig'), tiktok_handle:val('tt'),
-    youtube_handle:val('yt'),   threads_handle:val('th'),
+    threads_handle:val('th'),
     updated_at:new Date().toISOString()
   }
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
@@ -6138,12 +6134,15 @@ async function kontoWarnungSenden(art, neueAdresse){
   }catch(_){ /* Der Hinweis ist Beiwerk, er darf die Aenderung nie blockieren. */ }
 }
 
-/* ── Datenauskunft (Art. 15 DSGVO, in den AGB 7.4 zugesagt) ── */
+/* ── Datenauskunft (Art. 15 DSGVO, in den AGB 7.4 zugesagt) ──
+   Die Anfrage geht an uns, nicht an den Nutzer: eine JSON-Datei mit
+   Datenbankzeilen ist keine Auskunft, mit der jemand etwas anfangen kann.
+   Wir bereiten sie auf und schicken sie innerhalb von 48 Stunden. */
 window.pfDatenExport=async function(){
   const zeile=document.getElementById('pf-export-zeile')
   const sub=document.getElementById('pf-export-sub')
   if(!zeile||zeile.disabled)return
-  zeile.disabled=true; sub.textContent='Wird zusammengestellt …'
+  zeile.disabled=true; sub.textContent='Wird angefordert …'
   try{
     const{data:{session}}=await sb.auth.getSession()
     if(!session)throw new Error('Session abgelaufen')
@@ -6153,8 +6152,12 @@ window.pfDatenExport=async function(){
     })
     const body=await res.json().catch(()=>({}))
     if(!res.ok||body.success!==true)throw new Error(body.error||`HTTP ${res.status}`)
-    sub.textContent='Unterwegs an '+(body.gesendet_an||'dein Postfach')
-    showToast('Datenauskunft ist unterwegs ✓',5000)
+    sub.textContent='Angefordert — du erhältst sie innerhalb von 48 Stunden'
+    showModal(
+      'Auskunft angefordert',
+      'Wir stellen deine Daten zusammen und schicken sie dir innerhalb von 48 Stunden an deine Login-Adresse.',
+      'Alles klar', closeModal, null
+    )
   }catch(err){
     sub.textContent='Hat nicht geklappt: '+err.message
     zeile.disabled=false

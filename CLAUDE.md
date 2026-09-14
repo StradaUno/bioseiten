@@ -83,6 +83,8 @@ which reads the middle of the token and checks no signature at all. Combined wit
 
 ## Creator News
 
+The legal texts in `legal_texts` were brought in line on 14.09.2026: no more Anfragen feature, and the news are weekly, not a "Daily Digest".
+
 The news pipeline runs weekly: `generate-daily-digest` (pg_cron Monday 04:00 UTC) searches a **fixed domain whitelist** — platform newsrooms plus German trade and legal press — with Claude's server-side web search, and writes up to 5 cards into `daily_digest` (`date` = that Monday, UNIQUE). Cards that are flagged `is_repeat` or that link to a rolling collection page are dropped in code, and what survives is stored sorted by `relevance_score`.
 
 The prompt's **"Treue zur Quelle"** section is load-bearing, not boilerplate. A comparison against the original articles found the model inverting a scope exclusion (the source exempted thumbnails; the card warned exactly those creators), attributing statements to a platform that the article never quotes, and padding with invention while omitting the concrete steps the source did give. The cause was the length requirement — demanding 180–300 words from a 200-word source forces filling. Hence: length follows the source (120–300), and **`impact` may be `null`** when the source gives no concrete step. An edition with fewer cards, shorter cards, or cards without an action line is the intended outcome, not a failure.
@@ -91,6 +93,8 @@ Urgency shown in the UI comes from `relevance_score` (≥8 / ≥6 / below), **no
 
 Three consumers read the **same two views**, never the raw jsonb: `digest_cards_today` (the single most recent edition) and `digest_cards_past` (everything older). Both compute `slug` via `news_slug(date, headline)` — the slug is derived, not stored, so it also covers historical rows. The consumers are the SPA view `renderDigest`, the public page `public/news/`, and the weekly mail. Going through the views is what keeps order, slugs and content identical across app, mail and public page — do not go back to reading `cards` directly.
 
+- **The weekly mail goes to `newsletter_subscribers`, not to `users`.** Until 14.09.2026 it queried `users` with `newsletter_subscribed = true`, so anyone who signed up on the public page without an account and confirmed by e-mail was never written to — the whole double-opt-in path collected addresses nobody mailed. `users.newsletter_subscribed` stays as the mirror that the app reads (kept in sync by the `newsletter_spiegeln` trigger); it is not the recipient list.
+- **The unsubscribe link carries the row's token.** `digest-unsubscribe` was switched to `newsletter_subscribers.token` while the sender still built an HMAC over the user id, which that function rejects as `invalid` — every "Abmelden" click landed on an error page. Dedupe now runs on `digest_email_log.subscriber_id`; the column was already there.
 - `public/news/` is **public, no login**, reads the two views with the publishable key, and is the target of every shared link and every link in the mail.
 - `public/digest/` is the *logged-in* standalone page and a login wall. Do not link the public site at it.
 - `page_views` records opens (`page`, `source` = app/public/share/mail, optional `card_slug`); anonymous insert is allowed, users read their own rows, admins read all. Without it there is no way to tell whether the news are read at all — and the sidebar dot on "Creator News" is derived from it: it shows while the newest edition is newer than that user's last `page='news'` view.
@@ -146,6 +150,10 @@ What the redesign fixed, and what not to undo:
 - **Changing an already-analysed handle asks first.** The trigger `sync_analytics_username` rewrites the existing `creator_analytics` row, so the old numbers survive under the new name and can no longer be attributed. That used to happen silently.
 - **Deleting the account needs the username typed.** The old two-step "are you sure / really sure" was two reflex clicks with identical buttons.
 - **Photos are downscaled to 800 px in the browser and the previous file is deleted.** Before, up to 5 MB went straight onto both public pages and every upload left the old file in the bucket forever.
+
+**YouTube is not offered.** The profile edits Instagram, TikTok and Threads; `youtube_handle` stays in the table, stays in `biopage_v2`/`mediakit_public` and still renders on a public page if a value is there — `pfKanaeleSchreiben` deliberately leaves the column alone rather than nulling it. The BioLink and Media-Kit editors still offer the field; pulling it from those two is a separate decision.
+
+**The data request is not a self-service export.** `datenauskunft` mails the raw JSON to `kontakt@stradauno.de` with the creator as Reply-To, and the user sees "within 48 hours" in the app. A JSON dump of database rows is not an answer a person can use; it gets prepared by hand. The DSGVO deadline (one month, Art. 12 (3)) is comfortably met either way.
 
 `niche_category` has exactly one value domain: the 16 keys in `NICHES_PROFILE`. The Media-Kit sheet used to have a free-text field writing the same column ("Italian Lifestyle & Fashion" → `italian_lifestyle_&_fashion` via the `normalize_niche_category` trigger); it now uses the same picker via `mkSelectNiche`. The public label comes from `public.nische_label()` **inside the `mediakit_public` view**, not from the generator — that way pages already generated show "Fashion" instead of "fashion" without anyone regenerating.
 

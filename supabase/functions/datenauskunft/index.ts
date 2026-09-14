@@ -7,16 +7,18 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
  * Bis 14.09.2026 gab es dafuer weder Knopf noch Adresse -- eine zugesagte und
  * nicht erbrachte Leistung.
  *
- * Der Export geht als JSON-Anhang per Mail an die Login-Adresse, nicht als
- * Download-Link. Damit muss niemand ueber Ablaufzeiten, Tokens oder oeffentlich
- * erreichbare Dateien nachdenken, und die Auskunft landet nachweislich beim
- * Kontoinhaber.
+ * Die Anfrage geht an den Anbieter, nicht an den Nutzer. Eine JSON-Datei mit
+ * Datenbankzeilen ist fuer den Betroffenen keine brauchbare Auskunft; der
+ * Rohexport haengt hier als Arbeitsgrundlage an, aufbereitet und verschickt
+ * wird von Hand. Der Nutzer sieht in der App den Hinweis auf 48 Stunden.
+ * Die DSGVO-Frist (ein Monat, Art. 12 Abs. 3) ist damit deutlich unterboten.
  *
  * verify_jwt bleibt aus (CORS-Preflight), der Token wird hier geprueft.
  */
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || ''
 const FROM = 'viuno <noreply@viuno.de>'
+const AN_ANBIETER = 'kontakt@stradauno.de'
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 
@@ -75,8 +77,8 @@ Deno.serve(async (req) => {
       .from('users').select('email, contact_email, display_name').eq('id', uid).maybeSingle()
     /* Bewusst die Login-Adresse, nicht contact_email: die Auskunft gehoert dem
        Kontoinhaber, nicht dem Postfach, das auf dem Media Kit steht. */
-    const ziel = user.email || profil?.email
-    if (!ziel) return json({ success: false, error: 'Keine E-Mail-Adresse am Konto' }, 400)
+    const anfragende_adresse = user.email || profil?.email
+    if (!anfragende_adresse) return json({ success: false, error: 'Keine E-Mail-Adresse am Konto' }, 400)
 
     const export_: Record<string, unknown> = {
       hinweis: 'Auskunft nach Art. 15 DSGVO über alle zu deinem viuno-Konto gespeicherten Daten.',
@@ -102,7 +104,7 @@ Deno.serve(async (req) => {
     // Newsletter haengt an der Adresse, nicht nur an der Konto-ID.
     const { data: nl } = await supabase
       .from('newsletter_subscribers').select('*')
-      .or(`user_id.eq.${uid},email.eq.${String(ziel).toLowerCase()}`)
+      .or(`user_id.eq.${uid},email.eq.${String(anfragende_adresse).toLowerCase()}`)
     export_['newsletter_subscribers'] = nl ?? []
 
     const { data: consents } = await supabase.from('user_consents').select('*').eq('user_id', uid)
@@ -119,38 +121,33 @@ Deno.serve(async (req) => {
     const datum = new Date().toISOString().slice(0, 10)
 
     const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8"></head>
-<body style="margin:0;padding:0;background:#f5f4f2;font-family:-apple-system,BlinkMacSystemFont,'Inter',Arial,sans-serif;">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f5f4f2;padding:32px 14px;">
-<tr><td align="center">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:480px;background:#ffffff;border:1px solid #e4e4e2;border-radius:14px;">
-<tr><td style="padding:28px 26px 24px;">
-  <div style="width:26px;height:26px;border-radius:7px;background:#111110;text-align:center;line-height:26px;font-size:13px;font-weight:800;color:#fff;margin-bottom:18px;">v</div>
-  <h1 style="margin:0 0 10px;font-size:20px;font-weight:700;color:#111110;letter-spacing:-0.03em;">Deine Datenauskunft</h1>
-  <p style="margin:0 0 16px;font-size:14px;color:#7a7975;line-height:1.6;">Hallo ${name}, im Anhang findest du alles, was wir zu deinem viuno-Konto gespeichert haben — als JSON-Datei.</p>
-  <p style="margin:0 0 16px;font-size:14px;color:#7a7975;line-height:1.6;">Die Datei enthält dein Profil, deine BioLink- und Media-Kit-Daten, deine Analysen samt Auswertungen, deine Käufe und deine Einwilligungen. Reine Zähldaten (Seitenaufrufe) sind nur als Anzahl enthalten, weil sie keinen Personenbezug haben.</p>
-  <p style="margin:0;font-size:12px;color:#a8a6a3;line-height:1.6;">Du hast das nicht angefordert? Dann melde dich bitte bei kontakt@stradauno.de — jemand hatte womöglich Zugriff auf dein Konto.</p>
-</td></tr>
-<tr><td style="padding:0 26px 24px;">
-  <p style="margin:0;font-size:11px;color:#a8a6a3;line-height:1.6;border-top:1px solid #e4e4e2;padding-top:14px;">
-    <a href="https://viuno.de/legal/#impressum" style="color:#a8a6a3;">Impressum</a> &middot;
-    <a href="https://viuno.de/legal/#datenschutz" style="color:#a8a6a3;">Datenschutz</a>
+<body style="margin:0;padding:24px;background:#f5f4f2;font-family:-apple-system,BlinkMacSystemFont,'Inter',Arial,sans-serif;color:#111110;">
+  <h1 style="margin:0 0 14px;font-size:18px;font-weight:700;">Datenauskunft angefordert</h1>
+  <table cellpadding="0" cellspacing="0" style="font-size:14px;color:#111110;line-height:1.7;">
+    <tr><td style="padding-right:14px;color:#7a7975;">Username</td><td><strong>${name}</strong></td></tr>
+    <tr><td style="padding-right:14px;color:#7a7975;">Login-Adresse</td><td>${anfragende_adresse}</td></tr>
+    <tr><td style="padding-right:14px;color:#7a7975;">Konto-ID</td><td style="font-family:ui-monospace,monospace;font-size:12px;">${uid}</td></tr>
+    <tr><td style="padding-right:14px;color:#7a7975;">Angefordert</td><td>${new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin', dateStyle: 'long', timeStyle: 'short' })} Uhr</td></tr>
+  </table>
+  <p style="margin:18px 0 0;font-size:14px;color:#7a7975;line-height:1.6;">
+    Der Nutzer hat in der App den Hinweis bekommen, dass die Auskunft <strong>innerhalb von 48 Stunden</strong> kommt.
+    Der Rohexport haengt als JSON an — bitte aufbereiten und an die Login-Adresse schicken.
   </p>
-</td></tr>
-</table></td></tr></table></body></html>`
+</body></html>`
 
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { 'Authorization': 'Bearer ' + RESEND_API_KEY, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        from: FROM, to: [ziel],
-        subject: 'Deine viuno-Datenauskunft',
+        from: FROM, to: [AN_ANBIETER], reply_to: anfragende_adresse,
+        subject: `Datenauskunft angefordert: ${name} (${anfragende_adresse})`,
         html,
-        attachments: [{ filename: `viuno-datenauskunft-${datum}.json`, content: anhang }],
+        attachments: [{ filename: `datenauskunft-${name}-${datum}.json`, content: anhang }],
       }),
     })
     if (!res.ok) throw new Error('Resend: ' + (await res.text()))
 
-    return json({ success: true, gesendet_an: ziel })
+    return json({ success: true, frist_stunden: 48 })
   } catch (err: any) {
     console.error('datenauskunft:', err.message)
     try { await supabase.rpc('log_error', { function_name: 'datenauskunft', error_message: err.message }) } catch (_) {}
