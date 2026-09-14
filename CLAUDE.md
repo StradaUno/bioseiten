@@ -134,6 +134,25 @@ Consequences worth knowing:
   dashboard is the deployment source. **Edit one, deploy it; change it in the
   dashboard, copy it back.** Deployed version at the time of writing: v16.
 
+## The Profil view
+
+Rebuilt 14.09.2026. Structure: the **outside view** on top — a card showing exactly what stands on the BioLink and the Media Kit, with links to both — then two groups of compact rows, "Öffentliche Angaben" and "Nur für dich". Each row opens a sheet (`pf-*-sheet`), the same mechanism as the Media-Kit edit menu. Everything is prefixed `pf-` so it cannot collide with the BioLink and Media-Kit views that live in the same file.
+
+What the redesign fixed, and what not to undo:
+
+- **`full_name` and `city` are not in the form any more.** Neither is rendered on any public page — the BioLink template never reads `city`, the Media Kit renders only the niche tag. The columns stay; the fields were collecting data nobody sees.
+- **Saving is per group, not one big patch.** Only `bio` sits in the baked-in `og:` tags, so only a changed bio triggers a page rebuild. Handles, niche and contact email are read at runtime from `biopage_v2` — do not add a rebuild for them.
+- **The rebuild is visible.** `regenerateBioPageQuietly(uid, {leise})` returns `{ok, unveraendert, uebersprungen, fehler}` and the profile renders it as a status line with a retry, because a missed error toast means a page sits online with a stale link preview. `commit: 'unchanged'` from `generate-biolink` shows nothing at all.
+- **Changing an already-analysed handle asks first.** The trigger `sync_analytics_username` rewrites the existing `creator_analytics` row, so the old numbers survive under the new name and can no longer be attributed. That used to happen silently.
+- **Deleting the account needs the username typed.** The old two-step "are you sure / really sure" was two reflex clicks with identical buttons.
+- **Photos are downscaled to 800 px in the browser and the previous file is deleted.** Before, up to 5 MB went straight onto both public pages and every upload left the old file in the bucket forever.
+
+`niche_category` has exactly one value domain: the 16 keys in `NICHES_PROFILE`. The Media-Kit sheet used to have a free-text field writing the same column ("Italian Lifestyle & Fashion" → `italian_lifestyle_&_fashion` via the `normalize_niche_category` trigger); it now uses the same picker via `mkSelectNiche`. The public label comes from `public.nische_label()` **inside the `mediakit_public` view**, not from the generator — that way pages already generated show "Fashion" instead of "fashion" without anyone regenerating.
+
+## Plan display
+
+There is one model and every feature is free, so nothing in the UI mentions Free, Pro, a plan badge or an upgrade banner any more (removed 14.09.2026 from the SPA, the five standalone app pages and `sidebar.js`). **The data stays**: `users.subscription_type` with its `'free'` default, the `subscriptions` table, the insert in `handle_new_user`, and the column in the existing `select` lists. Nothing in RLS, no database function and no Edge Function reads it. Bringing a second model back is a display change, not a rebuild.
+
 ## Account deletion
 
 `delete-account` (repo copy under `supabase/functions/`) runs, in order:
@@ -154,6 +173,21 @@ call happens *before* `auth.admin.deleteUser`, so the row is still there.
 
 Leftovers from before the fix (`public/stradi/`, `public/antika/`,
 `public/kit/stradi/`) were removed in the same commit.
+
+`newsletter_subscribers` is now **deleted**, by `user_id` and by address — the
+FK is `ON DELETE SET NULL`, so the row used to survive with the e-mail address
+in clear text while the privacy policy claimed the personal reference was gone.
+`user_consents` is pseudonymised. `subscriptions` finally has a foreign key
+(`ON DELETE SET NULL`, not CASCADE — paid rows must survive) and `user_id` is
+nullable, without which the existing "anonymise paid subscriptions" step would
+have failed silently the first time anyone paid.
+
+Two Edge Functions exist for the account, both with repo copies:
+`datenauskunft` mails the full Art.-15 export as a JSON attachment to the login
+address (AGB 7.4 promised it; there was no way to get it), and `konto-warnung`
+mails the **previous** address whenever the password or the login e-mail
+changes. That mail is the account protection for this audience — two-factor
+would be overbuilt for a profile page with no payment data behind it.
 
 ## Editing conventions to be aware of
 

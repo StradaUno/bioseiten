@@ -138,3 +138,6 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .claude/settings.local.json
+
+# Deno-Lockfile aus 'deno check' der Edge Functions — kein Deploy-Artefakt
+deno.lock

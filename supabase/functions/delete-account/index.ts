@@ -126,11 +126,41 @@ Deno.serve(async (req) => {
       .eq('user_id', userId)
     if (aiErr) console.warn('[delete-account] ai_usage_log anon failed:', aiErr.message)
 
+    /* 4c) Newsletter-Eintrag loeschen.
+       Der Fremdschluessel ist ON DELETE SET NULL, die Zeile ueberlebt also die
+       Cascade -- mit der E-Mail-Adresse im Klartext. Die Datenschutzerklaerung
+       9.1 sagt zu, der Personenbezug werde "durch Setzen des Nutzer-Verweises
+       auf NULL entfernt". Bei dieser Tabelle IST die Adresse der Personenbezug,
+       die Zusage stimmte also nicht. Deshalb: ganz weg.
+       Auch ueber die Adresse, nicht nur ueber user_id — eine Anmeldung von der
+       oeffentlichen Seite traegt keine Konto-ID. */
+    const { data: profilFuerNL } = await supabaseAdmin
+      .from('users').select('email, contact_email').eq('id', userId).maybeSingle()
+    const nlAdressen = [profilFuerNL?.email, profilFuerNL?.contact_email]
+      .filter(Boolean).map((a) => String(a).toLowerCase())
+
+    const { error: nlErr } = await supabaseAdmin
+      .from('newsletter_subscribers').delete().eq('user_id', userId)
+    if (nlErr) console.warn('[delete-account] newsletter by user_id failed:', nlErr.message)
+    if (nlAdressen.length) {
+      const { error: nlMailErr } = await supabaseAdmin
+        .from('newsletter_subscribers').delete().in('email', nlAdressen)
+      if (nlMailErr) console.warn('[delete-account] newsletter by email failed:', nlMailErr.message)
+    }
+
+    // user_consents hat keinen Fremdschluessel und bleibt als Nachweis stehen —
+    // aber ohne Verweis auf die Person.
+    const { error: ucErr } = await supabaseAdmin
+      .from('user_consents')
+      .update({ user_id: null })
+      .eq('user_id', userId)
+    if (ucErr) console.warn('[delete-account] user_consents anon failed:', ucErr.message)
+
     // 5) Auth-User loeschen.
     //    Cascade-Kette uebernimmt den Rest:
     //      auth.users -> public.users -> 14 abhaengige Tabellen.
-    //    user_consents bleibt (keine FK = Option A: pseudonymisierter Nachweis).
-    //    newsletter_subscribers bleibt (SET NULL).
+    //    user_consents bleibt pseudonymisiert stehen (Nachweis, keine FK).
+    //    newsletter_subscribers ist in Schritt 4c geloescht.
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId)
     if (deleteError) throw new Error('Auth delete fehlgeschlagen: ' + deleteError.message)
 
