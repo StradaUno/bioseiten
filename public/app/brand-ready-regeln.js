@@ -99,8 +99,12 @@ export function brZahlDe(n, d = 1) {
 export function brGanz(n) {
   return (n == null || isNaN(Number(n))) ? '–' : Number(n).toLocaleString('de-DE')
 }
+/* Fest auf Berliner Zeit, nicht auf die Zeitzone des Betrachters -- dieselbe
+   Entscheidung wie in der Analyse-Ansicht. Ein geteilter Stand darf nicht je
+   nach Standort des Lesers einen anderen Stichtag nennen. */
 export function brDatum(s) {
-  return s ? new Date(s).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '–'
+  return s ? new Date(s).toLocaleDateString('de-DE',
+    { timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric' }) : '–'
 }
 function brStatus(p, max) {
   if (p == null) return 'nicht_bewertbar'

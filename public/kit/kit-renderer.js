@@ -100,8 +100,11 @@ const fm = n => n == null ? '–' : n >= 1e6 ? (n/1e6).toFixed(1).replace(/\.0$/
   : n >= 1e3 ? (n/1e3).toFixed(1).replace(/\.0$/,'')+'k' : String(n)
 const dez = (n, d = 1) => n == null ? '–'
   : Number(n).toLocaleString(lang === 'de' ? 'de-DE' : lang, { minimumFractionDigits: d, maximumFractionDigits: d })
+/* Fest auf Berliner Zeit, nicht auf die Zeitzone des Betrachters -- dieselbe
+   Entscheidung wie in der Analyse-Ansicht. Sonst sieht eine Marke in New York
+   als Stichtag den Vortag, und zwei Leute streiten ueber dasselbe Datum. */
 const datum = s => s ? new Date(s).toLocaleDateString(lang === 'de' ? 'de-DE' : lang,
-  { day: '2-digit', month: '2-digit', year: 'numeric' }) : ''
+  { timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric' }) : ''
 const euro = n => n == null ? null
   : Number(n).toLocaleString('de-DE', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 0 })
 const nu = x => x ? (x.startsWith('http') ? x : 'https://' + x) : '#'
