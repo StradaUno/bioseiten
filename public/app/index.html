@@ -114,7 +114,7 @@ html, body {
    Ziffernbreite heisst, dass 18.400 und 19.200 exakt gleich breit sind
    und der Unterschied an der Ziffer auffaellt, nicht an der Laenge.
    ──────────────────────────────────────────────────────────────── */
-.dash-card-value, .kpi-value, .stat-box-value, .c-num, .bl-wert, .br-gewinn,
+.dash-card-value, .kpi-value, .stat-box-value, .c-num, .c-big, .bl-wert, .br-gewinn,
 .timing-value, .top-post-stat, .chart-val, .cmp-val, .c-cmp-val, .br-zeile-p,
 .mk-mini-posts, .bl-uhr-lbl, .c-rang-nr, .tip-num, .step-num, .br-ring b {
   font-family: var(--mono);
@@ -686,59 +686,37 @@ html, body {
    wenigen Stellen, die "background:var(--text)" mit hart weisser Schrift
    kombinieren: dort muss die Schrift auf den Grund umschlagen, sonst steht
    Weiss auf Hellgrau. */
-body.analyse-dunkel{
-  --bg:#0B0E13;
-  --surface:#141922;
-  --surface2:#1B212C;
-  --border:#262E3B;
-  --border-strong:#36404F;
-  --text:#EDF1F7;
-  --muted:#9AA6B8;
-  --subtle:#6B7789;
-  --green:#34D399; --green-bg:#0C2A21; --green-border:#17513E;
-  --red:#FB7185;   --red-bg:#2B1219;
-  --orange:#FBBF24; --orange-bg:#2A2008;
-  --blue:#60A5FA;  --blue-bg:#0E1D33;
-}
-body.analyse-dunkel .topbar{background:rgba(11,14,19,.92)}
-body.analyse-dunkel .tabbar{background:rgba(11,14,19,.94)}
-/* Die untere Leiste steht auf dunklem Grund: aktives Ziel hell, Rest gedaempft.
-   Nicht in die Regel darunter aufnehmen — die dreht Vorder- auf Hintergrund
-   und liesse das aktive Ziel auf dunklem Grund verschwinden. */
-body.analyse-dunkel .tab-item.active{color:var(--text)}
-body.analyse-dunkel .topbar-avatar{color:#fff}
-/* Umgekehrtes Paar: heller Grund, dunkle Schrift. */
-body.analyse-dunkel .btn-plat,
-body.analyse-dunkel .plat-btn.active,
-body.analyse-dunkel .btn-save,
-body.analyse-dunkel .niche-btn.active,
-body.analyse-dunkel .modal-btn-confirm{color:var(--bg)}
-body.analyse-dunkel .kpi-card.dark .kpi-value{color:var(--bg)}
-body.analyse-dunkel .kpi-card.dark .kpi-label,
-body.analyse-dunkel .kpi-card.dark .kpi-delta{color:rgba(11,14,19,.6)}
-/* Der helle Spinner war fuer hellen Grund gezeichnet. */
-body.analyse-dunkel .spinner-dark{border-color:rgba(255,255,255,.16);border-top-color:var(--muted)}
-body.analyse-dunkel .result-head-inner{background:var(--surface2)}
+/* Hier stand bis zum Redesign body.analyse-dunkel: ein zweiter Token-Satz,
+   der die ganze Seite umfaerbte, solange die Analyse offen war. Er ist
+   entfallen, weil die App durchgehend hell ist. Der Satz ist nicht verloren —
+   er steht im Tag stand-vor-redesign und ist die fertige Vorlage, falls ein
+   App-weiter Dunkelmodus kommt. Dann gehoert er an :root als
+   html[data-farbmodus="dunkel"], nicht wieder an eine einzelne Route. */
 
 /* ══ Analyse-Ergebnis: "Cockpit" ══════════════════════════════════════════
-   Bewusst durchgehend dunkel und gegen den Rest der App abgesetzt. Das
-   Ergebnis ist das bezahlte Produkt -- es soll sich wie ein Instrument lesen
-   und nicht wie die naechste Einstellungsseite. Alle Farben stehen explizit
-   hier, nichts erbt aus dem hellen App-Theme. */
+   Das Ergebnis ist das bezahlte Produkt und soll sich wie ein Instrument
+   lesen. Bis zum Redesign hiess das: durchgehend dunkel, abgesetzt gegen eine
+   helle App. Seit die ganze App das Studio-Design traegt, kommt die Wirkung
+   aus Dichte, Monospace-Zahlen und der Signaturfarbe -- nicht mehr aus dem
+   Farbumschlag. Die eigene Palette bleibt trotzdem: sie haelt die vier
+   Bedeutungsfarben (gut/schlecht/Signatur/Achtung) an einer Stelle, und ein
+   Dunkelmodus waere hier wieder genau dieser eine Block.
+   --c-cool haengt an --v1 und wandert deshalb mit dem Design des Creators. */
 .ckpt{
-  --c-bg:#0B0E13; --c-panel:#141922; --c-panel2:#1B212C; --c-line:#262E3B; --c-line2:#36404F;
-  --c-fg:#EDF1F7; --c-fg2:#9AA6B8; --c-fg3:#6B7789;
-  --c-ok:#34D399; --c-ok-bg:#0C2A21; --c-ok-line:#17513E;
-  --c-bad:#FB7185; --c-bad-bg:#2B1219; --c-bad-line:#5A222E;
-  --c-cool:#60A5FA; --c-cool-bg:#0E1D33; --c-cool-line:#1D3A5F;
-  --c-amber:#FBBF24; --c-amber-bg:#2A2008; --c-amber-line:#54401A;
+  --c-bg:#ffffff; --c-panel:#ffffff; --c-panel2:#f2f0f8; --c-line:rgba(27,24,38,.09); --c-line2:#d7d3e3;
+  --c-fg:#17151f; --c-fg2:#4e4a5e; --c-fg3:#817c92;
+  --c-ok:#15784b; --c-ok-bg:#eaf4ef; --c-ok-line:rgba(21,120,75,.22);
+  --c-bad:#c23a31; --c-bad-bg:#fbeeed; --c-bad-line:rgba(194,58,49,.22);
+  --c-cool:var(--v1); --c-cool-bg:var(--akzent-bg); --c-cool-line:var(--akzent-border);
+  --c-amber:#a8630b; --c-amber-bg:#fdf3e6; --c-amber-line:rgba(168,99,11,.22);
   color:var(--c-fg);
   font-family:"Inter",-apple-system,BlinkMacSystemFont,Arial,sans-serif;
   line-height:1.6; margin:12px 0 0;
   padding:4px var(--page-x) calc(24px + var(--safe-bottom));
   display:flex; flex-direction:column; gap:16px;
 }
-.ckpt h1,.ckpt h2,.ckpt h3,.ckpt .c-num,.ckpt .c-big{font-family:"Outfit","Inter",sans-serif;text-wrap:balance;margin:0}
+.ckpt h1,.ckpt h2,.ckpt h3{font-family:"Outfit","Inter",sans-serif;text-wrap:balance;margin:0}
+.ckpt .c-num,.ckpt .c-big{margin:0}
 .ckpt .c-mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:var(--c-fg3)}
 .ckpt p{margin:0}
 
@@ -751,7 +729,7 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 
 .c-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 @media(min-width:640px){.c-grid{grid-template-columns:repeat(4,1fr)}}
-.c-tile{border-radius:15px;padding:14px 15px 13px;border:1px solid var(--c-line);background:var(--c-panel)}
+.c-tile{border-radius:15px;padding:14px 15px 13px;border:1px solid var(--c-line);background:var(--c-panel);box-shadow:var(--sh-card)}
 .c-tile.ok{background:var(--c-ok-bg);border-color:var(--c-ok-line)}
 .c-tile.bad{background:var(--c-bad-bg);border-color:var(--c-bad-line)}
 .c-tile.cool{background:var(--c-cool-bg);border-color:var(--c-cool-line)}
@@ -762,7 +740,7 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 .c-tile.bad .c-num,.c-tile.bad .c-s{color:var(--c-bad)}
 .c-tile.cool .c-num,.c-tile.cool .c-s{color:var(--c-cool)}
 
-.c-panel{background:var(--c-panel);border:1px solid var(--c-line);border-radius:16px;padding:18px}
+.c-panel{background:var(--c-panel);border:1px solid var(--c-line);border-radius:16px;padding:18px;box-shadow:var(--sh-card)}
 .c-panel > h2{font-size:18px;font-weight:700;letter-spacing:-.015em;margin-bottom:3px}
 .c-panel > .c-lede{color:var(--c-fg3);font-size:12.5px;margin:0 0 14px}
 .c-legend{display:flex;flex-wrap:wrap;gap:14px;font-size:11.5px;color:var(--c-fg3);margin-bottom:12px}
@@ -772,14 +750,14 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 
 .c-split{display:grid;gap:10px}
 @media(min-width:600px){.c-split{grid-template-columns:1fr 1fr}}
-.c-box{border-radius:15px;padding:17px 18px;border:1px solid var(--c-line);background:var(--c-panel)}
+.c-box{border-radius:15px;padding:17px 18px;border:1px solid var(--c-line);background:var(--c-panel);box-shadow:var(--sh-card)}
 .c-box.ok{background:var(--c-ok-bg);border-color:var(--c-ok-line)}
 .c-box.bad{background:var(--c-bad-bg);border-color:var(--c-bad-line)}
 .c-box.cool{background:var(--c-cool-bg);border-color:var(--c-cool-line)}
 .c-box.amber{background:var(--c-amber-bg);border-color:var(--c-amber-line)}
 .c-chip{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.07em;
   text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:10px;
-  background:rgba(255,255,255,.07);color:var(--c-fg2)}
+  background:rgba(27,24,38,.06);color:var(--c-fg2)}
 .c-box.ok .c-chip{color:var(--c-ok)} .c-box.bad .c-chip{color:var(--c-bad)}
 .c-box.cool .c-chip{color:var(--c-cool)} .c-box.amber .c-chip{color:var(--c-amber)}
 .c-box h3{font-size:16.5px;font-weight:700;letter-spacing:-.012em;margin-bottom:8px}
@@ -840,7 +818,7 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 .c-btn:disabled{opacity:.5;cursor:not-allowed}
 .c-link-feld{margin-top:14px;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
 .c-link-feld input{flex:1 1 220px;min-width:0;font-family:"JetBrains Mono",monospace;font-size:12.5px;
-  padding:11px 13px;border-radius:10px;border:1px solid var(--c-line);background:var(--c-bg);color:var(--c-fg)}
+  padding:11px 13px;border-radius:10px;border:1px solid var(--c-line);background:var(--c-panel2);color:var(--c-fg)}
 .c-link-meta{font-size:12px;color:var(--c-fg3);margin-top:10px;line-height:1.6}
 .c-link-meta a{color:var(--c-fg2)}
 .c-foot{border-top:1px solid var(--c-line);padding-top:14px;font-size:12px;color:var(--c-fg3);line-height:1.55}
@@ -4829,11 +4807,6 @@ let anv = null
 
 async function renderAnalytics(area, ctx){
   const uid = state.session.user.id
-
-  /* Die Route faerbt die ganze Seite um. ctx.onCleanup nimmt es beim Verlassen
-     zurueck -- ohne das bliebe die App dunkel, sobald man einmal hier war. */
-  document.body.classList.add('analyse-dunkel')
-  ctx.onCleanup(()=>document.body.classList.remove('analyse-dunkel'))
 
   area.innerHTML = `
   <div class="view-analytics">
