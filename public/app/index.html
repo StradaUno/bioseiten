@@ -147,8 +147,14 @@ html, body {
 }
 .topbar-left { display: flex; align-items: center; gap: 10px; }
 .topbar-title { font-size: var(--t-xl); font-weight: 700; letter-spacing: -.03em; }
-.topbar-avatar { width: 32px; height: 32px; border-radius: var(--r-xs); background: var(--verlauf); color: white; display: grid; place-items: center; font-size:var(--t-sm); font-weight: 600; cursor: pointer; overflow: hidden; flex-shrink: 0; padding: 1.5px; }
-.topbar-avatar img { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 7px; }
+/* ── Avatare ──────────────────────────────────────────────────────
+   Die Initiale liegt IMMER im Container, das Bild darueber. Laedt das
+   Bild nicht, bleibt die Initiale stehen -- vorher stand dort entweder
+   ein farbiger Verlauf oder (im Profil) loeschte ein onerror das Element
+   dauerhaft weg. Grund ist neutral, nicht bunt: ein fehlendes Bild soll
+   wie ein fehlendes Bild aussehen und nicht wie Absicht. */
+.topbar-avatar { position: relative; width: 32px; height: 32px; border-radius: var(--r-xs); background: var(--surface2); box-shadow: inset 0 0 0 1px var(--border); color: var(--muted); display: grid; place-items: center; font-size:var(--t-sm); font-weight: 700; cursor: pointer; overflow: hidden; flex-shrink: 0; }
+.topbar-avatar img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 
 /* ─── UNTERNAVIGATION ──────────────────────────────────────────
    Sieben Routen auf fuenf Ziele: BioLink und Media Kit teilen sich
@@ -173,13 +179,6 @@ html, body {
 .page { flex: 1; padding-bottom: 24px; }
 #content-area { min-height: 40dvh; }
 
-/* ─── FOOTER ─── */
-.app-footer { border-top: 1px solid var(--border); padding: var(--s-4) var(--page-x) var(--s-5); }
-.footer-links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
-.footer-links a { font-size:var(--t-sm); color: var(--muted); text-decoration: none; }
-.footer-links a:hover { color: var(--text); text-decoration: underline; }
-.footer-copy { font-size:var(--t-xs); color: var(--subtle); margin-top: 10px; }
-
 /* ─── UNTERE LEISTE ────────────────────────────────────────────
    Fuenf Ziele, keins davon unter "Mehr" versteckt. Der Punkt an
    "News" ist derselbe Wiederkehr-Ausloeser wie vorher in der Sidebar.
@@ -202,8 +201,8 @@ html, body {
 .tab-item.active { color: var(--text); }
 .tab-item.active svg { stroke: var(--v1); }
 .tab-punkt { position: absolute; top: 0; margin-left: 20px; width: 7px; height: 7px; border-radius: 50%; background: var(--v2); }
-.tab-avatar { width: 22px; height: 22px; border-radius: 7px; overflow: hidden; background: var(--verlauf); padding: 1.5px; }
-.tab-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 5.5px; }
+.tab-avatar { position: relative; width: 22px; height: 22px; border-radius: 7px; overflow: hidden; background: var(--surface2); box-shadow: inset 0 0 0 1px var(--border); display: grid; place-items: center; font-size: 10px; font-weight: 700; color: var(--muted); }
+.tab-avatar img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; }
 .tab-item.active .tab-avatar { box-shadow: 0 0 0 1.5px var(--v2); }
 
 /* Platz fuer die Leiste — jede Seite endet ueber ihr, nicht darunter. */
@@ -212,8 +211,7 @@ html, body {
 /* ─── AUTH MODE (login / register / onboarding: keine Navigation) ─── */
 #shell.auth-mode .topbar,
 #shell.auth-mode .tabbar,
-#shell.auth-mode #subnav,
-#shell.auth-mode .app-footer { display: none !important; }
+#shell.auth-mode #subnav { display: none !important; }
 /* margin:auto statt align-items:center — zentriert, schneidet aber
    lange Formulare (Register) oben nicht ab */
 #shell.auth-mode .page { display: flex; padding: 24px; }
@@ -301,8 +299,10 @@ html, body {
    genau eine Hauptsache — vorher standen vier gleich grosse Kacheln neben-
    einander und keine war wichtiger als die andere. */
 .dash-kopf{display:flex;align-items:center;gap:12px;padding:var(--s-4) var(--page-x) var(--s-4)}
-.dash-kopf-av{width:42px;height:42px;border-radius:var(--r-sm);flex-shrink:0;overflow:hidden;background:var(--verlauf);padding:1.5px;display:grid;place-items:center;color:#fff;font-weight:var(--fw-b)}
-.dash-kopf-av img{width:100%;height:100%;object-fit:cover;display:block;border-radius:9px}
+/* Der Avatar sass hier ein zweites Mal, nur wenige Zentimeter unter dem in
+   der Topbar. Einer reicht. */
+.dash-kopf-av{position:relative;width:42px;height:42px;border-radius:var(--r-sm);flex-shrink:0;overflow:hidden;background:var(--surface2);box-shadow:inset 0 0 0 1px var(--border);display:grid;place-items:center;color:var(--muted);font-weight:var(--fw-b)}
+.dash-kopf-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .dash-kopf-txt{flex:1;min-width:0}
 .dash-kopf-name{font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.03em;line-height:1.2}
 .dash-kopf-sub{font-size:var(--t-xs);color:var(--subtle);margin-top:3px;font-family:var(--ziffern)}
@@ -370,9 +370,8 @@ html, body {
 /* Kopf waagerecht: Foto links, Name daneben. Mittig zentriert stand der
    Name im Leeren, sobald die Bio kurz ist -- und sie ist meistens kurz. */
 .pf-karte-top{padding:20px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--border)}
-.pf-av{width:68px;height:68px;border-radius:var(--r-md);flex-shrink:0;position:relative;cursor:pointer;padding:2px;background:var(--verlauf)}
-.pf-av img{width:100%;height:100%;border-radius:16px;object-fit:cover;background:var(--surface2);display:block}
-.pf-av-fallback{width:100%;height:100%;border-radius:16px;background:var(--surface2);color:var(--text);display:grid;place-items:center;font-size:25px;font-weight:700}
+.pf-av{width:68px;height:68px;border-radius:var(--r-md);flex-shrink:0;position:relative;cursor:pointer;overflow:hidden;background:var(--surface2);box-shadow:inset 0 0 0 1px var(--border);display:grid;place-items:center;color:var(--muted);font-size:25px;font-weight:700}
+.pf-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
 .pf-av-btn{position:absolute;bottom:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:var(--surface);color:var(--muted);display:grid;place-items:center;border:1px solid var(--border-strong);pointer-events:none}
 .pf-ident{flex:1;min-width:0}
 .pf-name{font-size:var(--t-2xl);font-weight:var(--fw-b);letter-spacing:-.03em;line-height:1.15}
@@ -1219,17 +1218,10 @@ a.news-quelle:hover{color:var(--text)}
       <div id="content-area"></div>
     </div>
 
-    <!-- FOOTER -->
-    <footer class="app-footer">
-      <div class="footer-links">
-        <a href="/legal#impressum">Impressum</a>
-        <a href="/legal#datenschutz">Datenschutz</a>
-        <a href="/legal#agb">AGB</a>
-        <a href="/legal#widerruf">Widerruf</a>
-        <a href="/legal/">Legal</a>
-      </div>
-      <div class="footer-copy">© <span id="footer-year"></span> viuno</div>
-    </footer>
+    <!-- Kein Fuss mehr unter jeder Ansicht: Impressum, Datenschutz, AGB und
+         Widerruf standen auf allen zehn Routen unter dem Inhalt und waren
+         damit zehnmal das Letzte, was man sieht. Erreichbar bleiben sie im
+         Profil unter "Rechtliches & Daten". -->
   </div>
 
   <!-- UNTERE LEISTE — genau einmal definiert, Router setzt .active -->
@@ -1617,6 +1609,13 @@ async function loadProfile(uid) {
   state.profile = data || null
 }
 
+/* Initiale als Grund, Bild darueber. decoding="async" haelt das Zeichnen
+   der Seite nicht auf, wenn die Datei gross ist. */
+function avatarInhalt(url, name){
+  const initial = escHtml(String(name||'?').trim().charAt(0).toUpperCase() || '?')
+  return initial + (url ? `<img src="${escHtml(url)}" alt="" decoding="async">` : '')
+}
+
 function paintUser() {
   const av  = document.getElementById('user-avatar')
   const tab = document.getElementById('tab-avatar')
@@ -1624,15 +1623,11 @@ function paintUser() {
   const p = state.profile
   const name = p?.display_name || p?.full_name || state.session.user.email || '?'
   const bild = p?.profile_image_url
-  if (av) {
-    if (bild) av.innerHTML = `<img src="${escHtml(bild)}" alt="">`
-    else av.textContent = name[0].toUpperCase()
-    av.title = name
-  }
+  if (av) { av.innerHTML = avatarInhalt(bild, name); av.title = name }
   /* Derselbe Avatar noch einmal unten in der Leiste: er ist dort das
      Symbol fuer "Profil" und zugleich der Beleg, welches Foto oeffentlich
      steht — die Frage, die auf dieser Seite am haeufigsten gestellt wird. */
-  if (tab) tab.innerHTML = bild ? `<img src="${escHtml(bild)}" alt="">` : ''
+  if (tab) tab.innerHTML = avatarInhalt(bild, name)
 }
 
 /* ─────────────────────────────────────────────
@@ -2124,13 +2119,12 @@ async function onObPhotoPicked(e){
   }
   reader.readAsDataURL(file)
   if(!obv?.user)return
-  const path=`${obv.user.id}/${Date.now()}.${file.name.split('.').pop()}`
-  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
-  if(!obv)return
   const st=document.getElementById('upload-status')
-  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);if(st)st.textContent='Upload fehlgeschlagen';return}
-  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
-  obv.data.photoUrl=publicUrl
+  if(st)st.textContent='Wird hochgeladen…'
+  const erg=await profilbildHochladen(file, obv.user.id, obv.data.photoUrl)
+  if(!obv)return
+  if(erg.fehler){showToast(erg.fehler,4000);if(st)st.textContent='Upload fehlgeschlagen';return}
+  obv.data.photoUrl=erg.publicUrl
   if(st)st.textContent='✓ Eigenes Foto hochgeladen'
   // Update badge
   const badge=document.querySelector('#ob-content div[style*="bottom:-2px"]')
@@ -2214,7 +2208,7 @@ async function renderDashboard(area, ctx) {
        Vorher stand hier cards.slice(0,2) auf dem rohen jsonb — der Teaser
        zeigte damit die beiden Karten, die das Modell zufaellig zuerst
        geschrieben hatte, nicht die beiden wichtigsten. */
-    sb.from('digest_cards_today').select('slug,headline,source,platform,date').order('relevance_score',{ascending:false}).limit(2),
+    sb.from('digest_cards_today').select('slug,headline,source,platform,date').order('relevance_score',{ascending:false}).limit(3),
     sb.rpc('get_daily_text',{p_user_id:uid}),
     sb.from('analyse_stats').select('platform,followers,followers_change,handle_changed,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(20),
   ])
@@ -2294,9 +2288,6 @@ async function renderDashboard(area, ctx) {
   content.classList.remove('hidden')
   content.innerHTML = `
     <div class="dash-kopf">
-      <div class="dash-kopf-av">${p?.profile_image_url
-        ? `<img src="${escHtml(p.profile_image_url)}" alt="">`
-        : escHtml(name[0].toUpperCase())}</div>
       <div class="dash-kopf-txt">
         <div class="dash-kopf-name">${escHtml(name)}</div>
         ${kanaele.length?`<div class="dash-kopf-sub">${escHtml(kanaele[0])}</div>`:''}
@@ -2481,7 +2472,7 @@ const LOADING_FLOWS={
     sub:'Das dauert einen Moment — bitte lass die Seite offen.',
     steps:['Angaben werden geprüft','Layout wird gebaut','Kennzahlen werden eingesetzt','Design wird angewendet'],
     tail:'Media Kit geht online',
-    tailSub:'Fast geschafft — dein Media Kit wird gerade ausgeliefert.'
+    tailSub:'Fast geschafft — dein Media Kit wird gerade erstellt.'
   },
   mediakitDelete:{
     title:'Media Kit wird gelöscht',
@@ -3245,16 +3236,13 @@ async function onBioPhotoPicked(e){
   reader.onload=ev=>{const bw=document.getElementById('profile-photo-wrap');if(bw)bw.innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`}
   reader.readAsDataURL(file)
   const uid=blv?blv.uid:state.session.user.id
-  const path=`${uid}/${Date.now()}.${file.name.split('.').pop()}`
-  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
-  if(error){showToast('Upload fehlgeschlagen');if(status)status.textContent='Fehler';return}
-  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
-  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',uid)
+  const erg=await profilbildHochladen(file, uid, blv?.profile?.profile_image_url)
+  if(erg.fehler){showToast(erg.fehler,4000);const sf=document.getElementById('photo-status');if(sf)sf.textContent='Fehler';return}
+  const publicUrl=erg.publicUrl
   if(blv?.profile)blv.profile.profile_image_url=publicUrl
   const st=document.getElementById('photo-status')
   if(st)st.textContent='✓ Foto hochgeladen'
   showToast('Profilbild gespeichert ✓')
-  if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
   e.target.value=''
   regenerateBioPageQuietly(uid)
 }
@@ -4141,7 +4129,6 @@ function getChecks(){
   const p=mkv.profile||{},mk=mkv.mkData||{}
   return [
     {label:'Profilbild hochgeladen',ok:!!p.profile_image_url},
-    {label:'Bio ausgefüllt',ok:!!(p.bio&&p.bio.trim())},
     {label:'Anfrage-E-Mail hinterlegt',ok:!!(p.contact_email&&p.contact_email.trim())},
     {label:'Mindestens 1 Plattform mit Kennzahlen',ok:!!(p.instagram_handle&&(mk.er_instagram!=null||mk.followers_instagram!=null||mk.avg_likes_instagram!=null))||!!(p.tiktok_handle&&(mk.er_tiktok!=null||mk.followers_tiktok!=null||mk.avg_views_tiktok!=null))},
     {label:'Impressum hinterlegt',ok:!!(p.impressum_text&&p.impressum_text.trim())}
@@ -4295,16 +4282,13 @@ async function onMkPhotoPicked(e){
   reader.onload=ev=>{const bw=document.getElementById('profile-photo-wrap');if(bw)bw.innerHTML=`<img src="${ev.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`}
   reader.readAsDataURL(file)
   const uid=mkv?mkv.uid:state.session.user.id
-  const path=`${uid}/${Date.now()}.${file.name.split('.').pop()}`
-  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
-  if(error){showToast('Upload fehlgeschlagen');const st=document.getElementById('photo-status');if(st)st.textContent='Fehler';return}
-  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
-  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',uid)
+  const erg=await profilbildHochladen(file, uid, mkv?.profile?.profile_image_url)
+  if(erg.fehler){showToast(erg.fehler,4000);const sf=document.getElementById('photo-status');if(sf)sf.textContent='Fehler';return}
+  const publicUrl=erg.publicUrl
   if(mkv?.profile)mkv.profile.profile_image_url=publicUrl
   const st=document.getElementById('photo-status')
   if(st)st.textContent='✓ Foto hochgeladen'
   showToast('Profilbild gespeichert ✓')
-  if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
   e.target.value=''
   regenerateBioPageQuietly(uid)
 }
@@ -5724,7 +5708,7 @@ function renderAnalyticsContent(){
   /* P7: Die Media-Kit-Uebernahme existiert seit jeher (loadMediakit liest
      analyse_stats), wurde im Ergebnis aber nirgends erwaehnt. */
   h+=`<div class="c-foot">
-    ${posts.length?`${deN(posts.length)} öffentlich sichtbare Beiträge. `:''}Gespeicherte Beiträge, Reichweite nach Followern und Demografie stehen nur in deinen ${label}-Insights.
+    ${posts.length?`${deN(posts.length)} öffentlich sichtbare Beiträge.`:''}
     ${st?' · <a href="#/mediakit">Diese Zahlen ins Media Kit übernehmen</a>':''}
   </div>`
 
@@ -6438,9 +6422,9 @@ function paintProfile(){
   const gesetzt = kanaele.filter(([,h])=>h && String(h).trim())
   const hauptHandle = (p.instagram_handle || p.tiktok_handle || '').replace(/^@/,'').trim()
   const seitenLive = (p.bio_active?1:0) + (p.mediakit_active?1:0)
-  const foto = p.profile_image_url
-    ? `<img src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;pf-av-fallback&quot;>${initial}</div>'">`
-    : `<div class="pf-av-fallback">${initial}</div>`
+  /* Kein onerror mehr, das das Element wegloescht: die Initiale steht
+     ohnehin darunter, ein fehlgeschlagenes Bild deckt sie einfach nicht ab. */
+  const foto = avatarInhalt(p.profile_image_url, p.display_name || initial)
 
   document.getElementById('profile-content').innerHTML = `
     <div class="pf-aussen">
@@ -7030,6 +7014,41 @@ function bildVerkleinern(file, maxKante=800){
   })
 }
 
+/* ── Ein Weg fuer alle vier Upload-Stellen ────────────────────────────
+   Bis 14.09.2026 luden Onboarding, BioLink und Media Kit die Kameradatei
+   ROH hoch; nur das Profil rechnete herunter. So kam ein Bild mit
+   2316x3088 px und 1,2 MB in den Speicher, das an jeder Stelle mit 22 bis
+   68 px angezeigt wird -- und weil nichts die alte Datei entfernte, lagen
+   neun Fassungen im Ordner desselben Accounts.
+
+   cacheControl ist der zweite Teil: ohne die Angabe kam das Bild mit
+   "no-cache" heraus und wurde bei jedem Aufruf neu geladen. Der Dateiname
+   traegt einen Zeitstempel, eine neue Fassung bekommt also eine neue URL --
+   ein Jahr Cache ist damit gefahrlos.
+   ──────────────────────────────────────────────────────────────────── */
+async function profilbildHochladen(file, uid, altUrl){
+  const klein = await bildVerkleinern(file)
+  if(!klein) return {fehler:'Bild konnte nicht gelesen werden.'}
+
+  const altPfad = pfPfadAusUrl(altUrl, uid)
+  const pfad    = `${uid}/${Date.now()}.${klein.endung}`
+
+  const {error} = await sb.storage.from('profile-images')
+    .upload(pfad, klein.blob, {upsert:true, contentType:klein.blob.type||'image/jpeg', cacheControl:'31536000'})
+  if(error) return {fehler:'Upload fehlgeschlagen: '+error.message}
+
+  const {data:{publicUrl}} = sb.storage.from('profile-images').getPublicUrl(pfad)
+  const {error:dbErr} = await sb.from('users')
+    .update({profile_image_url:publicUrl, updated_at:new Date().toISOString()}).eq('id', uid)
+  if(dbErr) return {fehler:'Konnte nicht gespeichert werden: '+dbErr.message}
+
+  /* Alte Datei wegraeumen -- sonst waechst der Bucket mit jedem Upload. */
+  if(altPfad && altPfad!==pfad){ try{ await sb.storage.from('profile-images').remove([altPfad]) }catch(_){} }
+
+  if(state.profile){ state.profile.profile_image_url = publicUrl; paintUser() }
+  return {publicUrl, vorschau:klein.vorschau}
+}
+
 async function onPhotoPicked(e){
   const file=e.target.files?.[0];if(!file)return
   e.target.value=''
@@ -7038,31 +7057,12 @@ async function onPhotoPicked(e){
   const setzeStatus=(t,cls)=>{if(status){status.textContent=t;status.className='sheet-hint'+(cls?' '+cls:'')}}
   setzeStatus('Wird verkleinert …')
 
-  const klein=await bildVerkleinern(file)
-  if(!klein){setzeStatus('Bild konnte nicht gelesen werden.','err');showToast('Bild konnte nicht gelesen werden.');return}
-
   const uid=pv?pv.uid:state.session.user.id
-  const altPfad=pfPfadAusUrl(pv?.profile?.profile_image_url, uid)
-
-  /* Sofortige Vorschau in Karte und Sheet. */
-  const av=document.querySelector('.pf-av')
-  if(av){const alt=av.querySelector('img,.pf-av-fallback');if(alt)alt.outerHTML=`<img src="${klein.vorschau}" alt="">`}
-  const sheetAv=document.getElementById('pf-sheet-av')
-  if(sheetAv)sheetAv.innerHTML=`<img src="${klein.vorschau}" style="width:100%;height:100%;object-fit:cover">`
   setzeStatus('Wird hochgeladen …')
+  const erg=await profilbildHochladen(file, uid, pv?.profile?.profile_image_url)
+  if(erg.fehler){setzeStatus(erg.fehler,'err');showToast(erg.fehler,4000);return}
 
-  const pfad=`${uid}/${Date.now()}.${klein.endung}`
-  const{error}=await sb.storage.from('profile-images').upload(pfad,klein.blob,{upsert:true,contentType:klein.blob.type||'image/jpeg'})
-  if(error){setzeStatus('Upload fehlgeschlagen: '+error.message,'err');showToast('Upload fehlgeschlagen',4000);return}
-  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(pfad)
-  const{error:dbErr}=await sb.from('users').update({profile_image_url:publicUrl,updated_at:new Date().toISOString()}).eq('id',uid)
-  if(dbErr){setzeStatus('Konnte nicht gespeichert werden.','err');showToast('Fehler: '+dbErr.message,4000);return}
-
-  /* Alte Datei wegräumen — sonst wächst der Bucket mit jedem Upload. */
-  if(altPfad && altPfad!==pfad){ try{ await sb.storage.from('profile-images').remove([altPfad]) }catch(_){} }
-
-  if(pv)pv.profile.profile_image_url=publicUrl
-  if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
+  if(pv)pv.profile.profile_image_url=erg.publicUrl
   setzeStatus('✓ Foto gespeichert','ok')
   showToast('Profilbild gespeichert ✓')
   if(pv){paintProfile();pfSeiteAktualisieren(uid)}
@@ -7494,7 +7494,6 @@ window.brLinkZuruecknehmen = async function () {
 window.addEventListener('hashchange', router)
 
 ;(async function init() {
-  document.getElementById('footer-year').textContent = new Date().getFullYear()
   await loadSession()
 
   // Default-Route setzen, wenn kein (gültiger) Hash da ist
