@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 // @ts-ignore -- dasselbe Regelwerk, das die SPA laedt; siehe Kommentar unten
-import { brBerechnen, brSaetze } from 'https://cdn.jsdelivr.net/gh/StradaUno/bioseiten@4f1d8753d3191c66d01dd40545bf91ddcd454fe2/public/app/brand-ready-regeln.js'
+import { brBerechnen, brSaetze } from 'https://cdn.jsdelivr.net/gh/StradaUno/bioseiten@893a36a84c9f81aaeb855996871cab7465ab97ac/public/app/brand-ready-regeln.js'
 
 /* Erzeugt oder nimmt einen oeffentlichen Link auf den Brand-Ready-Stand zurueck.
 
