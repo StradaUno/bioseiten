@@ -10,23 +10,38 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --bg: #f5f4f2;
+  --bg: #f6f5fa;
   --surface: #ffffff;
-  --surface2: #f0efed;
-  --border: rgba(0,0,0,0.08);
-  --border-strong: rgba(0,0,0,0.13);
-  --text: #111110;
-  --muted: #7a7975;
-  --subtle: #b0afa9;
-  --green: #1a7f4b;
-  --green-bg: #edf7f1;
-  --green-border: rgba(26,127,75,.2);
-  --red: #c0392b;
-  --red-bg: #fdf0ef;
-  --orange: #b85c00;
-  --orange-bg: #fdf3e7;
-  --blue: #3b5bdb;
-  --blue-bg: #f0f4ff;
+  --surface2: #f2f0f8;
+  --border: rgba(27,24,38,.09);
+  --border-strong: rgba(27,24,38,.16);
+  --text: #17151f;
+  --muted: #4e4a5e;
+  --subtle: #817c92;
+  --green: #15784b;
+  --green-bg: #eaf4ef;
+  --green-border: rgba(21,120,75,.2);
+  --red: #c23a31;
+  --red-bg: #fbeeed;
+  --orange: #a8630b;
+  --orange-bg: #fdf3e6;
+  --blue: #4338ca;
+  --blue-bg: #eef0fd;
+
+  /* ── Signatur ────────────────────────────────────────────────
+     Die App traegt den Farbverlauf, den der Creator fuer seine
+     BioLink-Seite gewaehlt hat. Gesetzt wird er als data-thema am
+     <html> beim Laden der Session; ohne Angabe gilt "color".
+     Die Werte sind gegenueber der oeffentlichen Seite abgedunkelt —
+     das Orange der Seite ist auf Weiss nicht mehr lesbar.
+     ──────────────────────────────────────────────────────────── */
+  --v1: #6b3fe8;
+  --v2: #b02a7d;
+  --v3: #c87a08;
+  --akzent-text: #5b32c9;
+  --akzent-bg: rgba(107,63,232,.10);
+  --akzent-border: rgba(107,63,232,.24);
+  --verlauf: linear-gradient(120deg, var(--v1), var(--v2) 55%, var(--v3));
 
   /* ── Spacing: 4er-Raster. Alle Abstaende kommen aus dieser Skala. ── */
   --s-1: 4px;  --s-2: 8px;  --s-3: 12px;
@@ -42,27 +57,46 @@
   --t-xl:  17px;             /* Sheet- und Modal-Titel       */
   --t-2xl: 22px;             /* Seitentitel                  */
   --t-input: 16px;           /* Eingaben — darunter zoomt iOS beim Fokus */
-  --t-num-sm: 20px;          /* kleine Kennzahlen            */
-  --t-num: 28px;             /* grosse Kennzahlen            */
+  --t-num-sm: 21px;          /* kleine Kennzahlen            */
+  --t-num: 32px;             /* grosse Kennzahlen            */
+  /* Zahlen laufen in Monospace, damit Ziffern untereinander stehen und
+     ein Sprung zwischen zwei Messungen als Sprung sichtbar wird.
+     Die Schrift wird im <head> ohnehin schon geladen. */
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   --lh-tight: 1.35;
   --lh-body: 1.55;
   --fw-md: 500; --fw-sb: 600; --fw-b: 700;
 
   /* ── Radien: drei Stufen plus Pille ── */
-  --r-xs: 8px;               /* kleine Bedienelemente, Thumbnails */
-  --r-sm: 10px;              /* Buttons, Inputs, kleine Flaechen */
-  --r-md: 16px;              /* Karten                           */
-  --r-lg: 20px;              /* Sheets, Modals                   */
+  --r-xs: 9px;               /* kleine Bedienelemente, Thumbnails */
+  --r-sm: 11px;              /* Buttons, Inputs, kleine Flaechen */
+  --r-md: 18px;              /* Karten                           */
+  --r-lg: 22px;              /* Sheets, Modals                   */
   --r-full: 99px;
 
   /* ── Schatten: bewusst nur zwei ── */
-  --sh-card: 0 1px 2px rgba(0,0,0,.04);
-  --sh-over: 0 -4px 24px rgba(0,0,0,.10);
+  --sh-card: 0 2px 10px rgba(27,24,38,.05);
+  --sh-over: 0 -6px 28px rgba(27,24,38,.12);
 
   --field-h: 44px;           /* Touch-Mindesthoehe fuer Eingaben und Buttons */
   --nav-h: 56px;
-  --sidebar-w: 272px;
+  --tab-h: 74px;             /* Hoehe der unteren Leiste, ohne Safe Area */
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Die drei BioLink-Designs als App-Signatur. "color" ist der Standard und
+   steht auch in :root, damit die App vor der ersten Antwort nicht farblos ist. */
+html[data-thema="dark"] {
+  --v1: #3f3a6e; --v2: #6b5ca5; --v3: #9a86c9;
+  --akzent-text: #443e78;
+  --akzent-bg: rgba(63,58,110,.10);
+  --akzent-border: rgba(63,58,110,.24);
+}
+html[data-thema="clean"] {
+  --v1: #2b2a33; --v2: #57545f; --v3: #8a8694;
+  --akzent-text: #2b2a33;
+  --akzent-bg: rgba(43,42,51,.07);
+  --akzent-border: rgba(43,42,51,.18);
 }
 
 html, body {
@@ -74,6 +108,20 @@ html, body {
   font-size:var(--t-md);
 }
 
+/* ── Zahlen ──────────────────────────────────────────────────────
+   Jede Kennzahl laeuft in Monospace mit Tabellenziffern. Das ist die
+   Signatur des Designs und hat einen sachlichen Grund: gleiche
+   Ziffernbreite heisst, dass 18.400 und 19.200 exakt gleich breit sind
+   und der Unterschied an der Ziffer auffaellt, nicht an der Laenge.
+   ──────────────────────────────────────────────────────────────── */
+.dash-card-value, .kpi-value, .stat-box-value, .c-num, .bl-wert, .br-gewinn,
+.timing-value, .top-post-stat, .chart-val, .cmp-val, .c-cmp-val, .br-zeile-p,
+.mk-mini-posts, .bl-uhr-lbl, .c-rang-nr, .tip-num, .step-num, .br-ring b {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.03em;
+}
+
 /* ─── BOOT ─── */
 #boot { min-height: 100dvh; display: grid; place-items: center; }
 .boot-spinner { width: 22px; height: 22px; border: 2px solid var(--border-strong); border-top-color: var(--text); border-radius: 50%; animation: spin .6s linear infinite; }
@@ -82,58 +130,39 @@ html, body {
 #shell { display: none; min-height: 100dvh; }
 #shell.visible { display: block; }
 
-/* ─── MENU (one definition — sidebar on desktop, drawer on mobile) ─── */
-.sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0); z-index: 80; pointer-events: none; transition: background .25s; }
-.sidebar-overlay.open { background: rgba(0,0,0,.35); pointer-events: auto; }
-
-.sidebar {
-  position: fixed; top: 0; left: 0; bottom: 0; width: var(--sidebar-w);
-  background: var(--surface); z-index: 90;
-  transform: translateX(-100%);
-  transition: transform .28s cubic-bezier(.32,.72,0,1);
-  display: flex; flex-direction: column;
-  box-shadow: 4px 0 24px rgba(0,0,0,.08);
-}
-.sidebar.open { transform: translateX(0); }
-.sidebar-header { padding: 20px 20px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-.sidebar-logo { display: flex; align-items: center; gap: 8px; }
-.sidebar-logo-mark { width: 28px; height: 28px; border-radius:var(--r-xs); background: var(--text); color: white; display: grid; place-items: center; font-size:var(--t-sm); font-weight: 700; }
-.sidebar-logo-text { font-size: 16px; font-weight: 700; letter-spacing: -.03em; }
-.sidebar-close { width: 32px; height: 32px; border-radius:var(--r-full); background: var(--surface2); border: none; cursor: pointer; display: grid; place-items: center; font-size:var(--t-xl); color: var(--muted); line-height: 1; }
-.sidebar-nav { flex: 1; padding: 10px; overflow-y: auto; }
-.sidebar-section { font-size:var(--t-2xs); font-weight: 700; color: var(--subtle); text-transform: uppercase; letter-spacing: .08em; padding: 12px 10px 4px; }
-.sidebar-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius:var(--r-sm); text-decoration: none; color: var(--muted); font-size:var(--t-sm); font-weight: 500; transition: all .15s; margin-bottom: 2px; }
-.sidebar-item:hover { background: var(--surface2); color: var(--text); }
-.sidebar-item.active { background: var(--text); color: white; }
-.sidebar-item svg { flex-shrink: 0; }
-/* Punkt neben "Creator News", solange die juengste Ausgabe neuer ist als
-   der letzte Besuch der Seite. Der einzige Wiederkehr-Ausloeser in der App. */
-.sidebar-punkt{width:7px;height:7px;border-radius:50%;background:#c2410c;margin-left:auto;flex-shrink:0}
-.sidebar-item.active .sidebar-punkt{background:#fff}
-.sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); }
-.sidebar-legal{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
-.sidebar-legal a{font-size:var(--t-xs);color:var(--subtle);text-decoration:none}
-.sidebar-legal a:hover{color:var(--muted)}
-.sidebar-legal span{font-size:var(--t-xs);color:var(--subtle)}
-.sidebar-user { font-size:var(--t-sm); color: var(--muted); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.btn-sidebar-logout { width: 100%; padding: 10px; border-radius: var(--r-sm); background: var(--surface2); border: 1px solid var(--border-strong); font-family: inherit; font-size:var(--t-sm); font-weight: 500; color: var(--text); cursor: pointer; }
-.btn-sidebar-logout:hover { background: var(--border); }
-
-/* ─── TOPBAR ─── */
+/* ─── TOPBAR ───────────────────────────────────────────────────
+   Traegt nur noch Titel und Avatar. Das Menue sitzt unten; ein
+   Hamburger waere eine zweite Tuer zum selben Raum.
+   ─────────────────────────────────────────────────────────────── */
 .topbar {
   position: sticky; top: 0; z-index: 50;
-  background: rgba(245,244,242,.92); backdrop-filter: blur(16px);
+  background: rgba(246,245,250,.92); backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   padding: 0 var(--page-x); height: var(--nav-h);
   display: flex; align-items: center; justify-content: space-between;
 }
 .topbar-left { display: flex; align-items: center; gap: 10px; }
-.hamburger { width: 36px; height: 36px; border: none; background: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border-radius:var(--r-xs); transition: background .15s; padding: 0; }
-.hamburger:hover { background: var(--surface2); }
-.hamburger span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; }
-.topbar-title { font-size:var(--t-lg); font-weight: 700; letter-spacing: -.03em; }
-.topbar-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--text); color: white; display: grid; place-items: center; font-size:var(--t-sm); font-weight: 600; cursor: pointer; border: 2px solid var(--border); overflow: hidden; flex-shrink: 0; }
-.topbar-avatar img { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+.topbar-title { font-size: var(--t-xl); font-weight: 700; letter-spacing: -.03em; }
+.topbar-avatar { width: 32px; height: 32px; border-radius: var(--r-xs); background: var(--verlauf); color: white; display: grid; place-items: center; font-size:var(--t-sm); font-weight: 600; cursor: pointer; overflow: hidden; flex-shrink: 0; padding: 1.5px; }
+.topbar-avatar img { display: block; width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 7px; }
+
+/* ─── UNTERNAVIGATION ──────────────────────────────────────────
+   Sieben Routen auf fuenf Ziele: BioLink und Media Kit teilen sich
+   einen Tab, Analyse und Brand Ready ebenso. Hier wird innerhalb
+   des Tabs umgeschaltet. Gefuellt wird die Leiste vom Router, damit
+   keine View sie selbst bauen muss.
+   ─────────────────────────────────────────────────────────────── */
+#subnav:empty { display: none; }
+#subnav { display: flex; gap: 6px; padding: var(--s-3) var(--page-x) 0; }
+.subnav-btn {
+  flex: 1; min-height: 38px; padding: 0 14px; border-radius: var(--r-full);
+  border: 1px solid var(--border); background: var(--surface);
+  font-family: inherit; font-size: var(--t-sm); font-weight: var(--fw-sb);
+  color: var(--muted); cursor: pointer; text-decoration: none;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  box-shadow: var(--sh-card);
+}
+.subnav-btn.aktiv { background: var(--text); border-color: var(--text); color: #fff; box-shadow: none; }
 
 /* ─── MAIN ─── */
 .main { display: flex; flex-direction: column; min-height: 100dvh; }
@@ -141,35 +170,62 @@ html, body {
 #content-area { min-height: 40dvh; }
 
 /* ─── FOOTER ─── */
-.app-footer { border-top: 1px solid var(--border); padding: var(--s-4) var(--page-x) calc(var(--s-5) + var(--safe-bottom)); }
+.app-footer { border-top: 1px solid var(--border); padding: var(--s-4) var(--page-x) var(--s-5); }
 .footer-links { display: flex; flex-wrap: wrap; gap: 6px 16px; }
 .footer-links a { font-size:var(--t-sm); color: var(--muted); text-decoration: none; }
 .footer-links a:hover { color: var(--text); text-decoration: underline; }
 .footer-copy { font-size:var(--t-xs); color: var(--subtle); margin-top: 10px; }
 
-/* ─── AUTH MODE (login / register: no menu, no topbar) ─── */
-#shell.auth-mode .sidebar,
-#shell.auth-mode .sidebar-overlay,
-#shell.auth-mode .topbar { display: none !important; }
-#shell.auth-mode .main { padding-left: 0 !important; }
+/* ─── UNTERE LEISTE ────────────────────────────────────────────
+   Fuenf Ziele, keins davon unter "Mehr" versteckt. Der Punkt an
+   "News" ist derselbe Wiederkehr-Ausloeser wie vorher in der Sidebar.
+   ─────────────────────────────────────────────────────────────── */
+.tabbar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+  height: calc(var(--tab-h) + var(--safe-bottom));
+  padding: 8px 4px var(--safe-bottom);
+  background: rgba(255,255,255,.94); backdrop-filter: blur(14px);
+  border-top: 1px solid var(--border);
+  display: flex;
+}
+.tab-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  gap: 5px; padding-top: 2px; text-decoration: none;
+  color: var(--subtle); font-size: var(--t-2xs); font-weight: var(--fw-sb);
+  position: relative; min-width: 0;
+}
+.tab-item svg { flex-shrink: 0; }
+.tab-item.active { color: var(--text); }
+.tab-item.active svg { stroke: var(--v1); }
+.tab-punkt { position: absolute; top: 0; margin-left: 20px; width: 7px; height: 7px; border-radius: 50%; background: var(--v2); }
+.tab-avatar { width: 22px; height: 22px; border-radius: 7px; overflow: hidden; background: var(--verlauf); padding: 1.5px; }
+.tab-avatar img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 5.5px; }
+.tab-item.active .tab-avatar { box-shadow: 0 0 0 1.5px var(--v2); }
+
+/* Platz fuer die Leiste — jede Seite endet ueber ihr, nicht darunter. */
+#shell:not(.auth-mode) .main { padding-bottom: calc(var(--tab-h) + var(--safe-bottom)); }
+
+/* ─── AUTH MODE (login / register / onboarding: keine Navigation) ─── */
+#shell.auth-mode .topbar,
+#shell.auth-mode .tabbar,
+#shell.auth-mode #subnav,
+#shell.auth-mode .app-footer { display: none !important; }
 /* margin:auto statt align-items:center — zentriert, schneidet aber
    lange Formulare (Register) oben nicht ab */
 #shell.auth-mode .page { display: flex; padding: 24px; }
 #shell.auth-mode #content-area { margin: auto; width: 100%; max-width: 380px; min-height: 0; }
 
-/* ─── DESKTOP: sidebar permanently visible ─── */
-@media (min-width: 900px) {
-  .hamburger { display: none; }
-  .sidebar-close { display: none; }
-  .sidebar { transform: translateX(0); box-shadow: none; border-right: 1px solid var(--border); }
-  .sidebar-overlay { display: none; }
-  .main { padding-left: var(--sidebar-w); }
-  .topbar { padding-left: 24px; }
+/* ─── BREITE SCHIRME ───────────────────────────────────────────
+   Die App bleibt eine Spalte und waechst nicht in die Breite: sie
+   wird auf dem Telefon benutzt, und eine 1200 px breite Kachelwand
+   waere ein zweites Layout, das niemand pflegt.
+   ─────────────────────────────────────────────────────────────── */
+@media (min-width: 720px) {
+  .main { max-width: 560px; margin: 0 auto; width: 100%; }
+  .tabbar { max-width: 560px; left: 50%; transform: translateX(-50%); border-left: 1px solid var(--border); border-right: 1px solid var(--border); }
 }
-
-/* ═══ VIEW: LOGIN + REGISTER (aus /login/ und /register/) ═══ */
 .view-auth .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
-.view-auth .logo-mark { width: 36px; height: 36px; border-radius:var(--r-sm); background: var(--text); color: white; display: grid; place-items: center; font-size: 16px; font-weight: 700; }
+.view-auth .logo-mark { width: 36px; height: 36px; border-radius:var(--r-sm); background: var(--verlauf); color: white; display: grid; place-items: center; font-size: 16px; font-weight: 700; }
 .view-auth .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -.04em; }
 .view-auth .card { background: var(--surface); border: 1px solid var(--border); border-radius:var(--r-lg); padding: 28px 24px; }
 .view-auth .card-title { font-size: var(--t-2xl); font-weight: 700; letter-spacing: -.03em; margin-bottom: 4px; }
@@ -235,50 +291,66 @@ html, body {
 .modal-btn-cancel{background:var(--surface2);color:var(--text)}
 .modal-btn-confirm{background:var(--text);color:white;border-color:var(--text)}
 
-/* ═══ VIEW: DASHBOARD (aus /dashboard/) ═══ */
-.greeting-hi{font-size:var(--t-2xl);font-weight:700;letter-spacing:-.04em}
-.greeting-date{font-size:var(--t-sm);color:var(--muted);margin-top:3px}
+/* ═══ VIEW: DASHBOARD (aus /dashboard/) ═══
+   Aufbau: Kopf mit Avatar, darunter EINE Hauptzahl mit ihrem Verlauf, dann
+   die kleineren Kennzahlen, dann was zu tun ist, dann die News. Pro Bildschirm
+   genau eine Hauptsache — vorher standen vier gleich grosse Kacheln neben-
+   einander und keine war wichtiger als die andere. */
+.dash-kopf{display:flex;align-items:center;gap:12px;padding:var(--s-4) var(--page-x) var(--s-4)}
+.dash-kopf-av{width:42px;height:42px;border-radius:var(--r-sm);flex-shrink:0;overflow:hidden;background:var(--verlauf);padding:1.5px;display:grid;place-items:center;color:#fff;font-weight:var(--fw-b)}
+.dash-kopf-av img{width:100%;height:100%;object-fit:cover;display:block;border-radius:9px}
+.dash-kopf-txt{flex:1;min-width:0}
+.dash-kopf-name{font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.03em;line-height:1.2}
+.dash-kopf-sub{font-size:var(--t-xs);color:var(--subtle);margin-top:3px;font-family:var(--mono)}
+.dash-live{flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--green);padding:5px 9px;border-radius:var(--r-full);background:var(--green-bg);border:1px solid var(--green-border)}
+.dash-live i{width:5px;height:5px;border-radius:50%;background:var(--green)}
+/* Tagessatz aus get_daily_text — bleibt, aber als Zeile, nicht als Karte. */
+.dash-satz{padding:0 var(--page-x) var(--s-4);font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
+
+/* Hauptkarte: Zahl, Veraenderung, Verlauf */
+.dash-haupt{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);padding:18px;text-decoration:none}
+.dash-haupt-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.dash-chip{font-family:var(--mono);font-size:var(--t-sm);font-weight:var(--fw-b);padding:4px 9px;border-radius:var(--r-xs);white-space:nowrap}
+.dash-chip.hoch{background:var(--green-bg);color:var(--green)}
+.dash-chip.runter{background:var(--red-bg);color:var(--red)}
+.dash-chip.neutral{background:var(--surface2);color:var(--muted)}
+.dash-spark{margin-top:14px;width:100%;height:68px;display:block}
+
 .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-/* Einzelne Kachel laesst sonst eine leere Haelfte stehen */
 .dash-grid-single{grid-template-columns:1fr}
-/* Begruessungskarte */
-.greeting-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px}
-/* Einrichten-Karten: gestapelte Liste statt halbleerer Kacheln */
-.setup-list{display:flex;flex-direction:column;gap:var(--s-2)}
-.setup-card{display:flex;align-items:center;gap:var(--s-3);padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);text-decoration:none;transition:border-color .15s}
-.setup-card:hover{border-color:var(--border-strong)}
-.setup-card:active{transform:scale(.99)}
-.setup-card-icon{flex-shrink:0;display:grid;place-items:center;color:var(--muted)}
-.setup-card-body{flex:1;min-width:0;display:flex;flex-direction:column}
-.setup-card-title{font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text)}
-.setup-card-sub{font-size:var(--t-xs);color:var(--muted);margin-top:1px}
-.setup-card-arrow{flex-shrink:0;display:grid;place-items:center;color:var(--subtle)}
+
+/* Zeilenliste: Brand Ready, Warteschlange. Eine Karte, Zeilen durch Linien
+   getrennt — statt einzeln schwebender Kaertchen mit Luecken dazwischen. */
+.dash-liste{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);overflow:hidden}
+.dash-zeile{display:flex;align-items:center;gap:13px;padding:14px 16px;min-height:60px;text-decoration:none;color:var(--text)}
+.dash-zeile+.dash-zeile{border-top:1px solid var(--border)}
+.dash-zeile:active{background:var(--bg)}
+.dash-zeile-ic{width:36px;height:36px;flex-shrink:0;border-radius:var(--r-sm);background:var(--surface2);display:grid;place-items:center;color:var(--muted)}
+/* Die Zeilen sind Links, ihr Inhalt also Spans — ohne display:block laufen
+   Titel und Unterzeile in einer Zeile ineinander. */
+.dash-zeile-b{flex:1;min-width:0;display:block}
+.dash-zeile-t{display:block;font-size:var(--t-md);font-weight:var(--fw-sb);letter-spacing:-.01em;line-height:var(--lh-tight)}
+.dash-zeile-s{display:block;font-size:var(--t-xs);color:var(--muted);margin-top:3px;line-height:var(--lh-body)}
+.dash-zeile-pfeil{flex-shrink:0;color:var(--subtle);display:grid;place-items:center}
+.dash-marke{flex-shrink:0;font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-b);padding:4px 8px;border-radius:var(--r-xs);background:var(--akzent-bg);color:var(--akzent-text);border:1px solid var(--akzent-border)}
+.dash-marke.preis{background:var(--surface2);color:var(--muted);border-color:var(--border)}
+
 /* News-Teaser: zwei Schlagzeilen, nicht aufklappbar, fuehrt auf die News-Seite */
-.news-teaser{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);text-decoration:none;overflow:hidden;transition:border-color .15s}
-.news-teaser:hover{border-color:var(--border-strong)}
-.news-teaser-datum{font-size:var(--t-xs);color:var(--subtle);margin-bottom:var(--s-2)}
-.news-teaser-row{display:block;padding:13px 16px}
+.news-teaser{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);text-decoration:none;overflow:hidden}
+.news-teaser-datum{font-size:var(--t-xs);color:var(--subtle);margin-bottom:var(--s-2);font-family:var(--mono)}
+.news-teaser-row{display:block;padding:14px 16px}
 .news-teaser-row+.news-teaser-row{border-top:1px solid var(--border)}
 .news-teaser-meta{display:flex;align-items:center;gap:var(--s-2);margin-bottom:6px}
 .news-teaser-source{font-size:var(--t-xs);color:var(--subtle);margin-left:auto;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.news-teaser-headline{display:block;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text);line-height:var(--lh-tight)}
-/* Ab Tablet reihen sich Kacheln und Einrichten-Karten auf, statt sich zu dehnen */
-@media (min-width: 900px) {
-  .dash-grid, .dash-grid-single { grid-template-columns: repeat(auto-fit, minmax(175px, 230px)); justify-content: start; }
-  .setup-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 340px)); justify-content: start; }
-}
-.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:18px 16px;text-decoration:none;display:flex;flex-direction:column;gap:4px;transition:border-color .15s,transform .1s;cursor:pointer}
-.dash-card:hover{border-color:var(--border-strong)}
-.dash-card:active{transform:scale(.97)}
-.dash-card-dark{background:var(--text);border-color:var(--text)}
-.dash-card-dark .dash-card-label{color:rgba(255,255,255,.5)}
-.dash-card-dark .dash-card-value{color:white}
-.dash-card-dark .dash-card-sub{color:rgba(255,255,255,.45)}
-.dash-card-label{font-size:var(--t-2xs);font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
-.dash-card-value{font-size:var(--t-num);font-weight:700;color:var(--text);letter-spacing:-.04em;line-height:1.1;margin-top:4px}
-.dash-card-sub{font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
-.dash-platform-badge{font-size:var(--t-2xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.03em}
-.pb-tiktok{background:#f0f9ff;color:#0891b2}.pb-instagram{background:#fdf2f8;color:#9d174d}.pb-youtube{background:#fff7ed;color:#c2410c}.pb-meta{background:#eff6ff;color:#1d4ed8}.pb-allgemein{background:var(--surface2);color:var(--muted)}
+.news-teaser-headline{display:block;font-size:var(--t-md);font-weight:var(--fw-sb);color:var(--text);line-height:var(--lh-tight)}
+
+.dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);padding:16px 15px;text-decoration:none;display:flex;flex-direction:column;gap:4px;cursor:pointer}
+.dash-card:active{background:var(--bg)}
+.dash-card-label{font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.1em}
+.dash-card-value{font-size:var(--t-num-sm);font-weight:var(--fw-b);color:var(--text);line-height:1.1;margin-top:6px}
+.dash-card-sub{font-size:var(--t-xs);color:var(--muted);margin-top:2px}
+.dash-platform-badge{font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-b);padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.03em}
+.pb-tiktok{background:#eef7fb;color:#0b6f87}.pb-instagram{background:#fbeff5;color:#8e1a4c}.pb-youtube{background:#fdf2ea;color:#a3450b}.pb-meta{background:#eef1fd;color:#2b3fae}.pb-allgemein{background:var(--surface2);color:var(--muted)}
 
 /* ═══ VIEW: PROFIL ═══
    Oben die Aussenansicht — was auf BioLink und Media Kit wirklich steht.
@@ -629,10 +701,13 @@ body.analyse-dunkel{
   --blue:#60A5FA;  --blue-bg:#0E1D33;
 }
 body.analyse-dunkel .topbar{background:rgba(11,14,19,.92)}
+body.analyse-dunkel .tabbar{background:rgba(11,14,19,.94)}
+/* Die untere Leiste steht auf dunklem Grund: aktives Ziel hell, Rest gedaempft.
+   Nicht in die Regel darunter aufnehmen — die dreht Vorder- auf Hintergrund
+   und liesse das aktive Ziel auf dunklem Grund verschwinden. */
+body.analyse-dunkel .tab-item.active{color:var(--text)}
+body.analyse-dunkel .topbar-avatar{color:#fff}
 /* Umgekehrtes Paar: heller Grund, dunkle Schrift. */
-body.analyse-dunkel .sidebar-logo-mark,
-body.analyse-dunkel .sidebar-item.active,
-body.analyse-dunkel .topbar-avatar,
 body.analyse-dunkel .btn-plat,
 body.analyse-dunkel .plat-btn.active,
 body.analyse-dunkel .btn-save,
@@ -1045,12 +1120,12 @@ a.news-quelle:hover{color:var(--text)}
 .br-head-txt{flex:1;min-width:0}
 .br-teilen-btn{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;min-height:36px;padding:0 13px;border-radius:var(--r-sm);background:var(--surface);color:var(--text);border:1px solid var(--border-strong);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer;margin-top:2px}
 .br-teilen-btn:hover{border-color:var(--text)}
-.br-kopf{display:flex;align-items:center;gap:14px;margin:var(--s-4) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px}
-.br-ring{width:62px;height:62px;flex-shrink:0;position:relative;display:grid;place-items:center}
+.br-kopf{display:flex;align-items:center;gap:16px;margin:var(--s-4) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);padding:18px}
+.br-ring{width:76px;height:76px;flex-shrink:0;position:relative;display:grid;place-items:center}
 .br-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
-.br-ring b{font-size:var(--t-lg);font-weight:var(--fw-b);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.br-ring b{font-size:var(--t-num-sm);font-weight:var(--fw-b);font-variant-numeric:tabular-nums;letter-spacing:-.035em}
 .br-kopf-txt{flex:1;min-width:0}
-.br-kopf-titel{font-size:var(--t-sm);font-weight:var(--fw-sb)}
+.br-kopf-titel{font-size:var(--t-md);font-weight:var(--fw-sb);letter-spacing:-.015em}
 .br-kopf-sub{font-size:var(--t-xs);color:var(--muted);line-height:1.5;margin-top:3px}
 .br-saetze{margin:var(--s-3) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
 .br-satz{padding:13px 16px;font-size:var(--t-sm);line-height:var(--lh-body);color:var(--muted)}
@@ -1077,10 +1152,10 @@ a.news-quelle:hover{color:var(--text)}
 .br-wahl button.nein-an{background:var(--text);border-color:var(--text);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
 .br-zahl{width:70px;min-height:36px;padding:0 10px;border-radius:var(--r-sm);border:1.5px solid var(--border-strong);background:var(--surface);font-family:inherit;font-size:var(--t-input);text-align:center;flex-shrink:0;color:var(--text)}
 /* Handlungsliste */
-.br-tat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.br-tat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);overflow:hidden}
 .br-tat-zeile{display:flex;align-items:flex-start;gap:11px;padding:13px 16px;border-bottom:1px solid var(--border)}
 .br-tat-zeile:last-child{border-bottom:0}
-.br-gewinn{font-size:var(--t-xs);font-weight:var(--fw-b);color:var(--green);background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r-full);padding:3px 8px;white-space:nowrap;font-variant-numeric:tabular-nums;flex-shrink:0;margin-top:1px}
+.br-gewinn{font-size:var(--t-xs);font-weight:var(--fw-b);color:var(--akzent-text);background:var(--akzent-bg);border:1px solid var(--akzent-border);border-radius:var(--r-xs);padding:4px 8px;white-space:nowrap;font-variant-numeric:tabular-nums;flex-shrink:0;margin-top:1px}
 .br-tat-k{flex:1;min-width:0}
 .br-tat-name{font-size:var(--t-sm);font-weight:var(--fw-sb);display:flex;align-items:center;gap:8px}
 .br-tat-name span{flex:1;min-width:0}
@@ -1135,67 +1210,17 @@ a.news-quelle:hover{color:var(--text)}
 <!-- SHELL -->
 <div id="shell">
 
-  <!-- MENÜ — genau einmal definiert, Router setzt .active -->
-  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-      <div class="sidebar-logo"><div class="sidebar-logo-mark">v</div><div class="sidebar-logo-text">viuno</div></div>
-      <button class="sidebar-close" onclick="closeSidebar()" aria-label="Menü schließen"><svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>
-    </div>
-    <nav class="sidebar-nav" id="sidebar-nav">
-      <div class="sidebar-section">Übersicht</div>
-      <a class="sidebar-item" data-route="dashboard" href="#/dashboard">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Dashboard
-      </a>
-      <a class="sidebar-item" data-route="digest" href="#/digest">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        Creator News
-        <span class="sidebar-punkt hidden" id="news-punkt" title="Neue Ausgabe"></span>
-      </a>
-      <a class="sidebar-item" data-route="biolink" href="#/biolink">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        BioLink
-      </a>
-      <a class="sidebar-item" data-route="mediakit" href="#/mediakit">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        Media Kit
-      </a>
-      <a class="sidebar-item" data-route="analytics" href="#/analytics">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Analyse
-      </a>
-      <a class="sidebar-item" data-route="brandready" href="#/brandready">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.26 6.6.72-4.9 4.6 1.3 6.42L12 16.9 6.1 20l1.3-6.42L2.5 8.98l6.6-.72z"/></svg>
-        Brand Ready
-      </a>
-
-      <div class="sidebar-section">Konto</div>
-      <a class="sidebar-item" data-route="profile" href="#/profile">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Profil
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user" id="sidebar-user-email"></div>
-      <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
-      <div class="sidebar-legal">
-        <a href="/legal#impressum">Impressum</a><span>·</span>
-        <a href="/legal#datenschutz">Datenschutz</a><span>·</span>
-        <a href="/legal#agb">AGB</a>
-      </div>
-    </div>
-  </aside>
-
   <div class="main">
     <!-- TOPBAR -->
     <div class="topbar">
       <div class="topbar-left">
-        <button class="hamburger" onclick="openSidebar()"><span></span><span></span><span></span></button>
         <span class="topbar-title" id="topbar-title">Dashboard</span>
       </div>
-      <div class="topbar-avatar" id="user-avatar">?</div>
+      <a class="topbar-avatar" id="user-avatar" href="#/profile" aria-label="Profil">?</a>
     </div>
+
+    <!-- UNTERNAVIGATION — vom Router gefuellt, sonst leer und unsichtbar -->
+    <div id="subnav"></div>
 
     <!-- PAGE -->
     <div class="page">
@@ -1214,8 +1239,32 @@ a.news-quelle:hover{color:var(--text)}
       <div class="footer-copy">© <span id="footer-year"></span> viuno</div>
     </footer>
   </div>
-</div>
 
+  <!-- UNTERE LEISTE — genau einmal definiert, Router setzt .active -->
+  <nav class="tabbar" id="tabbar">
+    <a class="tab-item" data-tab="start" href="#/dashboard">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Start
+    </a>
+    <a class="tab-item" data-tab="seiten" href="#/biolink">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      Seiten
+    </a>
+    <a class="tab-item" data-tab="analyse" href="#/analytics">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Analyse
+    </a>
+    <a class="tab-item" data-tab="news" href="#/digest">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      News
+      <span class="tab-punkt hidden" id="news-punkt" title="Neue Ausgabe"></span>
+    </a>
+    <a class="tab-item" data-tab="profil" href="#/profile">
+      <span class="tab-avatar" id="tab-avatar"></span>
+      Profil
+    </a>
+  </nav>
+</div>
 <!-- TOAST -->
 <div class="toast-wrap hidden" id="toast-wrap"><div class="toast" id="toast-msg"></div></div>
 
@@ -1397,9 +1446,13 @@ window.closeModal = function(id) {
 window.openSheet  = function(id){ document.getElementById(id).classList.remove('hidden'); document.body.style.overflow='hidden' }
 window.closeSheet = function(id){ document.getElementById(id).classList.add('hidden'); document.body.style.overflow='' }
 
-/* ─── Sidebar (aus /dashboard/) ─── */
-window.openSidebar  = () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('open'); document.body.style.overflow = 'hidden' }
-window.closeSidebar = () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('open'); document.body.style.overflow = '' }
+/* Die Sidebar ist durch die untere Leiste ersetzt. Die beiden Funktionen
+   bleiben als Attrappen stehen, weil der Router closeSidebar() bei jedem
+   Routenwechsel aufruft und ein ReferenceError dort die ganze App anhalten
+   wuerde. (/extras/ bringt seine eigene Sidebar samt sidebar.js mit und ist
+   von hier nicht betroffen.) */
+window.openSidebar  = () => {}
+window.closeSidebar = () => {}
 
 /* wie in den Einzelseiten: abmelden und zurueck auf die Website */
 window.logout = async function() {
@@ -1510,10 +1563,41 @@ async function router() {
   await route.render(area, ctx)
 }
 
+/* ─────────────────────────────────────────────
+   Sieben Routen, fuenf Ziele
+   BioLink und Media Kit sind dieselbe Sache — die oeffentliche Seite —
+   und teilen sich Profil, Kontakt-E-Mail, Nische und den Generator.
+   Analyse und Brand Ready haengen beide an analyse_stats; Brand Ready
+   zeigt ohne Analyse ohnehin nur die Sperrtafel. Deshalb je ein Tab
+   mit Unternavigation statt zwei Eintraege oder ein "Mehr"-Menue.
+   ───────────────────────────────────────────── */
+const TABS = {
+  dashboard:  'start',
+  biolink:    'seiten',   mediakit:   'seiten',
+  analytics:  'analyse',  brandready: 'analyse',
+  digest:     'news',
+  profile:    'profil'
+}
+const SUBNAVS = {
+  seiten:  [{ route: 'biolink',   label: 'BioLink'    }, { route: 'mediakit',   label: 'Media Kit'   }],
+  analyse: [{ route: 'analytics', label: 'Analyse'    }, { route: 'brandready', label: 'Brand Ready' }]
+}
+
 function setActiveMenuItem(name) {
-  document.querySelectorAll('.sidebar-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.route === name)
+  const tab = TABS[name] || null
+  document.querySelectorAll('.tab-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.tab === tab)
   })
+
+  /* Die Unternavigation baut der Router, nicht die View: sonst muesste
+     jede der vier Views dieselbe Leiste selbst erzeugen und beim naechsten
+     Umbau wuerden drei davon vergessen. */
+  const sub = document.getElementById('subnav')
+  if (!sub) return
+  const eintraege = SUBNAVS[tab]
+  sub.innerHTML = !eintraege ? '' : eintraege.map(e =>
+    `<a class="subnav-btn${e.route === name ? ' aktiv' : ''}" href="#/${e.route}">${escHtml(e.label)}</a>`
+  ).join('')
 }
 
 /* Wie in /dashboard/: nur ein explizites false erzwingt Onboarding. */
@@ -1528,7 +1612,9 @@ async function loadSession() {
   const { data: { session } } = await sb.auth.getSession()
   state.session = session || null
   state.profile = null
-  if (session) await loadProfile(session.user.id)
+  /* Parallel, nicht nacheinander: die Signatur ist eine einzelne Zeile und
+     soll den ersten Aufbau nicht um eine zweite Rundreise verzoegern. */
+  if (session) await Promise.all([loadProfile(session.user.id), ladeSignatur(session.user.id)])
   paintUser()
 }
 
@@ -1540,15 +1626,36 @@ async function loadProfile(uid) {
 }
 
 function paintUser() {
-  const av = document.getElementById('user-avatar')
-  const mail = document.getElementById('sidebar-user-email')
-  if (!state.session) { av.textContent = '?'; mail.textContent = ''; return }
+  const av  = document.getElementById('user-avatar')
+  const tab = document.getElementById('tab-avatar')
+  if (!state.session) { if (av) av.textContent = '?'; if (tab) tab.innerHTML = ''; return }
   const p = state.profile
   const name = p?.display_name || p?.full_name || state.session.user.email || '?'
-  if (p?.profile_image_url) av.innerHTML = `<img src="${escHtml(p.profile_image_url)}" alt="">`
-  else av.textContent = name[0].toUpperCase()
-  av.title = name
-  mail.textContent = state.session.user.email || ''
+  const bild = p?.profile_image_url
+  if (av) {
+    if (bild) av.innerHTML = `<img src="${escHtml(bild)}" alt="">`
+    else av.textContent = name[0].toUpperCase()
+    av.title = name
+  }
+  /* Derselbe Avatar noch einmal unten in der Leiste: er ist dort das
+     Symbol fuer "Profil" und zugleich der Beleg, welches Foto oeffentlich
+     steht — die Frage, die auf dieser Seite am haeufigsten gestellt wird. */
+  if (tab) tab.innerHTML = bild ? `<img src="${escHtml(bild)}" alt="">` : ''
+}
+
+/* ─────────────────────────────────────────────
+   Signaturfarbe
+   Die App traegt das Design, das der Creator fuer seine BioLink-Seite
+   gewaehlt hat. Faellt die Abfrage aus, bleibt "color" stehen — die App
+   ist dann nicht falsch gefaerbt, sondern im Standard.
+   ───────────────────────────────────────────── */
+async function ladeSignatur(uid) {
+  try {
+    const { data } = await sb.from('biolink_viuno').select('theme').eq('user_id', uid).maybeSingle()
+    const t = data?.theme
+    if (t === 'dark' || t === 'clean') document.documentElement.setAttribute('data-thema', t)
+    else document.documentElement.removeAttribute('data-thema')
+  } catch (e) { /* Standard bleibt stehen */ }
 }
 
 /* ─────────────────────────────────────────────
@@ -2109,7 +2216,7 @@ async function renderDashboard(area, ctx) {
      mediakit_aufrufe) — dieselbe Quelle, aus der auch die BioLink- und
      die Media-Kit-View lesen. */
   const [profileRes,analyticsRes,digestRes,dailyTextRes,statsRes] = await Promise.all([
-    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_active,mediakit_active,bio_views_last_7_days,mediakit_views_last_7_days').eq('id',uid).single(),
+    sb.from('users').select('full_name,display_name,profile_image_url,total_followers,bio_active,mediakit_active,bio_views_last_7_days,mediakit_views_last_7_days,instagram_handle,tiktok_handle').eq('id',uid).single(),
     sb.from('creator_analytics').select('platform,followers,followers_prev,followers_change,avg_likes,avg_views,avg_saves,engagement_rate,engagement_rate_prev,fetched_at').eq('user_id',uid).eq('platform','instagram').order('fetched_at',{ascending:false}).limit(10),
     /* Aus derselben View wie die News-Seite: nach relevance_score sortiert.
        Vorher stand hier cards.slice(0,2) auf dem rohen jsonb — der Teaser
@@ -2151,67 +2258,102 @@ async function renderDashboard(area, ctx) {
   const bioActive   = p?.bio_active===true
   const mkActive    = p?.mediakit_active===true
 
-  const greetText = dailyText || (()=>{
-    const h=new Date().getHours()
-    return h<12?`Guten Morgen, ${name.split(' ')[0]}.`:h<18?`Guten Tag, ${name.split(' ')[0]}.`:`Guten Abend, ${name.split(' ')[0]}.`
-  })()
+  /* Der Tagessatz aus get_daily_text steht jetzt unter dem Namen statt in einer
+     eigenen Begruessungskarte. Ohne Satz das Datum — eine Begruessung direkt
+     unter dem eigenen Namen waere doppelt. */
+  const greetText = dailyText || new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})
 
   /* B5: Bezugspunkt ist die vorherige Analyse derselben Plattform, nicht "diese Woche". */
   const igPrev = statsRows.filter(r=>r.platform==='instagram')[1] || null
+  const seitWann = igPrev?.created_at
+    ? 'seit ' + new Date(igPrev.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})
+    : 'seit letzter Analyse'
+
+  /* Verlauf statt Einzelwert: analyse_stats liegt je Kanal mehrfach vor, das
+     ist bereits eine Kurve. Gezeichnet wird der Kanal mit den meisten
+     Messungen -- zwei Plattformen in eine Linie zu addieren wuerde einen
+     Sprung zeigen, wo nur eine zweite Messung dazugekommen ist. */
+  const reihe = pf => statsRows.filter(r=>r.platform===pf && r.followers!=null)
+                               .slice().reverse().map(r=>+r.followers)
+  const igReihe = reihe('instagram'), ttReihe = reihe('tiktok')
+  const sparkPf  = ttReihe.length > igReihe.length ? 'TikTok' : 'Instagram'
+  const sparkPkt = ttReihe.length > igReihe.length ? ttReihe  : igReihe
+
+  const kanaele = []
+  if(p?.instagram_handle) kanaele.push('@'+String(p.instagram_handle).replace(/^@/,''))
+  else if(p?.tiktok_handle) kanaele.push('@'+String(p.tiktok_handle).replace(/^@/,''))
+  const seitenLive = (bioActive?1:0) + (mkActive?1:0)
+
+  /* Kleine Kennzahlen: nur was tatsaechlich live ist. */
   const tiles=[]
-  if(hasAnalyse) tiles.push({dark:true,href:'#/analytics',label:'Follower',value:fmt(totalFollowers),
-    sub:follDelta!=null
-      ?(follDelta>=0?'↑ ':'↓ ')+Math.abs(follDelta).toLocaleString('de-DE')+(igPrev?.created_at?' seit '+new Date(igPrev.created_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}):' seit letzter Analyse')
-      :'Gesamt'})
   if(bioActive) tiles.push({href:'#/biolink',label:'BioLink',value:fmt(p?.bio_views_last_7_days),sub:'Aufrufe · 7 Tage'})
   if(mkActive)  tiles.push({href:'#/mediakit',label:'Media Kit',value:fmt(p?.mediakit_views_last_7_days),sub:'Aufrufe · 7 Tage'})
 
+  /* Warteschlange: was Punkte bringt, oben. Aus "Einrichten" wurde eine
+     Liste mit Marke rechts -- der Preis steht dort, wo geklickt wird. */
   const setup=[]
   if(!bioActive)  setup.push({icon:'link',href:'#/biolink',title:'BioLink-Seite erstellen',sub:'Deine Visitenkarte für Brands'})
-  /* P3: Der Preis gehoert dorthin, wo geklickt wird. Vorher stand er ausschliesslich
-     auf dem Kaufbutton -- der Weg dahin versprach implizit etwas Kostenloses. */
-  if(!hasAnalyse) setup.push({icon:'barChart',href:'#/analytics',title:'Analyse starten',sub:'Was deine Top-Posts verbindet — 9,99 € je Kanal'})
+  if(!hasAnalyse) setup.push({icon:'barChart',href:'#/analytics',title:'Analyse starten',sub:'Was deine Top-Posts verbindet',marke:'9,99 €',markeKlasse:'preis'})
   if(!mkActive)   setup.push({icon:'fileText',href:'#/mediakit',title:'Media Kit erstellen',sub:'Reichweite und Zahlen für Marken'})
-  /* Der Brand-Ready-Check gehoert hierher, sobald es Daten fuer ihn gibt --
-     ohne Analyse hat er nichts zu rechnen und waere ein Link ins Leere. */
   if(hasAnalyse)  setup.push({icon:'star',href:'#/brandready',title:'Brand-Ready-Check ansehen',sub:'Wie eine Marke deinen Kanal heute sieht'})
 
   document.getElementById('skeleton-area').classList.add('hidden')
   const content=document.getElementById('dashboard-content')
   content.classList.remove('hidden')
   content.innerHTML = `
-    <div class="section" style="padding-top:var(--s-4)">
-      <div class="greeting-card">
-        <div class="greeting-hi">${escHtml(greetText)}</div>
-        <div class="greeting-date">${new Date().toLocaleDateString('de-DE',{weekday:'long',day:'2-digit',month:'long'})}</div>
+    <div class="dash-kopf">
+      <div class="dash-kopf-av">${p?.profile_image_url
+        ? `<img src="${escHtml(p.profile_image_url)}" alt="">`
+        : escHtml(name[0].toUpperCase())}</div>
+      <div class="dash-kopf-txt">
+        <div class="dash-kopf-name">${escHtml(name)}</div>
+        ${kanaele.length?`<div class="dash-kopf-sub">${escHtml(kanaele[0])}</div>`:''}
       </div>
+      ${seitenLive?`<span class="dash-live"><i></i>${seitenLive} ${seitenLive===1?'SEITE':'SEITEN'} LIVE</span>`:''}
     </div>
 
-    <div class="section">
+    ${greetText?`<div class="dash-satz">${escHtml(greetText)}</div>`:''}
+
+    ${hasAnalyse?`<div class="section" style="padding-top:0">
+      <a class="dash-haupt" href="#/analytics">
+        <div class="dash-haupt-top">
+          <span class="dash-card-label">FOLLOWER GESAMT</span>
+          ${follDelta!=null
+            ? `<span class="dash-chip ${follDelta>0?'hoch':follDelta<0?'runter':'neutral'}">${follDelta>=0?'+':'−'}${Math.abs(follDelta).toLocaleString('de-DE')}</span>`
+            : ''}
+        </div>
+        <div class="dash-card-value" style="font-size:var(--t-num);margin-top:10px">${fmt(totalFollowers)}</div>
+        <div class="dash-card-sub">${follDelta!=null?escHtml(seitWann):'Erste Messung'}${sparkPkt.length>=3?' · Verlauf '+escHtml(sparkPf):''}</div>
+        ${dashSparkline(sparkPkt)}
+      </a>
+    </div>`:''}
+
+    ${tiles.length?`<div class="section">
       <div class="dash-grid${tiles.length===1?' dash-grid-single':''}">
-        ${tiles.map(t=>`<a class="dash-card${t.dark?' dash-card-dark':''}" href="${t.href}">
+        ${tiles.map(t=>`<a class="dash-card" href="${t.href}">
           <div class="dash-card-label">${escHtml(t.label)}</div>
           <div class="dash-card-value">${t.value}</div>
           <div class="dash-card-sub">${escHtml(t.sub)}</div>
         </a>`).join('')}
       </div>
-    </div>
+    </div>`:''}
 
     ${setup.length?`<div class="section">
-      <div class="section-header"><div class="section-title">Einrichten</div></div>
-      <div class="setup-list">
-        ${setup.map(it=>`<a class="setup-card" href="${it.href}">
-          <span class="setup-card-icon">${icon(it.icon,20)}</span>
-          <span class="setup-card-body">
-            <span class="setup-card-title">${escHtml(it.title)}</span>
-            <span class="setup-card-sub">${escHtml(it.sub)}</span>
+      <div class="section-header"><div class="section-title">Zu erledigen</div></div>
+      <div class="dash-liste">
+        ${setup.map(it=>`<a class="dash-zeile" href="${it.href}">
+          <span class="dash-zeile-ic">${icon(it.icon,18)}</span>
+          <span class="dash-zeile-b">
+            <span class="dash-zeile-t">${escHtml(it.title)}</span>
+            <span class="dash-zeile-s">${escHtml(it.sub)}</span>
           </span>
-          <span class="setup-card-arrow">${icon('chevronRight',16)}</span>
+          ${it.marke?`<span class="dash-marke ${it.markeKlasse||''}">${escHtml(it.marke)}</span>`
+                    :`<span class="dash-zeile-pfeil">${icon('chevronRight',16)}</span>`}
         </a>`).join('')}
       </div>
     </div>`:''}
 
-    ${cards.length?`<div class="section" style="padding-bottom:calc(var(--s-6) + var(--safe-bottom))">
+    ${cards.length?`<div class="section" style="padding-bottom:var(--s-6)">
       <div class="section-header">
         <div class="section-title">Creator News</div>
         <a class="section-link" href="#/digest">Alle ${icon('chevronRight',14)}</a>
@@ -2226,8 +2368,40 @@ async function renderDashboard(area, ctx) {
           <span class="news-teaser-headline">${escHtml(c.headline||'')}</span>
         </span>`).join('')}
       </a>
-    </div>`:'<div style="padding-bottom:calc(var(--s-6) + var(--safe-bottom))"></div>'}
+    </div>`:'<div style="padding-bottom:var(--s-6)"></div>'}
   `
+}
+
+/* Verlaufslinie fuer die Hauptkarte.
+   Unter drei Messungen wird nichts gezeichnet: zwei Punkte sind immer eine
+   Gerade und behaupten einen Trend, den es nicht gibt. Die Flaeche ist
+   bewusst nur eine Andeutung -- die Zahl ist die Aussage, die Linie der
+   Zusatz. Skaliert wird auf min/max der Reihe, nicht auf Null, sonst
+   verschwindet jede Bewegung bei fuenfstelligen Followerzahlen. */
+function dashSparkline(werte){
+  if(!Array.isArray(werte) || werte.length < 3) return ''
+  const W=320, H=68, P=5
+  const min=Math.min(...werte), max=Math.max(...werte)
+  const spanne = (max-min) || 1
+  const x = i => P + i*(W-2*P)/(werte.length-1)
+  const y = v => P + (1-(v-min)/spanne)*(H-2*P)
+  const punkte = werte.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`)
+  const linie  = 'M'+punkte.join(' L')
+  const flaeche= linie+` L${x(werte.length-1).toFixed(1)},${H} L${x(0).toFixed(1)},${H} Z`
+  const letztX = x(werte.length-1).toFixed(1), letztY = y(werte[werte.length-1]).toFixed(1)
+  return `<svg class="dash-spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="dash-spark-linie" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="var(--v1)"/><stop offset=".55" stop-color="var(--v2)"/><stop offset="1" stop-color="var(--v3)"/>
+      </linearGradient>
+      <linearGradient id="dash-spark-flaeche" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--v2)" stop-opacity=".22"/><stop offset="1" stop-color="var(--v2)" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="${flaeche}" fill="url(#dash-spark-flaeche)"/>
+    <path d="${linie}" fill="none" stroke="url(#dash-spark-linie)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <circle cx="${letztX}" cy="${letztY}" r="3.4" fill="var(--v3)"/>
+  </svg>`
 }
 
 /* Sagt, wie frisch der Teaser ist. Ohne diese Zeile war nicht erkennbar,
@@ -2967,6 +3141,10 @@ window.pickThemeCard=async function(theme){
     el.classList.toggle('selected',el.getAttribute('data-theme-card')===theme)
   })
   renderBioEditMenu()
+  /* Sofort, nicht erst beim naechsten Laden: das Design der Seite ist auch
+     das Design der App — wer hier waehlt, soll die Wirkung gleich sehen. */
+  if(theme==='dark'||theme==='clean')document.documentElement.setAttribute('data-thema',theme)
+  else document.documentElement.removeAttribute('data-thema')
   await sb.from('biolink_viuno').upsert({user_id:blv.uid,theme,default_language:blv.lang,updated_at:new Date().toISOString()},{onConflict:'user_id'})
   if(!blv)return
   if(blv.biolink){blv.biolink.theme=theme}else{blv.biolink={user_id:blv.uid,theme,default_language:blv.lang}}
@@ -3174,6 +3352,9 @@ window.saveThemeLang=async function(){
   const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   await sb.from('biolink_viuno').upsert({user_id:blv.uid,theme:blv.theme,default_language:blv.lang,updated_at:new Date().toISOString()},{onConflict:'user_id'})
   if(!blv)return
+  /* Wie in pickThemeCard: die Signatur der App folgt dem Design der Seite. */
+  if(blv.theme==='dark'||blv.theme==='clean')document.documentElement.setAttribute('data-thema',blv.theme)
+  else document.documentElement.removeAttribute('data-thema')
   if(blv.biolink){blv.biolink.theme=blv.theme;blv.biolink.default_language=blv.lang}else{blv.biolink={user_id:blv.uid,theme:blv.theme,default_language:blv.lang}}
   btn.disabled=false;btn.textContent='Speichern'
   // Theme-Änderung erfordert Neu-Generierung (einzige Änderung die nicht live ist)
@@ -6345,7 +6526,17 @@ function paintProfile(){
       </div>
     </div>
 
-    <div class="section" style="padding-bottom:calc(8px + var(--safe-bottom))">
+    <div class="section">
+      <div class="pf-liste">
+        <button class="pf-zeile" onclick="logout()">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Abmelden</span>
+            <span class="pf-zeile-sub">${escHtml(pv.user.email||'')}</span></span>
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section" style="padding-bottom:8px">
       <div class="pf-liste">
         <button class="pf-zeile gefahr" onclick="openDeleteModal()">
           <span class="pf-zeile-t"><span class="pf-zeile-label">Konto löschen</span></span>
@@ -7012,15 +7203,20 @@ function brZeichnen() {
   const fertig  = r.kriterien.filter(x => x.punkte != null && x.punkte >= x.max)
   const ruhend  = r.kriterien.filter(x => x.punkte == null)
 
-  const u = 2 * Math.PI * 26
+  const u = 2 * Math.PI * 32
   const an = r.max > 0 ? r.punkte / r.max * u : 0
 
   el.innerHTML = `
     <div class="br-kopf">
       <div class="br-ring">
-        <svg width="62" height="62" viewBox="0 0 62 62" aria-hidden="true">
-          <circle cx="31" cy="31" r="26" fill="none" stroke="var(--surface2)" stroke-width="7"/>
-          <circle cx="31" cy="31" r="26" fill="none" stroke="var(--text)" stroke-width="7"
+        <svg width="76" height="76" viewBox="0 0 76 76" aria-hidden="true">
+          <defs>
+            <linearGradient id="br-ring-verlauf" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="var(--v1)"/><stop offset=".5" stop-color="var(--v2)"/><stop offset="1" stop-color="var(--v3)"/>
+            </linearGradient>
+          </defs>
+          <circle cx="38" cy="38" r="32" fill="none" stroke="var(--surface2)" stroke-width="8"/>
+          <circle cx="38" cy="38" r="32" fill="none" stroke="url(#br-ring-verlauf)" stroke-width="8"
             stroke-linecap="round" stroke-dasharray="${an.toFixed(1)} ${u.toFixed(1)}"/>
         </svg><b>${r.punkte}</b></div>
       <div class="br-kopf-txt">
