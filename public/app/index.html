@@ -111,10 +111,6 @@ html, body {
 .sidebar-punkt{width:7px;height:7px;border-radius:50%;background:#c2410c;margin-left:auto;flex-shrink:0}
 .sidebar-item.active .sidebar-punkt{background:#fff}
 .sidebar-footer { padding: 14px 16px; border-top: 1px solid var(--border); }
-.sidebar-pro-banner{background:var(--text);border-radius:var(--r-sm);padding:12px 14px;margin-bottom:12px;display:none;align-items:center;gap:10px;color:white}
-.sidebar-pro-banner.show{display:flex}
-.sidebar-pro-title{font-size:var(--t-sm);font-weight:700;color:white;margin-bottom:1px}
-.sidebar-pro-sub{font-size:var(--t-2xs);color:rgba(255,255,255,.55)}
 .sidebar-legal{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
 .sidebar-legal a{font-size:var(--t-xs);color:var(--subtle);text-decoration:none}
 .sidebar-legal a:hover{color:var(--muted)}
@@ -284,20 +280,60 @@ html, body {
 .dash-platform-badge{font-size:var(--t-2xs);font-weight:700;padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.03em}
 .pb-tiktok{background:#f0f9ff;color:#0891b2}.pb-instagram{background:#fdf2f8;color:#9d174d}.pb-youtube{background:#fff7ed;color:#c2410c}.pb-meta{background:#eff6ff;color:#1d4ed8}.pb-allgemein{background:var(--surface2);color:var(--muted)}
 
-/* ═══ VIEW: PROFIL (aus /profile/) ═══ */
-.profile-hero{padding:24px 20px 0;display:flex;align-items:flex-start;gap:16px}
-.photo-wrap{position:relative;width:72px;height:72px;flex-shrink:0;cursor:pointer}
-.profile-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border-strong);background:var(--surface2)}
-.profile-photo-fallback{width:72px;height:72px;border-radius:50%;flex-shrink:0;background:var(--text);color:white;display:grid;place-items:center;font-size:26px;font-weight:700;border:2px solid var(--border-strong)}
-.photo-edit-btn{position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--text);color:white;display:grid;place-items:center;border:2px solid var(--surface);pointer-events:none}
-.profile-info{flex:1;min-width:0}
-.profile-name{font-size:var(--t-2xl);font-weight:700;letter-spacing:-.03em;color:var(--text)}
-.profile-handle{font-size:var(--t-sm);color:var(--muted);margin-top:2px}
-.profile-plan{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:var(--t-xs);font-weight:600;padding:3px 10px;border-radius:var(--r-full)}
-.plan-free{background:var(--surface2);color:var(--muted);border:1px solid var(--border-strong)}
-.plan-pro{background:#111;color:white}
+/* ═══ VIEW: PROFIL ═══
+   Oben die Aussenansicht — was auf BioLink und Media Kit wirklich steht.
+   Darunter die Gruppen als kompakte Zeilen; jede oeffnet ein Sheet, gleiche
+   Mechanik wie das Media-Kit-Edit-Menue. Bis 14.09.2026 war das ein einziges
+   langes Formular mit einem Sammel-Speichern, in dem oeffentliche und private
+   Angaben ununterscheidbar nebeneinander standen. */
+.pf-aussen{padding:20px var(--page-x) 0}
+.pf-aussen-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.pf-aussen-edit{margin-left:auto;font-size:var(--t-xs);font-weight:var(--fw-sb);color:var(--muted);background:none;border:0;cursor:pointer;padding:4px 6px;border-radius:var(--r-xs)}
+.pf-aussen-edit:hover{background:var(--surface2);color:var(--text)}
+.pf-karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);overflow:hidden}
+.pf-karte-top{padding:22px 20px 18px;text-align:center;border-bottom:1px solid var(--border)}
+.pf-av{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;position:relative;cursor:pointer}
+.pf-av img{width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--surface2)}
+.pf-av-fallback{width:72px;height:72px;border-radius:50%;background:var(--text);color:#fff;display:grid;place-items:center;font-size:27px;font-weight:700}
+.pf-av-btn{position:absolute;bottom:0;right:0;width:22px;height:22px;border-radius:50%;background:var(--surface);color:var(--muted);display:grid;place-items:center;border:1px solid var(--border-strong);pointer-events:none}
+.pf-name{font-size:var(--t-2xl);font-weight:var(--fw-b);letter-spacing:-.03em}
+.pf-tag{display:inline-block;margin-top:7px;font-size:var(--t-xs);color:var(--muted);background:var(--surface2);border:1px solid var(--border-strong);border-radius:var(--r-full);padding:3px 11px}
+.pf-bio{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin:11px auto 0;max-width:300px}
+.pf-bio.leer{color:var(--subtle);font-style:italic}
+.pf-kanaele{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.pf-kanal{font-size:var(--t-xs);font-weight:var(--fw-md);color:var(--text);background:var(--bg);border:1px solid var(--border-strong);border-radius:var(--r-full);padding:5px 12px}
+.pf-kanal.leer{color:var(--subtle);border-style:dashed;background:transparent}
+.pf-mail{font-size:var(--t-xs);color:var(--muted);margin-top:14px}
+.pf-mail.leer{color:var(--subtle)}
+.pf-links{display:flex}
+.pf-links a,.pf-links span{flex:1;padding:12px 8px;text-align:center;font-size:var(--t-xs);font-weight:var(--fw-sb);color:var(--muted);text-decoration:none;border-right:1px solid var(--border)}
+.pf-links a:last-child,.pf-links span:last-child{border-right:none}
+.pf-links a:hover{background:var(--bg);color:var(--text)}
+.pf-links span{color:var(--subtle);font-weight:var(--fw-md)}
+.pf-hinweis{font-size:var(--t-xs);color:var(--subtle);text-align:center;margin-top:9px;line-height:var(--lh-body)}
+.pf-liste{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);overflow:hidden}
+.pf-zeile{width:100%;display:flex;align-items:center;gap:12px;padding:13px 16px;background:none;border:0;border-bottom:1px solid var(--border);text-align:left;cursor:pointer;min-height:var(--field-h);font-family:inherit}
+.pf-zeile:last-child{border-bottom:none}
+.pf-zeile:hover{background:var(--bg)}
+.pf-zeile-t{flex:1;min-width:0;display:block}
+.pf-zeile-label{display:block;font-size:var(--t-md);color:var(--text)}
+.pf-zeile-sub{display:block;font-size:var(--t-xs);color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:var(--lh-body)}
+.pf-badge{font-size:var(--t-2xs);font-weight:var(--fw-sb);padding:3px 8px;border-radius:var(--r-full);flex-shrink:0}
+.pf-badge.ok{background:var(--green-bg);color:var(--green)}
+.pf-badge.offen{background:var(--orange-bg);color:var(--orange)}
+.pf-pfeil{color:var(--subtle);flex-shrink:0}
+.pf-zeile.gefahr .pf-zeile-label{color:var(--red)}
+.pf-fuss{font-size:var(--t-xs);color:var(--subtle);margin-top:8px;line-height:var(--lh-body)}
+.pf-regen{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 13px;border-radius:var(--r-sm);background:var(--blue-bg);color:var(--blue);font-size:var(--t-xs);line-height:var(--lh-body)}
+.pf-regen.fehler{background:var(--orange-bg);color:var(--orange)}
+.pf-regen button{background:none;border:0;color:inherit;font-family:inherit;font-size:var(--t-xs);font-weight:var(--fw-sb);text-decoration:underline;cursor:pointer;padding:0;margin-left:auto;flex-shrink:0}
+.pf-note{padding:12px 14px;margin:0 20px 12px;border-radius:var(--r-sm);background:var(--blue-bg);color:var(--blue);font-size:var(--t-xs);line-height:var(--lh-body)}
+.pf-schalter{position:relative;width:44px;height:26px;border-radius:var(--r-full);background:var(--border-strong);border:none;cursor:pointer;flex-shrink:0;transition:background .15s}
+.pf-schalter::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s}
+.pf-schalter.an{background:var(--green)}
+.pf-schalter.an::after{transform:translateX(18px)}
+.pf-schalter:disabled{opacity:.5}
 .section-label{font-size:var(--t-2xs);font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
-.edit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
 .edit-card .field{margin-bottom:10px}
 .edit-card .field:last-child{margin-bottom:0}
 .edit-card .field label{font-size:var(--t-xs)}
@@ -309,13 +345,7 @@ html, body {
 .niche-btn.active{background:var(--text);color:white;border-color:var(--text)}
 .btn-save{width:100%;padding:13px;margin-top:14px;background:var(--text);color:white;border:none;border-radius:var(--r-sm);font-family:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer}
 .btn-save:disabled{opacity:.5;cursor:not-allowed}
-.save-success{font-size:var(--t-sm);color:var(--green);text-align:center;margin-top:8px;min-height:18px}
-.danger-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
-.danger-row{display:flex;align-items:center;justify-content:space-between}
-.danger-title{font-size:var(--t-sm);font-weight:600;color:var(--text)}
-.danger-sub{font-size:var(--t-xs);color:var(--muted);margin-top:2px}
 .btn-danger{padding:8px 16px;border-radius:var(--r-sm);background:var(--red-bg);color:var(--red);border:1px solid rgba(192,57,43,.2);font-family:inherit;font-size:var(--t-sm);font-weight:600;cursor:pointer;white-space:nowrap}
-.username-hint{font-size:var(--t-xs);color:var(--subtle);margin-top:5px}
 
 /* ═══ VIEW: BIOLINK (aus /biolink/) ═══ */
 .status-banner{margin:var(--s-3) var(--page-x) 0;padding:12px 16px;border-radius:var(--r-md);display:flex;align-items:center;gap:10px;border:1px solid}
@@ -564,7 +594,6 @@ body.analyse-dunkel .topbar{background:rgba(11,14,19,.92)}
 /* Umgekehrtes Paar: heller Grund, dunkle Schrift. */
 body.analyse-dunkel .sidebar-logo-mark,
 body.analyse-dunkel .sidebar-item.active,
-body.analyse-dunkel .sidebar-pro-banner,
 body.analyse-dunkel .topbar-avatar,
 body.analyse-dunkel .btn-plat,
 body.analyse-dunkel .plat-btn.active,
@@ -975,10 +1004,6 @@ a.news-quelle:hover{color:var(--text)}
       </a>
     </nav>
     <div class="sidebar-footer">
-      <div class="sidebar-pro-banner" id="sidebar-pro-banner">
-        <svg class="icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>
-        <div><div class="sidebar-pro-title">viuno Pro</div><div class="sidebar-pro-sub">Managed Creator</div></div>
-      </div>
       <div class="sidebar-user" id="sidebar-user-email"></div>
       <button class="btn-sidebar-logout" onclick="logout()">Abmelden</button>
       <div class="sidebar-legal">
@@ -1334,8 +1359,6 @@ function paintUser() {
   else av.textContent = name[0].toUpperCase()
   av.title = name
   mail.textContent = state.session.user.email || ''
-  /* Pro-Banner wie in den Einzelseiten */
-  document.getElementById('sidebar-pro-banner')?.classList.toggle('show', p?.subscription_type === 'pro')
 }
 
 /* ─────────────────────────────────────────────
@@ -2685,20 +2708,32 @@ window.pickThemeCard=async function(theme){
    Hintergrund, ohne das Vollbild-Overlay von generatePage(). bio_active wird
    frisch gelesen: die Function wuerde eine Seite sonst neu anlegen und
    veroeffentlichen, die der User nie erstellt hat. */
-async function regenerateBioPageQuietly(uid){
+/* Neubau der erzeugten BioLink-Seite.
+   Noetig ist er nur fuer die eingebackenen Kopf-Tags (title, description,
+   canonical, og:*) — also bei bio, profile_image_url, display_name und Theme.
+   Name, Bio, Kanaele und Kontaktadresse liest die Seite zur Laufzeit aus
+   biopage_v2; dafuer braucht es keinen Commit.
+   Gibt das Ergebnis zurueck, damit das Profil einen sichtbaren Zustand zeigen
+   kann statt eines leicht zu uebersehenden Toasts. `leise` unterdrueckt den
+   Toast fuer Aufrufer, die selbst berichten. */
+async function regenerateBioPageQuietly(uid, opt={}){
   try{
     const{data}=await sb.from('users').select('bio_active').eq('id',uid).single()
-    if(data?.bio_active!==true)return
+    if(data?.bio_active!==true)return {uebersprungen:true}
     const{data:{session}}=await sb.auth.getSession()
-    if(!session)return
+    if(!session)return {uebersprungen:true}
     const res=await fetch(`${SUPABASE_URL}/functions/v1/generate-biolink`,{
       method:'POST',
       headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
     })
     const body=await res.json().catch(()=>({}))
     if(!res.ok||body.success!==true)throw new Error(body.error||`HTTP ${res.status}`)
+    /* generate-biolink vergleicht die Bytes und committet nur bei echter
+       Aenderung — 'unchanged' heisst: nichts zu melden. */
+    return {ok:true, unveraendert: body.commit==='unchanged'}
   }catch(err){
-    showToast('Öffentliche Seite nicht aktualisiert: '+err.message,5000)
+    if(!opt.leise) showToast('Öffentliche Seite nicht aktualisiert: '+err.message,5000)
+    return {ok:false, fehler:err.message}
   }
 }
 
@@ -2831,8 +2866,12 @@ window.saveBioContactEmail=async function(){
   backToEditMenu('bl-contact-sheet')
   showToast(mail?'Kontakt-E-Mail gespeichert ✓':'Kontakt-E-Mail entfernt')
   paintBiolink()
-  /* Die Seite ist statisch generiert — ohne Neubau bliebe der Button, wie er war. */
-  regenerateBioPageQuietly(blv.uid)
+  /* Kein Neubau noetig: renderLinks() der erzeugten Seite baut den
+     mailto-Button zur Laufzeit aus creatorData.contact_email (biopage_v2).
+     Hier stand frueher ein regenerateBioPageQuietly mit dem Kommentar, die
+     Seite sei statisch — das stimmt nur fuer die og:-Tags, und die Adresse
+     steht in keinem davon. Der Aufruf kostete zwei API-Aufrufe und einen
+     Cloudflare-Purge fuer nichts. */
 }
 
 window.saveImpressum=async function(){
@@ -3006,8 +3045,8 @@ async function renderMediakit(area, ctx){
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Nische</label>
-          <input type="text" class="sheet-input" id="s-niche" placeholder="z.B. Italian Lifestyle & Fashion" maxlength="60"/>
-          <div class="sheet-hint">Erscheint als kleiner Tag unter deinem Namen.</div>
+          <div class="niche-grid" id="mk-niche-grid">${NICHES_PROFILE.map(n=>`<button type="button" class="niche-btn" data-niche="${n.key}" onclick="mkSelectNiche('${n.key}')">${n.label}</button>`).join('')}</div>
+          <div class="sheet-hint">Erscheint als Schlagwort unter deinem Namen. Dieselbe Auswahl wie im Profil — hier stand vorher ein Freitextfeld, das denselben Datensatz mit unvergleichbaren Werten gefüllt hat.</div>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Stadt</label>
@@ -3551,7 +3590,7 @@ window.openEditMenu=function(){
 function renderEditMenu(){
   const p=mkv.profile||{},mk=mkv.mkData||{}
   const profileOk=!!(p.profile_image_url&&p.bio&&p.bio.trim())
-  const profileSub=[p.niche_category||null,p.city||null].filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Bild & Bio fehlen')
+  const profileSub=[nischeLabel(p.niche_category),p.city||null].filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Bild & Bio fehlen')
   const contactOk=!!(p.contact_email&&p.contact_email.trim())
   const statsOk=!!(p.instagram_handle&&(mk.er_instagram!=null))||!!(p.tiktok_handle&&(mk.er_tiktok!=null))
   const statsSub=[]
@@ -3595,7 +3634,8 @@ window.openEditSubSheet=function(id){
     const bw=document.getElementById('profile-photo-wrap')
     if(p.profile_image_url)bw.innerHTML=`<img src="${escHtml(p.profile_image_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
     else bw.textContent=(p.display_name||'?')[0].toUpperCase()
-    document.getElementById('s-niche').value=p.niche_category||''
+    mkv.niche=p.niche_category||'general'
+    document.querySelectorAll('#mk-niche-grid .niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===mkv.niche))
     document.getElementById('s-city').value=p.city||''
     document.getElementById('s-bio').value=p.bio||''
   } else if(id==='contact-sheet'){
@@ -3687,12 +3727,20 @@ async function onMkPhotoPicked(e){
 }
 
 // ── Save Profile ──
+/* Eigener Name, weil selectNiche zum Profil-Sheet gehoert — beide waeren sonst
+   wieder ein doppelt vergebener Global. */
+window.mkSelectNiche=function(key){
+  if(!mkv)return
+  mkv.niche=key
+  document.querySelectorAll('#mk-niche-grid .niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===key))
+}
+
 window.mkSaveProfile=async function(){
   if(!mkv)return
   const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   const patch={
     bio:document.getElementById('s-bio').value.trim()||null,
-    niche_category:document.getElementById('s-niche').value.trim()||null,
+    niche_category:mkv.niche||'general',
     city:document.getElementById('s-city').value.trim()||null,
     updated_at:new Date().toISOString()
   }
@@ -5362,14 +5410,31 @@ window.toggleNewsMail=async function(el){
 
 /* ── App-Views (Platzhalter) ── */
 /* ═══════════════════════════════════════════════════════════════
-   VIEW: PROFIL — übernommen aus public/profile/index.html
-   Query, Formular-Patch, Foto-Upload, Newsletter-Toggle, Passwort-,
-   Username-, E-Mail- und Loesch-Dialoge unveraendert. Die beiden
-   statischen Modals liegen jetzt in der View und verschwinden mit ihr.
+   VIEW: PROFIL
+
+   Aufbau: oben die Aussenansicht — genau das, was auf BioLink und
+   Media Kit steht —, darunter zwei Gruppen ("Was Brands sehen" /
+   "Nur fuer dich") als kompakte Zeilen. Jede Zeile oeffnet ein Sheet,
+   dieselbe Mechanik wie das Media-Kit-Edit-Menue.
+
+   Vorher war das ein einziges Formular mit einem Sammel-Speichern, in
+   dem oeffentliche und private Angaben ununterscheidbar nebeneinander
+   standen, plus zwei Felder (full_name, city), die auf keiner Seite
+   ausgegeben werden. Beide sind raus; die Spalten bleiben.
    ═══════════════════════════════════════════════════════════════ */
 const NICHES_PROFILE=[{key:'lifestyle',label:'Lifestyle'},{key:'fashion',label:'Fashion'},{key:'beauty',label:'Beauty'},{key:'food',label:'Food'},{key:'fitness',label:'Fitness'},{key:'travel',label:'Travel'},{key:'gaming',label:'Gaming'},{key:'music',label:'Music'},{key:'comedy',label:'Comedy'},{key:'education',label:'Bildung & Wissen'},{key:'business',label:'Business'},{key:'tech',label:'Tech'},{key:'art',label:'Art'},{key:'family',label:'Family'},{key:'mental_health',label:'Mental Health'},{key:'general',label:'Allgemein'}]
 
-/* View-lokaler Zustand, entspricht dem `state` der alten Seite */
+/* Schluessel -> Beschriftung. Der Media Kit zeigt den Wert oeffentlich als
+   Schlagwort; ohne diese Tabelle stuende dort "mental_health". */
+const NICHE_LABEL = Object.fromEntries(NICHES_PROFILE.map(n=>[n.key,n.label]))
+function nischeLabel(key){
+  if(!key) return null
+  return NICHE_LABEL[key] || String(key).replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())
+}
+
+const HANDLE_RE = /^[a-zA-Z0-9._]{1,50}$/
+
+/* View-lokaler Zustand */
 let pv = null
 let _usernameTimer = null
 
@@ -5378,66 +5443,230 @@ async function renderProfile(area, ctx) {
 
   area.innerHTML = `
     <div id="skeleton-area" style="padding:20px;display:flex;flex-direction:column;gap:12px">
-      <div style="display:flex;gap:16px;align-items:center"><div class="skeleton" style="width:72px;height:72px;border-radius:50%;flex-shrink:0"></div><div style="flex:1"><div class="skeleton" style="height:22px;margin-bottom:8px"></div><div class="skeleton" style="height:16px;width:60%"></div></div></div>
-      <div class="skeleton" style="height:80px"></div><div class="skeleton" style="height:200px"></div>
+      <div class="skeleton" style="height:280px;border-radius:16px"></div>
+      <div class="skeleton" style="height:150px;border-radius:16px"></div>
     </div>
     <div id="profile-content" class="hidden"></div>
     <input type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" class="hidden"/>
 
-    <!-- PASSWORD MODAL (zentriertes Popup) -->
-    <div class="modal-backdrop centered hidden" id="password-modal" onclick="closePasswordModal()">
-      <div class="modal-card" onclick="event.stopPropagation()">
-        <div class="modal-title">Passwort ändern</div>
-        <div class="modal-sub">Wähle ein neues sicheres Passwort.</div>
-        <div style="margin-bottom:12px">
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neues Passwort</label>
-          <input type="password" id="sheet-new-pw" placeholder="Mindestens 8 Zeichen"
-            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
-            oninput="checkPwSheet()"/>
-          <div id="pw-sheet-hint" style="font-size:11px;margin-top:5px;min-height:16px"></div>
+    <!-- SHEET: Profil (oeffentlich) -->
+    <div class="sheet-backdrop hidden" id="pf-profil-sheet" onclick="pfSheetZu('pf-profil-sheet')">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Profil</div>
+        <div class="sheet-sub">Diese Angaben stehen auf deinem BioLink und deinem Media Kit — weltweit sichtbar.</div>
+        <div class="sheet-field">
+          <label class="sheet-label">Profilbild</label>
+          <div style="display:flex;align-items:center;gap:14px;cursor:pointer" onclick="document.getElementById('photo-input').click()">
+            <div id="pf-sheet-av" style="width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;background:var(--text);color:#fff;display:grid;place-items:center;font-size:19px;font-weight:700"></div>
+            <div>
+              <div style="font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text)">Foto ändern</div>
+              <div class="sheet-hint" id="pf-foto-status">JPG, PNG oder WebP · wird auf 800 px verkleinert</div>
+            </div>
+          </div>
         </div>
-        <div style="margin-bottom:20px">
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Passwort bestätigen</label>
-          <input type="password" id="sheet-new-pw2" placeholder="••••••••"
-            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"/>
+        <div class="sheet-field">
+          <label class="sheet-label">Username</label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="sheet-input" style="flex:1;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">viuno.de/<b style="color:var(--text)" id="pf-username-anzeige"></b></div>
+            <button class="btn-danger" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong);flex-shrink:0" onclick="openUsernameSheet()">Ändern</button>
+          </div>
+          <div class="sheet-hint">Ändert die Adresse von BioLink und Media Kit. Beide müssen danach neu erstellt werden.</div>
         </div>
-        <div class="modal-actions">
-          <button class="modal-btn modal-btn-cancel" onclick="closePasswordModal()">Abbrechen</button>
-          <button class="modal-btn modal-btn-confirm" id="btn-save-pw" onclick="saveNewPassword()" disabled style="opacity:.5">Speichern</button>
+        <div class="sheet-field">
+          <label class="sheet-label">Bio</label>
+          <textarea class="sheet-textarea" id="pf-bio" maxlength="160" placeholder="Wer du bist und was du machst — ein, zwei Sätze." oninput="pfBioZaehler()"></textarea>
+          <div class="sheet-hint" id="pf-bio-zaehler" style="text-align:right"></div>
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Nische</label>
+          <div class="niche-grid">${NICHES_PROFILE.map(n=>`<button type="button" class="niche-btn" data-niche="${n.key}" onclick="selectNiche('${n.key}')">${n.label}</button>`).join('')}</div>
+          <div class="sheet-hint">Erscheint als Schlagwort unter deinem Namen im Media Kit.</div>
+        </div>
+        <div class="pf-note">Nach dem Speichern wird deine BioLink-Seite neu gebaut, damit die Vorschau eines geteilten Links stimmt.</div>
+        <div class="sheet-actions">
+          <button class="sheet-btn-primary" id="pf-profil-btn" onclick="pfSpeichereProfil()">Speichern</button>
+          <button class="sheet-btn-cancel" onclick="pfSheetZu('pf-profil-sheet')">Abbrechen</button>
         </div>
       </div>
     </div>
 
-    <!-- USERNAME MODAL (zentriertes Popup) -->
+    <!-- SHEET: Kanaele (oeffentlich) -->
+    <div class="sheet-backdrop hidden" id="pf-kanaele-sheet" onclick="pfSheetZu('pf-kanaele-sheet')">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Kanäle</div>
+        <div class="sheet-sub">Erscheinen als Buttons auf deinem BioLink und als Kennzahlen im Media Kit.</div>
+        ${[['ig','Instagram','instagram_handle'],['tt','TikTok','tiktok_handle'],['yt','YouTube','youtube_handle'],['th','Threads','threads_handle']].map(([k,label])=>`
+        <div class="sheet-field">
+          <label class="sheet-label">${label}</label>
+          <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="pf-${k}" placeholder="dein_handle" autocapitalize="none" autocorrect="off" spellcheck="false"/></div>
+          <div class="sheet-hint" id="pf-${k}-hint"></div>
+        </div>`).join('')}
+        <div class="sheet-actions">
+          <button class="sheet-btn-primary" id="pf-kanaele-btn" onclick="pfSpeichereKanaele()">Speichern</button>
+          <button class="sheet-btn-cancel" onclick="pfSheetZu('pf-kanaele-sheet')">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHEET: Anfrage-E-Mail (oeffentlich) -->
+    <div class="sheet-backdrop hidden" id="pf-kontakt-sheet" onclick="pfSheetZu('pf-kontakt-sheet')">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Anfrage-E-Mail</div>
+        <div class="sheet-sub">Marken schreiben dir direkt an diese Adresse. Ohne Adresse erscheint auf deinem BioLink gar kein Kontakt-Button.</div>
+        <div class="sheet-field">
+          <label class="sheet-label">Adresse</label>
+          <input type="email" class="sheet-input" id="pf-kontakt" placeholder="anfragen@deinedomain.de" autocomplete="email" autocapitalize="none"/>
+          <div class="sheet-hint" id="pf-kontakt-hint">Empfohlen: eine eigene Adresse, nicht deine private.</div>
+        </div>
+        <div class="sheet-actions">
+          <button class="sheet-btn-primary" id="pf-kontakt-btn" onclick="pfSpeichereKontakt()">Speichern</button>
+          <button class="sheet-btn-cancel" onclick="pfSheetZu('pf-kontakt-sheet')">Abbrechen</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHEET: Konto (privat) -->
+    <div class="sheet-backdrop hidden" id="pf-konto-sheet" onclick="pfSheetZu('pf-konto-sheet')">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Konto</div>
+        <div class="sheet-sub">Nur für dich. Steht auf keiner öffentlichen Seite.</div>
+        <div class="pf-liste" style="margin:0 20px 12px">
+          <button class="pf-zeile" onclick="openEmailModal()">
+            <span class="pf-zeile-t"><span class="pf-zeile-label">Login-E-Mail</span><span class="pf-zeile-sub" id="pf-login-mail"></span></span>
+            <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+          </button>
+          <button class="pf-zeile" onclick="openPasswordSheet()">
+            <span class="pf-zeile-t"><span class="pf-zeile-label">Passwort</span><span class="pf-zeile-sub">Neues Passwort setzen</span></span>
+            <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+          </button>
+        </div>
+        <div class="sheet-actions"><button class="sheet-btn-cancel" onclick="pfSheetZu('pf-konto-sheet')">Schließen</button></div>
+      </div>
+    </div>
+
+    <!-- SHEET: Benachrichtigungen -->
+    <div class="sheet-backdrop hidden" id="pf-news-sheet" onclick="pfSheetZu('pf-news-sheet')">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Benachrichtigungen</div>
+        <div class="sheet-sub">Wir schicken nur die Creator News. Keine Werbung, kein Zweitverwerten.</div>
+        <div class="pf-liste" style="margin:0 20px 12px">
+          <div class="pf-zeile" style="cursor:default">
+            <span class="pf-zeile-t"><span class="pf-zeile-label">Creator News per Mail</span><span class="pf-zeile-sub" id="pf-news-sub"></span></span>
+            <button class="pf-schalter" id="pf-news-schalter" onclick="pfNewsUmschalten()" aria-label="Creator News per Mail"></button>
+          </div>
+        </div>
+        <div class="sheet-actions"><button class="sheet-btn-cancel" onclick="pfSheetZu('pf-news-sheet')">Schließen</button></div>
+      </div>
+    </div>
+
+    <!-- SHEET: Rechtliches & Daten -->
+    <div class="sheet-backdrop hidden" id="pf-recht-sheet" onclick="pfSheetZu('pf-recht-sheet')">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">Rechtliches &amp; Daten</div>
+        <div class="sheet-sub">Deine Rechte und die Texte, die für viuno gelten.</div>
+        <div class="pf-liste" style="margin:0 20px 12px">
+          <button class="pf-zeile" id="pf-export-zeile" onclick="pfDatenExport()">
+            <span class="pf-zeile-t"><span class="pf-zeile-label">Meine Daten anfordern</span><span class="pf-zeile-sub" id="pf-export-sub">Alles zu deinem Konto als JSON, per Mail</span></span>
+            <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+          </button>
+          <a class="pf-zeile" href="/legal#agb" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">AGB</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
+          <a class="pf-zeile" href="/legal#datenschutz" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">Datenschutzerklärung</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
+          <a class="pf-zeile" href="/legal#impressum" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">Impressum</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
+          <a class="pf-zeile" href="/legal#widerruf" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">Widerrufsbelehrung</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
+        </div>
+        <div class="sheet-actions"><button class="sheet-btn-cancel" onclick="pfSheetZu('pf-recht-sheet')">Schließen</button></div>
+      </div>
+    </div>
+
+    <!-- PASSWORD MODAL -->
+    <div class="modal-backdrop centered hidden" id="password-modal" onclick="closePasswordModal()">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-title">Passwort ändern</div>
+        <div class="modal-sub">Wähle ein neues sicheres Passwort. Du bleibst angemeldet.</div>
+        <div class="field"><label>Neues Passwort</label>
+          <input type="password" id="sheet-new-pw" placeholder="Mindestens 8 Zeichen" autocomplete="new-password" oninput="checkPwSheet()"/>
+          <div id="pw-sheet-hint" class="sheet-hint"></div>
+        </div>
+        <div class="field" style="margin-bottom:20px"><label>Passwort bestätigen</label>
+          <input type="password" id="sheet-new-pw2" placeholder="••••••••" autocomplete="new-password" oninput="checkPwSheet()"/>
+          <div id="pw-sheet-hint2" class="sheet-hint"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-cancel" onclick="closePasswordModal()">Abbrechen</button>
+          <button class="modal-btn modal-btn-confirm" id="btn-save-pw" onclick="saveNewPassword()" disabled>Speichern</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERNAME MODAL -->
     <div class="modal-backdrop centered hidden" id="username-modal" onclick="closeUsernameModal()">
       <div class="modal-card" onclick="event.stopPropagation()">
         <div class="modal-title">Username ändern</div>
         <div class="modal-sub">Dein BioLink und Media Kit werden deaktiviert. Du musst sie danach mit dem neuen Username neu erstellen.</div>
-        <div style="margin-bottom:6px">
-          <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neuer Username</label>
-          <input type="text" id="sheet-new-username" placeholder="Neuer Username"
-            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
-            oninput="checkUsernameAvailability()"/>
+        <div class="field" style="margin-bottom:6px"><label>Neuer Username</label>
+          <input type="text" id="sheet-new-username" placeholder="Neuer Username" autocapitalize="none" autocorrect="off" spellcheck="false" oninput="checkUsernameAvailability()"/>
         </div>
-        <div id="username-status" style="font-size:12px;min-height:18px;margin-bottom:16px"></div>
+        <div id="username-status" style="font-size:var(--t-sm);min-height:18px;margin-bottom:16px"></div>
         <div class="modal-actions">
           <button class="modal-btn modal-btn-cancel" onclick="closeUsernameModal()">Abbrechen</button>
-          <button class="modal-btn modal-btn-confirm" id="btn-save-username" onclick="confirmUsernameChange()" disabled style="opacity:.5">Weiter</button>
+          <button class="modal-btn modal-btn-confirm" id="btn-save-username" onclick="confirmUsernameChange()" disabled>Weiter</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOESCH-DIALOG -->
+    <div class="modal-backdrop centered hidden" id="pf-loesch-modal">
+      <div class="modal-card" onclick="event.stopPropagation()">
+        <div class="modal-title">Konto wirklich löschen?</div>
+        <div class="modal-sub">Das passiert sofort und lässt sich nicht rückgängig machen:</div>
+        <div id="pf-loesch-liste" style="font-size:var(--t-sm);color:var(--muted);line-height:1.8;margin-bottom:16px"></div>
+        <div class="modal-warn">${icon('alert',14)} Kaufbelege deiner Analyse-Freischaltungen bleiben aus steuerlichen Gründen aufbewahrt — ohne Verweis auf dich.</div>
+        <div class="field"><label id="pf-loesch-label">Bestätigung</label>
+          <input type="text" id="pf-loesch-eingabe" autocapitalize="none" autocorrect="off" spellcheck="false" oninput="pfLoeschPruefen()"/>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn modal-btn-cancel" onclick="pfLoeschZu()">Abbrechen</button>
+          <button class="modal-btn modal-btn-danger" id="pf-loesch-btn" onclick="commitDeleteAccount()" disabled>Konto löschen</button>
         </div>
       </div>
     </div>`
 
-  const [profileRes] = await Promise.all([sb.from('users').select('*').eq('id',uid).single()])
+  const [profileRes, analysen] = await Promise.all([
+    sb.from('users').select('*').eq('id',uid).single(),
+    sb.from('analysis_runs').select('id',{count:'exact',head:true}).eq('user_id',uid).eq('status','done'),
+  ])
   if (ctx.stale) return
+
+  /* Faellt die Query aus, blieb hier frueher dauerhaft das Skeleton stehen. */
+  if (profileRes.error || !profileRes.data) {
+    document.getElementById('skeleton-area').innerHTML =
+      `<div class="empty-state"><div class="empty-title">Profil konnte nicht geladen werden</div>
+       <div class="empty-sub">${escHtml(profileRes.error?.message || 'Unbekannter Fehler')}</div>
+       <button class="btn-save" style="max-width:220px;margin:16px auto 0" onclick="router()">Erneut versuchen</button></div>`
+    return
+  }
 
   pv = {
     uid,
     user: state.session.user,
     profile: profileRes.data,
     niche: profileRes.data?.niche_category || 'general',
-    isSubscribed: profileRes.data?.newsletter_subscribed || false
+    isSubscribed: profileRes.data?.newsletter_subscribed || false,
+    analysen: analysen?.count ?? 0,
+    regen: null,
   }
-  ctx.onCleanup(() => { pv = null; clearTimeout(_usernameTimer); document.body.style.overflow = '' })
+  ctx.onCleanup(() => {
+    pv = null
+    clearTimeout(_usernameTimer)
+    document.querySelectorAll('.sheet-backdrop,.modal-backdrop').forEach(el=>el.classList.add('hidden'))
+    document.body.style.overflow = ''
+  })
 
   document.getElementById('skeleton-area').classList.add('hidden')
   document.getElementById('profile-content').classList.remove('hidden')
@@ -5446,99 +5675,315 @@ async function renderProfile(area, ctx) {
   ctx.on(document.getElementById('photo-input'), 'change', onPhotoPicked)
 }
 
+/* ── Aussenansicht + Gruppen ── */
 function paintProfile(){
   const p = pv.profile
-  const initial=(p.display_name||p.full_name||'?')[0].toUpperCase()
-  const photoInner=p.profile_image_url?`<img class="profile-photo" src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;profile-photo-fallback&quot;>${initial}</div>'">`:`<div class="profile-photo-fallback">${initial}</div>`
-  document.getElementById('profile-content').innerHTML=`
-    <div class="profile-hero">
-      <div class="photo-wrap" onclick="document.getElementById('photo-input').click()" title="Foto ändern">${photoInner}<div class="photo-edit-btn">${icon('pencil',11)}</div></div>
-      <div class="profile-info">
-        <div class="profile-name">${escHtml(p.display_name||p.full_name||'–')}</div>
-        <div class="profile-handle">${p.email?escHtml(p.email):''}</div>
-        <div class="profile-plan ${p.subscription_type==='pro'?'plan-pro':'plan-free'}">${p.subscription_type==='pro'?icon('star',12)+' Pro':'Free Plan'}</div>
-      </div>
-    </div>
-    <div class="section"><div class="section-label">Profil bearbeiten</div>
-      <div class="edit-card">
-        <div class="field"><label>Username</label>
-          <div style="display:flex;gap:8px;align-items:center;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--bg)">
-            <span style="flex:1;font-size:14px;color:var(--text)" id="display-username">${escHtml(p.display_name||'–')}</span>
-            <button onclick="openUsernameSheet()" style="padding:6px 12px;border-radius:var(--r-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">Ändern</button>
-          </div>
-          <div class="username-hint">Dein öffentlicher Name auf viuno.de</div>
-        </div>
-        <div class="field"><label>Name</label><input type="text" id="edit-fullname" value="${escHtml(p.full_name||'')}"/></div>
-        <div class="field"><label>Bio</label><textarea id="edit-bio" rows="3">${escHtml(p.bio||'')}</textarea></div>
-        <div class="field"><label>Instagram</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="edit-ig" value="${escHtml((p.instagram_handle||'').replace(/^@/,''))}"/></div></div>
-        <div class="field"><label>TikTok</label><div class="handle-input-wrap"><span class="handle-prefix">@</span><input type="text" id="edit-tt" value="${escHtml((p.tiktok_handle||'').replace(/^@/,''))}"/></div></div>
-        <div class="field"><label>Stadt</label><input type="text" id="edit-city" value="${escHtml(p.city||'')}"/></div>
-        <div class="field"><label>Nische</label><div class="niche-grid">${NICHES_PROFILE.map(n=>`<button class="niche-btn ${pv.niche===n.key?'active':''}" data-niche="${n.key}" onclick="selectNiche('${n.key}')">${n.label}</button>`).join('')}</div></div>
-        <button class="btn-save" id="btn-save" onclick="saveProfile()">Speichern</button>
-        <div class="save-success hidden" id="save-success">✓ Gespeichert</div>
-      </div>
-    </div>
-    <div class="section" style="padding-bottom:calc(8px + var(--safe-bottom))"><div class="section-label">Account</div>
-      <div class="danger-card">
-        <div class="danger-row" style="margin-bottom:0">
-          <div style="flex:1;min-width:0">
-            <div class="danger-title">Login-E-Mail</div>
-            <div class="danger-sub" id="current-email-display">${escHtml(pv.user.email||'–')}</div>
-          </div>
-          <button class="btn-danger" onclick="openEmailModal()" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong)">Ändern</button>
-        </div>
-        <div style="height:1px;background:var(--border);margin:14px 0"></div>
-        <div class="danger-row" style="margin-bottom:0">
-          <div><div class="danger-title">Passwort ändern</div><div class="danger-sub">Neues Passwort setzen</div></div>
-          <button class="btn-danger" onclick="openPasswordSheet()" style="background:var(--surface2);color:var(--text);border-color:var(--border-strong)">Ändern</button>
-        </div>
-        <div style="height:1px;background:var(--border);margin:14px 0"></div>
-        <div class="danger-row" style="margin-bottom:0">
-          <div>
-            <div class="danger-title">Creator News Newsletter</div>
-            <div class="danger-sub">${pv.isSubscribed?'Aktiv — du erhältst tägliche Creator News':'Nicht abonniert'}</div>
-          </div>
-          ${pv.isSubscribed
-            ?`<button class="btn-danger" onclick="toggleNewsletter(false)" style="background:var(--surface2);color:var(--muted);border-color:var(--border-strong)">Abmelden</button>`
-            :`<button class="btn-danger" onclick="toggleNewsletter(true)" style="background:var(--text);color:white;border-color:var(--text)">Anmelden</button>`
-          }
-        </div>
-        <div style="height:1px;background:var(--border);margin:14px 0"></div>
-        <div class="danger-row">
-          <div><div class="danger-title">Account löschen</div><div class="danger-sub">Alle Daten werden unwiderruflich gelöscht.</div></div>
-          <button class="btn-danger" onclick="openDeleteModal()">Löschen</button>
-        </div>
-      </div>
-    </div>`
-}
-window.selectNiche=function(key){if(!pv)return;pv.niche=key;document.querySelectorAll('.niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===key))}
+  const initial = (p.display_name||'?')[0].toUpperCase()
+  const slug = (p.display_name||'').toLowerCase()
+  const kanaele = [
+    ['Instagram', p.instagram_handle], ['TikTok', p.tiktok_handle],
+    ['YouTube', p.youtube_handle],     ['Threads', p.threads_handle],
+  ]
+  const gesetzt = kanaele.filter(([,h])=>h && String(h).trim())
+  const foto = p.profile_image_url
+    ? `<img src="${escHtml(p.profile_image_url)}" alt="" onerror="this.outerHTML='<div class=&quot;pf-av-fallback&quot;>${initial}</div>'">`
+    : `<div class="pf-av-fallback">${initial}</div>`
 
-// ── Passwort Sheet ──
+  document.getElementById('profile-content').innerHTML = `
+    <div class="pf-aussen">
+      <div class="pf-aussen-head">
+        <span class="section-label" style="margin:0">So sehen dich Brands</span>
+        <button class="pf-aussen-edit" onclick="pfSheetAuf('pf-profil-sheet')">Bearbeiten</button>
+      </div>
+      <div class="pf-karte">
+        <div class="pf-karte-top">
+          <div class="pf-av" onclick="document.getElementById('photo-input').click()" title="Foto ändern">${foto}<div class="pf-av-btn">${icon('pencil',11)}</div></div>
+          <div class="pf-name">${escHtml(p.display_name||'–')}</div>
+          ${p.niche_category?`<div class="pf-tag">${escHtml(nischeLabel(p.niche_category))}</div>`:''}
+          <div class="pf-bio ${p.bio?'':'leer'}">${p.bio?escHtml(p.bio):'Noch keine Bio — Marken sehen hier nichts über dich.'}</div>
+          <div class="pf-kanaele">
+            ${kanaele.map(([label,h])=>h&&String(h).trim()
+              ? `<span class="pf-kanal">${label} @${escHtml(String(h).replace(/^@/,''))}</span>`
+              : `<span class="pf-kanal leer">${label} +</span>`).join('')}
+          </div>
+          <div class="pf-mail ${p.contact_email?'':'leer'}">${p.contact_email
+            ? 'Anfragen an '+escHtml(p.contact_email)
+            : 'Keine Anfrage-Adresse — auf dem BioLink erscheint kein Kontakt-Button'}</div>
+        </div>
+        <div class="pf-links">
+          ${p.bio_active?`<a href="https://viuno.de/${encodeURIComponent(slug)}" target="_blank" rel="noopener">viuno.de/${escHtml(slug)} ${icon('arrowUpRight',12)}</a>`:`<span>BioLink nicht erstellt</span>`}
+          ${p.mediakit_active?`<a href="https://viuno.de/kit/${encodeURIComponent(slug)}" target="_blank" rel="noopener">viuno.de/kit/${escHtml(slug)} ${icon('arrowUpRight',12)}</a>`:`<span>Media Kit nicht erstellt</span>`}
+        </div>
+      </div>
+      <div class="pf-hinweis">${(p.bio_active||p.mediakit_active)
+        ? 'Genau das ist öffentlich abrufbar — von jedem, ohne Anmeldung.'
+        : 'So würde es aussehen. Öffentlich ist noch nichts.'}</div>
+      <div id="pf-regen"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Öffentliche Angaben</div>
+      <div class="pf-liste">
+        <button class="pf-zeile" onclick="pfSheetAuf('pf-profil-sheet')">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Profil</span>
+            <span class="pf-zeile-sub">Foto · Username · Bio · Nische</span></span>
+          ${p.profile_image_url&&p.bio?'<span class="pf-badge ok">Vollständig</span>':'<span class="pf-badge offen">'+(p.bio?'Foto fehlt':'Bio fehlt')+'</span>'}
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+        <button class="pf-zeile" onclick="pfSheetAuf('pf-kanaele-sheet')">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Kanäle</span>
+            <span class="pf-zeile-sub">${gesetzt.length?escHtml(gesetzt.map(([l])=>l).join(' · ')):'Noch kein Kanal hinterlegt'}</span></span>
+          <span class="pf-badge ${gesetzt.length?'ok':'offen'}">${gesetzt.length} von 4</span>
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+        <button class="pf-zeile" onclick="pfSheetAuf('pf-kontakt-sheet')">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Anfrage-E-Mail</span>
+            <span class="pf-zeile-sub">${p.contact_email?escHtml(p.contact_email):'Ohne Adresse kein Kontakt-Button'}</span></span>
+          ${p.contact_email?'<span class="pf-badge ok">OK</span>':'<span class="pf-badge offen">Fehlt</span>'}
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+      </div>
+      <div class="pf-fuss">Impressum und Design gehören zur jeweiligen Seite und stehen im BioLink- bzw. Media-Kit-Editor.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Nur für dich</div>
+      <div class="pf-liste">
+        <button class="pf-zeile" onclick="pfSheetAuf('pf-konto-sheet')">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Konto</span>
+            <span class="pf-zeile-sub">${escHtml(pv.user.email||'–')}</span></span>
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+        <button class="pf-zeile" onclick="pfSheetAuf('pf-news-sheet')">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Benachrichtigungen</span>
+            <span class="pf-zeile-sub">Creator News jeden Montag</span></span>
+          <span class="pf-badge ${pv.isSubscribed?'ok':''}" style="${pv.isSubscribed?'':'background:var(--surface2);color:var(--muted)'}">${pv.isSubscribed?'An':'Aus'}</span>
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+        <button class="pf-zeile" onclick="pfSheetAuf('pf-recht-sheet')">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Rechtliches &amp; Daten</span>
+            <span class="pf-zeile-sub">AGB, Datenschutz, Impressum, Widerruf, Datenauskunft</span></span>
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section" style="padding-bottom:calc(8px + var(--safe-bottom))">
+      <div class="pf-liste">
+        <button class="pf-zeile gefahr" onclick="openDeleteModal()">
+          <span class="pf-zeile-t"><span class="pf-zeile-label">Konto löschen</span></span>
+          <span class="pf-pfeil">${icon('chevronRight',16)}</span>
+        </button>
+      </div>
+      <div class="pf-fuss">Entfernt Seiten, Analysen und Bilder. Nicht rückgängig zu machen.</div>
+    </div>`
+
+  pfRegenZeigen(pv.regen)
+}
+
+/* ── Sheets ── */
+window.pfSheetAuf=function(id){
+  if(!pv)return
+  const p=pv.profile
+  if(id==='pf-profil-sheet'){
+    const av=document.getElementById('pf-sheet-av')
+    av.innerHTML = p.profile_image_url
+      ? `<img src="${escHtml(p.profile_image_url)}" style="width:100%;height:100%;object-fit:cover">`
+      : (p.display_name||'?')[0].toUpperCase()
+    document.getElementById('pf-username-anzeige').textContent = p.display_name||'–'
+    document.getElementById('pf-bio').value = p.bio||''
+    document.getElementById('pf-foto-status').className='sheet-hint'
+    document.getElementById('pf-foto-status').textContent='JPG, PNG oder WebP · wird auf 800 px verkleinert'
+    pv.niche = p.niche_category||'general'
+    document.querySelectorAll('#pf-profil-sheet .niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===pv.niche))
+    pfBioZaehler()
+  } else if(id==='pf-kanaele-sheet'){
+    const setz=(k,v)=>{document.getElementById('pf-'+k).value=(v||'').replace(/^@/,'');document.getElementById('pf-'+k+'-hint').textContent='';document.getElementById('pf-'+k+'-hint').className='sheet-hint'}
+    setz('ig',p.instagram_handle); setz('tt',p.tiktok_handle)
+    setz('yt',p.youtube_handle);   setz('th',p.threads_handle)
+  } else if(id==='pf-kontakt-sheet'){
+    document.getElementById('pf-kontakt').value=p.contact_email||''
+    const h=document.getElementById('pf-kontakt-hint')
+    h.className='sheet-hint'; h.textContent='Empfohlen: eine eigene Adresse, nicht deine private.'
+  } else if(id==='pf-konto-sheet'){
+    document.getElementById('pf-login-mail').textContent=pv.user.email||'–'
+  } else if(id==='pf-news-sheet'){
+    pfNewsMalen()
+  }
+  openSheet(id)
+}
+window.pfSheetZu=function(id){ closeSheet(id) }
+
+window.pfBioZaehler=function(){
+  const el=document.getElementById('pf-bio'); if(!el)return
+  document.getElementById('pf-bio-zaehler').textContent=`${el.value.length} / 160`
+}
+window.selectNiche=function(key){
+  if(!pv)return
+  pv.niche=key
+  document.querySelectorAll('#pf-profil-sheet .niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===key))
+}
+
+/* ── Speichern: Profil ── */
+window.pfSpeichereProfil=async function(){
+  if(!pv)return
+  const btn=document.getElementById('pf-profil-btn')
+  const bio=document.getElementById('pf-bio').value.trim()||null
+  const patch={bio, niche_category:pv.niche, updated_at:new Date().toISOString()}
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const uid=pv.uid
+  const bioGeaendert=(pv.profile.bio||null)!==bio
+  const{error}=await sb.from('users').update(patch).eq('id',uid)
+  if(!pv)return
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  Object.assign(pv.profile,patch)
+  pfSheetZu('pf-profil-sheet')
+  paintProfile()
+  showToast('Profil gespeichert ✓')
+  /* Nur die Bio steckt in den og:-Tags der erzeugten Seite. Nische und
+     Kanaele laedt die Seite zur Laufzeit aus biopage_v2 — dafuer braucht es
+     keinen Neubau. */
+  if(bioGeaendert) pfSeiteAktualisieren(uid)
+}
+
+/* ── Speichern: Kanaele ── */
+window.pfSpeichereKanaele=async function(){
+  if(!pv)return
+  const lies=(k)=>document.getElementById('pf-'+k).value.trim().replace(/^@/,'')
+  const felder=[['ig','instagram_handle'],['tt','tiktok_handle'],['yt','youtube_handle'],['th','threads_handle']]
+  let fehler=false
+  for(const [k] of felder){
+    const h=document.getElementById('pf-'+k+'-hint'); h.textContent=''; h.className='sheet-hint'
+    const v=lies(k)
+    if(v && !HANDLE_RE.test(v)){
+      h.textContent='Nur Buchstaben, Zahlen, Punkt und Unterstrich.'; h.className='sheet-hint err'; fehler=true
+    }
+  }
+  if(fehler)return
+
+  /* Wer einen bereits ausgewerteten Kanal umbenennt, verliert die Zuordnung
+     seines Analyse-Verlaufs: der Trigger sync_analytics_username schreibt den
+     neuen Namen in die bestehende creator_analytics-Zeile, die alten Zahlen
+     bleiben stehen. Frueher passierte das wortlos. */
+  const alt=pv.profile
+  const gewarnt=[]
+  if(pv.analysen>0){
+    if(alt.instagram_handle && lies('ig') && '@'+lies('ig')!==alt.instagram_handle) gewarnt.push('Instagram')
+    if(alt.tiktok_handle    && lies('tt') && '@'+lies('tt')!==alt.tiktok_handle)    gewarnt.push('TikTok')
+  }
+  if(gewarnt.length){
+    showModal(
+      gewarnt.join(' und ')+'-Handle ändern?',
+      null,
+      'Ja, ändern',
+      ()=>{closeModal();pfKanaeleSchreiben()},
+      `Zu ${gewarnt.length>1?'diesen Kanälen':'diesem Kanal'} gibt es bereits eine Analyse. Die alten Zahlen bleiben erhalten, tragen danach aber den neuen Namen — sie lassen sich dem früheren Kanal nicht mehr zuordnen.`
+    )
+    return
+  }
+  pfKanaeleSchreiben()
+}
+async function pfKanaeleSchreiben(){
+  if(!pv)return
+  const btn=document.getElementById('pf-kanaele-btn')
+  const val=(k)=>{const v=document.getElementById('pf-'+k).value.trim().replace(/^@/,'');return v?'@'+v:null}
+  const patch={
+    instagram_handle:val('ig'), tiktok_handle:val('tt'),
+    youtube_handle:val('yt'),   threads_handle:val('th'),
+    updated_at:new Date().toISOString()
+  }
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{error}=await sb.from('users').update(patch).eq('id',pv.uid)
+  if(!pv)return
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  Object.assign(pv.profile,patch)
+  pfSheetZu('pf-kanaele-sheet')
+  paintProfile()
+  showToast('Kanäle gespeichert ✓')
+}
+
+/* ── Speichern: Anfrage-E-Mail ── */
+window.pfSpeichereKontakt=async function(){
+  if(!pv)return
+  const el=document.getElementById('pf-kontakt'), hint=document.getElementById('pf-kontakt-hint')
+  const mail=el.value.trim()
+  hint.className='sheet-hint'
+  if(mail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)){
+    hint.textContent='Bitte eine gültige E-Mail-Adresse.'; hint.className='sheet-hint err'; return
+  }
+  const btn=document.getElementById('pf-kontakt-btn')
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const{error}=await sb.from('users').update({contact_email:mail||null,updated_at:new Date().toISOString()}).eq('id',pv.uid)
+  if(!pv)return
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  pv.profile.contact_email=mail||null
+  pfSheetZu('pf-kontakt-sheet')
+  paintProfile()
+  showToast(mail?'Anfrage-E-Mail gespeichert ✓':'Anfrage-E-Mail entfernt')
+  /* Kein Neubau: die erzeugte Seite liest contact_email zur Laufzeit aus
+     biopage_v2 und baut den mailto-Button daraus. */
+}
+
+/* ── Regenerierung sichtbar machen ── */
+function pfRegenZeigen(zustand){
+  const el=document.getElementById('pf-regen'); if(!el)return
+  if(pv) pv.regen=zustand
+  if(!zustand){el.innerHTML='';return}
+  if(zustand==='laeuft'){
+    el.innerHTML=`<div class="pf-regen"><span class="spinner spinner-dark"></span> BioLink-Seite wird aktualisiert …</div>`
+  } else if(zustand==='fertig'){
+    el.innerHTML=`<div class="pf-regen">${icon('check',14)} BioLink-Seite aktualisiert</div>`
+    setTimeout(()=>{ if(pv&&pv.regen==='fertig') pfRegenZeigen(null) },4000)
+  } else {
+    el.innerHTML=`<div class="pf-regen fehler">${icon('alert',14)} BioLink-Seite konnte nicht aktualisiert werden. Die Vorschau eines geteilten Links zeigt noch den alten Stand.<button onclick="pfSeiteAktualisieren()">Erneut versuchen</button></div>`
+  }
+}
+window.pfSeiteAktualisieren=async function(uid){
+  if(!pv)return
+  const id=uid||pv.uid
+  pfRegenZeigen('laeuft')
+  const r=await regenerateBioPageQuietly(id,{leise:true})
+  if(!pv)return
+  if(r.uebersprungen) pfRegenZeigen(null)
+  else if(r.ok)       pfRegenZeigen(r.unveraendert?null:'fertig')
+  else                pfRegenZeigen('fehler')
+}
+
+/* ── Passwort ── */
 window.openPasswordSheet=function(){
   document.getElementById('sheet-new-pw').value=''
   document.getElementById('sheet-new-pw2').value=''
   document.getElementById('pw-sheet-hint').textContent=''
-  const btn=document.getElementById('btn-save-pw')
-  btn.disabled=true;btn.style.opacity='.5'
+  document.getElementById('pw-sheet-hint2').textContent=''
+  const btn=document.getElementById('btn-save-pw'); btn.disabled=true
   document.getElementById('password-modal').classList.remove('hidden')
   document.body.style.overflow='hidden'
   setTimeout(()=>document.getElementById('sheet-new-pw')?.focus(),100)
 }
 window.closePasswordModal=function(){
   document.getElementById('password-modal')?.classList.add('hidden')
-  document.body.style.overflow=''
+  document.body.style.overflow = document.querySelector('.sheet-backdrop:not(.hidden)') ? 'hidden' : ''
 }
+/* Prueft beide Felder. Vorher war der Knopf schon aktiv, wenn nur das erste
+   ausgefuellt war — der Klick endete dann in einem Fehler-Toast. */
 window.checkPwSheet=function(){
   const pw=document.getElementById('sheet-new-pw').value
+  const pw2=document.getElementById('sheet-new-pw2').value
   const hint=document.getElementById('pw-sheet-hint')
+  const hint2=document.getElementById('pw-sheet-hint2')
   const btn=document.getElementById('btn-save-pw')
-  if(!pw){hint.textContent='';btn.disabled=true;btn.style.opacity='.5';return}
-  if(pw.length<8){
-    hint.textContent='Mindestens 8 Zeichen erforderlich.'
-    hint.style.color='var(--red)';btn.disabled=true;btn.style.opacity='.5';return
-  }
-  hint.textContent='✓ Passwort sieht gut aus';hint.style.color='var(--green)'
-  btn.disabled=false;btn.style.opacity='1'
+  hint.className='sheet-hint'; hint2.className='sheet-hint'
+  hint.textContent=''; hint2.textContent=''
+  let ok=true
+  if(pw && pw.length<8){hint.textContent='Mindestens 8 Zeichen erforderlich.';hint.className='sheet-hint err';ok=false}
+  else if(pw){hint.textContent='✓ Passwort sieht gut aus';hint.className='sheet-hint ok'}
+  else ok=false
+  if(pw2 && pw!==pw2){hint2.textContent='Stimmt nicht überein.';hint2.className='sheet-hint err';ok=false}
+  else if(!pw2) ok=false
+  btn.disabled=!ok
 }
 window.saveNewPassword=async function(){
   const pw=document.getElementById('sheet-new-pw').value
@@ -5549,42 +5994,53 @@ window.saveNewPassword=async function(){
   btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
   const{error}=await sb.auth.updateUser({password:pw})
   if(!document.getElementById('btn-save-pw'))return
-  btn.disabled=false;btn.textContent='Passwort speichern'
+  btn.disabled=false;btn.textContent='Speichern'
   if(error){showToast('Fehler: '+error.message,4000);return}
   closePasswordModal()
   showToast('Passwort gespeichert ✓')
+  kontoWarnungSenden('passwort')
 }
 
-// ── Newsletter Toggle ──
-window.toggleNewsletter=async function(subscribe){
+/* ── Newsletter ── */
+function pfNewsMalen(){
+  const s=document.getElementById('pf-news-schalter')
+  const sub=document.getElementById('pf-news-sub')
+  if(!s||!pv)return
+  s.classList.toggle('an',!!pv.isSubscribed)
+  const ziel=pv.profile.contact_email||pv.user.email||''
+  sub.textContent=pv.isSubscribed?('Jeden Montag an '+ziel):'Zurzeit nicht abonniert'
+}
+window.pfNewsUmschalten=async function(){
   if(!pv)return
-  try{
-    await newsletterSetzen(subscribe,'profil')
-  }catch(_){
-    showToast('Konnte nicht gespeichert werden');return
-  }
+  const s=document.getElementById('pf-news-schalter')
+  const neu=!pv.isSubscribed
+  s.disabled=true
+  try{ await newsletterSetzen(neu,'profil') }
+  catch(_){ if(pv){s.disabled=false;showToast('Konnte nicht gespeichert werden')} return }
   if(!pv)return
-  pv.isSubscribed=subscribe
-  showToast(subscribe?'Newsletter abonniert ✓':'Newsletter abgemeldet')
-  // Re-render profile to update button state
+  s.disabled=false
+  pv.isSubscribed=neu
+  pv.profile.newsletter_subscribed=neu
+  pfNewsMalen()
   paintProfile()
+  showToast(neu?'Newsletter abonniert ✓':'Newsletter abgemeldet')
 }
 
-// ── Username Sheet ──
+/* ── Username ── */
 window.openUsernameSheet=function(){
   const input=document.getElementById('sheet-new-username')
   const status=document.getElementById('username-status')
   const btn=document.getElementById('btn-save-username')
   if(input)input.value=''
   if(status)status.textContent=''
-  if(btn){btn.disabled=true;btn.style.opacity='.5'}
+  if(btn)btn.disabled=true
   document.getElementById('username-modal').classList.remove('hidden')
   document.body.style.overflow='hidden'
   setTimeout(()=>input?.focus(),100)
 }
 window.closeUsernameSheet=function(){
   document.getElementById('username-modal')?.classList.add('hidden')
-  document.body.style.overflow=''
+  document.body.style.overflow = document.querySelector('.sheet-backdrop:not(.hidden)') ? 'hidden' : ''
 }
 window.closeUsernameModal=window.closeUsernameSheet
 window.checkUsernameAvailability=async function(){
@@ -5593,7 +6049,7 @@ window.checkUsernameAvailability=async function(){
   const btn=document.getElementById('btn-save-username')
   const val=input.value.trim()
   clearTimeout(_usernameTimer)
-  btn.disabled=true;btn.style.opacity='.5'
+  btn.disabled=true
   if(!val){status.textContent='';return}
   if(val.toLowerCase()===pv?.profile?.display_name?.toLowerCase()){status.style.color='var(--muted)';status.textContent='Das ist bereits dein Username.';return}
   if(!/^[a-zA-Z0-9_]{3,30}$/.test(val)){status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.';return}
@@ -5602,26 +6058,12 @@ window.checkUsernameAvailability=async function(){
     // RPC umgeht RLS und prüft sicher gegen users + username_blacklist
     const{data:result,error}=await sb.rpc('check_username_available',{p_username:val})
     if(!document.getElementById('username-status'))return
-    if(error){
-      status.style.color='var(--red)';status.textContent='Fehler bei Prüfung'
-      btn.disabled=true;btn.style.opacity='.5';return
-    }
-    if(result==='reserved'){
-      status.style.color='var(--red)';status.textContent='Dieser Username ist reserviert.'
-      btn.disabled=true;btn.style.opacity='.5'
-    } else if(result==='taken'){
-      status.style.color='var(--red)';status.textContent='Leider vergeben.'
-      btn.disabled=true;btn.style.opacity='.5'
-    } else if(result==='invalid_format'){
-      status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.'
-      btn.disabled=true;btn.style.opacity='.5'
-    } else if(result==='available'){
-      status.style.color='var(--green)';status.textContent='✓ Verfügbar!'
-      btn.disabled=false;btn.style.opacity='1'
-    } else {
-      status.style.color='var(--red)';status.textContent='Unbekannte Antwort'
-      btn.disabled=true;btn.style.opacity='.5'
-    }
+    if(error){status.style.color='var(--red)';status.textContent='Fehler bei Prüfung';btn.disabled=true;return}
+    if(result==='reserved'){status.style.color='var(--red)';status.textContent='Dieser Username ist reserviert.';btn.disabled=true}
+    else if(result==='taken'){status.style.color='var(--red)';status.textContent='Leider vergeben.';btn.disabled=true}
+    else if(result==='invalid_format'){status.style.color='var(--red)';status.textContent='3–30 Zeichen, nur Buchstaben, Zahlen und _.';btn.disabled=true}
+    else if(result==='available'){status.style.color='var(--green)';status.textContent='✓ Verfügbar!';btn.disabled=false}
+    else {status.style.color='var(--red)';status.textContent='Unbekannte Antwort';btn.disabled=true}
   },500)
 }
 window.confirmUsernameChange=function(){
@@ -5648,24 +6090,20 @@ async function commitUsername(newName){
       body:JSON.stringify({new_username:newName})
     })
     const body=await res.json().catch(()=>({}))
-    if(!res.ok||body.success!==true){
-      showToast('Fehler: '+(body.error||'Unbekannt'),5000)
-      return
-    }
+    if(!res.ok||body.success!==true){showToast('Fehler: '+(body.error||'Unbekannt'),5000);return}
     showToast('Username geändert ✓ — bitte BioLink & Media Kit neu erstellen',5000)
     if(state.route==='profile')router()
-  }catch(err){
-    showToast('Fehler: '+err.message,5000)
-  }
+  }catch(err){showToast('Fehler: '+err.message,5000)}
 }
 
-// ── E-Mail ändern ──
+/* ── E-Mail ändern ── */
 window.openEmailModal=function(){
   showModal(
     'E-Mail-Adresse ändern',
     `<div style="margin-bottom:12px">Aktuelle E-Mail: <strong>${escHtml(pv.user.email)}</strong></div>
-     <div class="field" style="margin:0"><label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Neue E-Mail</label>
-     <input type="email" id="modal-new-email" placeholder="neue@email.de" style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none"/></div>`,
+     <div class="field" style="margin:0"><label>Neue E-Mail</label>
+     <input type="email" id="modal-new-email" placeholder="neue@email.de" autocapitalize="none"/></div>
+     <div style="font-size:var(--t-xs);color:var(--subtle);margin-top:8px;line-height:1.5">Bis du die neue Adresse bestätigt hast, gilt weiter die alte. Deine Anfrage-E-Mail auf BioLink und Media Kit bleibt davon unberührt.</div>`,
     'Bestätigungsmail senden',
     commitEmailChange,
     null
@@ -5682,30 +6120,80 @@ async function commitEmailChange(){
   closeModal()
   if(error){showToast('Fehler: '+error.message,5000);return}
   showToast('Bestätigungsmail gesendet! Bitte prüfe dein Postfach.',5000)
+  kontoWarnungSenden('email', newEmail)
 }
 
-// ── Account löschen ──
-window.openDeleteModal=function(){
-  showModal(
-    'Account löschen?',
-    'Alle deine Daten, BioLink-Seite und Media Kit werden dauerhaft gelöscht.',
-    'Weiter',
-    showDeleteConfirm,
-    null
-  )
+/* Hinweis an die BISHERIGE Adresse, wenn Passwort oder E-Mail geaendert
+   werden. Fuer diese Zielgruppe ist das der einzige sinnvolle Kontoschutz —
+   Zwei-Faktor waere Ueberbau, eine uebernommene Sitzung faellt so aber auf. */
+async function kontoWarnungSenden(art, neueAdresse){
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session)return
+    await fetch(`${SUPABASE_URL}/functions/v1/konto-warnung`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'},
+      body:JSON.stringify({art, neue_adresse:neueAdresse||null})
+    })
+  }catch(_){ /* Der Hinweis ist Beiwerk, er darf die Aenderung nie blockieren. */ }
 }
-function showDeleteConfirm(){
-  showModal(
-    'Wirklich unwiderruflich löschen?',
-    null,
-    'Ja, Account jetzt löschen',
-    commitDeleteAccount,
-    'Diese Aktion kann nicht rückgängig gemacht werden. Dein Account wird sofort gelöscht.'
-  )
+
+/* ── Datenauskunft (Art. 15 DSGVO, in den AGB 7.4 zugesagt) ── */
+window.pfDatenExport=async function(){
+  const zeile=document.getElementById('pf-export-zeile')
+  const sub=document.getElementById('pf-export-sub')
+  if(!zeile||zeile.disabled)return
+  zeile.disabled=true; sub.textContent='Wird zusammengestellt …'
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session)throw new Error('Session abgelaufen')
+    const res=await fetch(`${SUPABASE_URL}/functions/v1/datenauskunft`,{
+      method:'POST',
+      headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
+    })
+    const body=await res.json().catch(()=>({}))
+    if(!res.ok||body.success!==true)throw new Error(body.error||`HTTP ${res.status}`)
+    sub.textContent='Unterwegs an '+(body.gesendet_an||'dein Postfach')
+    showToast('Datenauskunft ist unterwegs ✓',5000)
+  }catch(err){
+    sub.textContent='Hat nicht geklappt: '+err.message
+    zeile.disabled=false
+  }
+}
+
+/* ── Konto löschen ── */
+window.openDeleteModal=function(){
+  if(!pv)return
+  const p=pv.profile, slug=(p.display_name||'').toLowerCase()
+  const punkte=[]
+  if(p.bio_active)      punkte.push(`viuno.de/${escHtml(slug)} wird offline genommen`)
+  if(p.mediakit_active) punkte.push(`viuno.de/kit/${escHtml(slug)} wird offline genommen`)
+  if(pv.analysen)       punkte.push(`${pv.analysen} ${pv.analysen===1?'Analyse wird':'Analysen werden'} samt Auswertung gelöscht`)
+  punkte.push('Profilbild und alle Uploads werden gelöscht')
+  if(pv.isSubscribed)   punkte.push('Der Newsletter wird abbestellt')
+  punkte.push('Deine Zugangsdaten werden gelöscht')
+  document.getElementById('pf-loesch-liste').innerHTML=punkte.map(t=>`<div>· ${t}</div>`).join('')
+  document.getElementById('pf-loesch-label').textContent=`Tippe „${p.display_name}“, um zu bestätigen`
+  const eingabe=document.getElementById('pf-loesch-eingabe')
+  eingabe.value=''; eingabe.placeholder=p.display_name||''
+  document.getElementById('pf-loesch-btn').disabled=true
+  document.getElementById('pf-loesch-modal').classList.remove('hidden')
+  document.body.style.overflow='hidden'
+  setTimeout(()=>eingabe.focus(),100)
+}
+window.pfLoeschZu=function(){
+  document.getElementById('pf-loesch-modal')?.classList.add('hidden')
+  document.body.style.overflow=''
+}
+/* Tippen statt eines zweiten Ja-Klicks: der zweite Klick war Reflex. */
+window.pfLoeschPruefen=function(){
+  const soll=(pv?.profile?.display_name||'').trim().toLowerCase()
+  const ist=document.getElementById('pf-loesch-eingabe').value.trim().toLowerCase()
+  document.getElementById('pf-loesch-btn').disabled = !soll || ist!==soll
 }
 async function commitDeleteAccount(){
-  const btn=document.getElementById('modal-confirm-btn')
-  if(btn){btn.disabled=true;btn.textContent='Wird gelöscht…'}
+  const btn=document.getElementById('pf-loesch-btn')
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'}
   try{
     const{data:{session}}=await sb.auth.getSession()
     if(!session){showToast('Session abgelaufen');navigate('#/login');return}
@@ -5714,47 +6202,86 @@ async function commitDeleteAccount(){
       headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
     })
     const body=await res.json().catch(()=>({}))
-    if(!res.ok&&body.success!==true){closeModal();showToast('Fehler: '+(body.error||'Unbekannt'),5000);return}
+    if(!res.ok&&body.success!==true){pfLoeschZu();showToast('Fehler: '+(body.error||'Unbekannt'),5000);return}
     await sb.auth.signOut()
     location.replace('https://viuno.de')
   }catch(err){
-    closeModal();showToast('Fehler: '+err.message,5000)
+    pfLoeschZu();showToast('Fehler: '+err.message,5000)
   }
 }
 
-window.saveProfile=async function(){
-  if(!pv)return
-  const btn=document.getElementById('btn-save'),successEl=document.getElementById('save-success')
-  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Speichern…';successEl.classList.add('hidden')
-  const ig=document.getElementById('edit-ig').value.trim().replace(/^@/,''),tt=document.getElementById('edit-tt').value.trim().replace(/^@/,'')
-  const patch={full_name:document.getElementById('edit-fullname').value.trim()||null,bio:document.getElementById('edit-bio').value.trim()||null,instagram_handle:ig||null,tiktok_handle:tt||null,city:document.getElementById('edit-city').value.trim()||null,niche_category:pv.niche,updated_at:new Date().toISOString()}
-  const{error}=await sb.from('users').update(patch).eq('id',pv.uid)
-  if(!pv||!document.getElementById('btn-save'))return
-  btn.disabled=false;btn.textContent='Speichern'
-  if(error){showToast('Fehler: '+error.message,4000);return}
-  const bioChanged=(pv.profile?.bio||null)!==patch.bio
-  const uid=pv.uid
-  Object.assign(pv.profile,patch);successEl.classList.remove('hidden');setTimeout(()=>document.getElementById('save-success')?.classList.add('hidden'),3000);showToast('Profil gespeichert ✓')
-  if(bioChanged)regenerateBioPageQuietly(uid)
+/* ── Foto ──
+   Vorher gingen bis zu 5 MB unveraendert auf BioLink und Media Kit, und jede
+   Aenderung liess die alte Datei fuer immer im Storage liegen. */
+function bildVerkleinern(file, maxKante=800){
+  return new Promise((fertig)=>{
+    const reader=new FileReader()
+    reader.onload=(ev)=>{
+      const img=new Image()
+      img.onload=()=>{
+        const k=Math.min(1, maxKante/Math.max(img.width,img.height))
+        if(k>=1 && file.size<400*1024){ fertig({blob:file, vorschau:ev.target.result, endung:(file.name.split('.').pop()||'jpg')}); return }
+        const c=document.createElement('canvas')
+        c.width=Math.round(img.width*k); c.height=Math.round(img.height*k)
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height)
+        c.toBlob(b=>fertig(b?{blob:b, vorschau:c.toDataURL('image/jpeg',.85), endung:'jpg'}
+                             :{blob:file, vorschau:ev.target.result, endung:(file.name.split('.').pop()||'jpg')}),
+                 'image/jpeg', .85)
+      }
+      img.onerror=()=>fertig(null)
+      img.src=ev.target.result
+    }
+    reader.onerror=()=>fertig(null)
+    reader.readAsDataURL(file)
+  })
 }
 
 async function onPhotoPicked(e){
   const file=e.target.files?.[0];if(!file)return
-  if(file.size>5*1024*1024){showToast('Bild zu groß. Max. 5 MB.');return}
-  const reader=new FileReader()
-  reader.onload=(ev)=>{const wrap=document.querySelector('.photo-wrap');if(!wrap)return;const ex=wrap.querySelector('img,.profile-photo-fallback');if(ex)ex.remove();const img=document.createElement('img');img.className='profile-photo';img.src=ev.target.result;wrap.insertBefore(img,wrap.querySelector('.photo-edit-btn'))}
-  reader.readAsDataURL(file);showToast('Wird hochgeladen…',8000)
+  e.target.value=''
+  if(file.size>10*1024*1024){showToast('Bild zu groß. Max. 10 MB.');return}
+  const status=document.getElementById('pf-foto-status')
+  const setzeStatus=(t,cls)=>{if(status){status.textContent=t;status.className='sheet-hint'+(cls?' '+cls:'')}}
+  setzeStatus('Wird verkleinert …')
+
+  const klein=await bildVerkleinern(file)
+  if(!klein){setzeStatus('Bild konnte nicht gelesen werden.','err');showToast('Bild konnte nicht gelesen werden.');return}
+
   const uid=pv?pv.uid:state.session.user.id
-  const path=`${uid}/${Date.now()}.${file.name.split('.').pop()}`
-  const{error}=await sb.storage.from('profile-images').upload(path,file,{upsert:true})
-  if(error){showToast('Upload fehlgeschlagen: '+error.message,4000);return}
-  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(path)
-  await sb.from('users').update({profile_image_url:publicUrl}).eq('id',uid)
+  const altPfad=pfPfadAusUrl(pv?.profile?.profile_image_url, uid)
+
+  /* Sofortige Vorschau in Karte und Sheet. */
+  const av=document.querySelector('.pf-av')
+  if(av){const alt=av.querySelector('img,.pf-av-fallback');if(alt)alt.outerHTML=`<img src="${klein.vorschau}" alt="">`}
+  const sheetAv=document.getElementById('pf-sheet-av')
+  if(sheetAv)sheetAv.innerHTML=`<img src="${klein.vorschau}" style="width:100%;height:100%;object-fit:cover">`
+  setzeStatus('Wird hochgeladen …')
+
+  const pfad=`${uid}/${Date.now()}.${klein.endung}`
+  const{error}=await sb.storage.from('profile-images').upload(pfad,klein.blob,{upsert:true,contentType:klein.blob.type||'image/jpeg'})
+  if(error){setzeStatus('Upload fehlgeschlagen: '+error.message,'err');showToast('Upload fehlgeschlagen',4000);return}
+  const{data:{publicUrl}}=sb.storage.from('profile-images').getPublicUrl(pfad)
+  const{error:dbErr}=await sb.from('users').update({profile_image_url:publicUrl,updated_at:new Date().toISOString()}).eq('id',uid)
+  if(dbErr){setzeStatus('Konnte nicht gespeichert werden.','err');showToast('Fehler: '+dbErr.message,4000);return}
+
+  /* Alte Datei wegräumen — sonst wächst der Bucket mit jedem Upload. */
+  if(altPfad && altPfad!==pfad){ try{ await sb.storage.from('profile-images').remove([altPfad]) }catch(_){} }
+
   if(pv)pv.profile.profile_image_url=publicUrl
-  /* Avatar in der Topbar mitziehen — die alte Seite lud die Seite dafuer neu */
   if(state.profile){state.profile.profile_image_url=publicUrl;paintUser()}
-  showToast('Profilbild gespeichert ✓');e.target.value=''
-  regenerateBioPageQuietly(uid)
+  setzeStatus('✓ Foto gespeichert','ok')
+  showToast('Profilbild gespeichert ✓')
+  if(pv){paintProfile();pfSeiteAktualisieren(uid)}
+}
+
+/* Nur Pfade im eigenen Ordner — das Standardbild aus handle_new_user liegt im
+   Bucket-Wurzelverzeichnis und darf nicht geloescht werden. */
+function pfPfadAusUrl(url, uid){
+  if(!url)return null
+  const m=String(url).match(/\/profile-images\/(.+)$/)
+  if(!m)return null
+  const pfad=decodeURIComponent(m[1].split('?')[0])
+  return pfad.startsWith(uid+'/') ? pfad : null
 }
 
 /* ─────────────────────────────────────────────
