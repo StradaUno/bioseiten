@@ -2281,7 +2281,7 @@ async function renderBiolink(area, ctx){
           <div class="sheet-input-wrap"><span class="sheet-prefix">@</span><input type="text" class="sheet-prefix-input" id="s-threads" placeholder="dein_handle"/></div>
         </div>
         <div class="sheet-actions">
-          <button class="sheet-btn-primary" onclick="saveHandles()">Speichern</button>
+          <button class="sheet-btn-primary" onclick="saveBioHandles()">Speichern</button>
           <button class="sheet-btn-cancel" onclick="backToEditMenu('handles-sheet')">Abbrechen</button>
         </div>
       </div>
@@ -2800,7 +2800,12 @@ window.saveBioProfile=async function(){
   if(bioChanged)regenerateBioPageQuietly(blv.uid)
 }
 
-window.saveHandles=async function(){
+/* saveBioHandles, nicht saveHandles: die Analyse-View definiert weiter unten
+   eine gleichnamige Funktion. Sie stand spaeter in der Datei und hat diese hier
+   ueberschrieben -- der Speichern-Knopf im Kanaele-Sheet rief dann die
+   Analyse-Fassung auf, fand deren Felder nicht, sah blv statt anv und kehrte
+   wortlos zurueck. Das Sheet hat monatelang nichts gespeichert. */
+window.saveBioHandles=async function(){
   if(!blv)return
   const val=(id)=>{const v=document.getElementById(id)?.value.trim();return v?'@'+v.replace(/^@/,''):null}
   const patch={
@@ -5387,14 +5392,14 @@ async function renderProfile(area, ctx) {
         <div style="margin-bottom:12px">
           <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neues Passwort</label>
           <input type="password" id="sheet-new-pw" placeholder="Mindestens 8 Zeichen"
-            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
+            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
             oninput="checkPwSheet()"/>
           <div id="pw-sheet-hint" style="font-size:11px;margin-top:5px;min-height:16px"></div>
         </div>
         <div style="margin-bottom:20px">
           <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Passwort bestätigen</label>
           <input type="password" id="sheet-new-pw2" placeholder="••••••••"
-            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"/>
+            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"/>
         </div>
         <div class="modal-actions">
           <button class="modal-btn modal-btn-cancel" onclick="closePasswordModal()">Abbrechen</button>
@@ -5411,7 +5416,7 @@ async function renderProfile(area, ctx) {
         <div style="margin-bottom:6px">
           <label style="display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px">Neuer Username</label>
           <input type="text" id="sheet-new-username" placeholder="Neuer Username"
-            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
+            style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:16px;color:var(--text);background:var(--bg);outline:none"
             oninput="checkUsernameAvailability()"/>
         </div>
         <div id="username-status" style="font-size:12px;min-height:18px;margin-bottom:16px"></div>
@@ -5457,9 +5462,9 @@ function paintProfile(){
     <div class="section"><div class="section-label">Profil bearbeiten</div>
       <div class="edit-card">
         <div class="field"><label>Username</label>
-          <div style="display:flex;gap:8px;align-items:center;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg)">
+          <div style="display:flex;gap:8px;align-items:center;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--bg)">
             <span style="flex:1;font-size:14px;color:var(--text)" id="display-username">${escHtml(p.display_name||'–')}</span>
-            <button onclick="openUsernameSheet()" style="padding:6px 12px;border-radius:var(--radius-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">Ändern</button>
+            <button onclick="openUsernameSheet()" style="padding:6px 12px;border-radius:var(--r-sm);background:var(--text);color:white;border:none;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0">Ändern</button>
           </div>
           <div class="username-hint">Dein öffentlicher Name auf viuno.de</div>
         </div>
@@ -5660,7 +5665,7 @@ window.openEmailModal=function(){
     'E-Mail-Adresse ändern',
     `<div style="margin-bottom:12px">Aktuelle E-Mail: <strong>${escHtml(pv.user.email)}</strong></div>
      <div class="field" style="margin:0"><label style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:6px">Neue E-Mail</label>
-     <input type="email" id="modal-new-email" placeholder="neue@email.de" style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none"/></div>`,
+     <input type="email" id="modal-new-email" placeholder="neue@email.de" style="width:100%;padding:11px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);font-family:inherit;font-size:14px;color:var(--text);background:var(--bg);outline:none"/></div>`,
     'Bestätigungsmail senden',
     commitEmailChange,
     null
