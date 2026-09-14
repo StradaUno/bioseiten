@@ -258,18 +258,21 @@ function zaehlen(page, slug) {
   } catch (_) {}
 }
 
-function karte(c, { gross = false, offen = false, mitDatum = false } = {}) {
+/* ohneKopf: in der Einzelansicht traegt schon die Seitenueberschrift die
+   Schlagzeile und die Zusammenfassung — die Karte wuerde sie sonst direkt
+   darunter ein zweites Mal wiederholen. */
+function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = false } = {}) {
   const voll = (c.full_content || '').trim()
   const aufklappbar = voll || c.impact || c.source_url
   const wichtig = (c.relevance_score || 0) >= 8
   const quelle = [c.platform_label, c.source, mitDatum ? datum(c.date) : alter(c.published_date || c.date)]
     .filter(Boolean).join(' · ')
 
-  return `<article class="card${gross ? ' gross' : ''}${offen ? ' open' : ''}${aufklappbar ? '' : ' fix'}" data-slug="${esc(c.slug || '')}">
+  return `<article class="card${gross ? ' gross' : ''}${offen ? ' open' : ''}${aufklappbar && !ohneKopf ? '' : ' fix'}" data-slug="${esc(c.slug || '')}">
     <div class="card-inner">
       ${wichtig ? `<div class="chip">Wichtig</div>` : ''}
-      <div class="card-headline">${esc(c.headline || '')}</div>
-      <div class="card-summary">${esc(c.summary || '')}</div>
+      ${ohneKopf ? '' : `<div class="card-headline">${esc(c.headline || '')}</div>
+      <div class="card-summary">${esc(c.summary || '')}</div>`}
       ${aufklappbar ? `<div class="card-body-full">
         ${c.impact ? `<div class="card-impact">
           <div class="card-impact-label">Was das für dich bedeutet</div>
@@ -283,7 +286,7 @@ function karte(c, { gross = false, offen = false, mitDatum = false } = {}) {
       </div>` : ''}
       <div class="card-foot">
         <span class="card-quelle">${esc(quelle)}</span>
-        ${aufklappbar ? CHEVRON : ''}
+        ${aufklappbar && !ohneKopf ? CHEVRON : ''}
       </div>
     </div>
   </article>`
@@ -342,7 +345,7 @@ async function start() {
         document.getElementById('untertitel').textContent = c.summary || ''
         document.getElementById('einzel-karte').innerHTML =
           `<div class="zurueck"><a href="/news">← Alle Creator News</a></div>` +
-          karte(c, { gross: true, offen: true, mitDatum: true })
+          karte(c, { gross: true, offen: true, mitDatum: true, ohneKopf: true })
         document.getElementById('einzel-section').hidden = false
         document.getElementById('aktuell-titel').textContent = 'Weitere News'
       }
