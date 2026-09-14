@@ -43,6 +43,8 @@ const STR = {
     followers:'Follower', subscribers:'Abonnenten', er:'Engagement', avg_likes:'Ø Likes',
     avg_views:'Ø Views', avg_comments:'Ø Kommentare', frequency:'Beiträge/Woche',
     view_profile:'Profil ansehen', reach:'Reichweite', posts:'Stärkste Beiträge',
+    avg_reach:'Ø Aufrufe', avg_shares:'Ø geteilt',
+    geprueft:'Von viuno gemessen am',
     terms:'Zusammenarbeit', lead:'Vorlauf', rights:'Nutzungsrechte', excl:'Exklusivität',
     rounds:'Freigabe', days:'Tage', round_one:'eine Korrekturschleife inklusive',
     rounds_n:'Korrekturschleifen inklusive', measured:'gemessen am', self:'Eigenangabe',
@@ -61,6 +63,8 @@ const STR = {
     followers:'Followers', subscribers:'Subscribers', er:'Engagement', avg_likes:'Avg likes',
     avg_views:'Avg views', avg_comments:'Avg comments', frequency:'Posts/week',
     view_profile:'View profile', reach:'Reach', posts:'Top posts',
+    avg_reach:'Avg reach', avg_shares:'Avg shares',
+    geprueft:'Measured by viuno on',
     terms:'Working together', lead:'Lead time', rights:'Usage rights', excl:'Exclusivity',
     rounds:'Approval', days:'days', round_one:'one round of revisions included',
     rounds_n:'rounds of revisions included', measured:'measured on', self:'self-reported',
@@ -79,6 +83,8 @@ const STR = {
     followers:'Follower', subscribers:'Iscritti', er:'Engagement', avg_likes:'Media like',
     avg_views:'Media views', avg_comments:'Media commenti', frequency:'Post/settimana',
     view_profile:'Vedi profilo', reach:'Copertura', posts:'Post migliori',
+    avg_reach:'Media copertura', avg_shares:'Media condivisioni',
+    geprueft:'Misurato da viuno il',
     terms:'Collaborazione', lead:'Preavviso', rights:'Diritti di utilizzo', excl:'Esclusività',
     rounds:'Approvazione', days:'giorni', round_one:'una revisione inclusa',
     rounds_n:'revisioni incluse', measured:'misurato il', self:'dichiarato',
@@ -191,6 +197,19 @@ a{text-decoration:none;color:inherit}
 .mk-cta{display:block;width:100%;padding:14px;background:#1A1A2E;color:#fff;border-radius:12px;font-size:14px;font-weight:600;text-align:center}
 .mk-footer{text-align:center;padding:16px 24px;font-size:11px;color:#9292A0;border-top:1px solid #D4D4D8}
 .mk-footer a,.mk-footer button{color:#71717A}
+.mk-powered{font-size:12px;color:#71717A;margin-bottom:4px}
+.mk-powered a{font-weight:600;color:#1A1A2E}
+.mk-powered a:hover{text-decoration:underline}
+.mk-impressum{background:none;border:none;cursor:pointer;font-size:11px;color:#9292A0;font-family:inherit;text-decoration:underline;padding:4px}
+/* Der Haken taucht nur auf, wo viuno wirklich gemessen hat. Angetippt nennt
+   er den Stichtag -- auf dem Telefon gibt es kein Hover. */
+.mk-haken{background:none;border:none;padding:0;margin-left:5px;cursor:pointer;color:#3897f0;
+  display:inline-flex;align-items:center;position:relative;line-height:0}
+.mk-haken::after{content:attr(data-stand);position:absolute;left:50%;top:calc(100% + 7px);
+  transform:translateX(-50%);background:#1A1A2E;color:#fff;font-size:10px;font-weight:500;
+  padding:5px 9px;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .15s;z-index:20}
+.mk-haken.auf::after,.mk-haken:hover::after{opacity:1}
 .mk-lang{display:inline-flex;gap:2px;background:#FAFAF9;border:1px solid #D4D4D8;border-radius:999px;padding:3px;margin-bottom:10px}
 .mk-lang-btn{font-size:10px;font-weight:500;padding:4px 10px;border-radius:999px;border:none;background:none;color:#9292A0;cursor:pointer;font-family:inherit}
 .mk-lang-btn.active{background:#1A1A2E;color:#fff}
@@ -213,7 +232,7 @@ body.imp-open{overflow:hidden}
 @media print{
   body{background:#fff;padding:0}
   .mk-main{max-width:none;border:none;box-shadow:none;border-radius:0}
-  .mk-lang,.mk-drucken,.page-loader,.imp-sheet,.imp-backdrop,.mk-profile-btn{display:none!important}
+  .mk-lang,.mk-impressum,.page-loader,.imp-sheet,.imp-backdrop,.mk-profile-btn,.mk-haken::after{display:none!important}
   .mk-section{break-inside:avoid}
   #main{visibility:visible!important}
 }`
@@ -226,11 +245,14 @@ const IKON = {
   mail: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>'
 }
 
-/* Herkunfts-Etikett. Das ist der Kern des Ganzen: eine Marke sieht sofort,
-   welche Zahl aus einer Messung stammt und welche der Creator behauptet. */
-const etikett = (gemessenAm) => gemessenAm
-  ? `<span class="mk-herkunft gemessen">${t('measured')} ${datum(gemessenAm)}</span>`
-  : `<span class="mk-herkunft eigen">${t('self')}</span>`
+/* Der Haken. Er erscheint NUR, wo viuno wirklich gemessen hat -- und
+   nirgends sonst. Kein Haken heisst damit stillschweigend "Eigenangabe",
+   ohne dass unter jeder Eigenangabe ein Warnsatz stehen muss: das las sich
+   wie eine Entschuldigung auf einer Seite, die ueberzeugen soll.
+   Angeklickt nennt er den Stichtag. */
+const haken = (gemessenAm) => gemessenAm
+  ? `<button type="button" class="mk-haken" data-stand="${t('geprueft')} ${datum(gemessenAm)}" aria-label="${t('geprueft')} ${datum(gemessenAm)}"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1.1 2.8 1.1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9L3.2 15.8 4.3 13 3.2 10.2l2.5-1.7.9-2.9 3 .2z"/><path d="M10.6 14.6l-2.1-2.1-1.1 1.1 3.2 3.2 5.9-5.9-1.1-1.1z" fill="#fff"/></svg></button>`
+  : ''
 
 function abschnitt(titel, inhalt, herkunft) {
   if (!inhalt) return ''
@@ -246,18 +268,24 @@ function plattformBlock(art) {
   const er   = ig ? u.er_instagram : u.er_tiktok
   const drit = ig ? u.avg_likes_instagram : u.avg_views_tiktok
   const komm = ig ? u.avg_comments_instagram : u.avg_comments_tiktok
-  const freq = ig ? u.posts_woche_instagram : u.posts_woche_tiktok
+  /* Zweite Zusatzzeile je Kanal, jeweils die Zahl, die dort etwas aussagt:
+     auf Instagram wie weit ein Reel ueber die Follower hinaus laeuft, auf
+     TikTok wie oft geteilt wird -- dort treibt Teilen die Verbreitung.
+     Beitraege pro Woche steht bewusst nicht mehr da: eine Marke bucht einen
+     Beitrag, kein Abonnement. */
+  const zweite = ig ? u.avg_views_instagram : u.avg_shares_tiktok
+  const zweiteLbl = ig ? t('avg_reach') : t('avg_shares')
   const gem  = ig ? u.gemessen_am_instagram : u.gemessen_am_tiktok
   const link = ig ? 'https://instagram.com/' + encodeURIComponent(clean)
                   : 'https://tiktok.com/@' + encodeURIComponent(clean)
 
   let zeilen = ''
   if (komm != null) zeilen += `<div class="mk-row"><span>${t('avg_comments')}</span><span>${fm(komm)}</span></div>`
-  if (freq != null) zeilen += `<div class="mk-row"><span>${t('frequency')}</span><span>${dez(freq, 1)}</span></div>`
+  if (zweite != null) zeilen += `<div class="mk-row"><span>${zweiteLbl}</span><span>${fm(zweite)}</span></div>`
 
   return `<div class="mk-platform">
     <div class="mk-plat-head">
-      <div class="mk-plat-name"><div class="mk-plat-icon ${art}">${IKON[art]}</div>${ig ? 'Instagram' : 'TikTok'}</div>
+      <div class="mk-plat-name"><div class="mk-plat-icon ${art}">${IKON[art]}</div>${ig ? 'Instagram' : 'TikTok'}${haken(gem)}</div>
       <span class="mk-plat-handle">@${es(clean)}</span>
     </div>
     <div class="mk-stats3">
@@ -267,7 +295,6 @@ function plattformBlock(art) {
     </div>
     ${zeilen ? `<div class="mk-rows">${zeilen}</div>` : ''}
     <a class="mk-profile-btn" href="${link}" target="_blank" rel="noopener">${t('view_profile')} ↗</a>
-    ${gem ? `<div class="mk-stand">${t('measured')} ${datum(gem)} · ${t('measured_note')}</div>` : ''}
   </div>`
 }
 
@@ -315,7 +342,7 @@ function zielgruppeBlock() {
     }
     h += `</div></div>`
   }
-  h += `</div><div class="mk-hinweis">${t('self_note')}</div>`
+  h += '</div>'
   return h
 }
 
@@ -399,9 +426,9 @@ function zeichne() {
 
   const koerper = [
     abschnitt(t('reach'), reichweite || null),
-    abschnitt(t('posts'), beitraegeBlock(), gemessenIrgendwo ? etikett(gemessenIrgendwo) : ''),
+    abschnitt(t('posts'), beitraegeBlock(), gemessenIrgendwo ? haken(gemessenIrgendwo) : ''),
     abschnitt(t('other_platforms'), weitereBlock()),
-    abschnitt(t('audience'), zielgruppeBlock(), etikett(null)),
+    abschnitt(t('audience'), zielgruppeBlock()),
     abschnitt(t('offers'), leistungenBlock()),
     abschnitt(t('terms'), konditionenBlock()),
     abschnitt(t('brands'), markenBlock()),
@@ -410,12 +437,14 @@ function zeichne() {
       <a class="mk-cta" href="mailto:${es(u.contact_email || '')}">${t('contact_btn')}</a></div>`
   ].join('')
 
+  /* Kein "Als PDF speichern": das Kit laeuft ueber drei Druckseiten, und ein
+     dreiseitiges PDF ist schlechter als keines. Kommt das Kit je auf eine
+     Seite, kann der Knopf zurueck -- das Druck-CSS bleibt deshalb stehen. */
   const fuss = `<div class="mk-footer">
       <div class="mk-lang">${['de','en','it'].map(l =>
         `<button class="mk-lang-btn${l === lang ? ' active' : ''}" data-lang="${l}" type="button">${l.toUpperCase()}</button>`).join('')}</div>
-      <div>powered by <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
-        · <button type="button" id="btn-imprint" class="mk-drucken">${t('imprint')}</button>
-        · <button type="button" id="btn-print" class="mk-drucken">${t('print')}</button></div>
+      <div class="mk-powered">powered by <a href="https://viuno.de?quelle=kit" target="_blank" rel="noopener">viuno</a></div>
+      <div><button type="button" id="btn-imprint" class="mk-impressum">${t('imprint')}</button></div>
     </div>`
 
   document.getElementById('main').innerHTML = `<div class="mk-main">${kopf}${koerper}${fuss}</div>`
@@ -425,7 +454,11 @@ function zeichne() {
 function binde() {
   document.querySelectorAll('.mk-lang-btn').forEach(b =>
     b.addEventListener('click', () => { setzeSprache(b.dataset.lang); zeichne() }))
-  document.getElementById('btn-print')?.addEventListener('click', () => window.print())
+  document.querySelectorAll('.mk-haken').forEach(h => h.addEventListener('click', e => {
+    e.preventDefault()
+    document.querySelectorAll('.mk-haken').forEach(x => { if (x !== h) x.classList.remove('auf') })
+    h.classList.toggle('auf')
+  }))
   document.getElementById('btn-imprint')?.addEventListener('click', () => {
     const txt = (u.impressum_text || '').trim()
     const c = document.getElementById('imp-content')

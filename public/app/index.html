@@ -994,6 +994,37 @@ a.news-quelle:hover{color:var(--text)}
 .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
 @keyframes spin { to{transform:rotate(360deg)} }
 .hidden { display: none !important; }
+/* ── Media Kit: Chips, optionale Felder, Miniatur ── */
+.sheet-optional{font-size:var(--t-2xs);font-weight:var(--fw-md);color:var(--subtle);
+  text-transform:none;letter-spacing:0;margin-left:5px}
+/* Vorschlaege zum Antippen. Wer "Nutzungsrechte" zum ersten Mal liest, hat
+   keine Antwort parat -- drei uebliche Antworten schon. */
+.mk-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.mk-chip{padding:7px 12px;border-radius:var(--r-full);border:1px solid var(--border-strong);
+  background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--t-xs);
+  font-weight:var(--fw-sb);cursor:pointer;min-height:32px}
+.mk-chip:hover{border-color:var(--text);color:var(--text)}
+/* Gezeichnete Miniatur des Kits. Kein Foto: das alte Vorschaubild lag nicht
+   mehr im Speicher und versteckte sich stillschweigend. */
+.mk-mini{margin:0 auto;width:196px;background:#FAFAF9;border:1px solid var(--border-strong);
+  border-radius:12px;padding:12px 11px;box-shadow:0 4px 16px rgba(0,0,0,.07);overflow:hidden}
+.mk-mini-kopf{text-align:center;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.mk-mini-avatar{width:34px;height:34px;border-radius:50%;background:var(--text);color:#fff;
+  display:grid;place-items:center;margin:0 auto 6px;font-size:14px;font-weight:var(--fw-b)}
+.mk-mini-name{font-size:11px;font-weight:var(--fw-b);letter-spacing:-.02em;color:var(--text)}
+.mk-mini-tag{width:44px;height:7px;border-radius:99px;background:var(--surface2);margin:6px auto 0}
+.mk-mini-abschnitt{padding-top:9px}
+.mk-mini-lbl{width:52px;height:5px;border-radius:99px;background:var(--border-strong);margin-bottom:6px}
+.mk-mini-lbl.kurz{width:38px}
+.mk-mini-karte{background:#fff;border:1px solid var(--border);border-radius:7px;padding:7px}
+.mk-mini-drei{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.mk-mini-drei span{height:18px;border-radius:4px;background:var(--surface2)}
+.mk-mini-posts{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.mk-mini-posts span{aspect-ratio:4/5;border-radius:5px;background:linear-gradient(135deg,#ddd9d4,#c9c4bd)}
+.mk-mini-zeile{height:6px;border-radius:99px;background:var(--surface2)}
+.mk-mini-zeile+.mk-mini-zeile{margin-top:5px;width:70%}
+.mk-mini-knopf{height:15px;border-radius:5px;background:var(--text);margin-top:11px}
+
 /* ── Media Kit: Alters- und Preisfelder ── */
 .mk-alter-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .mk-alter-lbl{padding:11px 0 11px 14px;font-size:var(--t-sm);color:var(--muted);white-space:nowrap}
@@ -3226,7 +3257,6 @@ window.saveLinks=function(){
    saveProfile→mkSaveProfile, saveImpressum→mkSaveImpressum,
    confirmDelete→mkConfirmDelete, selectLang→mkSelectLang.
    ═══════════════════════════════════════════════════════════════ */
-const PREVIEW_IMG='https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/Website/mediakit/mediakit-preview.jpg'
 
 /* View-lokaler Zustand, entspricht dem `S` der alten Seite */
 let mkv = null
@@ -3276,10 +3306,9 @@ async function renderMediakit(area, ctx){
         <div class="sheet-field">
           <label class="sheet-label">Nische</label>
           <div class="niche-grid" id="mk-niche-grid">${NICHES_PROFILE.map(n=>`<button type="button" class="niche-btn" data-niche="${n.key}" onclick="mkSelectNiche('${n.key}')">${n.label}</button>`).join('')}</div>
-          <div class="sheet-hint">Erscheint als Schlagwort unter deinem Namen. Dieselbe Auswahl wie im Profil — hier stand vorher ein Freitextfeld, das denselben Datensatz mit unvergleichbaren Werten gefüllt hat.</div>
         </div>
         <div class="sheet-field">
-          <label class="sheet-label">Stadt</label>
+          <label class="sheet-label">Stadt <span class="sheet-optional">optional</span></label>
           <input type="text" class="sheet-input" id="s-city" placeholder="z.B. Berlin" maxlength="60"/>
         </div>
         <div class="sheet-field">
@@ -3289,7 +3318,7 @@ async function renderMediakit(area, ctx){
         <div class="sheet-field">
           <label class="sheet-label">Ein Satz an Marken</label>
           <div class="sheet-sub" style="padding:0 0 8px">Deine Bio ist an Follower gerichtet. Eine Marke liest etwas anderes: wofür stehst du, und warum lohnt sich eine Kooperation? Steht hier etwas, führt es auf dem Kit.</div>
-          <textarea class="sheet-textarea" id="s-pitch" maxlength="200" placeholder="z.B. Italienischer Alltag mit viel Humor — meine Community ist zu 62 % weiblich und kauft, was ich wirklich benutze."></textarea>
+          <textarea class="sheet-textarea" id="s-pitch" maxlength="200" placeholder="z.B. Ich zeige Alltagsrezepte für Leute mit wenig Zeit. Meine Community fragt regelmäßig nach Produkten, die ich benutze — Kooperationen funktionieren hier am besten, wenn ich sie wirklich im Alltag einsetze."></textarea>
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="mkSaveProfile()">Speichern</button>
@@ -3313,7 +3342,7 @@ async function renderMediakit(area, ctx){
         <div class="sheet-field">
           <label class="sheet-label">Anfrage-E-Mail</label>
           <input type="email" class="sheet-input" id="s-contact-email" placeholder="anfragen@deinedomain.de" autocomplete="email"/>
-          <div class="sheet-hint" id="contact-hint">Empfohlen: eigene Adresse, nicht deine private.</div>
+          <div class="sheet-hint" id="contact-hint"></div>
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="saveContact()">Speichern</button>
@@ -3433,7 +3462,7 @@ async function renderMediakit(area, ctx){
             <div style="padding-bottom:14px">
               <button class="br-i" onclick="brInfoKlapp('mk-i-zielgruppe',this)" aria-label="Wo finde ich diese Zahlen?">i</button>
               <span style="font-size:var(--t-xs);color:var(--muted);margin-left:6px">Wo finde ich diese Zahlen?</span>
-              <div class="br-i-txt" id="mk-i-zielgruppe">Instagram: Profil → Professional Dashboard → Insights → Zielgruppe. TikTok: Profil → Menü → Creator-Tools → Analytics → Follower. Dort stehen Alter, Geschlecht und Top-Länder. viuno kann sie ohne offizielle Plattform-API nicht selbst messen — deshalb trägst du sie hier ein, und auf dem Kit steht ausdrücklich „Eigenangabe“.</div>
+              <div class="br-i-txt" id="mk-i-zielgruppe">Instagram: Profil → Professional Dashboard → Insights → Zielgruppe. TikTok: Profil → Menü → Creator-Tools → Analytics → Follower. Dort stehen Alter, Geschlecht und Top-Länder.</div>
             </div>
           </div>
           <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
@@ -3450,10 +3479,10 @@ async function renderMediakit(area, ctx){
         <div class="sheet-field">
           <label class="sheet-label">Alter (Anteil in %)</label>
           <div class="mk-alter-grid">
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">18–24</span><input type="number" class="sheet-prefix-input" id="s-alter1" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">25–34</span><input type="number" class="sheet-prefix-input" id="s-alter2" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">35–44</span><input type="number" class="sheet-prefix-input" id="s-alter3" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">45+</span><input type="number" class="sheet-prefix-input" id="s-alter4" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">18–24</span><input type="number" class="sheet-prefix-input" id="s-alter1" min="0" max="100" placeholder="18" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">25–34</span><input type="number" class="sheet-prefix-input" id="s-alter2" min="0" max="100" placeholder="41" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">35–44</span><input type="number" class="sheet-prefix-input" id="s-alter3" min="0" max="100" placeholder="29" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">45+</span><input type="number" class="sheet-prefix-input" id="s-alter4" min="0" max="100" placeholder="12" inputmode="numeric"/></div>
           </div>
         </div>
         <div class="sheet-divider"></div>
@@ -3510,7 +3539,7 @@ async function renderMediakit(area, ctx){
         <div class="sheet-divider"></div>
         <div class="sheet-field">
           <label class="sheet-label">Preise</label>
-          <div class="sheet-sub" style="padding:0 0 10px">Marken fragen zuerst nach dem Preis. Ohne Angabe schreiben viele gar nicht erst. „bis“ ist optional — leer heißt Festpreis.</div>
+          <div class="sheet-sub" style="padding:0 0 10px">Alles hier ist freiwillig. Wer einen Preis nennt, bekommt oft schnellere und konkretere Anfragen; wer lieber erst verhandelt, lässt die Felder leer — auf dem Kit steht dann „auf Anfrage“. Nur „ab“ ausfüllen ergibt einen Startpreis, beide Felder eine Spanne.</div>
           <div id="mk-preis-liste"></div>
         </div>
         <div class="sheet-field">
@@ -3536,25 +3565,49 @@ async function renderMediakit(area, ctx){
         <div class="sheet-header">
           <div class="sheet-header-text">
             <div class="sheet-title">Zusammenarbeit</div>
-            <div class="sheet-sub" style="padding-bottom:16px">Vier Angaben, die eine Marke sonst per Mail erfragt. Stehen sie im Kit, spart das eine ganze Runde.</div>
+            <div class="sheet-sub" style="padding-bottom:12px">Vier Fragen, die eine Marke sonst per Mail stellt. Wenn du unsicher bist: tippe einen Vorschlag an — das sind die üblichen Antworten. Alles ist freiwillig und jederzeit änderbar.</div>
+            <button class="sheet-btn-cancel" style="width:auto;padding:8px 14px;margin-bottom:6px" onclick="mkKondStandard()">Üblichen Standard übernehmen</button>
           </div>
           <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
-          <label class="sheet-label">Vorlauf in Tagen</label>
-          <input type="number" class="sheet-input" id="s-vorlauf" min="0" max="365" placeholder="z.B. 10" inputmode="numeric"/>
+          <label class="sheet-label">Wie viel Zeit brauchst du?</label>
+          <div class="sheet-sub" style="padding:0 0 8px">Von der Zusage bis der Beitrag online ist.</div>
+          <input type="number" class="sheet-input" id="s-vorlauf" min="0" max="365" placeholder="10" inputmode="numeric"/>
+          <div class="mk-chips">
+            <button type="button" class="mk-chip" onclick="mkChip('s-vorlauf','7')">1 Woche</button>
+            <button type="button" class="mk-chip" onclick="mkChip('s-vorlauf','14')">2 Wochen</button>
+            <button type="button" class="mk-chip" onclick="mkChip('s-vorlauf','21')">3 Wochen</button>
+          </div>
         </div>
         <div class="sheet-field">
-          <label class="sheet-label">Nutzungsrechte</label>
-          <input type="text" class="sheet-input" id="s-rechte" maxlength="120" placeholder="z.B. 6 Monate organisch, Paid auf Anfrage"/>
+          <label class="sheet-label">Darf die Marke deinen Beitrag weiterverwenden?</label>
+          <div class="sheet-sub" style="padding:0 0 8px">Also auf ihrem eigenen Kanal zeigen oder als Werbung schalten. „Paid“ heißt bezahlte Anzeige — dafür verlangen die meisten Creator extra.</div>
+          <input type="text" class="sheet-input" id="s-rechte" maxlength="120" placeholder="6 Monate auf den Kanälen der Marke"/>
+          <div class="mk-chips">
+            <button type="button" class="mk-chip" onclick="mkChip('s-rechte','Nur auf meinen eigenen Kanälen')">Nur bei mir</button>
+            <button type="button" class="mk-chip" onclick="mkChip('s-rechte','6 Monate auf den Kanälen der Marke')">6 Monate bei der Marke</button>
+            <button type="button" class="mk-chip" onclick="mkChip('s-rechte','6 Monate auf den Kanälen der Marke, bezahlte Anzeigen auf Anfrage')">… plus Anzeigen</button>
+          </div>
         </div>
         <div class="sheet-field">
-          <label class="sheet-label">Exklusivität</label>
-          <input type="text" class="sheet-input" id="s-exkl" maxlength="120" placeholder="z.B. 4 Wochen in der Kategorie"/>
+          <label class="sheet-label">Arbeitest du danach für Wettbewerber?</label>
+          <div class="sheet-sub" style="padding:0 0 8px">Manche Marken wollen, dass du eine Zeit lang keine ähnliche Marke bewirbst. Je länger die Sperre, desto mehr kannst du verlangen.</div>
+          <input type="text" class="sheet-input" id="s-exkl" maxlength="120" placeholder="4 Wochen keine ähnliche Marke"/>
+          <div class="mk-chips">
+            <button type="button" class="mk-chip" onclick="mkChip('s-exkl','Keine Einschränkung')">Keine Sperre</button>
+            <button type="button" class="mk-chip" onclick="mkChip('s-exkl','4 Wochen keine ähnliche Marke')">4 Wochen</button>
+            <button type="button" class="mk-chip" onclick="mkChip('s-exkl','3 Monate keine ähnliche Marke')">3 Monate</button>
+          </div>
         </div>
         <div class="sheet-field">
-          <label class="sheet-label">Freigabeschleifen inklusive</label>
-          <input type="number" class="sheet-input" id="s-freigabe" min="0" max="9" placeholder="z.B. 1" inputmode="numeric"/>
+          <label class="sheet-label">Wie oft darf die Marke Änderungen wünschen?</label>
+          <div class="sheet-sub" style="padding:0 0 8px">Ohne Grenze kann aus einem Beitrag schnell eine Woche Arbeit werden. Eine Runde ist üblich.</div>
+          <input type="number" class="sheet-input" id="s-freigabe" min="0" max="9" placeholder="1" inputmode="numeric"/>
+          <div class="mk-chips">
+            <button type="button" class="mk-chip" onclick="mkChip('s-freigabe','1')">Einmal</button>
+            <button type="button" class="mk-chip" onclick="mkChip('s-freigabe','2')">Zweimal</button>
+          </div>
         </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="mkSaveKonditionen()">Speichern</button>
@@ -3692,7 +3745,7 @@ async function loadMediakit(){
     sb.from('mediakit_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('mediakit_brands').select('*').eq('user_id',uid).order('position',{ascending:true}),
     sb.from('mediakit_content_offers').select('offer_type').eq('user_id',uid),
-    sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views,avg_comments,posts_per_week,created_at').eq('user_id',uid).order('created_at',{ascending:true}),
+    sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views,avg_comments,avg_shares,created_at').eq('user_id',uid).order('created_at',{ascending:true}),
     sb.rpc('get_mediakit_views_last_7_days_daily',{p_user_id:uid}),
     sb.from('mediakit_preise').select('*').eq('user_id',uid),
     sb.from('mediakit_beitraege').select('*').eq('user_id',uid).order('position',{ascending:true})
@@ -3816,10 +3869,33 @@ function paintMediakit(){
      <span style="flex:1;font-size:13px;font-weight:600;color:#b85c00">${icon('zap',14)} Neue Analyse verfügbar (${escHtml(drift)}) — Zahlen aktualisieren?</span>
    </div>`:''
 
+  /* Miniatur statt Foto. Das frueher hier verlinkte Bild existiert im Speicher
+     nicht mehr (400) und versteckte sich per onerror stillschweigend -- der
+     Leerzustand hatte damit gar keine Vorschau. Gezeichnet statt fotografiert
+     heisst ausserdem: sie kann nicht veralten, wenn sich das Kit aendert. */
   const previewHtml=!isActive?`<div class="preview-wrap">
-    <div class="preview-title">Erstelle dein Media Kit</div>
-    <div class="preview-sub">Eine professionelle Seite mit allen wichtigen Daten für Marken-Anfragen.</div>
-    <div class="preview-img-wrap"><img src="${PREVIEW_IMG}" alt="Media Kit Vorschau" onerror="this.parentElement.style.display='none'"/></div>
+    <div class="preview-title">So sieht dein Media Kit aus</div>
+    <div class="preview-sub">Eine Seite mit deinen Zahlen, Leistungen und Konditionen — der Link, den du Marken schickst.</div>
+    <div class="mk-mini">
+      <div class="mk-mini-kopf">
+        <div class="mk-mini-avatar">${escHtml((mkv.profile?.display_name||'?')[0].toUpperCase())}</div>
+        <div class="mk-mini-name">${escHtml(mkv.profile?.display_name||'Dein Name')}</div>
+        <div class="mk-mini-tag"></div>
+      </div>
+      <div class="mk-mini-abschnitt">
+        <div class="mk-mini-lbl"></div>
+        <div class="mk-mini-karte"><div class="mk-mini-drei"><span></span><span></span><span></span></div></div>
+      </div>
+      <div class="mk-mini-abschnitt">
+        <div class="mk-mini-lbl kurz"></div>
+        <div class="mk-mini-posts"><span></span><span></span><span></span></div>
+      </div>
+      <div class="mk-mini-abschnitt">
+        <div class="mk-mini-lbl kurz"></div>
+        <div class="mk-mini-karte"><div class="mk-mini-zeile"></div><div class="mk-mini-zeile"></div></div>
+      </div>
+      <div class="mk-mini-knopf"></div>
+    </div>
   </div>`:''
 
   const checklistHtml=!isActive?`<div class="section">
@@ -3898,7 +3974,8 @@ window.openEditMenu=function(){
 function renderEditMenu(){
   const p=mkv.profile||{},mk=mkv.mkData||{}
   const profileOk=!!(p.profile_image_url&&p.bio&&p.bio.trim())
-  const profileSub=[nischeLabel(p.niche_category),p.city||null].filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Bild & Bio fehlen')
+  const profileSub=[nischeLabel(p.niche_category),p.city||null,(mkv.mkData||{}).pitch?'Satz an Marken ✓':null]
+    .filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Bild & Bio fehlen')
   const contactOk=!!(p.contact_email&&p.contact_email.trim())
   const statsOk=!!(p.instagram_handle&&(mk.er_instagram!=null))||!!(p.tiktok_handle&&(mk.er_tiktok!=null))
   const statsSub=[]
@@ -4138,7 +4215,7 @@ window.doAutofill=function(){
     mkv.autofill=mkv.autofill||{}
     mkv.autofill.instagram={stichtag:ig.created_at||null,
       avg_comments:ig.avg_comments!=null?Math.round(ig.avg_comments):null,
-      posts_woche:ig.posts_per_week!=null?+parseFloat(ig.posts_per_week).toFixed(1):null}
+      avg_views:ig.avg_views!=null?Math.round(ig.avg_views):null}
   }
   if(tt){
     if(tt.engagement_rate!=null)document.getElementById('s-tt-er').value=(+parseFloat(tt.engagement_rate).toFixed(2))
@@ -4147,7 +4224,7 @@ window.doAutofill=function(){
     mkv.autofill=mkv.autofill||{}
     mkv.autofill.tiktok={stichtag:tt.created_at||null,
       avg_comments:tt.avg_comments!=null?Math.round(tt.avg_comments):null,
-      posts_woche:tt.posts_per_week!=null?+parseFloat(tt.posts_per_week).toFixed(1):null}
+      avg_shares:tt.avg_shares!=null?Math.round(tt.avg_shares):null}
   }
   showToast('Gemessene Werte übernommen ✓')
 }
@@ -4178,12 +4255,12 @@ window.saveStats=async function(){
   if(af.instagram){
     mkPatch.gemessen_am_instagram=af.instagram.stichtag
     mkPatch.avg_comments_instagram=af.instagram.avg_comments
-    mkPatch.posts_woche_instagram=af.instagram.posts_woche
+    mkPatch.avg_views_instagram=af.instagram.avg_views
   }
   if(af.tiktok){
     mkPatch.gemessen_am_tiktok=af.tiktok.stichtag
     mkPatch.avg_comments_tiktok=af.tiktok.avg_comments
-    mkPatch.posts_woche_tiktok=af.tiktok.posts_woche
+    mkPatch.avg_shares_tiktok=af.tiktok.avg_shares
   }
   const[r1,r2]=await Promise.all([
     sb.from('users').update(userPatch).eq('id',mkv.uid),
@@ -4369,6 +4446,26 @@ window.mkSavePreisHinweis=async function(){
   if(!mkv)return
   if(error){showToast('Fehler: '+error.message,4000);return}
   mkv.mkData=Object.assign(mkv.mkData||{},{preis_hinweis:wert||null})
+}
+
+/* Vorschlag antippen statt Fachbegriff tippen. Fuellt nur das Feld -- der
+   Creator kann jeden Wert danach ueberschreiben. */
+window.mkChip=function(feld,wert){
+  const el=document.getElementById(feld)
+  if(!el)return
+  el.value=wert
+  el.focus({preventScroll:true})
+}
+
+/* Die vier ueblichen Antworten auf einmal. Wer sich nicht auskennt, hat damit
+   etwas Vernuenftiges stehen und kann es spaeter anpassen -- besser als vier
+   leere Felder, die nie ausgefuellt werden. */
+window.mkKondStandard=function(){
+  mkChip('s-vorlauf','14')
+  mkChip('s-rechte','6 Monate auf den Kanälen der Marke')
+  mkChip('s-exkl','4 Wochen keine ähnliche Marke')
+  mkChip('s-freigabe','1')
+  showToast('Vorschlag eingetragen — noch speichern')
 }
 
 window.mkSaveKonditionen=async function(){

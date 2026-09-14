@@ -111,10 +111,28 @@ Deno.serve(async (req) => {
           post_url: p.post_url, bild_pfad: pfad,
           likes: p.likes, comments: p.comments, views: p.views,
           posted_at: p.posted_at, position: pos,
+          analysis_run_id: lauf.analysis_run_id,
           gesichert_am: new Date().toISOString()
         }, { onConflict: 'user_id,platform,post_id' })
 
         ergebnis.push({ platform: lauf.platform, post_id: p.post_id })
+      }
+
+      /* Nach einer neuen Analyse raeumen wir die Beitraege der aelteren Laeufe
+         ab. Sonst bleiben sie liegen und koennen die neuen verdraengen -- das
+         Kit zeigte dann Monate alte Zahlen als "staerkste Beitraege".
+         Erst NACH dem Sichern, damit bei einem Fehlschlag nicht die alten
+         Bilder weg sind und die neuen noch nicht da. */
+      if (posts && posts.length) {
+        const { data: veraltet } = await supabase.from('mediakit_beitraege')
+          .select('post_id, bild_pfad').eq('user_id', uid).eq('platform', lauf.platform)
+          .not('analysis_run_id', 'is', null).neq('analysis_run_id', lauf.analysis_run_id)
+        for (const alt of (veraltet || [])) {
+          if (alt.bild_pfad) await supabase.storage.from(BUCKET).remove([alt.bild_pfad])
+        }
+        await supabase.from('mediakit_beitraege')
+          .delete().eq('user_id', uid).eq('platform', lauf.platform)
+          .not('analysis_run_id', 'is', null).neq('analysis_run_id', lauf.analysis_run_id)
       }
     }
 
