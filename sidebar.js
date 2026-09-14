@@ -101,15 +101,8 @@
     .sb-item:hover{background:var(--surface2,#f0efed);color:var(--text,#111)}
     .sb-item.active{background:var(--text,#111);color:white}
     .sb-item svg{flex-shrink:0}
-    .sb-pro-badge{display:inline-flex;align-items:center;gap:4px;background:var(--text,#111);color:white;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-left:auto;flex-shrink:0}
-    .sb-item.active .sb-pro-badge{background:rgba(255,255,255,.25);color:white}
     .sb-extras-hint{font-size:11px;color:var(--subtle,#b0afa9);padding:6px 12px 10px;line-height:1.4}
     .sb-footer{padding:14px 16px;border-top:1px solid var(--border,rgba(0,0,0,.08))}
-    .sb-pro-banner{background:var(--text,#111);border-radius:10px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
-    .sb-pro-icon{font-size:18px;flex-shrink:0}
-    .sb-pro-text{flex:1;min-width:0}
-    .sb-pro-title{font-size:12px;font-weight:700;color:white;margin-bottom:1px}
-    .sb-pro-sub{font-size:10px;color:rgba(255,255,255,.55);line-height:1.3}
     .sb-user{font-size:12px;color:var(--muted,#7a7975);margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .sb-logout{width:100%;padding:10px;border-radius:8px;background:var(--surface2,#f0efed);border:1px solid var(--border-strong,rgba(0,0,0,.13));font-family:inherit;font-size:13px;font-weight:500;color:var(--text,#111);cursor:pointer;transition:background .15s;margin-bottom:10px}
     .sb-logout:hover{background:var(--border,rgba(0,0,0,.08))}
@@ -150,14 +143,10 @@
       navHTML += `<div class="sb-section">${escHtml(group.section)}</div>`;
       for (const item of group.items) {
         const active = isActive(item.href) ? ' active' : '';
-        const proBadge = item.href === '/extras'
-          ? `<span class="sb-pro-badge">✦ viuno Pro</span>`
-          : '';
         navHTML += `
           <a class="sb-item${active}" href="${escHtml(item.href)}">
             ${item.icon}
             ${escHtml(item.label)}
-            ${proBadge}
           </a>`;
       }
     }
@@ -174,12 +163,6 @@
         </div>
         <nav class="sb-nav">${navHTML}</nav>
         <div class="sb-footer">
-          <div class="sb-pro-banner" id="sb-pro-banner" style="display:none">
-            <div class="sb-pro-icon">⭐</div>
-            <div class="sb-pro-text">
-              <div class="sb-pro-title">viuno Pro</div>
-              <div class="sb-pro-sub">Managed Creator · Exklusive Features</div>
-            </div>
           </div>
           <div class="sb-user" id="sb-user-email"></div>
           <button class="sb-logout" onclick="sidebarLogout()">Abmelden</button>
@@ -209,7 +192,6 @@
   // ── FILL USER INFO ─────────────────────────────────────────────────────────
   async function fillUser() {
     const emailEl = document.getElementById('sb-user-email');
-    const proBanner = document.getElementById('sb-pro-banner');
 
     // Try to get session from global sb / supabase client or window.sidebarSession
     let session = window.sidebarSession || null;
@@ -228,20 +210,9 @@
 
     if (emailEl) emailEl.textContent = session.user?.email || '';
 
-    // Check if user is Pro (managed creator)
-    const client = window.sb || window.supabase;
-    if (client && proBanner) {
-      try {
-        const { data: profile } = await client
-          .from('users')
-          .select('subscription_type')
-          .eq('id', session.user.id)
-          .single();
-        if (profile?.subscription_type === 'pro') {
-          proBanner.style.display = 'flex';
-        }
-      } catch(_) {}
-    }
+    /* Plan-Banner ist ausgeblendet: es gibt derzeit nur ein Modell, alle
+       Funktionen sind frei. users.subscription_type bleibt in der Datenbank
+       stehen — kommt ein zweites Modell, wird hier wieder gelesen. */
   }
 
   // ── GLOBAL FUNCTIONS ───────────────────────────────────────────────────────
