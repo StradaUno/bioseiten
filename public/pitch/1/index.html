@@ -8,12 +8,14 @@
 <title>viuno · Designentwurf</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ══════════ Seite ══════════ */
 :root{
   --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  /* Zahlen und Mikro-Label: Inter mit Tabellenziffern. Gleiche
+     Ziffernbreite ohne Schreibmaschinen-Anmutung. */
+  --ziffern:"Inter",-apple-system,BlinkMacSystemFont,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:var(--sans);background:#E8E5F0;color:#1B1826;padding:40px 24px 70px;-webkit-font-smoothing:antialiased}
@@ -97,8 +99,8 @@ input.sys{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 .hdr .av img{width:100%;height:100%;object-fit:cover;display:block;border-radius:9px}
 .hdr .t{flex:1;min-width:0}
 .hdr .t b{display:block;font-size:15px;font-weight:700;letter-spacing:-.015em}
-.hdr .t span{display:block;margin-top:2px;font-family:var(--mono);font-size:10.5px;color:var(--txt3)}
-.hdr .live{flex:none;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;font-weight:600;
+.hdr .t span{display:block;margin-top:2px;font-family:var(--ziffern);font-size:10.5px;color:var(--txt3)}
+.hdr .live{flex:none;display:flex;align-items:center;gap:6px;font-family:var(--ziffern);font-size:10px;font-weight:600;
   color:var(--gruen);padding:5px 9px;border-radius:999px;background:var(--gruen-bg);border:1px solid var(--gruen-bd)}
 .hdr .live i{width:5px;height:5px;border-radius:50%;background:var(--gruen)}
 
@@ -108,10 +110,10 @@ input.sys{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 
 .karte{margin:0 18px;background:var(--fl);border:1px solid var(--kante);border-radius:18px;box-shadow:var(--sh)}
 .pad{padding:18px}
-.lab{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--txt3)}
-.gross{font-family:var(--mono);font-size:36px;font-weight:700;letter-spacing:-.035em;margin-top:9px;line-height:1}
+.lab{font-family:var(--ziffern);font-size:10px;font-weight:600;letter-spacing:.12em;color:var(--txt3)}
+.gross{font-size:36px;font-weight:800;letter-spacing:-.035em;margin-top:9px;line-height:1;font-variant-numeric:tabular-nums}
 .unter{margin-top:8px;font-size:12.5px;color:var(--txt3);line-height:1.5}
-.delta{font-family:var(--mono);font-size:12px;font-weight:700;padding:4px 9px;border-radius:7px}
+.delta{font-size:12.5px;font-weight:700;padding:4px 9px;border-radius:7px;font-variant-numeric:tabular-nums}
 .delta.up{background:var(--gruen-bg);color:var(--gruen)}
 .tp{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
 .verlauf{margin-top:14px;height:72px;width:100%;display:block}
@@ -122,7 +124,7 @@ input.sys{position:absolute;opacity:0;width:0;height:0;pointer-events:none}
 
 .sk{padding:26px 18px 11px;display:flex;align-items:center;justify-content:space-between}
 .sk h2{font-size:16px;font-weight:700;letter-spacing:-.015em}
-.sk span{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--txt3)}
+.sk span{font-family:var(--ziffern);font-size:10.5px;letter-spacing:.08em;color:var(--txt3)}
 
 .z{display:flex;align-items:center;gap:13px;padding:14px 16px;min-height:60px}
 .z+.z{border-top:1px solid var(--kante)}
@@ -131,9 +133,9 @@ label.z{cursor:pointer}
 .z-b{flex:1;min-width:0}
 .z-t{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
 .z-s{margin-top:3px;font-size:12px;color:var(--txt3);line-height:1.45}
-.z-w{font-family:var(--mono);font-size:13px;color:var(--txt2);flex:none}
+.z-w{font-size:13.5px;font-weight:600;color:var(--txt2);flex:none;font-variant-numeric:tabular-nums}
 .z-ch{color:var(--txt3);flex:none;font-size:15px}
-.tag{flex:none;font-family:var(--mono);padding:4px 8px;border-radius:7px;font-size:10.5px;font-weight:700}
+.tag{flex:none;font-family:var(--ziffern);padding:4px 8px;border-radius:7px;font-size:10.5px;font-weight:700}
 .tag.plus{background:var(--plus-bg);color:var(--vsoft);border:1px solid var(--plus-bd)}
 .tag.rot{background:var(--rot-bg);color:var(--rot)}
 .tag.grau{background:var(--fl2);color:var(--txt2)}
@@ -141,36 +143,36 @@ label.z{cursor:pointer}
 .ringrow{display:flex;align-items:center;gap:16px;padding:18px;cursor:pointer}
 .ring{width:66px;height:66px;flex:none;position:relative;display:grid;place-items:center}
 .ring svg{position:absolute;inset:0}
-.ring b{font-family:var(--mono);font-size:19px;font-weight:700;letter-spacing:-.03em}
-.ring small{display:block;font-family:var(--mono);font-size:9px;color:var(--txt3);margin-top:1px}
+.ring b{font-size:20px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ring small{display:block;font-family:var(--ziffern);font-size:9px;color:var(--txt3);margin-top:1px}
 
 .mgrid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--kante);border:1px solid var(--kante);
   border-radius:18px;overflow:hidden;margin:0 18px;box-shadow:var(--sh)}
 .mc{background:var(--fl);padding:14px 13px}
-.mc .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;color:var(--txt3)}
-.mc .v{font-family:var(--mono);font-size:21px;font-weight:700;letter-spacing:-.03em;margin-top:7px}
+.mc .k{font-family:var(--ziffern);font-size:9.5px;letter-spacing:.1em;color:var(--txt3)}
+.mc .v{font-size:22px;font-weight:800;letter-spacing:-.03em;margin-top:7px;font-variant-numeric:tabular-nums}
 .mc .s{font-size:11.5px;color:var(--txt3);margin-top:3px;line-height:1.35}
 .mc.ok .v{color:var(--gruen)} .mc.bad .v{color:var(--rot)}
 
 .befund{margin:0 18px;padding:18px;border-radius:18px;background:var(--befund-bg);border:1px solid var(--befund-bd)}
-.befund .e{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--vsoft)}
+.befund .e{font-family:var(--ziffern);font-size:10px;letter-spacing:.14em;color:var(--vsoft)}
 .befund h3{margin-top:10px;font-size:18px;font-weight:700;letter-spacing:-.022em;line-height:1.32}
 .befund p{margin-top:9px;font-size:12.5px;line-height:1.55;color:var(--txt2)}
-.befund .q{margin-top:12px;padding-top:12px;border-top:1px solid var(--trenner);font-family:var(--mono);font-size:11px;color:var(--txt3)}
+.befund .q{margin-top:12px;padding-top:12px;border-top:1px solid var(--trenner);font-family:var(--ziffern);font-size:11px;color:var(--txt3)}
 
 .chart{padding:16px}
 .cb{display:flex;align-items:flex-end;gap:3px;height:82px}
 .cb i{flex:1;border-radius:2px 2px 0 0;background:var(--balken)}
 .cb i.top{background:linear-gradient(180deg,var(--v3),var(--v2))}
 .cb i.flop{background:var(--flop)}
-.ax{display:flex;justify-content:space-between;margin-top:9px;font-family:var(--mono);font-size:10px;color:var(--txt3)}
+.ax{display:flex;justify-content:space-between;margin-top:9px;font-family:var(--ziffern);font-size:10px;color:var(--txt3)}
 
 .hk{padding:14px 16px}
 .hz{display:flex;align-items:center;gap:11px;padding:8px 0}
 .hn{width:74px;flex:none;font-size:12.5px;font-weight:600}
 .hb{flex:1;height:7px;border-radius:4px;background:var(--spur);overflow:hidden}
 .hb span{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--v1),var(--v2))}
-.hv{width:44px;text-align:right;flex:none;font-family:var(--mono);font-size:12px;color:var(--txt2)}
+.hv{width:44px;text-align:right;flex:none;font-size:12.5px;font-weight:600;color:var(--txt2);font-variant-numeric:tabular-nums}
 .stb{display:flex;align-items:flex-end;gap:3px;height:50px}
 .stb i{flex:1;background:var(--spur);border-radius:2px}
 .stb i.hi{background:linear-gradient(180deg,var(--v3),var(--v2))}
@@ -185,7 +187,7 @@ label.z{cursor:pointer}
 .vinner .b{margin:4px auto 0;height:3px;width:68%;border-radius:2px;background:rgba(255,255,255,.5)}
 .vinner .l{margin-top:7px;height:13px;border-radius:4px;background:rgba(255,255,255,.22)}
 .vinner .l.f{background:rgba(255,255,255,.92)}
-.vtxt .u{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:-.01em;line-height:1.45;word-break:break-all}
+.vtxt .u{font-family:var(--ziffern);font-size:13px;font-weight:600;letter-spacing:-.01em;line-height:1.45;word-break:break-all}
 .vtxt .m{margin-top:8px;font-size:12px;color:var(--txt3);line-height:1.55}
 .vb{margin-top:14px;display:flex;gap:8px}
 .vb span{height:34px;padding:0 13px;border-radius:9px;font-size:12.5px;font-weight:600;display:inline-flex;align-items:center}
@@ -197,15 +199,15 @@ label.z{cursor:pointer}
 .pk .pa{width:70px;height:70px;border-radius:20px;flex:none;padding:2px;background:linear-gradient(140deg,var(--v1),var(--v2) 55%,var(--v3))}
 .pk .pa{background:linear-gradient(140deg,var(--v1),var(--v2) 55%,var(--v3))}
 .pk .pa img{width:100%;height:100%;object-fit:cover;display:block;border-radius:18px}
-.pk h2{font-size:21px;font-weight:800;letter-spacing:-.03em}
-.pk .n{margin-top:4px;font-family:var(--mono);font-size:11px;color:var(--txt3)}
-.pk .badge{display:inline-block;margin-top:9px;padding:4px 9px;border-radius:7px;font-family:var(--mono);font-size:10px;font-weight:600;
+.pk h2{font-size:22px;font-weight:800;letter-spacing:-.03em}
+.pk .n{margin-top:4px;font-family:var(--ziffern);font-size:11px;color:var(--txt3)}
+.pk .badge{display:inline-block;margin-top:9px;padding:4px 9px;border-radius:7px;font-family:var(--ziffern);font-size:10px;font-weight:600;
   background:var(--plus-bg);color:var(--vsoft);border:1px solid var(--plus-bd)}
 .pstat{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--kante);border:1px solid var(--kante);
   border-radius:18px;overflow:hidden;margin:10px 18px 0;box-shadow:var(--sh)}
 .pstat div{background:var(--fl);padding:14px 10px;text-align:center}
-.pstat .v{font-family:var(--mono);font-size:19px;font-weight:700;letter-spacing:-.03em}
-.pstat .k{margin-top:3px;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;color:var(--txt3)}
+.pstat .v{font-size:20px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.pstat .k{margin-top:3px;font-family:var(--ziffern);font-size:9.5px;letter-spacing:.09em;color:var(--txt3)}
 
 /* ── Tabbar ── */
 .tabbar{flex:none;height:84px;background:var(--tab-bg);border-top:1px solid var(--kante);display:flex;padding:9px 4px 0;backdrop-filter:blur(12px)}
