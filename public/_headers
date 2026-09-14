@@ -14,3 +14,15 @@
   X-Content-Type-Options: nosniff
   # Suchmaschinen haben hier nichts zu holen.
   X-Robots-Tag: noindex, nofollow
+
+# Der Media-Kit-Renderer und das Brand-Ready-Regelwerk werden von erzeugten
+# Seiten und von Edge Functions geladen. Cloudflare gibt statischen Dateien
+# sonst vier Stunden Cache -- eine Layout- oder Regel-Aenderung waere dann
+# erst Stunden spaeter ueberall zu sehen, obwohl der Push durch ist.
+# Fuenf Minuten sind kurz genug, um "Push = live" zu halten, und lang genug,
+# damit die Datei nicht bei jedem Seitenaufruf neu geholt wird.
+/kit/kit-renderer.js
+  Cache-Control: public, max-age=300, must-revalidate
+
+/app/brand-ready-regeln.js
+  Cache-Control: public, max-age=300, must-revalidate
