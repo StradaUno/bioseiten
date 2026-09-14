@@ -31,7 +31,7 @@ Push in small, reviewable commits, and check `git diff --name-only origin/main H
 - The sidebar is defined once in the HTML; the router sets `.active` from `data-route`.
 - `ctx.stale` guards late query answers after a route change; `ctx.onCleanup` / `ctx.on` / `ctx.interval` remove listeners, timers and subscriptions when a route is left. Use them — a view must not leave anything behind.
 - View state lives in one module-level object per view (`pv`, `blv`, `mkv`, `anv`, `dgv`, `rqv`, `obv`), nulled on cleanup.
-- Where the source pages used the same global name for different things, the SPA renames: `saveBioProfile`, `mkSaveProfile`, `mkSaveImpressum`, `mkConfirmDelete`, `mkSelectLang`, `setReqFilter`, `renderAnalyticsContent`, `digestCardHtml`, `renderReqList`.
+- Where the source pages used the same global name for different things, the SPA renames: `saveBioProfile`, `saveBioHandles`, `mkSaveProfile`, `mkSaveImpressum`, `mkConfirmDelete`, `mkSelectLang`, `setReqFilter`, `renderAnalyticsContent`, `digestCardHtml`, `renderReqList`. **This list is load-bearing.** `saveBioHandles` was missed until 14.09.2026: the BioLink and the Analyse view both defined `window.saveHandles`, the later definition won, and the "Social Kanäle" sheet saved nothing at all — silently, because the Analyse version returns early when `anv` is null. `grep -o "^window\.[A-Za-z0-9_]*" public/app/index.html | sort | uniq -d` must stay empty.
 - Three `fmt` variants coexist on purpose (`fmt`, `fmtCount`, `fmtNum`) because the source pages round differently. Don't unify them without checking every call site.
 
 **When a standalone page changes, the matching SPA view has to be changed too** — they are not generated from a shared source. Port queries and logic 1:1; the views are meant to behave identically to their page, bugs included.
@@ -69,6 +69,15 @@ A single Supabase project: `https://bzejndghppuipnedasuv.supabase.co`. Two anon 
 The `sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI` token is a Supabase publishable key, distinct from the JWT — leave it alone unless rotating both ends.
 
 Edge Functions referenced from the client (not in this repo — managed in Supabase dashboard): `track-bio-view`, `track-mediakit-view`, `fetch-analytics`, `contact-submit`.
+
+**Authenticating a user inside an Edge Function: always `supabase.auth.getUser(token)`.** Never decode the JWT by hand. Several functions used to do
+
+```ts
+const payload = JSON.parse(atob(token.split('.')[1]))   // NEVER DO THIS
+const userId = payload.sub
+```
+
+which reads the middle of the token and checks no signature at all. Combined with `verify_jwt: false` — which every one of these functions needs, because the gateway would otherwise reject the CORS preflight — anyone who knows a user's UUID could forge a token and act as that user. The UUIDs are public: they sit in the tracking pixel of every hand-built creator page. On 14.09.2026 this was fixed in `delete-account` (foreign accounts were deletable), `change-username` (foreign BioLinks were switchable off) and `admin-dashboard` (all users, the newsletter list and the landing-page contact requests were readable without an account). `notify-new-request` had the same hole and is a 410 stub. If you add a function that acts on behalf of a user, copy the auth block from `generate-biolink` or `start-analysis`.
 
 **Exception: the three Creator-News functions live in this repo** under `supabase/functions/` — `generate-daily-digest`, `send-weekly-digest-email`, `digest-unsubscribe`. They are still *deployed* from the Supabase dashboard (there is no CI for them), so the repo copy is documentation, not the deployment source: **after editing one, deploy it, and after changing it in the dashboard, copy it back.** They were put here because a silent, unlogged failure in `generate-daily-digest` went unnoticed for 109 days and nobody could read the code to find out why.
 
@@ -124,6 +133,27 @@ Consequences worth knowing:
   deal as the Creator-News functions: the repo copy is documentation, the
   dashboard is the deployment source. **Edit one, deploy it; change it in the
   dashboard, copy it back.** Deployed version at the time of writing: v16.
+
+## Account deletion
+
+`delete-account` (repo copy under `supabase/functions/`) runs, in order:
+`cleanup-user-pages` → storage `profile-images/<uid>/*` → `subscriptions`
+(paid rows anonymised, free rows deleted) → `analysis_purchases`,
+`withdrawal_consents`, `ai_usage_log` anonymised → `auth.admin.deleteUser`,
+whose cascade takes the rest.
+
+**The slug is derived from `users.display_name` everywhere — it is never
+stored.** `generate-biolink`, `generate-mediakit` and `change-username` all
+call the same `slugify()`. `cleanup-user-pages` used to look the slug up in
+`biolink_settings.slug` instead, a column the current generator never writes
+and `change-username` actively nulls; it was `null` for four of five accounts,
+so deleting an account left the public HTML in this repo — with name, bio and
+image URL baked into the `og:` tags. Fixed 14.09.2026: `display_name` is the
+primary source, `biolink_settings.slug` only a fallback for old rows. The
+call happens *before* `auth.admin.deleteUser`, so the row is still there.
+
+Leftovers from before the fix (`public/stradi/`, `public/antika/`,
+`public/kit/stradi/`) were removed in the same commit.
 
 ## Editing conventions to be aware of
 
