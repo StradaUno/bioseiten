@@ -25,9 +25,9 @@ Push in small, reviewable commits, and check `git diff --name-only origin/main H
 
 ## The SPA under `/app/`
 
-`public/app/index.html` is a single-file hash-router SPA that carries the whole logged-in app. It is a *port* of the standalone pages, not a replacement — the pages under `public/dashboard/`, `public/profile/`, `public/biolink/`, `public/mediakit/`, `public/analytics/`, `public/digest/`, `public/requests/`, `public/onboarding/`, `public/login/` and `public/register/` still exist and still work.
+`public/app/index.html` is a single-file hash-router SPA that carries the whole logged-in app. It is a *port* of the standalone pages, not a replacement — the pages under `public/dashboard/`, `public/profile/`, `public/biolink/`, `public/mediakit/`, `public/analytics/`, `public/digest/`, `public/onboarding/`, `public/login/` and `public/register/` still exist and still work.
 
-- Routes: `#/login`, `#/register`, `#/onboarding`, `#/dashboard`, `#/analytics`, `#/biolink`, `#/mediakit`, `#/digest`, `#/requests`, `#/profile`. (`#/digest` is the Creator-News view — the route name predates the rename.) Each is a `renderX(area, ctx)` that renders into `#content-area`. Unknown hashes fall back to `#/dashboard`.
+- Routes: `#/login`, `#/register`, `#/onboarding`, `#/dashboard`, `#/analytics`, `#/biolink`, `#/mediakit`, `#/digest`, `#/profile`. (`#/digest` is the Creator-News view — the route name predates the rename.) Each is a `renderX(area, ctx)` that renders into `#content-area`. Unknown hashes fall back to `#/dashboard`.
 - The sidebar is defined once in the HTML; the router sets `.active` from `data-route`.
 - `ctx.stale` guards late query answers after a route change; `ctx.onCleanup` / `ctx.on` / `ctx.interval` remove listeners, timers and subscriptions when a route is left. Use them — a view must not leave anything behind.
 - View state lives in one module-level object per view (`pv`, `blv`, `mkv`, `anv`, `dgv`, `rqv`, `obv`), nulled on cleanup.
@@ -52,10 +52,10 @@ Each subdirectory of `public/` is a route via its `index.html`. Cloudflare Pages
 Two very different page types share `public/`:
 
 1. **Public landing/creator pages** (`/`, `/it/`, `/stradauno/`, `/easyglenn/`, `/agb/`, `/datenschutz/`, …) — pure HTML/CSS, may include:
-   - A collab form that POSTs to `https://bzejndghppuipnedasuv.supabase.co/rest/v1/collab_requests` with the `sb_publishable_*` key as `apikey` (publishable key, intended to be public — RLS on `collab_requests` allows anonymous inserts).
+   - A contact button that is a plain `mailto:` link to the creator's `users.contact_email`. There is **no** contact form and no `collab_requests` table any more — see "Anfragen removed" below.
    - A fire-and-forget tracking pixel: `POST /functions/v1/track-bio-view` or `/functions/v1/track-mediakit-view` with the creator's `user_id`.
 
-2. **Authenticated app pages** (`/dashboard/`, `/profile/`, `/onboarding/`, `/Requests/`, `/digest/`, `/trends/`, `/analytic/`) — load `@supabase/supabase-js@2` from `https://esm.sh` as an ES module, do `signInWithPassword` against Supabase Auth, and read/write tables like `users`, `creator_analytics`, `bio_stats`, `collab_requests`, `daily_digest`, `live_hashtags`, `deals`, `user_goals`, `biolink_settings`. Sessions persist in localStorage (`persistSession:true`).
+2. **Authenticated app pages** (`/dashboard/`, `/profile/`, `/onboarding/`, `/digest/`, `/analytics/`) — load `@supabase/supabase-js@2` from `https://esm.sh` as an ES module, do `signInWithPassword` against Supabase Auth, and read/write tables like `users`, `creator_analytics`, `daily_digest`, `biolink_settings`, `biolink_viuno`. Sessions persist in localStorage (`persistSession:true`).
 
 `public/index.html` runs an early language-detection redirect: if `navigator.languages[0]` starts with `it`, it sets `sessionStorage.viuno-lang-redirected` and replaces location with `/it/`. The flag is intentional — it prevents loops if the user manually navigates back to DE.
 
@@ -66,7 +66,7 @@ A single Supabase project: `https://bzejndghppuipnedasuv.supabase.co`. Two anon 
 - The newer one (`iat:1773653197`) is used by the auth-gated app pages and `public/onboarding/`, `public/dashboard/`, etc.
 - An older one (`iat:1743702807`) is hardcoded in `public/kit/index.html`. If you touch that file, decide whether to align it with the newer key — they correspond to different key-rotation moments on the same project.
 
-The `sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI` token used in collab form POSTs is a Supabase publishable key, distinct from the JWT — leave it alone unless rotating both ends.
+The `sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI` token is a Supabase publishable key, distinct from the JWT — leave it alone unless rotating both ends.
 
 Edge Functions referenced from the client (not in this repo — managed in Supabase dashboard): `track-bio-view`, `track-mediakit-view`, `fetch-analytics`, `contact-submit`.
 
@@ -90,9 +90,44 @@ Three consumers read the **same two views**, never the raw jsonb: `digest_cards_
 - **Images are back and must stay small.** The 61 stock photos averaged 2.2 MB (131 MB total) and were briefly switched off for that reason; they are now 900 px / ~85 kB each (5.2 MB total). Supabase image transformation is not available on this plan, and resizing inside an Edge Function fails — `imagescript` decodes JPEG to raw RGBA and blows the memory limit on files as small as 1 MB. If new images are ever added, **resize them before upload**.
 - The `approved` card field is gone; nothing ever read it. `digest_bookmarks` existed briefly and was dropped again.
 
+## Anfragen removed (14.09.2026)
+
+The collab-request feature is gone, root and branch. What used to exist: a
+two-slide form overlay (`#cf-overlay`) on every BioLink page that POSTed
+straight to `collab_requests`, an `Anfragen` view in the SPA and at
+`/requests/`, four insert/update triggers, and the `notify-new-request` Edge
+Function that mailed the creator.
+
+What replaces it: the contact button on a BioLink page is a plain
+`mailto:<contact_email>?subject=<localised>` link, built in `renderLinks()`.
+**If `users.contact_email` is empty the button is not rendered at all** — the
+address is optional and is edited in the app under BioLink → Kontakt-E-Mail
+(`saveBioContactEmail`), which also triggers a page regeneration because the
+page is static. The Media Kit reads the same `users.contact_email`.
+
+Consequences worth knowing:
+
+- `collab_requests` and `collab_request_activities` are dropped, as are
+  `trigger_notify_new_request`, `update_new_requests_count`,
+  `handle_collab_request_activity`, `block_empty_collab_note`, the RPC
+  `get_dashboard` and the column `users.new_requests_count`.
+- `handle_new_user` no longer inserts the "viuno Team" demo request. New
+  accounts start with an empty app, not with a fake first request.
+- `notify-new-request` is a 410 stub with `verify_jwt: true`. It was reachable
+  **unauthenticated** and took the record straight from the request body, so
+  anyone with a creator UUID could send mail from `noreply@viuno.de` to that
+  creator with a Reply-To of their choosing. Delete the function in the
+  Supabase dashboard when convenient; the stub only exists because the MCP
+  tooling cannot delete functions.
+- `generate-biolink` is the live source for every generated page, and a copy of
+  its source now lives in `supabase/functions/generate-biolink/` — same
+  deal as the Creator-News functions: the repo copy is documentation, the
+  dashboard is the deployment source. **Edit one, deploy it; change it in the
+  dashboard, copy it back.** Deployed version at the time of writing: v16.
+
 ## Editing conventions to be aware of
 
 - **Creator pages are intentionally minified** into a few long lines. Reformatting them just to read them creates noisy diffs — read them in their compact form, edit surgically, and keep the layout. The non-minified template lives in `public/bio-template.html` and (loosely) the generic `public/kit/index.html`.
-- **Hardcoded UUIDs everywhere.** Each per-creator page has the creator's `user_id` (UUID) baked into the collab `creator_id`, the tracking pixel `user_id`, and image URLs under `…/storage/v1/object/public/profile-images/<UUID>/…`. When duplicating a page for a new creator, update *all three* and the avatar/image URL. Easy to miss one.
+- **Hardcoded UUIDs everywhere.** Each per-creator page has the creator's `user_id` (UUID) baked into the tracking pixel `user_id` and image URLs under `…/storage/v1/object/public/profile-images/<UUID>/…`. When duplicating a page for a new creator, update *both* and the avatar/image URL. Easy to miss one.
 - **No shared CSS/JS files.** Every page inlines its own styles and scripts. Don't add a `/assets/` shared bundle without checking whether the static-only deploy assumption still holds.
 - **Language:** UI copy is German by default; `/it/` mirrors `/` in Italian. Match the existing language of the page you're editing.
