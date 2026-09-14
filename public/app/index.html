@@ -808,6 +808,8 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
    sichtbar, beansprucht aber nicht mehr den Platz ueber der Schlagzeile. */
 .news-foot{display:flex;align-items:center;gap:var(--s-2);margin-top:12px;padding-top:10px;border-top:1px solid var(--border)}
 .news-quelle{flex:1;min-width:0;font-size:var(--t-xs);color:var(--subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.news-quelle-link{display:flex;align-items:center;gap:4px;text-decoration:none;transition:color .15s}
+a.news-quelle-link:hover{color:var(--text)}
 .news-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
 .news-card.offen .news-chevron{transform:rotate(180deg)}
 
@@ -823,8 +825,7 @@ body.analyse-dunkel .result-head-inner{background:var(--surface2)}
 .news-disclaimer{font-size:var(--t-xs);color:var(--subtle);line-height:1.5;margin:12px 0 0;font-style:italic}
 
 .news-actions{display:flex;align-items:center;gap:8px;margin-top:14px;flex-wrap:wrap}
-.news-link,.news-btn{display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);font-weight:600;padding:7px 14px;border-radius:var(--r-full);background:var(--surface);font-family:inherit;cursor:pointer}
-.news-link{color:var(--text);text-decoration:none;border:1px solid var(--border-strong)}
+.news-btn{display:inline-flex;align-items:center;gap:5px;font-size:var(--t-sm);font-weight:600;padding:7px 14px;border-radius:var(--r-full);background:var(--surface);font-family:inherit;cursor:pointer}
 .news-btn{color:var(--muted);border:1px solid var(--border);transition:color .15s,border-color .15s}
 .news-btn:hover{color:var(--text);border-color:var(--border-strong)}
 .news-btn.aktiv{color:var(--text);border-color:var(--border-strong)}
@@ -5170,6 +5171,13 @@ function newsKarteHtml(c, gross){
   const gemerkt     = dgv.merkliste.has(c.slug)
   const aufklappbar = !!(c.full_content || c.impact)
   const quelle      = [c.platform_label, c.source, newsAlter(c.published_date || c.date)].filter(Boolean).join(' · ')
+  /* Die Quellenzeile ist der Link zur Meldung. Ein eigener "Quelle lesen"-
+     Knopf stand vorher im aufgeklappten Bereich und wiederholte nur, was
+     hier ohnehin steht — jetzt ist die Angabe selbst anklickbar und auch
+     bei zugeklappter Karte erreichbar. */
+  const quelleHtml  = c.source_url
+    ? `<a class="news-quelle news-quelle-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener">${escHtml(quelle)} ${icon('arrowUpRight',11)}</a>`
+    : `<span class="news-quelle">${escHtml(quelle)}</span>`
 
   return `<article class="news-card${gross?' gross':''}" data-slug="${escHtml(c.slug||'')}">
     ${wichtig?`<div class="news-chip">Wichtig</div>`:''}
@@ -5180,13 +5188,12 @@ function newsKarteHtml(c, gross){
       ${c.full_content?`<div class="news-full">${mitFettung(c.full_content)}</div>`:''}
       ${newsRechtshinweis(c)}
       <div class="news-actions">
-        ${c.source_url?`<a class="news-link" href="${escHtml(c.source_url)}" target="_blank" rel="noopener">Quelle lesen ${icon('arrowUpRight',13)}</a>`:''}
         <button class="news-btn news-share" type="button">${icon('share',14)} Teilen</button>
         <button class="news-btn news-merk${gemerkt?' aktiv':''}" type="button"><span class="news-merk-icon">${icon('star',14)}</span> <span class="news-merk-text">${gemerkt?'Gemerkt':'Merken'}</span></button>
       </div>
     </div>`:''}
     <div class="news-foot">
-      <span class="news-quelle">${escHtml(quelle)}</span>
+      ${quelleHtml}
       ${aufklappbar?icon('chevronDown',14,'news-chevron'):''}
     </div>
   </article>`
@@ -5200,7 +5207,7 @@ function newsKarte(slug){
 function bindeNews(el){
   el.querySelectorAll('.news-card').forEach(karte => {
     dgv.ctx.on(karte, 'click', e => {
-      if(e.target.closest('.news-link') || e.target.closest('.news-btn')) return
+      if(e.target.closest('.news-quelle-link') || e.target.closest('.news-btn')) return
       if(!karte.querySelector('.news-body')) return
       const offen = karte.classList.toggle('offen')
       if(offen) newsZaehlen('news_card', 'app', karte.dataset.slug)

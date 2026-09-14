@@ -76,13 +76,14 @@ nav.top{position:sticky;top:0;z-index:50;background:rgba(245,244,242,.85);backdr
 .card-full-text strong{color:var(--text);font-weight:600}
 .card-disclaimer{font-size:12px;color:var(--subtle);line-height:1.5;margin-top:12px;font-style:italic}
 .card-actions{margin-top:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.card-link,.card-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;padding:8px 16px;border-radius:99px;background:var(--surface);font-family:inherit;cursor:pointer}
-.card-link{border:1px solid var(--border-strong);color:var(--text)}
+.card-btn{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;padding:8px 16px;border-radius:99px;background:var(--surface);font-family:inherit;cursor:pointer}
 .card-btn{border:1px solid var(--border);color:var(--muted);transition:color .15s,border-color .15s}
 .card-btn:hover{color:var(--text);border-color:var(--border-strong)}
 /* Fusszeile: Plattform, Quelle und Datum in einer Zeile, unter dem Text. */
 .card-foot{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
 .card-quelle{flex:1;min-width:0;font-size:12px;color:var(--subtle);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+a.card-quelle-link{transition:color .15s}
+a.card-quelle-link:hover{color:var(--text)}
 .card-chevron{flex-shrink:0;color:var(--subtle);transition:transform .2s}
 .card.open .card-chevron{transform:rotate(180deg)}
 
@@ -263,10 +264,17 @@ function zaehlen(page, slug) {
    darunter ein zweites Mal wiederholen. */
 function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = false } = {}) {
   const voll = (c.full_content || '').trim()
-  const aufklappbar = voll || c.impact || c.source_url
+  const aufklappbar = voll || c.impact
   const wichtig = (c.relevance_score || 0) >= 8
   const quelle = [c.platform_label, c.source, mitDatum ? datum(c.date) : alter(c.published_date || c.date)]
     .filter(Boolean).join(' · ')
+  /* Die Quellenzeile ist der Link zur Meldung. Ein eigener "Quelle lesen"-
+     Knopf stand vorher im aufgeklappten Bereich und wiederholte nur, was
+     hier ohnehin steht — jetzt ist die Angabe selbst anklickbar und auch
+     bei zugeklappter Karte erreichbar. */
+  const quelleHtml = c.source_url
+    ? `<a class="card-quelle card-quelle-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">${esc(quelle)} ↗</a>`
+    : `<span class="card-quelle">${esc(quelle)}</span>`
 
   return `<article class="card${gross ? ' gross' : ''}${offen ? ' open' : ''}${aufklappbar && !ohneKopf ? '' : ' fix'}" data-slug="${esc(c.slug || '')}">
     <div class="card-inner">
@@ -280,12 +288,11 @@ function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = f
         ${voll ? `<div class="card-full-text">${escMitFett(voll)}</div>` : ''}
         ${hinweis(c)}
         <div class="card-actions">
-          ${c.source_url ? `<a class="card-link" href="${esc(c.source_url)}" target="_blank" rel="noopener">Quelle lesen ↗</a>` : ''}
           <button class="card-btn card-share" type="button">Teilen</button>
         </div>
       </div>` : ''}
       <div class="card-foot">
-        <span class="card-quelle">${esc(quelle)}</span>
+        ${quelleHtml}
         ${aufklappbar && !ohneKopf ? CHEVRON : ''}
       </div>
     </div>
@@ -294,7 +301,7 @@ function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = f
 
 /* Aufklappen: Klick auf die Karte, ausser auf Quelle-Link und Knoepfe. */
 document.addEventListener('click', e => {
-  if (e.target.closest('.card-link')) return
+  if (e.target.closest('.card-quelle-link')) return
   if (e.target.closest('.card-share')) {
     e.preventDefault()
     const k = e.target.closest('.card')
