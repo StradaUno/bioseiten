@@ -831,9 +831,18 @@ html, body {
 .c-rang-wann{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .c-rang-nr{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:6px;margin-right:8px;
   background:var(--c-panel2);color:var(--c-fg3);font-family:"Outfit",sans-serif;font-size:11px;font-weight:800;vertical-align:-3px}
-/* Abstand nach links: td.n setzt padding-right auf 0, sonst klebt
-   „12 von 1.000" direkt an der Zahl davor und liest sich als eine. */
-.c-rang-zusatz{font-size:12px;color:var(--c-fg3);white-space:nowrap;padding-left:12px}
+/* Zwei Regeln mit hoeherer Spezifitaet als `.c-tbl td` bzw. `.c-tbl a` --
+   beide sind Element+Klasse (0-1-1) und schlugen die reinen Klassenselektoren
+   (0-1-0) darunter:
+
+   1. padding-left: `.c-tbl td` setzt padding-right auf 0. Ohne Gegenregel
+      klebte „568.262 Aufrufe" direkt an der Zahl davor und las sich als eine
+      einzige, absurd grosse Zahl.
+   2. border-bottom: `.c-tbl a` unterstreicht jeden Link in der Tabelle. Die
+      Beitragszeile ist seit den Vorschaubildern selbst ein Link -- dadurch lief
+      unter jeder Zeile ein zweiter, kurzer Strich neben dem Zeilentrenner. */
+.c-rang-zusatz{display:block;margin-top:2px;font-size:11.5px;font-weight:400;color:var(--c-fg3);white-space:nowrap}
+.c-tbl a.c-rang-post{border-bottom:0}
 .c-datum{color:inherit;text-decoration:none;border-bottom:1px dotted var(--c-line2)}
 .c-datum:hover{border-bottom-style:solid;color:var(--c-fg)}
 /* Teilen: der einzige Block im Cockpit, der nach aussen zeigt. Deshalb als
@@ -5797,7 +5806,7 @@ function renderAnalyticsContent(){
         h+=`<div class="c-rang-liste" data-rang="${l.id}"${i===0?'':' hidden'}>
           <p class="c-lede" style="margin:0 0 10px">${escHtml(l.hinweis)}</p>
           <div class="c-tbl-wrap"><table class="c-tbl"><thead><tr>
-            <th>Beitrag</th><th class="n">${escHtml(l.titel)}</th><th>&nbsp;</th></tr></thead><tbody>
+            <th>Beitrag</th><th class="n">${escHtml(l.titel)}</th></tr></thead><tbody>
           ${zeilen.map((x,r)=>{
             const wann=`${tag(x.datum)} um ${uhr(x.datum)}`
             const pfad=x.url?(anv.bilder||{})[x.url]:null
@@ -5808,9 +5817,13 @@ function renderAnalyticsContent(){
             const zelle=x.url
               ? `<a class="c-rang-post" href="${escHtml(x.url)}" target="_blank" rel="noopener">${innen}</a>`
               : `<span class="c-rang-post">${innen}</span>`
+            /* Die Zusatzzahl steht UNTER dem Wert, nicht in einer dritten
+               Spalte: Bild, Datum, Wert und Zusatz nebeneinander passten auf
+               375 px nicht mehr, die Tabelle bekam eine Querleiste und der
+               Zusatz wurde abgeschnitten. */
+            const zu=escHtml(l.zusatz(x)||'')
             return `<tr><td>${zelle}</td>
-              <td class="n">${l.zeige(x)}</td>
-              <td class="c-rang-zusatz">${escHtml(l.zusatz(x)||'')}</td></tr>`
+              <td class="n">${l.zeige(x)}${zu?`<span class="c-rang-zusatz">${zu}</span>`:''}</td></tr>`
           }).join('')}
           </tbody></table></div></div>`
       })
