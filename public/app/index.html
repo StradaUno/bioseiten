@@ -374,7 +374,7 @@ html, body {
 .chart-empty{margin-top:12px;padding:18px;text-align:center;font-size:var(--t-sm);color:var(--muted);background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--r-md)}
 /* Herkunft und Klicks: Liste mit Balken im Hintergrund der Zeile. Der
    Balken traegt die Groessenordnung, die Zahl den genauen Wert. */
-.rang{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.rang{margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
 .rang-zeile{position:relative;display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)}
 .rang-zeile:last-child{border-bottom:0}
 .rang-balken{position:absolute;left:0;top:0;bottom:0;background:var(--surface2);z-index:0}
@@ -383,6 +383,13 @@ html, body {
 .rang-anteil{position:relative;z-index:1;font-size:var(--t-xs);color:var(--muted);flex-shrink:0;width:38px;text-align:right}
 /* 24 schmale Balken. Beschriftet werden nur 0, 6, 12 und 18 Uhr —
    24 Uhrzeiten nebeneinander liest ohnehin niemand. */
+.section-hint{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin:0 0 12px}
+/* Loeschen bleibt erreichbar, wirbt aber nicht um den Klick: keine Flaeche,
+   keine Signalfarbe im Ruhezustand, nur ein ruhiger Text. Die Rueckfrage
+   dahinter bleibt unveraendert. */
+.loesch-zeile{display:flex;justify-content:center;padding:22px var(--page-x) calc(8px + var(--safe-bottom))}
+.loesch-link{background:none;border:0;font-family:inherit;font-size:var(--t-sm);color:var(--subtle);cursor:pointer;padding:10px 12px;border-radius:var(--r-sm);min-height:44px;display:inline-flex;align-items:center;transition:color .15s}
+.loesch-link:hover{color:var(--red)}
 .uhr{display:flex;align-items:flex-end;gap:2px;height:70px;margin-top:12px;padding:12px 10px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
 .uhr-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
 .uhr-bar{width:100%;background:var(--border-strong);border-radius:2px 2px 0 0;min-height:2px}
@@ -2474,7 +2481,7 @@ async function renderBiolink(area, ctx){
     </div>
   </div>`
 
-  blv = { uid, ctx, profile:null, biolink:null, customLinks:[], viewsTotal:0, viewsToday:0, views7Days:0, viewsDaily:[], herkunft:[], stunden:[], klicks:[], theme:'color', lang:'de', editingLinkId:null }
+  blv = { uid, ctx, profile:null, biolink:null, customLinks:[], viewsTotal:0, viewsToday:0, views7Days:0, viewsDaily:[], herkunft:[], stunden:[], klicks:[], klickrate:null, theme:'color', lang:'de', editingLinkId:null }
 
   /* Die alte Seite haengt eine Theme-Init an openSheet — hier genauso,
      beim Verlassen der Route wird der Original-Helfer wiederhergestellt. */
@@ -2500,7 +2507,7 @@ async function renderBiolink(area, ctx){
 
 async function loadBiolink(){
   const uid = blv.uid
-  const[profileRes,biolinkRes,linksRes,viewsDailyRes,herkunftRes,stundenRes,klickRes]=await Promise.all([
+  const[profileRes,biolinkRes,linksRes,viewsDailyRes,herkunftRes,stundenRes,klickRes,rateRes]=await Promise.all([
     sb.from('users').select('display_name,full_name,profile_image_url,bio,bio_active,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,contact_email,subscription_type,bio_views_total,bio_views_today,bio_views_last_7_days').eq('id',uid).single(),
     sb.from('biolink_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('biolink_custom_links').select('*').eq('user_id',uid).order('position',{ascending:true}),
@@ -2510,7 +2517,11 @@ async function loadBiolink(){
        Funktionen lesen ueber auth.uid(), nicht ueber einen Parameter. */
     sb.rpc('biolink_herkunft',{p_tage:30}),
     sb.rpc('biolink_stunden',{p_tage:30}),
-    sb.rpc('biolink_klick_zahlen',{p_tage:30})
+    sb.rpc('biolink_klick_zahlen',{p_tage:30}),
+    /* Eigene Funktion, weil die Rate beide Seiten des Bruchs ab demselben
+       Moment zaehlen muss: Klicks gibt es erst seit der Neugenerierung,
+       Aufrufe seit jeher. Sonst steht dort 30 Tage lang zu wenig. */
+    sb.rpc('biolink_klickrate',{p_tage:30})
   ])
   if(!blv||blv.ctx.stale)return
   blv.profile=profileRes.data
@@ -2523,6 +2534,7 @@ async function loadBiolink(){
   blv.herkunft=herkunftRes.data||[]
   blv.stunden=stundenRes.data||[]
   blv.klicks=klickRes.data||[]
+  blv.klickrate=rateRes.data?.[0]||null
   blv.theme=blv.biolink?.theme||'color'
   blv.lang=blv.biolink?.default_language||'de'
   paintBiolink()
@@ -2571,7 +2583,10 @@ function paintBiolink(){
   const aufrufe30=blv.herkunft.reduce((a,h)=>a+Number(h.anzahl||0),0)
   const klicks30=blv.klicks.reduce((a,k)=>a+Number(k.anzahl||0),0)
   /* Kann ueber 100% liegen: ein Besucher klickt manchmal mehrere Links. */
-  const klickrate=aufrufe30>0?Math.round(klicks30/aufrufe30*100):0
+  const rate=blv.klickrate
+  const rateAufrufe=Number(rate?.aufrufe||0)
+  const klickrate=rateAufrufe>0?Math.round(Number(rate.klicks||0)/rateAufrufe*100):0
+  const rateSeit=rate?.seit?new Date(rate.seit).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}):null
 
   const rangHtml=(zeilen,gesamt)=>{
     const max=Math.max(...zeilen.map(z=>z.wert),1)
@@ -2622,6 +2637,7 @@ function paintBiolink(){
        </div>
        <div class="section">
          <div class="section-label">Klicks · 30 Tage</div>
+         <div class="section-hint">Jede Zeile ist ein Link deiner Seite: wie oft er in den letzten 30 Tagen angetippt wurde und welchen Anteil er an allen Klicks hat. Die Klickrate sind Klicks je Aufruf${rateSeit&&klicks30>0?`, gerechnet ab ${rateSeit}`:''} — über 100 % heißt, Besucher öffnen im Schnitt mehr als einen Link.</div>
          <div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
            <div class="stat-box"><div class="stat-box-value">${fmtNum(klicks30)}</div><div class="stat-box-label">Klicks</div></div>
            <div class="stat-box"><div class="stat-box-value">${klickrate}%</div><div class="stat-box-label">Klickrate</div></div>
@@ -2630,10 +2646,12 @@ function paintBiolink(){
        </div>
        <div class="section">
          <div class="section-label">Woher die Aufrufe kommen · 30 Tage</div>
+         <div class="section-hint">Die Seite, von der ein Besucher kam. „Direkt“ heißt: ohne erkennbare Herkunft geöffnet — etwa aus einer Instagram-Bio oder aus einer App heraus.</div>
          ${herkunftHtml}
        </div>
        <div class="section">
          <div class="section-label">Wann deine Seite geöffnet wird · Ortszeit der Besucher</div>
+         <div class="section-hint">Jede Säule ist eine Stunde des Tages, gezählt über die letzten 30 Tage in der Uhrzeit des Besuchers — nicht in deiner.</div>
          ${uhrHtml}
        </div>`
     :slug?`<div class="status-banner inactive"><div class="status-dot inactive"></div>
@@ -2672,8 +2690,8 @@ function paintBiolink(){
   </div>`
 
   const deleteHtml=isActive
-    ?`<div class="action-stack" style="padding-top:20px;padding-bottom:calc(8px + var(--safe-bottom))">
-        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">${icon('trash',16)} BioLink-Seite löschen</button>
+    ?`<div class="loesch-zeile">
+        <button class="loesch-link" onclick="document.getElementById('delete-modal').classList.remove('hidden')">BioLink-Seite löschen</button>
       </div>`
     :''
 

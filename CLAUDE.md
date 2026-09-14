@@ -169,11 +169,19 @@ keine Header setzen: der Body geht als `text/plain` raus. Das ist Absicht —
 `text/plain` loest keinen CORS-Preflight aus, ein Klick bleibt genau ein
 Request und haelt das Weiterspringen zum Ziel nicht auf.
 
-Die Anzeige in der SPA (`renderBiolink`) liest drei SECURITY-INVOKER-RPCs, alle
+Die Anzeige in der SPA (`renderBiolink`) liest vier SECURITY-INVOKER-RPCs, alle
 mit `p_tage` und **ohne** `user_id`-Parameter — sie filtern selbst auf
 `auth.uid()`, damit eine fremde UUID nichts herausgibt: `biolink_herkunft`,
 `biolink_stunden` (linker Join auf `generate_series(0,23)`, damit leere Stunden
-als Luecke erscheinen) und `biolink_klick_zahlen`. Rohe Referrer werden von
+als Luecke erscheinen), `biolink_klick_zahlen` und `biolink_klickrate`.
+
+**Die Klickrate hat eine eigene Funktion, weil beide Seiten des Bruchs ab
+demselben Moment zaehlen muessen.** Aufrufe gibt es seit April, Klicks erst,
+seit die Seite mit dem Zaehler erzeugt wurde. Gegen 30 Tage Aufrufe gerechnet
+stand dort 1 % statt 44 % — und das waere 30 Tage lang so geblieben, also
+genau so lange, wie jemand die Zahl zum ersten Mal anschaut.
+`biolink_klickrate` zaehlt ab dem ersten erfassten Klick (hoechstens `p_tage`
+zurueck) und gibt `seit` mit heraus, damit die App den Stichtag nennen kann. Rohe Referrer werden von
 `biolink_quelle(roh text)` auf Namen abgebildet (Instagram, Threads, TikTok,
 YouTube, Facebook, LinkedIn, X, WhatsApp, Pinterest, Google, viuno, Direkt,
 Andere) — `l.instagram.com` und `instagram.com` landen dadurch im selben Topf.
