@@ -16,7 +16,7 @@ Die Befunde aus Phase 1, die sofort schadeten, sind erledigt — siehe unten.
 
 | # | Was | Wo | Nachweis |
 |---|---|---|---|
-| 1 | Signaturprüfung in `delete-account`, `change-username`, `admin-dashboard` | Edge Functions v11 / v7 / v8 | gefälschtes Token liefert `invalid_token: rejected`, `Ungültiger Token`, `Auth fehlgeschlagen` |
+| 1 | Signaturprüfung in `delete-account`, `change-username`, `admin-dashboard` | Edge Functions v12 / v7 / v8 | gefälschtes Token liefert `invalid_token: rejected`, `Ungültiger Token`, `Auth fehlgeschlagen` |
 | 1b | `cleanup-user-pages` leitet den Slug aus `display_name` ab | Edge Function v24 | — |
 | 1c | Verwaiste Seiten `public/stradi`, `public/antika`, `public/kit/stradi` entfernt | Commit `427d29e` | liefern die Landingpage statt der Creator-Seite |
 | 2 | Spalten-Grants auf `users` eingeschränkt | Migration `users_spalten_grants_einschraenken` | `authenticated` hat 14 statt 41 Spalten; `is_admin`, `display_name`, `subscription_type`, `is_verified`, `email`, `bio_active` nicht mehr schreibbar |
@@ -29,8 +29,43 @@ Die Befunde aus Phase 1, die sofort schadeten, sind erledigt — siehe unten.
 Gateway den CORS-Preflight ab. Die Prüfung passiert jetzt im Code, genau wie in
 `generate-biolink` und `start-analysis`, die seit jeher so laufen.
 
-Nicht angefasst: alles aus „Verbesserung" ab #8 und alle
-Geschäftsentscheidungen.
+### Zweiter Durchgang — Umbau und Verbesserungen
+
+| # | Was | Wo |
+|---|---|---|
+| 8 | Nische vereinheitlicht: Media-Kit-Freitext → dieselbe Auswahl; Beschriftung über `public.nische_label()` in `mediakit_public`, deshalb wirken bestehende Media Kits sofort | Commit `f1b23fc` + Migration |
+| 9 | Handle-Wechsel warnt, wenn zu dem Kanal schon eine Analyse existiert | Commit `f1b23fc` |
+| 10 | Profil auf `variante-bc` umgebaut | Commit `f1b23fc` |
+| 11 | Anfrage-E-Mail und Kanäle sind jetzt im Profil bearbeitbar | Commit `f1b23fc` |
+| 12 | Löschdialog: eine Stufe, echte Zahlen, getippte Bestätigung, roter Knopf | Commit `f1b23fc` |
+| 13 | Bild auf 800 px verkleinert, altes Bild gelöscht | Commit `f1b23fc` |
+| 14 | Regenerierung sichtbar, `commit: 'unchanged'` ausgewertet, überflüssiger Neubau entfernt | Commit `f1b23fc` |
+| 15 | `full_name` und `city` aus dem Formular | Commit `f1b23fc` |
+| 16 | `konto-warnung`: Mail an die alte Adresse bei Passwort- und E-Mail-Wechsel | Edge Function v1 |
+| 17 | Handle-Format wird geprüft | Commit `f1b23fc` |
+| 18 | Passwort-Modal prüft beide Felder | Commit `f1b23fc` |
+| 19 | Fehlerpfad für die Profil-Query | Commit `f1b23fc` |
+| 20 | Plan-Anzeige entfernt, Daten und Logik bleiben | Commit `d6b8e6d` |
+| 21 | `datenauskunft`: Art.-15-Export als JSON-Anhang per Mail | Edge Function v1 |
+| 22 | `newsletter_subscribers` wird bei Kontolöschung gelöscht, `user_consents` pseudonymisiert | Edge Function v12 |
+| — | `subscriptions`: Fremdschlüssel, `user_id` nullable, Waise weg | Migration |
+
+### Bewusst nicht gemacht
+
+- **#23 Rechtstexte nachziehen** (Anfragen raus, „täglich" → „wöchentlich").
+  Die Texte in `legal_texts` sind anwaltlich freigegeben; sie ohne juristischen
+  Blick umzuschreiben wäre schlechter als ein veralteter Satz.
+- **#24 Zwei-Faktor und Geräteliste.** Ersetzt durch #16.
+- **#25 Löschfrist.** Sofortlöschung bleibt, dafür gibt es jetzt den Export.
+- **#26 Öffentliche Newsletter-Anmeldungen ohne Konto bekommen nie eine Mail.**
+  `send-weekly-digest-email` liest `users`, nicht `newsletter_subscribers`.
+  Echter Ausfall, aber er gehört in den News-Bereich und nicht in einen
+  Profil-Umbau.
+- Die Bearbeitung von Bio, Foto und Nische bleibt zusätzlich im BioLink- und
+  Media-Kit-Editor. Sie schreiben dieselben Spalten und können nicht mehr
+  auseinanderlaufen; sie dort herauszuoperieren, ohne diese beiden Bereiche
+  einmal ganz durchzugehen, wäre die Art Änderung, die still etwas kaputt
+  macht.
 
 ---
 
@@ -216,7 +251,7 @@ zum Schließen und keine Escape-Taste.
 
 | Feld | Orte | Bleibt es synchron? |
 |---|---|---|
-| `profile_image_url` | Profil, Media-Kit-Profil-Sheet | ja, beide schreiben dieselbe Spalte — aber nur das Profil baut danach den BioLink neu |
+| `profile_image_url` | Profil, Media-Kit-Profil-Sheet | ja, beide schreiben dieselbe Spalte und beide bauen den BioLink neu |
 | `bio` | Profil, BioLink-Profil-Sheet, Media-Kit-Profil-Sheet | ja, alle drei regenerieren den BioLink |
 | `city` | Profil, Media-Kit-Profil-Sheet | ja |
 | `niche_category` | Profil (16 feste Schlüssel), Media-Kit-Sheet (**Freitext**) | **nein — siehe unten** |
@@ -271,17 +306,22 @@ fehlen ganz.
 | Änderung | BioLink neu bauen? | Heute? | Media Kit neu bauen? |
 |---|---|---|---|
 | `bio` | **ja** (og:description) | ✔ ja, aus allen drei Bearbeitungsorten | nein, nichts eingebacken |
-| `profile_image_url` | **ja** (og:image) | ✔ ja aus dem Profil, ✘ **nein** aus dem Media-Kit-Sheet | nein |
+| `profile_image_url` | **ja** (og:image) | ✔ ja, aus beiden Bearbeitungsorten | nein |
 | `display_name` | ja — erledigt `change-username` | ✔ | nein |
 | Theme | ja (theme-color, CSS) | ✔ über `generatePage` | – |
 | `instagram_handle` u. a. | **nein**, Laufzeit | – | nein |
 | `contact_email` | **nein**, Laufzeit | ✘ regeneriert trotzdem, mit falschem Kommentar | nein |
 | `city`, `niche_category`, `full_name` | nein | – | nein |
 
-Also: **eine fehlende Regenerierung** (Foto-Upload im Media-Kit-Sheet) und
-**eine überflüssige** (Kontakt-E-Mail im BioLink-Sheet, inklusive
-Cloudflare-Purge). Der Byte-Vergleich in `commitToGitHub` verhindert
+Also **eine überflüssige** Regenerierung (Kontakt-E-Mail im BioLink-Sheet,
+inklusive Cloudflare-Purge). Der Byte-Vergleich in `commitToGitHub` verhindert
 immerhin einen leeren Commit.
+
+> **Korrektur, 14.09.2026:** In der ersten Fassung dieses Berichts stand hier
+> zusätzlich, der Foto-Upload im Media-Kit-Sheet regeneriere nicht. Das war
+> falsch — `onMkPhotoPicked` ruft `regenerateBioPageQuietly` seit jeher auf.
+> Der Irrtum entstand, weil die Datei beim Lesen abgeschnitten war und die
+> letzte Zeile der Funktion fehlte.
 
 Die Rückmeldung an den Nutzer ist heute asymmetrisch: `generatePage` zeigt
 ein Vollbild-Overlay mit Schritten, `regenerateBioPageQuietly` läuft
@@ -970,7 +1010,6 @@ steht dort nicht „—“, sondern „Ohne Adresse erscheint kein Kontakt-Butto
 | 4 | `window.saveHandles` in der BioLink-View umbenennen (z. B. `saveBioHandles`) | der Speichern-Knopf im BioLink-Kanäle-Sheet tut nichts | winzig; CLAUDE.md-Liste der umbenannten Globals ergänzen |
 | 5 | Trigger `auth.users UPDATE OF email` → `public.users.email` | Newsletter geht an die alte Adresse | klein |
 | 6 | `--radius-sm` → `--r-sm` an sechs Stellen | sechs eckige Ecken mitten im Formular | winzig |
-| 7 | Foto-Upload im Media-Kit-Sheet regeneriert nicht | geteilter Link behält das alte Vorschaubild | winzig |
 
 ## Verbesserung
 
