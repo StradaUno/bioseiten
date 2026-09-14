@@ -771,6 +771,14 @@ html, body {
 .c-box.bad{background:var(--c-bad-bg);border-color:var(--c-bad-line)}
 .c-box.cool{background:var(--c-cool-bg);border-color:var(--c-cool-line)}
 .c-box.amber{background:var(--c-amber-bg);border-color:var(--c-amber-line)}
+/* Aufklappbare Auswertungstexte. Der Anreisser verschwindet beim Oeffnen --
+   sonst stuende derselbe Satzanfang zweimal untereinander. */
+.c-falt{margin-top:12px}
+.c-falt-knopf{display:flex;align-items:baseline;gap:8px;width:100%;margin-top:10px;padding:0;
+  background:none;border:0;font-family:inherit;text-align:left;cursor:pointer}
+.c-falt-an{flex:1;min-width:0;font-size:14px;color:var(--c-fg3);line-height:1.5}
+.c-falt-mehr{flex-shrink:0;font-size:12.5px;font-weight:700;color:var(--c-cool);white-space:nowrap}
+.c-falt-knopf.auf{margin-top:14px}
 .c-chip{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:700;letter-spacing:.07em;
   text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:10px;
   background:rgba(27,24,38,.06);color:var(--c-fg2)}
@@ -814,9 +822,18 @@ html, body {
 .c-rang-tab{font:inherit;font-size:12px;font-weight:600;padding:7px 12px;border-radius:99px;cursor:pointer;
   border:1px solid var(--c-line);background:var(--c-panel2);color:var(--c-fg2)}
 .c-rang-tab.aktiv{background:var(--c-fg);color:var(--c-bg);border-color:var(--c-fg)}
+/* Rangliste mit Vorschau: Bild, Datum, Wert. Ohne Bild bleibt die Ziffer. */
+.c-rang-post{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-width:0}
+.c-rang-bild{width:40px;height:40px;border-radius:9px;flex-shrink:0;object-fit:cover;display:block;
+  background:var(--c-panel2);box-shadow:inset 0 0 0 1px var(--c-line)}
+.c-rang-bild.leer{display:grid;place-items:center;font-family:"Outfit",sans-serif;font-size:13px;
+  font-weight:800;color:var(--c-fg3)}
+.c-rang-wann{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .c-rang-nr{display:inline-grid;place-items:center;width:19px;height:19px;border-radius:6px;margin-right:8px;
   background:var(--c-panel2);color:var(--c-fg3);font-family:"Outfit",sans-serif;font-size:11px;font-weight:800;vertical-align:-3px}
-.c-rang-zusatz{font-size:12px;color:var(--c-fg3);white-space:nowrap}
+/* Abstand nach links: td.n setzt padding-right auf 0, sonst klebt
+   „12 von 1.000" direkt an der Zahl davor und liest sich als eine. */
+.c-rang-zusatz{font-size:12px;color:var(--c-fg3);white-space:nowrap;padding-left:12px}
 .c-datum{color:inherit;text-decoration:none;border-bottom:1px dotted var(--c-line2)}
 .c-datum:hover{border-bottom-style:solid;color:var(--c-fg)}
 /* Teilen: der einzige Block im Cockpit, der nach aussen zeigt. Deshalb als
@@ -2568,6 +2585,8 @@ function stopLoadingOverlay(){ if(_loadingTimer){clearInterval(_loadingTimer);_l
    Generate/Delete ueber die Edge Function generate-biolink und das
    Lade-Overlay unveraendert.
    ═══════════════════════════════════════════════════════════════ */
+/* Dieselben Bilder, die das Media Kit zeigt -- ein Bucket, eine Quelle. */
+const CKPT_BILD_BASIS=SUPABASE_URL+'/storage/v1/object/public/mediakit-beitraege/'
 const THEME_IMG_BASE='https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/Website/biolink/'
 const THEMES=[
   {key:'color',name:'Color',img:'theme-color.jpg'},
@@ -4946,6 +4965,7 @@ async function renderAnalytics(area, ctx){
     purchases:{instagram:false,tiktok:false},
     lastDone:{instagram:null,tiktok:null},
     posts:{instagram:[],tiktok:[]},
+    bilder:{},
     kaufOffen:false,
     activeRun:null,
     busy:null,
@@ -5296,6 +5316,16 @@ async function loadKi(){
         anv.posts[pl]=rid?(pd||[]).filter(r=>r.analysis_run_id===rid&&r.platform===pl)
           .sort((x,y)=>new Date(x.posted_at||0)-new Date(y.posted_at||0)):[]
       }
+
+      /* #16: Vorschaubilder gibt es laengst -- mediakit-bilder legt sie fuer
+         das Media Kit im Bucket ab. In der Rangliste stand ein Beitrag bisher
+         nur als Datum und Uhrzeit da; mit Bild erkennt man ihn wieder, ohne
+         ihn zu oeffnen. Zugeordnet ueber post_url, den beide Tabellen fuehren. */
+      const{data:bilder}=await sb.from('mediakit_beitraege')
+        .select('post_url,bild_pfad').eq('user_id',anv.uid).not('bild_pfad','is',null)
+      if(!anv||anv.ctx.stale)return
+      anv.bilder={}
+      for(const b of (bilder||[])) if(b.post_url) anv.bilder[b.post_url]=b.bild_pfad
     }
   }
   renderPlatformCards()
@@ -5533,13 +5563,13 @@ function renderAnalyticsContent(){
 
     const kacheln=[]
     if(st.avg_views!=null)kacheln.push(kachel('Ø Aufrufe',fmt(st.avg_views),'pro Beitrag','cool'))
-    if(st.resonanz_schnitt!=null)kacheln.push(kachel('Resonanz',deN(st.resonanz_schnitt,1),'Likes je 1.000 Aufrufe','cool'))
-    if(st.resonanz_top!=null)kacheln.push(kachel('Stärkste',deN(st.resonanz_top,1),'Likes je 1.000 Aufrufe','ok'))
-    if(st.resonanz_flop!=null)kacheln.push(kachel('Schwächste',deN(st.resonanz_flop,1),'Likes je 1.000 Aufrufe','bad'))
+    if(st.resonanz_schnitt!=null)kacheln.push(kachel('Resonanz',deN(st.resonanz_schnitt,1),`von 1.000 Zuschauern liken ${deN(st.resonanz_schnitt,0)}`,'cool'))
+    if(st.resonanz_top!=null)kacheln.push(kachel('Stärkste',deN(st.resonanz_top,1),`von 1.000 Zuschauern liken ${deN(st.resonanz_top,0)}`,'ok'))
+    if(st.resonanz_flop!=null)kacheln.push(kachel('Schwächste',deN(st.resonanz_flop,1),`von 1.000 Zuschauern liken ${deN(st.resonanz_flop,0)}`,'bad'))
     kacheln.push(kachel('Follower',deN(st.followers),fSub,fCls))
     kacheln.push(kachel('Ø Likes',fmt(st.avg_likes),'pro Beitrag'))
     kacheln.push(kachel('Ø Kommentare',fmt(st.avg_comments),'pro Beitrag'))
-    if(st.kommentarrate_schnitt!=null)kacheln.push(kachel('Kommentarrate',deN(st.kommentarrate_schnitt,1),'Kommentare je 1.000 Aufrufe'))
+    if(st.kommentarrate_schnitt!=null)kacheln.push(kachel('Kommentare',deN(st.kommentarrate_schnitt,1),`von 1.000 Zuschauern kommentieren ${deN(st.kommentarrate_schnitt,0)}`))
     if(st.engagement_rate!=null)kacheln.push(kachel('Je Follower',deN(st.engagement_rate,2)+' %','Likes plus Kommentare'))
     if(st.posts_per_week!=null)kacheln.push(kachel('Beiträge',deN(st.posts_per_week,1),'pro Woche'))
     h+=`<div class="c-grid">${kacheln.join('')}</div>`
@@ -5578,7 +5608,7 @@ function renderAnalyticsContent(){
          liest man einen kurzen Balken oben ueber einem langen Balken unten als
          Fehler -- tatsaechlich heißt es: wenig Reichweite, starke Reaktion. */
       svg+=`<text x="${PADL}" y="${TOP-2}" font-size="10.5" fill="var(--c-fg3)" font-family="Inter, sans-serif">${fmt(maxV)} Aufrufe \u2500 h\u00f6chster Wert oben</text>`
-      svg+=`<text x="${PADL}" y="${BOT+8}" font-size="10.5" fill="var(--c-fg3)" font-family="Inter, sans-serif">${deN(maxR,1)} Likes je 1.000 Aufrufe \u2500 h\u00f6chster Wert unten</text>`
+      svg+=`<text x="${PADL}" y="${BOT+8}" font-size="10.5" fill="var(--c-fg3)" font-family="Inter, sans-serif">von 1.000 Zuschauern liken bis zu ${deN(maxR,0)} \u2500 h\u00f6chster Wert unten</text>`
       h+=`<div class="c-panel">
         <h2>Jeder Beitrag einzeln</h2>
         <p class="c-lede">Oben die Aufrufe, unten wie viele davon reagiert haben. Chronologisch von links.
@@ -5641,7 +5671,7 @@ function renderAnalyticsContent(){
         h+=`<tr><td>${escHtml(x.sound)}</td>${zellen}<td class="n">${deN(x.faktor,1)}×</td></tr>`
       })
       h+=`</tbody></table></div>`
-      h+=`<p style="margin-top:12px">Alle Werte sind Likes je 1.000 Aufrufe, vom stärksten zum schwächsten Einsatz sortiert.</p>`
+      h+=`<p style="margin-top:12px">Alle Werte sagen, wie viele von 1.000 Zuschauern liken — vom stärksten zum schwächsten Einsatz sortiert.</p>`
     }
     if(ki.sound_befund)h+=absatz(ki.sound_befund)
     if(st?.eigener_ton&&st.eigener_ton.gesamt>0&&st.eigener_ton.mit===0){
@@ -5724,7 +5754,7 @@ function renderAnalyticsContent(){
   }
 
   if(ki.tipps_zukunft?.length){
-    h+=`<div class="c-panel"><h2>Was du als Nächstes tun kannst</h2>
+    h+=`<div class="c-panel" data-offen="1"><h2>Was du als Nächstes tun kannst</h2>
       <p class="c-lede">${deN(ki.tipps_zukunft.length)} Schritte, direkt aus den Zahlen oben.</p>
       <ol class="c-steps">${ki.tipps_zukunft.map(t=>`<li>${verlinke(t)}</li>`).join('')}</ol></div>`
   }
@@ -5750,14 +5780,14 @@ function renderAnalyticsContent(){
        wert:x=>x.likes, zeige:x=>deN(x.likes), zusatz:x=>x.views?`${deN(x.views)} Aufrufe`:''},
       {id:'aufrufe', titel:'Aufrufe', hinweis:'Wie weit ein Beitrag hinausgetragen wurde.',
        wert:x=>x.views, zeige:x=>deN(x.views), zusatz:x=>x.resonanz!=null?`Resonanz ${deN(x.resonanz,1)}`:''},
-      {id:'resonanz', titel:'Resonanz', hinweis:'Likes je 1.000 Aufrufe — unabhängig davon, wie weit der Beitrag lief.',
+      {id:'resonanz', titel:'Resonanz', hinweis:'Wie viele von 1.000 Zuschauern liken. Unabhängig davon, wie weit der Beitrag lief.',
        wert:x=>x.resonanz, zeige:x=>deN(x.resonanz,1), zusatz:x=>`${deN(x.likes)} Likes`},
       {id:'kommentare', titel:'Kommentare', hinweis:'Wo wirklich geantwortet wurde.',
-       wert:x=>x.comments, zeige:x=>deN(x.comments), zusatz:x=>x.kommentarrate!=null?`${deN(x.kommentarrate,1)} je 1.000 Aufrufe`:''}
+       wert:x=>x.comments, zeige:x=>deN(x.comments), zusatz:x=>x.kommentarrate!=null?`${deN(x.kommentarrate,0)} von 1.000`:''}
     ].filter(l=>alleBeitraege.filter(x=>l.wert(x)!=null&&l.wert(x)>0).length>=3)
 
     if(listen.length){
-      h+=`<div class="c-panel"><h2>Zum Nachschlagen</h2>
+      h+=`<div class="c-panel" data-offen="1"><h2>Zum Nachschlagen</h2>
         <p class="c-lede">Dieselben Beiträge, vier Mal anders sortiert. Klick öffnet den Beitrag.</p>
         <div class="c-rang-tabs">${listen.map((l,i)=>
           `<button class="c-rang-tab${i===0?' aktiv':''}" data-rang="${l.id}" onclick="ckptRang('${l.id}')">Top 5 nach ${l.titel}</button>`).join('')}</div>`
@@ -5770,8 +5800,15 @@ function renderAnalyticsContent(){
             <th>Beitrag</th><th class="n">${escHtml(l.titel)}</th><th>&nbsp;</th></tr></thead><tbody>
           ${zeilen.map((x,r)=>{
             const wann=`${tag(x.datum)} um ${uhr(x.datum)}`
-            const zelle=x.url?`<a href="${escHtml(x.url)}" target="_blank" rel="noopener">${escHtml(wann)}</a>`:escHtml(wann)
-            return `<tr><td><span class="c-rang-nr">${r+1}</span> ${zelle}</td>
+            const pfad=x.url?(anv.bilder||{})[x.url]:null
+            const bild=pfad
+              ? `<img class="c-rang-bild" src="${escHtml(CKPT_BILD_BASIS+pfad)}" alt="" loading="lazy" decoding="async">`
+              : `<span class="c-rang-bild leer">${r+1}</span>`
+            const innen=`${bild}<span class="c-rang-wann">${escHtml(wann)}</span>`
+            const zelle=x.url
+              ? `<a class="c-rang-post" href="${escHtml(x.url)}" target="_blank" rel="noopener">${innen}</a>`
+              : `<span class="c-rang-post">${innen}</span>`
+            return `<tr><td>${zelle}</td>
               <td class="n">${l.zeige(x)}</td>
               <td class="c-rang-zusatz">${escHtml(l.zusatz(x)||'')}</td></tr>`
           }).join('')}
@@ -5822,6 +5859,66 @@ function renderAnalyticsContent(){
 
   h+='</div>'
   el.innerHTML=h
+  ckptFalten(el)
+}
+
+/* ── Die Auswertung war eine Mauer ────────────────────────────────────
+   Antoniettas Lauf: zwoelf Textbloecke, 7.667 Zeichen, rund 1.100 Woerter --
+   und alle zwoelf sahen gleich wichtig aus. Weggelassen wird nichts, das ist
+   das bezahlte Produkt; sichtbar bleibt aber nur, WORUM es in einem Block
+   geht: Etikett, die grosse Zahl, die Ueberschrift und ein Anreisser. Der
+   Text steht einen Tipp entfernt darunter.
+
+   Gefaltet wird nachtraeglich am fertigen DOM statt an dreizehn Stellen im
+   Zusammenbau -- die Bloecke entstehen an dreizehn verschiedenen Orten, und
+   jeder einzeln umgebaut waere dreizehn Gelegenheiten, einen zu vergessen.
+   ─────────────────────────────────────────────────────────────────── */
+function ckptFalten(wurzel){
+  wurzel.querySelectorAll('.c-box, .c-panel').forEach(box=>{
+    if(box.dataset.offen==='1')return
+    const titel=box.querySelector('h2, h3')
+    if(!titel)return
+
+    const rest=[]
+    for(let n=titel.nextElementSibling; n; n=n.nextElementSibling) rest.push(n)
+    if(!rest.length)return
+
+    /* Kurze Bloecke bleiben offen -- ein "Mehr" fuer zwei Zeilen ist
+       laestiger als die zwei Zeilen. */
+    const ganzerText=rest.map(x=>x.textContent||'').join(' ').replace(/\s+/g,' ').trim()
+    if(ganzerText.length<200)return
+
+    /* Anreisser nur aus einem Absatz. Bei Bloecken, die mit einer Tabelle
+       anfangen, waeren aneinandergereihte Zellen kein Satz. */
+    const ersterAbsatz=rest.find(x=>x.tagName==='P')
+    const anreisser=ersterAbsatz
+      ? (ersterAbsatz.textContent||'').replace(/\s+/g,' ').trim().slice(0,72).trim()+'…'
+      : ''
+
+    const inhalt=document.createElement('div')
+    inhalt.className='c-falt'
+    inhalt.hidden=true
+    rest.forEach(x=>inhalt.appendChild(x))
+
+    const knopf=document.createElement('button')
+    knopf.type='button'
+    knopf.className='c-falt-knopf'
+    knopf.setAttribute('aria-expanded','false')
+    knopf.innerHTML=(anreisser?`<span class="c-falt-an">${escHtml(anreisser)}</span>`:'')
+      +`<span class="c-falt-mehr">Mehr lesen</span>`
+    knopf.addEventListener('click',()=>{
+      const auf=inhalt.hidden
+      inhalt.hidden=!auf
+      knopf.setAttribute('aria-expanded',auf?'true':'false')
+      knopf.classList.toggle('auf',auf)
+      const an=knopf.querySelector('.c-falt-an')
+      if(an)an.hidden=auf
+      knopf.querySelector('.c-falt-mehr').textContent=auf?'Weniger':'Mehr lesen'
+    })
+
+    box.appendChild(knopf)
+    box.appendChild(inhalt)
+  })
 }
 
 // ── Share ──
