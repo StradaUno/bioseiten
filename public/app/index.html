@@ -3558,6 +3558,14 @@ async function renderMediakit(area, ctx){
             <input type="number" class="sheet-input" id="s-ig-likes" min="0" placeholder="z.B. 1200" inputmode="numeric"/>
           </div>
           <div class="sheet-field">
+            <label class="sheet-label">Durchschnittliche Kommentare pro Post <span class="sheet-optional">optional</span></label>
+            <input type="number" class="sheet-input" id="s-ig-comments" min="0" placeholder="z.B. 60" inputmode="numeric"/>
+          </div>
+          <div class="sheet-field">
+            <label class="sheet-label">Durchschnittliche Aufrufe pro Reel <span class="sheet-optional">optional</span></label>
+            <input type="number" class="sheet-input" id="s-ig-views" min="0" placeholder="z.B. 40000" inputmode="numeric"/>
+          </div>
+          <div class="sheet-field">
             <label class="sheet-label">Follower</label>
             <input type="number" class="sheet-input" id="s-ig-followers" min="0" placeholder="z.B. 25000" inputmode="numeric"/>
           </div>
@@ -3574,6 +3582,14 @@ async function renderMediakit(area, ctx){
           <div class="sheet-field">
             <label class="sheet-label">Durchschnittliche Views pro Video</label>
             <input type="number" class="sheet-input" id="s-tt-views" min="0" placeholder="z.B. 50000" inputmode="numeric"/>
+          </div>
+          <div class="sheet-field">
+            <label class="sheet-label">Durchschnittliche Kommentare pro Video <span class="sheet-optional">optional</span></label>
+            <input type="number" class="sheet-input" id="s-tt-comments" min="0" placeholder="z.B. 40" inputmode="numeric"/>
+          </div>
+          <div class="sheet-field">
+            <label class="sheet-label">Durchschnittliche Shares pro Video <span class="sheet-optional">optional</span></label>
+            <input type="number" class="sheet-input" id="s-tt-shares" min="0" placeholder="z.B. 120" inputmode="numeric"/>
           </div>
           <div class="sheet-field">
             <label class="sheet-label">Follower</label>
@@ -3639,22 +3655,25 @@ async function renderMediakit(area, ctx){
           <button class="sheet-close" onclick="backToEditMenu('audience-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
-          <label class="sheet-label">Weiblich</label>
-          <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-female" min="0" max="100" placeholder="z.B. 72" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
-        </div>
-        <div class="sheet-field">
-          <label class="sheet-label">Männlich</label>
-          <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-male" min="0" max="100" placeholder="z.B. 28" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
+          <label class="sheet-label">Wie viel Prozent deiner Follower sind …</label>
+          <div class="sheet-sub" style="padding:0 0 10px">Zusammen ergeben beide etwa 100 %.</div>
+          <div class="mk-alter-grid">
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">weiblich</span><input type="number" class="sheet-prefix-input" id="s-female" min="0" max="100" placeholder="72" inputmode="numeric" oninput="mkAnteileSumme()"/><span class="sheet-suffix">%</span></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">männlich</span><input type="number" class="sheet-prefix-input" id="s-male" min="0" max="100" placeholder="28" inputmode="numeric" oninput="mkAnteileSumme()"/><span class="sheet-suffix">%</span></div>
+          </div>
+          <div class="sheet-hint" id="mk-geschlecht-summe"></div>
         </div>
         <div class="sheet-divider"></div>
         <div class="sheet-field">
-          <label class="sheet-label">Alter (Anteil in %)</label>
+          <label class="sheet-label">Wie alt sind deine Follower?</label>
+          <div class="sheet-sub" style="padding:0 0 10px">Trage je Altersgruppe ein, wie viel Prozent darauf entfallen. Zusammen etwa 100 %.</div>
           <div class="mk-alter-grid">
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">18–24</span><input type="number" class="sheet-prefix-input" id="s-alter1" min="0" max="100" placeholder="18" inputmode="numeric"/></div>
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">25–34</span><input type="number" class="sheet-prefix-input" id="s-alter2" min="0" max="100" placeholder="41" inputmode="numeric"/></div>
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">35–44</span><input type="number" class="sheet-prefix-input" id="s-alter3" min="0" max="100" placeholder="29" inputmode="numeric"/></div>
-            <div class="sheet-input-wrap"><span class="mk-alter-lbl">45+</span><input type="number" class="sheet-prefix-input" id="s-alter4" min="0" max="100" placeholder="12" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">18–24</span><input type="number" class="sheet-prefix-input" id="s-alter1" min="0" max="100" placeholder="18" inputmode="numeric" oninput="mkAnteileSumme()"/><span class="sheet-suffix">%</span></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">25–34</span><input type="number" class="sheet-prefix-input" id="s-alter2" min="0" max="100" placeholder="41" inputmode="numeric" oninput="mkAnteileSumme()"/><span class="sheet-suffix">%</span></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">35–44</span><input type="number" class="sheet-prefix-input" id="s-alter3" min="0" max="100" placeholder="29" inputmode="numeric" oninput="mkAnteileSumme()"/><span class="sheet-suffix">%</span></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">45+</span><input type="number" class="sheet-prefix-input" id="s-alter4" min="0" max="100" placeholder="12" inputmode="numeric" oninput="mkAnteileSumme()"/><span class="sheet-suffix">%</span></div>
           </div>
+          <div class="sheet-hint" id="mk-alter-summe"></div>
         </div>
         <div class="sheet-divider"></div>
         <div class="sheet-field">
@@ -4024,13 +4043,18 @@ function paintMediakit(){
          <button class="link-action-btn" onclick="copyLink('${kitFullUrl}')">Kopieren</button>
        </div>
        <div class="section">
-         <div class="section-label">Aufrufe</div>
-         <div class="stats-grid">
-           <div class="stat-box"><div class="stat-box-value">${fmtNum(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
-           <div class="stat-box"><div class="stat-box-value">${fmtNum(views7)}</div><div class="stat-box-label">7 Tage</div></div>
-           <div class="stat-box"><div class="stat-box-value">${fmtNum(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
+         <div class="bl-karte">
+           <div class="bl-teil">
+             <div class="bl-kopf"><span class="bl-titel">Aufrufe</span><span class="bl-meta">letzte 7 Tage</span></div>
+             <div class="bl-drei">
+               <div><b>${fmtNum(viewsToday)}</b><span>Heute</span></div>
+               <div><b>${fmtNum(views7)}</b><span>7 Tage</span></div>
+               <div><b>${fmtNum(viewsTotal)}</b><span>Gesamt</span></div>
+             </div>
+             ${viewsTotal>0?`<div class="chart-row" style="margin-top:12px">${chartBars}</div>`
+               :`<div class="bl-leer" style="margin-top:10px">Noch keine Aufrufe in den letzten 7 Tagen.</div>`}
+           </div>
          </div>
-         ${chartHtml}
        </div>`
     :`<div class="status-banner inactive"><div class="status-dot inactive"></div>
         <div class="status-text">Noch nicht aktiv<span>Trage deine Daten ein und erstelle dein Media Kit</span></div></div>`
@@ -4096,9 +4120,11 @@ function paintMediakit(){
     <button class="action-btn action-btn-primary" onclick="openEditMenu()">${icon('pencil',16)} Bearbeiten</button>
   </div>`
 
+  /* Wie im BioLink: eine unscheinbare Zeile, kein roter Block. Loeschen ist
+     nichts, das man oft tut -- es muss auffindbar sein, nicht auffaellig. */
   const deleteHtml=isActive
-    ?`<div class="action-stack" style="padding-top:24px;padding-bottom:calc(8px + var(--safe-bottom))">
-        <button class="action-btn action-btn-danger" onclick="document.getElementById('delete-modal').classList.remove('hidden')">${icon('trash',16)} Media Kit löschen</button>
+    ?`<div class="loesch-zeile">
+        <button class="loesch-link" onclick="document.getElementById('delete-modal').classList.remove('hidden')">Media Kit löschen</button>
       </div>`
     :''
 
@@ -4361,15 +4387,39 @@ window.openStatsSheet=function(){
   document.getElementById('s-tt-handle').value=strip(p.tiktok_handle)
   document.getElementById('s-ig-er').value=mk.er_instagram??''
   document.getElementById('s-ig-likes').value=mk.avg_likes_instagram??''
+  document.getElementById('s-ig-comments').value=mk.avg_comments_instagram??''
+  document.getElementById('s-ig-views').value=mk.avg_views_instagram??''
   document.getElementById('s-ig-followers').value=mk.followers_instagram??mkv.analyseStats.instagram?.followers??''
   document.getElementById('s-tt-er').value=mk.er_tiktok??''
   document.getElementById('s-tt-views').value=mk.avg_views_tiktok??''
+  document.getElementById('s-tt-comments').value=mk.avg_comments_tiktok??''
+  document.getElementById('s-tt-shares').value=mk.avg_shares_tiktok??''
   document.getElementById('s-tt-followers').value=mk.followers_tiktok??mkv.analyseStats.tiktok?.followers??''
   const has=Object.keys(mkv.analyseStats).length>0
   document.getElementById('autofill-wrap').classList.toggle('hidden',!has)
   switchStatsTab('ig')
   openSheet('stats-sheet')
 }
+/* #10: Vier Kaesten mit Altersspannen und ohne Bezug sagten nicht, was
+   einzutragen ist. Jetzt steht die Frage als Ueberschrift da, jedes Feld
+   traegt sein Prozentzeichen, und die laufende Summe sagt, ob die Angaben
+   zusammenpassen -- ohne zu blockieren: eine Marke kann auch mit 90 %
+   etwas anfangen, aber nicht mit 300 %. */
+window.mkAnteileSumme=function(){
+  const zahl = id => { const v=parseInt(document.getElementById(id)?.value); return isNaN(v)?0:v }
+  const zeige = (zielId, summe, leer) => {
+    const el=document.getElementById(zielId); if(!el)return
+    if(leer){ el.textContent=''; el.className='sheet-hint'; return }
+    const passt = summe>=95 && summe<=105
+    el.textContent = `Zusammen ${summe} %` + (passt?'':' — sollte etwa 100 % ergeben')
+    el.className = 'sheet-hint' + (passt?'':' err')
+  }
+  const g=['s-female','s-male']
+  const a=['s-alter1','s-alter2','s-alter3','s-alter4']
+  zeige('mk-geschlecht-summe', g.reduce((x,id)=>x+zahl(id),0), g.every(id=>!document.getElementById(id)?.value))
+  zeige('mk-alter-summe',      a.reduce((x,id)=>x+zahl(id),0), a.every(id=>!document.getElementById(id)?.value))
+}
+
 window.switchStatsTab=function(tab){
   document.querySelectorAll('#stats-sheet .sheet-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab))
   document.querySelectorAll('#stats-sheet .sheet-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===tab))
@@ -4410,9 +4460,17 @@ window.saveStats=async function(){
     user_id:mkv.uid,
     er_instagram:parseFloat(document.getElementById('s-ig-er').value)||null,
     avg_likes_instagram:parseInt(document.getElementById('s-ig-likes').value)||null,
+    /* #15: Kommentare, Reichweite und Shares kamen bisher ausschliesslich aus
+       einer Analyse. Wer fuer einen Kanal keine hat -- etwa weil nur Instagram
+       analysiert wurde --, dem fehlten im fertigen Kit genau diese Zeilen,
+       waehrend sie beim anderen Kanal standen. Jetzt von Hand nachtragbar. */
+    avg_comments_instagram:parseInt(document.getElementById('s-ig-comments').value)||null,
+    avg_views_instagram:parseInt(document.getElementById('s-ig-views').value)||null,
     followers_instagram:parseInt(document.getElementById('s-ig-followers').value)||null,
     er_tiktok:parseFloat(document.getElementById('s-tt-er').value)||null,
     avg_views_tiktok:parseInt(document.getElementById('s-tt-views').value)||null,
+    avg_comments_tiktok:parseInt(document.getElementById('s-tt-comments').value)||null,
+    avg_shares_tiktok:parseInt(document.getElementById('s-tt-shares').value)||null,
     followers_tiktok:parseInt(document.getElementById('s-tt-followers').value)||null,
     updated_at:new Date().toISOString()
   }
@@ -4505,6 +4563,7 @@ window.openAudienceSheet=function(){
   document.getElementById('s-alter2').value=mk.alter_25_34??''
   document.getElementById('s-alter3').value=mk.alter_35_44??''
   document.getElementById('s-alter4').value=mk.alter_45plus??''
+  mkAnteileSumme()
   openSheet('audience-sheet')
 }
 window.saveAudience=async function(){

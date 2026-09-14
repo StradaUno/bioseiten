@@ -195,15 +195,6 @@ a{text-decoration:none;color:inherit}
 .mk-powered a{font-weight:600;color:#1A1A2E}
 .mk-powered a:hover{text-decoration:underline}
 .mk-impressum{background:none;border:none;cursor:pointer;font-size:11px;color:#9292A0;font-family:inherit;text-decoration:underline;padding:4px}
-/* Der Haken taucht nur auf, wo viuno wirklich gemessen hat. Angetippt nennt
-   er den Stichtag -- auf dem Telefon gibt es kein Hover. */
-.mk-haken{background:none;border:none;padding:0;margin-left:5px;cursor:pointer;color:#3897f0;
-  display:inline-flex;align-items:center;position:relative;line-height:0}
-.mk-haken::after{content:attr(data-stand);position:absolute;left:50%;top:calc(100% + 7px);
-  transform:translateX(-50%);background:#1A1A2E;color:#fff;font-size:10px;font-weight:500;
-  padding:5px 9px;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;
-  transition:opacity .15s;z-index:20}
-.mk-haken.auf::after,.mk-haken:hover::after{opacity:1}
 .mk-lang{display:inline-flex;gap:2px;background:#FAFAF9;border:1px solid #D4D4D8;border-radius:999px;padding:3px;margin-bottom:10px}
 .mk-lang-btn{font-size:10px;font-weight:500;padding:4px 10px;border-radius:999px;border:none;background:none;color:#9292A0;cursor:pointer;font-family:inherit}
 .mk-lang-btn.active{background:#1A1A2E;color:#fff}
@@ -226,7 +217,7 @@ body.imp-open{overflow:hidden}
 @media print{
   body{background:#fff;padding:0}
   .mk-main{max-width:none;border:none;box-shadow:none;border-radius:0}
-  .mk-lang,.mk-impressum,.page-loader,.imp-sheet,.imp-backdrop,.mk-profile-btn,.mk-haken::after{display:none!important}
+  .mk-lang,.mk-impressum,.page-loader,.imp-sheet,.imp-backdrop,.mk-profile-btn{display:none!important}
   .mk-section{break-inside:avoid}
   #main{visibility:visible!important}
 }`
@@ -244,10 +235,6 @@ const IKON = {
    ohne dass unter jeder Eigenangabe ein Warnsatz stehen muss: das las sich
    wie eine Entschuldigung auf einer Seite, die ueberzeugen soll.
    Angeklickt nennt er den Stichtag. */
-const haken = (gemessenAm) => gemessenAm
-  ? `<button type="button" class="mk-haken" data-stand="${t('geprueft')} ${datum(gemessenAm)}" aria-label="${t('geprueft')} ${datum(gemessenAm)}"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1.1 2.8 1.1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9L3.2 15.8 4.3 13 3.2 10.2l2.5-1.7.9-2.9 3 .2z"/><path d="M10.6 14.6l-2.1-2.1-1.1 1.1 3.2 3.2 5.9-5.9-1.1-1.1z" fill="#fff"/></svg></button>`
-  : ''
-
 function abschnitt(titel, inhalt, herkunft) {
   if (!inhalt) return ''
   return `<div class="mk-section"><div class="mk-label">${es(titel)}${herkunft || ''}</div>${inhalt}</div>`
@@ -269,7 +256,6 @@ function plattformBlock(art) {
      Beitrag, kein Abonnement. */
   const zweite = ig ? u.avg_views_instagram : u.avg_shares_tiktok
   const zweiteLbl = ig ? t('avg_reach') : t('avg_shares')
-  const gem  = ig ? u.gemessen_am_instagram : u.gemessen_am_tiktok
   const link = ig ? 'https://instagram.com/' + encodeURIComponent(clean)
                   : 'https://tiktok.com/@' + encodeURIComponent(clean)
 
@@ -279,7 +265,7 @@ function plattformBlock(art) {
 
   return `<div class="mk-platform">
     <div class="mk-plat-head">
-      <div class="mk-plat-name"><div class="mk-plat-icon ${art}">${IKON[art]}</div>${ig ? 'Instagram' : 'TikTok'}${haken(gem)}</div>
+      <div class="mk-plat-name"><div class="mk-plat-icon ${art}">${IKON[art]}</div>${ig ? 'Instagram' : 'TikTok'}</div>
       <span class="mk-plat-handle">@${es(clean)}</span>
     </div>
     <div class="mk-stats3">
@@ -416,11 +402,10 @@ function zeichne() {
     </div>`
 
   const reichweite = plattformBlock('ig') + plattformBlock('tt')
-  const gemessenIrgendwo = u.gemessen_am_instagram || u.gemessen_am_tiktok
 
   const koerper = [
     abschnitt(t('reach'), reichweite || null),
-    abschnitt(t('posts'), beitraegeBlock(), gemessenIrgendwo ? haken(gemessenIrgendwo) : ''),
+    abschnitt(t('posts'), beitraegeBlock()),
     abschnitt(t('other_platforms'), weitereBlock()),
     abschnitt(t('audience'), zielgruppeBlock()),
     abschnitt(t('offers'), leistungenBlock()),
@@ -448,11 +433,6 @@ function zeichne() {
 function binde() {
   document.querySelectorAll('.mk-lang-btn').forEach(b =>
     b.addEventListener('click', () => { setzeSprache(b.dataset.lang); zeichne() }))
-  document.querySelectorAll('.mk-haken').forEach(h => h.addEventListener('click', e => {
-    e.preventDefault()
-    document.querySelectorAll('.mk-haken').forEach(x => { if (x !== h) x.classList.remove('auf') })
-    h.classList.toggle('auf')
-  }))
   document.getElementById('btn-imprint')?.addEventListener('click', () => {
     const txt = (u.impressum_text || '').trim()
     const c = document.getElementById('imp-content')
