@@ -374,27 +374,42 @@ html, body {
 .chart-empty{margin-top:12px;padding:18px;text-align:center;font-size:var(--t-sm);color:var(--muted);background:var(--surface);border:1px dashed var(--border-strong);border-radius:var(--r-md)}
 /* Herkunft und Klicks: Liste mit Balken im Hintergrund der Zeile. Der
    Balken traegt die Groessenordnung, die Zahl den genauen Wert. */
-.rang{margin-top:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
-.rang-zeile{position:relative;display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border)}
-.rang-zeile:last-child{border-bottom:0}
-.rang-balken{position:absolute;left:0;top:0;bottom:0;background:var(--surface2);z-index:0}
-.rang-text{position:relative;z-index:1;flex:1;min-width:0;font-size:var(--t-md);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rang-wert{position:relative;z-index:1;font-size:var(--t-md);font-weight:600;flex-shrink:0}
-.rang-anteil{position:relative;z-index:1;font-size:var(--t-xs);color:var(--muted);flex-shrink:0;width:38px;text-align:right}
+/* ── BioLink-Auswertung: ein Block, vier Streifen ────────────────────
+   Vorher hatte jede Kennzahl ihre eigene Karte in einer eigenen Section.
+   Bei vier Themen sind das vier Rahmen untereinander, und auf 375 px ist
+   das mehr Kante als Inhalt. Jetzt eine Karte, innen durch Haarlinien
+   geteilt — gleiche Information, ein Drittel weniger Scrollen. */
+.bl-karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.bl-teil{padding:15px 16px;border-bottom:1px solid var(--border)}
+.bl-teil:last-child{border-bottom:0}
+.bl-kopf{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+/* Sprechende Ueberschrift, deshalb bewusst NICHT versal wie .section-label:
+   ein Satz in Grossbuchstaben liest sich als Geschrei. */
+.bl-titel{font-size:var(--t-sm);font-weight:600;color:var(--text);letter-spacing:-.01em}
+.bl-meta{font-size:var(--t-xs);color:var(--muted);white-space:nowrap}
+.bl-drei{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;text-align:center}
+.bl-drei b{display:block;font-size:var(--t-num-sm);font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.bl-drei span{display:block;font-size:var(--t-2xs);color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.bl-zeile{display:flex;align-items:center;gap:9px;padding:6px 0}
+.bl-name{flex:0 0 94px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:var(--t-sm);color:var(--muted)}
+.bl-spur{flex:1;height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.bl-spur>div{height:100%;background:var(--text);border-radius:99px}
+.bl-wert{flex:0 0 38px;text-align:right;font-size:var(--t-sm);font-weight:600;font-variant-numeric:tabular-nums}
+.bl-uhr{display:flex;align-items:flex-end;gap:2px;height:46px}
+.bl-uhr-col{flex:1;display:flex;align-items:flex-end;height:100%}
+.bl-uhr-bar{width:100%;background:var(--surface2);border-radius:2px 2px 0 0;min-height:2px}
+.bl-uhr-bar.has{background:var(--text)}
+.bl-uhr-lbl{display:flex;justify-content:space-between;font-size:var(--t-2xs);color:var(--subtle);margin-top:5px}
+/* Leerzustand innerhalb der Karte: kein zweiter Rahmen, nur Text. */
+.bl-leer{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);padding:2px 0 4px}
 /* 24 schmale Balken. Beschriftet werden nur 0, 6, 12 und 18 Uhr —
    24 Uhrzeiten nebeneinander liest ohnehin niemand. */
-.section-hint{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin:0 0 12px}
 /* Loeschen bleibt erreichbar, wirbt aber nicht um den Klick: keine Flaeche,
    keine Signalfarbe im Ruhezustand, nur ein ruhiger Text. Die Rueckfrage
    dahinter bleibt unveraendert. */
 .loesch-zeile{display:flex;justify-content:center;padding:22px var(--page-x) calc(8px + var(--safe-bottom))}
 .loesch-link{background:none;border:0;font-family:inherit;font-size:var(--t-sm);color:var(--subtle);cursor:pointer;padding:10px 12px;border-radius:var(--r-sm);min-height:44px;display:inline-flex;align-items:center;transition:color .15s}
 .loesch-link:hover{color:var(--red)}
-.uhr{display:flex;align-items:flex-end;gap:2px;height:70px;margin-top:12px;padding:12px 10px 8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
-.uhr-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%}
-.uhr-bar{width:100%;background:var(--border-strong);border-radius:2px 2px 0 0;min-height:2px}
-.uhr-bar.has{background:var(--text)}
-.uhr-lbl{font-size:9px;color:var(--muted);margin-top:4px;height:11px}
 .action-stack{padding:var(--s-3) var(--page-x) 0;display:flex;flex-direction:column;gap:8px}
 .action-btn{width:100%;padding:13px 16px;border-radius:var(--r-sm);font-family:inherit;font-size:var(--t-md);font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;transition:opacity .15s}
 .action-btn-primary{background:var(--text);color:white;border-color:var(--text)}
@@ -2588,32 +2603,33 @@ function paintBiolink(){
   const klickrate=rateAufrufe>0?Math.round(Number(rate.klicks||0)/rateAufrufe*100):0
   const rateSeit=rate?.seit?new Date(rate.seit).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'}):null
 
-  const rangHtml=(zeilen,gesamt)=>{
+  /* Balkenlaenge relativ zum groessten Wert, Zahl rechts absolut.
+     Der Prozentanteil steckt in der Balkenlaenge — ihn zusaetzlich
+     auszuschreiben war eine dritte Zahl je Zeile ohne neue Aussage. */
+  const zeilenHtml=(zeilen)=>{
     const max=Math.max(...zeilen.map(z=>z.wert),1)
-    return `<div class="rang">${zeilen.map(z=>`
-      <div class="rang-zeile">
-        <div class="rang-balken" style="width:${Math.round(z.wert/max*100)}%"></div>
-        <span class="rang-text">${escHtml(z.text)}</span>
-        <span class="rang-wert">${fmtNum(z.wert)}</span>
-        <span class="rang-anteil">${gesamt>0?Math.round(z.wert/gesamt*100):0}%</span>
-      </div>`).join('')}</div>`
+    return zeilen.map(z=>`<div class="bl-zeile">
+        <span class="bl-name" title="${escHtml(z.text)}">${escHtml(z.text)}</span>
+        <div class="bl-spur"><div style="width:${Math.round(z.wert/max*100)}%"></div></div>
+        <span class="bl-wert">${fmtNum(z.wert)}</span>
+      </div>`).join('')
   }
 
   const herkunftHtml=aufrufe30>0
-    ? rangHtml(blv.herkunft.slice(0,6).map(h=>({text:h.quelle,wert:Number(h.anzahl)})),aufrufe30)
-    : `<div class="chart-empty">Noch keine Aufrufe in den letzten 30 Tagen.</div>`
+    ? zeilenHtml(blv.herkunft.slice(0,6).map(h=>({text:h.quelle,wert:Number(h.anzahl)})))
+    : `<div class="bl-leer">Noch keine Aufrufe in den letzten 30 Tagen.</div>`
 
   const maxStd=Math.max(...blv.stunden.map(x=>Number(x.anzahl||0)),1)
-  const uhrHtml=blv.stunden.length?`<div class="uhr">${blv.stunden.map(x=>{
+  const uhrHtml=blv.stunden.length?`<div class="bl-uhr">${blv.stunden.map(x=>{
       const v=Number(x.anzahl||0)
-      return `<div class="uhr-col" title="${x.stunde} Uhr · ${v} Aufrufe">
-        <div class="uhr-bar ${v>0?'has':''}" style="height:${Math.max(v/maxStd*100,v>0?6:2)}%"></div>
-        <div class="uhr-lbl">${[0,6,12,18].includes(Number(x.stunde))?x.stunde:''}</div>
-      </div>`}).join('')}</div>`:''
+      return `<div class="bl-uhr-col" title="${x.stunde} Uhr · ${v} Aufrufe">
+        <div class="bl-uhr-bar ${v>0?'has':''}" style="height:${Math.max(v/maxStd*100,v>0?6:2)}%"></div>
+      </div>`}).join('')}</div>
+    <div class="bl-uhr-lbl"><span>0</span><span>6</span><span>12</span><span>18</span><span>23</span></div>`:''
 
   const klickHtml=klicks30>0
-    ? rangHtml(blv.klicks.slice(0,8).map(k=>({text:k.label||ARTLABEL[k.art]||k.art,wert:Number(k.anzahl)})),klicks30)
-    : `<div class="chart-empty">Noch keine Klicks. Gezählt wird, seit die Seite das letzte Mal erzeugt wurde.</div>`
+    ? zeilenHtml(blv.klicks.slice(0,8).map(k=>({text:k.label||ARTLABEL[k.art]||k.art,wert:Number(k.anzahl)})))
+    : `<div class="bl-leer">Noch keine Klicks. Gezählt wird, seit die Seite zuletzt erzeugt wurde.</div>`
 
   renderBioEditMenu()
 
@@ -2627,32 +2643,35 @@ function paintBiolink(){
          <button class="link-action-btn" onclick="copyLink('${bioFullUrl}')">Kopieren</button>
        </div>`:''}
        <div class="section">
-         <div class="section-label">Aufrufe</div>
-         <div class="stats-grid">
-           <div class="stat-box"><div class="stat-box-value">${fmtNum(viewsToday)}</div><div class="stat-box-label">Heute</div></div>
-           <div class="stat-box"><div class="stat-box-value">${fmtNum(views7)}</div><div class="stat-box-label">7 Tage</div></div>
-           <div class="stat-box"><div class="stat-box-value">${fmtNum(viewsTotal)}</div><div class="stat-box-label">Gesamt</div></div>
+         <div class="bl-karte">
+           <div class="bl-teil">
+             <div class="bl-kopf"><span class="bl-titel">Aufrufe</span><span class="bl-meta">letzte 7 Tage</span></div>
+             <div class="bl-drei">
+               <div><b>${fmtNum(viewsToday)}</b><span>Heute</span></div>
+               <div><b>${fmtNum(views7)}</b><span>7 Tage</span></div>
+               <div><b>${fmtNum(viewsTotal)}</b><span>Gesamt</span></div>
+             </div>
+             ${viewsTotal>0?`<div class="chart-row" style="margin-top:12px">${chartBars}</div>`
+               :`<div class="bl-leer" style="margin-top:10px">Noch keine Aufrufe in den letzten 7 Tagen.</div>`}
+           </div>
+           <div class="bl-teil">
+             <div class="bl-kopf"><span class="bl-titel">Darauf klicken deine Besucher</span>
+               <span class="bl-meta">30 Tage · ${klickrate}% Klickrate</span></div>
+             ${klickHtml}
+             ${klicks30>0?`<div class="bl-meta" style="margin-top:8px">Klickrate = Klicks je Aufruf${rateSeit?`, ab ${rateSeit}`:''}.</div>`:''}
+           </div>
+           <div class="bl-teil">
+             <div class="bl-kopf"><span class="bl-titel">Von hier kommen sie</span>
+               <span class="bl-meta">30 Tage · ${fmtNum(aufrufe30)}</span></div>
+             ${herkunftHtml}
+             ${aufrufe30>0?`<div class="bl-meta" style="margin-top:8px">„Direkt“ = ohne erkennbare Quelle.</div>`:''}
+           </div>
+           <div class="bl-teil">
+             <div class="bl-kopf"><span class="bl-titel">Wann sie vorbeikommen</span>
+               <span class="bl-meta">Ortszeit der Besucher</span></div>
+             ${uhrHtml}
+           </div>
          </div>
-         ${chartHtml}
-       </div>
-       <div class="section">
-         <div class="section-label">Klicks · 30 Tage</div>
-         <div class="section-hint">Klickrate = Klicks je Aufruf${rateSeit&&klicks30>0?`, ab ${rateSeit}`:''}.</div>
-         <div class="stats-grid" style="grid-template-columns:repeat(2,1fr)">
-           <div class="stat-box"><div class="stat-box-value">${fmtNum(klicks30)}</div><div class="stat-box-label">Klicks</div></div>
-           <div class="stat-box"><div class="stat-box-value">${klickrate}%</div><div class="stat-box-label">Klickrate</div></div>
-         </div>
-         ${klickHtml}
-       </div>
-       <div class="section">
-         <div class="section-label">Herkunft · 30 Tage</div>
-         <div class="section-hint">„Direkt“ = ohne erkennbare Quelle.</div>
-         ${herkunftHtml}
-       </div>
-       <div class="section">
-         <div class="section-label">Uhrzeit · 30 Tage</div>
-         <div class="section-hint">Ortszeit der Besucher, nicht deine.</div>
-         ${uhrHtml}
        </div>`
     :slug?`<div class="status-banner inactive"><div class="status-dot inactive"></div>
         <div><div class="status-text">Seite ist inaktiv<span>Seite wurde deaktiviert — du kannst sie jederzeit wieder aktivieren</span></div></div></div>`
