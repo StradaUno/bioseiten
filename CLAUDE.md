@@ -76,14 +76,19 @@ Edge Functions referenced from the client (not in this repo — managed in Supab
 
 The news pipeline runs weekly: `generate-daily-digest` (pg_cron Monday 04:00 UTC) searches a **fixed domain whitelist** — platform newsrooms plus German trade and legal press — with Claude's server-side web search, and writes up to 5 cards into `daily_digest` (`date` = that Monday, UNIQUE). Cards that are flagged `is_repeat` or that link to a rolling collection page are dropped in code, and what survives is stored sorted by `relevance_score`.
 
+The prompt's **"Treue zur Quelle"** section is load-bearing, not boilerplate. A comparison against the original articles found the model inverting a scope exclusion (the source exempted thumbnails; the card warned exactly those creators), attributing statements to a platform that the article never quotes, and padding with invention while omitting the concrete steps the source did give. The cause was the length requirement — demanding 180–300 words from a 200-word source forces filling. Hence: length follows the source (120–300), and **`impact` may be `null`** when the source gives no concrete step. An edition with fewer cards, shorter cards, or cards without an action line is the intended outcome, not a failure.
+
+Urgency shown in the UI comes from `relevance_score` (≥8 / ≥6 / below), **not** from the model's `level` field — that one had "hoch" on a score-7 shop item and "info" on a score-5 one.
+
 Three consumers read the **same two views**, never the raw jsonb: `digest_cards_today` (the single most recent edition) and `digest_cards_past` (everything older). Both compute `slug` via `news_slug(date, headline)` — the slug is derived, not stored, so it also covers historical rows. The consumers are the SPA view `renderDigest`, the public page `public/news/`, and the weekly mail. Going through the views is what keeps order, slugs and content identical across app, mail and public page — do not go back to reading `cards` directly.
 
 - `public/news/` is **public, no login**, reads the two views with the publishable key, and is the target of every shared link and every link in the mail.
 - `public/digest/` is the *logged-in* standalone page and a login wall. Do not link the public site at it.
-- `page_views` records opens (`page`, `source` = app/public/share/mail, optional `card_slug`); anonymous insert is allowed, reading is admin-only. Without it there is no way to tell whether the news are read at all.
-- `digest_bookmarks` holds a user's saved cards, keyed by slug.
+- `page_views` records opens (`page`, `source` = app/public/share/mail, optional `card_slug`); anonymous insert is allowed, users read their own rows, admins read all. Without it there is no way to tell whether the news are read at all — and the sidebar dot on "Creator News" is derived from it: it shows while the newest edition is newer than that user's last `page='news'` view.
 - `digest_waechter()` (pg_cron Tuesday 09:00) checks whether the week's edition exists, logs to `admin_errors` and re-triggers the generator if it does not. `weekly-digest-email-nachzuegler` (Monday 06:00) is a second, idempotent attempt at the mail.
-- `news_images` and the `approved` card field are **dead**: no images are generated or shown any more, and nothing ever read `approved`.
+- **`public/admin/news/`** is the editorial screen: admins fix or delete individual cards after the fact. There is deliberately **no approval gate** — the news go live as generated, and this is the correction path. It rewrites the whole `cards` array of a row, because single cards have no key of their own; removing the last card deletes the row, since an edition with zero cards would render as an empty week. RLS: `daily_digest` update/delete require `is_admin()`.
+- **Images are back and must stay small.** The 61 stock photos averaged 2.2 MB (131 MB total) and were briefly switched off for that reason; they are now 900 px / ~85 kB each (5.2 MB total). Supabase image transformation is not available on this plan, and resizing inside an Edge Function fails — `imagescript` decodes JPEG to raw RGBA and blows the memory limit on files as small as 1 MB. If new images are ever added, **resize them before upload**.
+- The `approved` card field is gone; nothing ever read it. `digest_bookmarks` existed briefly and was dropped again.
 
 ## Editing conventions to be aware of
 

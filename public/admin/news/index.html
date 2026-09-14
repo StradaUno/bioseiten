@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>viuno · News-Redaktion</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="icon" href="data:," />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Tokens identisch zu /admin/ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;
+  --border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);
+  --text:#111110;--muted:#7a7975;--subtle:#b0afa9;
+  --green:#1a7f4b;--red:#c0392b;--orange:#b85c00;--blue:#1d4ed8;
+  --radius:16px;--radius-sm:10px;
+}
+html,body{background:var(--bg);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;min-height:100dvh;color:var(--text);font-size:14px}
+input,textarea,select{font-size:16px!important;font-family:inherit}
+
+#login-screen{min-height:100dvh;display:none;align-items:center;justify-content:center;padding:24px;flex-direction:column}
+#login-screen.visible{display:flex}
+.login-card{width:100%;max-width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px}
+.login-title{font-size:19px;font-weight:600;letter-spacing:-.02em;margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:22px}
+.login-card input{width:100%;padding:11px 13px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface);margin-bottom:10px}
+.btn-login{width:100%;padding:12px;background:var(--text);color:#fff;border:0;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit}
+.login-error{color:var(--red);font-size:13px;min-height:18px;margin-top:8px}
+
+#app{display:none;max-width:820px;margin:0 auto;padding:28px 20px 64px}
+#app.visible{display:block}
+.kopf{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+h1{font-size:22px;font-weight:700;letter-spacing:-.03em}
+.kopf a{font-size:13px;color:var(--muted);text-decoration:none}
+.kopf a:hover{color:var(--text)}
+.hinweis{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:22px;max-width:62ch}
+
+.ausgabe{margin-bottom:28px}
+.ausgabe-kopf{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ausgabe-titel{font-size:14px;font-weight:600}
+.ausgabe-meta{font-size:12px;color:var(--subtle)}
+
+.karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.karte-kopf{display:flex;align-items:flex-start;gap:10px}
+.karte-titel{flex:1;min-width:0;font-size:15px;font-weight:600;line-height:1.35}
+.karte-meta{font-size:12px;color:var(--subtle);margin-top:4px;line-height:1.5}
+.karte-meta a{color:var(--muted)}
+.score{flex-shrink:0;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid var(--border-strong);color:var(--muted)}
+
+.werkzeuge{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+button.w{font-family:inherit;font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:99px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer}
+button.w:hover{background:var(--surface2)}
+button.w.gefahr{border-color:var(--red);color:var(--red)}
+button.w.gefahr:hover{background:#fdf0ee}
+button.w:disabled{opacity:.5;cursor:default}
+
+.formular{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.karte.bearbeiten .formular{display:block}
+.feld{margin-bottom:12px}
+.feld label{display:block;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--subtle);margin-bottom:5px}
+.feld input,.feld textarea{width:100%;padding:9px 11px;border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--surface);line-height:1.55;resize:vertical}
+.feld textarea{min-height:72px}
+.feld textarea.gross{min-height:200px}
+.feld .tipp{font-size:11.5px;color:var(--subtle);margin-top:4px;line-height:1.45}
+
+.leer{text-align:center;color:var(--muted);padding:40px 0;font-size:14px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:#fff;padding:11px 18px;border-radius:99px;font-size:13px;font-weight:500;z-index:50}
+.toast.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-title">News-Redaktion</div>
+    <div class="login-sub">Nur für Admins.</div>
+    <input id="inp-email" type="email" placeholder="E-Mail" autocomplete="username" />
+    <input id="inp-pw" type="password" placeholder="Passwort" autocomplete="current-password" />
+    <button class="btn-login" id="btn-login">Einloggen</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="kopf">
+    <h1>News-Redaktion</h1>
+    <a href="/admin/">← Admin</a>
+  </div>
+  <p class="hinweis">
+    Die News laufen weiter automatisch. Hier lässt sich nachträglich
+    korrigieren, was der Lauf danebengelegt hat — Text ändern oder eine
+    Meldung ganz entfernen. Änderungen sind sofort in der App, auf
+    <a href="/news" target="_blank" rel="noopener">/news</a> und in der
+    nächsten Mail sichtbar.
+  </p>
+  <div id="liste"></div>
+</div>
+
+<div class="toast hidden" id="toast"><span id="toast-msg"></span></div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON, { auth: { persistSession: true, autoRefreshToken: true } })
+
+const $ = (s) => document.querySelector(s)
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
+
+function toast(msg, ms = 2600) {
+  const w = $('#toast'); $('#toast-msg').textContent = msg
+  w.classList.remove('hidden'); clearTimeout(w._t)
+  w._t = setTimeout(() => w.classList.add('hidden'), ms)
+}
+
+/* Die Ausgaben, wie sie in der Datenbank stehen: eine Zeile je Woche mit
+   einem cards-Array. Bearbeitet wird immer die ganze Zeile — einzelne
+   Karten haben keinen eigenen Schluessel. */
+let ausgaben = []
+
+const MONATE = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+const datum = (d) => {
+  const t = new Date(d + 'T12:00:00')
+  return isNaN(t) ? d : `${t.getDate()}. ${MONATE[t.getMonth()]} ${t.getFullYear()}`
+}
+
+async function laden() {
+  const { data, error } = await sb.from('daily_digest')
+    .select('id, date, cards, generated_at, model_used')
+    .order('date', { ascending: false })
+    .limit(8)
+  if (error) { $('#liste').innerHTML = `<div class="leer">Laden fehlgeschlagen: ${esc(error.message)}</div>`; return }
+  ausgaben = data ?? []
+  zeichnen()
+}
+
+function zeichnen() {
+  if (!ausgaben.length) { $('#liste').innerHTML = '<div class="leer">Noch keine Ausgaben.</div>'; return }
+
+  $('#liste').innerHTML = ausgaben.map((a, ai) => {
+    const karten = Array.isArray(a.cards) ? a.cards : []
+    return `<section class="ausgabe">
+      <div class="ausgabe-kopf">
+        <span class="ausgabe-titel">${esc(datum(a.date))}</span>
+        <span class="ausgabe-meta">${karten.length} ${karten.length === 1 ? 'Meldung' : 'Meldungen'} · ${esc(a.model_used || '')}</span>
+      </div>
+      ${karten.length === 0 ? '<div class="leer">Keine Meldungen in dieser Ausgabe.</div>' : karten.map((c, ki) => karteHtml(a, ai, c, ki)).join('')}
+    </section>`
+  }).join('')
+}
+
+function karteHtml(a, ai, c, ki) {
+  const quelle = [c.source, c.published_date].filter(Boolean).join(' · ')
+  return `<article class="karte" id="k-${ai}-${ki}">
+    <div class="karte-kopf">
+      <div class="karte-titel">
+        ${esc(c.headline || '(ohne Schlagzeile)')}
+        <div class="karte-meta">
+          ${esc(c.platform || '')}${quelle ? ' · ' + esc(quelle) : ''}
+          ${c.source_url ? ` · <a href="${esc(c.source_url)}" target="_blank" rel="noopener">Quelle ↗</a>` : ''}
+          ${c.impact ? '' : ' · <em>ohne Handlungsempfehlung</em>'}
+        </div>
+      </div>
+      <span class="score">${esc(String(c.relevance_score ?? '–'))}</span>
+    </div>
+
+    <div class="werkzeuge">
+      <button class="w" data-auf="${ai}-${ki}">Bearbeiten</button>
+      <button class="w gefahr" data-weg="${ai}-${ki}">Entfernen</button>
+    </div>
+
+    <div class="formular">
+      <div class="feld">
+        <label for="f-h-${ai}-${ki}">Schlagzeile</label>
+        <input id="f-h-${ai}-${ki}" value="${esc(c.headline || '')}" />
+      </div>
+      <div class="feld">
+        <label for="f-s-${ai}-${ki}">Zusammenfassung</label>
+        <textarea id="f-s-${ai}-${ki}">${esc(c.summary || '')}</textarea>
+      </div>
+      <div class="feld">
+        <label for="f-i-${ai}-${ki}">Was du tun kannst</label>
+        <textarea id="f-i-${ai}-${ki}">${esc(c.impact || '')}</textarea>
+        <div class="tipp">Leer lassen, wenn die Quelle keinen konkreten Schritt hergibt — der Block fällt dann weg.</div>
+      </div>
+      <div class="feld">
+        <label for="f-v-${ai}-${ki}">Volltext</label>
+        <textarea class="gross" id="f-v-${ai}-${ki}">${esc(c.full_content || '')}</textarea>
+        <div class="tipp">**Sternchen** werden als Fettung dargestellt.</div>
+      </div>
+      <div class="feld">
+        <label for="f-u-${ai}-${ki}">Quell-Link</label>
+        <input id="f-u-${ai}-${ki}" value="${esc(c.source_url || '')}" />
+      </div>
+      <div class="werkzeuge">
+        <button class="w" data-speichern="${ai}-${ki}">Speichern</button>
+        <button class="w" data-zu="${ai}-${ki}">Abbrechen</button>
+      </div>
+    </div>
+  </article>`
+}
+
+/* Schreibt das cards-Array einer Ausgabe zurueck. Faellt die letzte Karte
+   weg, verschwindet die ganze Zeile — eine Ausgabe ohne Meldungen wuerde
+   in der App als leere Woche erscheinen. */
+async function ausgabeSchreiben(ai, karten) {
+  const a = ausgaben[ai]
+  if (karten.length === 0) {
+    const { error } = await sb.from('daily_digest').delete().eq('id', a.id)
+    if (error) { toast('Fehlgeschlagen: ' + error.message, 4000); return false }
+    ausgaben.splice(ai, 1)
+  } else {
+    const { error } = await sb.from('daily_digest').update({ cards: karten }).eq('id', a.id)
+    if (error) { toast('Fehlgeschlagen: ' + error.message, 4000); return false }
+    a.cards = karten
+  }
+  zeichnen()
+  return true
+}
+
+document.addEventListener('click', async (e) => {
+  const auf = e.target.closest('[data-auf]')
+  if (auf) { document.getElementById('k-' + auf.dataset.auf)?.classList.add('bearbeiten'); return }
+
+  const zu = e.target.closest('[data-zu]')
+  if (zu) { document.getElementById('k-' + zu.dataset.zu)?.classList.remove('bearbeiten'); zeichnen(); return }
+
+  const weg = e.target.closest('[data-weg]')
+  if (weg) {
+    const [ai, ki] = weg.dataset.weg.split('-').map(Number)
+    const karte = ausgaben[ai].cards[ki]
+    const letzte = ausgaben[ai].cards.length === 1
+    const frage = letzte
+      ? `„${karte.headline}" ist die einzige Meldung dieser Ausgabe. Entfernen löscht die ganze Ausgabe. Fortfahren?`
+      : `„${karte.headline}" entfernen?`
+    if (!confirm(frage)) return
+    weg.disabled = true
+    const rest = ausgaben[ai].cards.filter((_, i) => i !== ki)
+    if (await ausgabeSchreiben(ai, rest)) toast(letzte ? 'Ausgabe gelöscht' : 'Meldung entfernt')
+    return
+  }
+
+  const sp = e.target.closest('[data-speichern]')
+  if (sp) {
+    const [ai, ki] = sp.dataset.speichern.split('-').map(Number)
+    const v = (art) => document.getElementById(`f-${art}-${ai}-${ki}`)?.value ?? ''
+    const kopf = v('h').trim()
+    if (!kopf) { toast('Ohne Schlagzeile geht es nicht'); return }
+
+    sp.disabled = true
+    const karten = ausgaben[ai].cards.map((c, i) => i !== ki ? c : {
+      ...c,
+      headline: kopf,
+      summary: v('s').trim(),
+      /* Leeres Feld heisst: keine Handlungsempfehlung. Die Karte zeigt den
+         Block dann gar nicht, statt eine leere Ueberschrift zu setzen. */
+      impact: v('i').trim() || null,
+      full_content: v('v').trim(),
+      source_url: v('u').trim(),
+    })
+    if (await ausgabeSchreiben(ai, karten)) toast('Gespeichert ✓')
+  }
+})
+
+// ── Anmeldung ────────────────────────────────────────────────────────────
+async function eintreten(session) {
+  const { data: me } = await sb.from('users').select('is_admin').eq('id', session.user.id).maybeSingle()
+  if (!me?.is_admin) { await sb.auth.signOut(); anmeldenZeigen('Kein Admin-Zugriff.'); return }
+  $('#login-screen').classList.remove('visible')
+  $('#app').classList.add('visible')
+  await laden()
+}
+
+function anmeldenZeigen(fehler = '') {
+  $('#login-screen').classList.add('visible')
+  $('#login-error').textContent = fehler
+}
+
+async function anmelden() {
+  const btn = $('#btn-login')
+  btn.disabled = true; $('#login-error').textContent = ''
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: $('#inp-email').value.trim(), password: $('#inp-pw').value,
+  })
+  btn.disabled = false
+  if (error) { $('#login-error').textContent = 'Falsche E-Mail oder Passwort.'; return }
+  await eintreten(data.session)
+}
+
+$('#btn-login').addEventListener('click', anmelden)
+$('#inp-pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') anmelden() })
+
+const { data: { session } } = await sb.auth.getSession()
+if (session) await eintreten(session); else anmeldenZeigen()
+</script>
+</body>
+</html>
