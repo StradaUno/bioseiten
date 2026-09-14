@@ -1,0 +1,35 @@
+-- Repo-Kopie. Angewendet am 14.09.2026 als drei Migrationen:
+--   mediakit_ausbau_felder_und_beitraege
+--   mediakit_public_neue_felder
+--   (Volltext dort; hier die Zusammenfassung als Dokumentation.)
+--
+-- Ein Media Kit geht an Marken. Es muss die Fragen beantworten, die eine
+-- Marke sonst per Mail stellt, und es muss erkennbar machen, welche Zahl
+-- gemessen und welche behauptet ist. Alles additiv.
+--
+-- mediakit_viuno bekommt:
+--   pitch                     -- ein Satz AN MARKEN (die Bio ist an Follower)
+--   avg_comments_*            -- lag in analyse_stats und wurde nie gezeigt
+--   posts_woche_*             -- Planbarkeit, die erste Frage im Erstgespraech
+--   gemessen_am_*             -- DER Unterschied zu jedem Canva-Kit:
+--                                gesetzt = aus einer Messung, leer = getippt
+--   alter_18_24 .. alter_45plus -- ohne offizielle API nicht messbar,
+--                                der Creator liest sie in seinen Insights ab
+--   vorlauf_tage, nutzungsrechte, exklusivitaet, freigabe_schleifen
+--                             -- die vier Fragen, die in fast keinem
+--                                Creator-Kit stehen
+--   preis_hinweis             -- ohne § 19 UStG kann die Buchhaltung einer
+--                                deutschen Marke mit einem Preis nichts anfangen
+--
+-- mediakit_beitraege: die staerksten Beitraege mit kopiertem Vorschaubild.
+--   Kopiert, nicht verlinkt: Instagram-Thumbnails tragen einen Ablaufstempel
+--   und sind rund vier Tage nach der Analyse tot. Ein Kit steht Monate online.
+--   Rund 100 kB je Bild -- Skalieren unnoetig (und in Edge Functions ohnehin
+--   nicht moeglich, siehe imagescript-Problem bei den News-Bildern).
+--
+-- Bucket mediakit-beitraege: oeffentlich lesbar, Schreiben nur Service Role.
+--
+-- mediakit_public um alle neuen Felder erweitert -- was dort nicht drin
+-- steht, kann die oeffentliche Kit-Seite nicht zeigen.
+-- mediakit_preise bekommt eine anon-Lesepolicy, damit die Kit-Seite die
+-- Preise lesen kann, die der Creator ausdruecklich veroeffentlichen will.

@@ -994,6 +994,15 @@ a.news-quelle:hover{color:var(--text)}
 .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
 @keyframes spin { to{transform:rotate(360deg)} }
 .hidden { display: none !important; }
+/* ── Media Kit: Alters- und Preisfelder ── */
+.mk-alter-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mk-alter-lbl{padding:11px 0 11px 14px;font-size:var(--t-sm);color:var(--muted);white-space:nowrap}
+.mk-preis-zeile{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.mk-preis-zeile:last-child{border-bottom:0}
+.mk-preis-name{flex:1;min-width:0;font-size:var(--t-sm);font-weight:var(--fw-sb)}
+.mk-preis-felder{display:flex;gap:6px;flex-shrink:0}
+.mk-preis-felder .sheet-input-wrap{width:92px}
+
 /* ═══ VIEW: BRAND READY ═══════════════════════════════════════════
    Handlungsliste zuerst, Gewinn statt Verlust. Der Punktestand ist ein
    kleiner Ring, nicht die halbe Seite -- was zaehlt, ist die Liste
@@ -3277,6 +3286,11 @@ async function renderMediakit(area, ctx){
           <label class="sheet-label">Bio</label>
           <textarea class="sheet-textarea" id="s-bio" placeholder="Wer du bist und was du machst — 1-2 Sätze."></textarea>
         </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Ein Satz an Marken</label>
+          <div class="sheet-sub" style="padding:0 0 8px">Deine Bio ist an Follower gerichtet. Eine Marke liest etwas anderes: wofür stehst du, und warum lohnt sich eine Kooperation? Steht hier etwas, führt es auf dem Kit.</div>
+          <textarea class="sheet-textarea" id="s-pitch" maxlength="200" placeholder="z.B. Italienischer Alltag mit viel Humor — meine Community ist zu 62 % weiblich und kauft, was ich wirklich benutze."></textarea>
+        </div>
         <div class="sheet-actions">
           <button class="sheet-btn-primary" onclick="mkSaveProfile()">Speichern</button>
           <button class="sheet-btn-cancel" onclick="backToEditMenu('profile-sheet')">Abbrechen</button>
@@ -3415,7 +3429,12 @@ async function renderMediakit(area, ctx){
         <div class="sheet-header">
           <div class="sheet-header-text">
             <div class="sheet-title">Zielgruppe</div>
-            <div class="sheet-sub" style="padding-bottom:16px">Geschlechterverteilung in % und deine zwei stärksten Länder.</div>
+            <div class="sheet-sub" style="padding-bottom:6px">Geschlecht, Alter und deine stärksten Länder.</div>
+            <div style="padding-bottom:14px">
+              <button class="br-i" onclick="brInfoKlapp('mk-i-zielgruppe',this)" aria-label="Wo finde ich diese Zahlen?">i</button>
+              <span style="font-size:var(--t-xs);color:var(--muted);margin-left:6px">Wo finde ich diese Zahlen?</span>
+              <div class="br-i-txt" id="mk-i-zielgruppe">Instagram: Profil → Professional Dashboard → Insights → Zielgruppe. TikTok: Profil → Menü → Creator-Tools → Analytics → Follower. Dort stehen Alter, Geschlecht und Top-Länder. viuno kann sie ohne offizielle Plattform-API nicht selbst messen — deshalb trägst du sie hier ein, und auf dem Kit steht ausdrücklich „Eigenangabe“.</div>
+            </div>
           </div>
           <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
         </div>
@@ -3426,6 +3445,16 @@ async function renderMediakit(area, ctx){
         <div class="sheet-field">
           <label class="sheet-label">Männlich</label>
           <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="s-male" min="0" max="100" placeholder="z.B. 28" inputmode="numeric"/><span class="sheet-suffix">%</span></div>
+        </div>
+        <div class="sheet-divider"></div>
+        <div class="sheet-field">
+          <label class="sheet-label">Alter (Anteil in %)</label>
+          <div class="mk-alter-grid">
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">18–24</span><input type="number" class="sheet-prefix-input" id="s-alter1" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">25–34</span><input type="number" class="sheet-prefix-input" id="s-alter2" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">35–44</span><input type="number" class="sheet-prefix-input" id="s-alter3" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
+            <div class="sheet-input-wrap"><span class="mk-alter-lbl">45+</span><input type="number" class="sheet-prefix-input" id="s-alter4" min="0" max="100" placeholder="%" inputmode="numeric"/></div>
+          </div>
         </div>
         <div class="sheet-divider"></div>
         <div class="sheet-field">
@@ -3478,8 +3507,58 @@ async function renderMediakit(area, ctx){
             <span class="offer-check" id="chk-story_package"></span>
           </button>
         </div>
+        <div class="sheet-divider"></div>
+        <div class="sheet-field">
+          <label class="sheet-label">Preise</label>
+          <div class="sheet-sub" style="padding:0 0 10px">Marken fragen zuerst nach dem Preis. Ohne Angabe schreiben viele gar nicht erst. „bis“ ist optional — leer heißt Festpreis.</div>
+          <div id="mk-preis-liste"></div>
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Umsatzsteuer</label>
+          <div class="sheet-sub" style="padding:0 0 10px">Ohne diesen Hinweis kann die Buchhaltung einer Marke mit deinem Preis nichts anfangen.</div>
+          <select class="sheet-input" id="s-ustg" onchange="mkSavePreisHinweis()">
+            <option value="">Keine Angabe</option>
+            <option value="kleinunternehmer">Kleinunternehmer § 19 UStG — keine USt ausgewiesen</option>
+            <option value="zzgl_ust">Netto, zzgl. gesetzlicher USt</option>
+            <option value="inkl_ust">Inklusive gesetzlicher USt</option>
+          </select>
+        </div>
         <div class="sheet-actions" style="margin-top:8px">
           <button class="sheet-btn-primary" onclick="backToEditMenu('offers-sheet')">Fertig</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- KONDITIONEN SHEET — die vier Fragen, die eine Marke sonst per Mail stellt -->
+    <div class="sheet-backdrop hidden" id="konditionen-sheet" onclick="backToEditMenu('konditionen-sheet')">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <div class="sheet-header-text">
+            <div class="sheet-title">Zusammenarbeit</div>
+            <div class="sheet-sub" style="padding-bottom:16px">Vier Angaben, die eine Marke sonst per Mail erfragt. Stehen sie im Kit, spart das eine ganze Runde.</div>
+          </div>
+          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Vorlauf in Tagen</label>
+          <input type="number" class="sheet-input" id="s-vorlauf" min="0" max="365" placeholder="z.B. 10" inputmode="numeric"/>
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Nutzungsrechte</label>
+          <input type="text" class="sheet-input" id="s-rechte" maxlength="120" placeholder="z.B. 6 Monate organisch, Paid auf Anfrage"/>
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Exklusivität</label>
+          <input type="text" class="sheet-input" id="s-exkl" maxlength="120" placeholder="z.B. 4 Wochen in der Kategorie"/>
+        </div>
+        <div class="sheet-field">
+          <label class="sheet-label">Freigabeschleifen inklusive</label>
+          <input type="number" class="sheet-input" id="s-freigabe" min="0" max="9" placeholder="z.B. 1" inputmode="numeric"/>
+        </div>
+        <div class="sheet-actions">
+          <button class="sheet-btn-primary" onclick="mkSaveKonditionen()">Speichern</button>
+          <button class="sheet-btn-cancel" onclick="backToEditMenu('konditionen-sheet')">Abbrechen</button>
         </div>
       </div>
     </div>
@@ -3592,7 +3671,7 @@ async function renderMediakit(area, ctx){
 
   mkv = {
     uid, ctx,
-    profile:null, mkData:null, brands:[], offers:new Set(), analyseStats:{},
+    profile:null, mkData:null, brands:[], offers:new Set(), preise:{}, beitraege:[], autofill:null, analyseStats:{},
     viewsTotal:0, viewsToday:0, views7Days:0, viewsDaily:[],
     isActive:false, slug:null, defaultLang:'de'
   }
@@ -3608,19 +3687,24 @@ async function renderMediakit(area, ctx){
 
 async function loadMediakit(){
   const uid = mkv.uid
-  const[profileRes,mkRes,brandsRes,offersRes,analyseRes,viewsDailyRes]=await Promise.all([
+  const[profileRes,mkRes,brandsRes,offersRes,analyseRes,viewsDailyRes,preiseRes,beitraegeRes]=await Promise.all([
     sb.from('users').select('display_name,full_name,profile_image_url,bio,instagram_handle,tiktok_handle,youtube_handle,threads_handle,impressum_text,mediakit_active,subscription_type,niche_category,city,contact_email,mediakit_views_total,mediakit_views_today,mediakit_views_last_7_days').eq('id',uid).single(),
     sb.from('mediakit_viuno').select('*').eq('user_id',uid).maybeSingle(),
     sb.from('mediakit_brands').select('*').eq('user_id',uid).order('position',{ascending:true}),
     sb.from('mediakit_content_offers').select('offer_type').eq('user_id',uid),
-    sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views,created_at').eq('user_id',uid).order('created_at',{ascending:true}),
-    sb.rpc('get_mediakit_views_last_7_days_daily',{p_user_id:uid})
+    sb.from('analyse_stats').select('platform,engagement_rate,followers,avg_likes,avg_views,avg_comments,posts_per_week,created_at').eq('user_id',uid).order('created_at',{ascending:true}),
+    sb.rpc('get_mediakit_views_last_7_days_daily',{p_user_id:uid}),
+    sb.from('mediakit_preise').select('*').eq('user_id',uid),
+    sb.from('mediakit_beitraege').select('*').eq('user_id',uid).order('position',{ascending:true})
   ])
   if(!mkv||mkv.ctx.stale)return
   mkv.profile=profileRes.data||{}
   mkv.mkData=mkRes.data||{}
   mkv.brands=brandsRes.data||[]
   mkv.offers=new Set((offersRes.data||[]).map(r=>r.offer_type))
+  mkv.preise={}
+  for(const r of(preiseRes.data||[])) mkv.preise[r.offer_type]=r
+  mkv.beitraege=beitraegeRes.data||[]
   mkv.analyseStats={}
   for(const row of(analyseRes.data||[])) mkv.analyseStats[row.platform]=row
   mkv.viewsTotal=mkv.profile.mediakit_views_total||0
@@ -3628,6 +3712,9 @@ async function loadMediakit(){
   mkv.views7Days=mkv.profile.mediakit_views_last_7_days||0
   mkv.viewsDaily=viewsDailyRes.data||[]
   mkv.isActive=mkv.profile.mediakit_active===true
+  /* Im Hintergrund: Vorschaubilder der staerksten Beitraege sichern, solange
+     die Plattform-Links noch leben. Blockiert das Zeichnen nicht. */
+  mkBilderSichern()
   mkv.slug=mkv.profile.display_name?slugify(mkv.profile.display_name):null
   mkv.defaultLang=mkv.mkData?.default_language||'de'
   paintMediakit()
@@ -3820,7 +3907,11 @@ function renderEditMenu(){
   const platformsOk=!!(p.youtube_handle||p.threads_handle)
   const platformsSub=[p.youtube_handle?'YouTube':null,p.threads_handle?'Threads':null].filter(Boolean).join(' · ')||'Optional'
   const audOk=mk.gender_female_pct!=null||mk.top_country_1
+  const alterOk=mk.alter_18_24!=null||mk.alter_25_34!=null||mk.alter_35_44!=null||mk.alter_45plus!=null
   const offersCount=mkv.offers.size
+  const preisCount=Object.values(mkv.preise||{}).filter(x=>x&&x.preis_von!=null).length
+  const kondAnzahl=[mk.vorlauf_tage,mk.nutzungsrechte,mk.exklusivitaet,mk.freigabe_schleifen].filter(x=>x!=null&&x!=='').length
+  const kondSub=kondAnzahl?`${kondAnzahl} von 4 Angaben`:'Vorlauf, Rechte, Exklusivität'
   const brandsCount=mkv.brands.length
   const impOk=!!(p.impressum_text&&p.impressum_text.trim())
 
@@ -3829,8 +3920,9 @@ function renderEditMenu(){
     {id:'contact-sheet',icon:'mail',label:'Kontakt-E-Mail',sub:p.contact_email||'Anfrage-Adresse für Marken',status:contactOk?'ok':'miss',statusLabel:contactOk?'OK':'Pflicht'},
     {id:'stats-sheet',icon:'barChart',label:'Kennzahlen',sub:statsSub.length?statsSub.join(' · '):'IG / TikTok Performance',status:statsOk?'ok':'miss',statusLabel:statsOk?'OK':'Pflicht'},
     {id:'platforms-sheet',icon:'link',label:'Weitere Plattformen',sub:platformsSub,status:'',statusLabel:''},
-    {id:'audience-sheet',icon:'users',label:'Zielgruppe',sub:audOk?'Demografie eingetragen':'Optional',status:'',statusLabel:''},
-    {id:'offers-sheet',icon:'clapperboard',label:'Content Angebote',sub:offersCount?`${offersCount} ausgewählt`:'Optional',status:'',statusLabel:''},
+    {id:'audience-sheet',icon:'users',label:'Zielgruppe',sub:audOk?(alterOk?'Geschlecht, Alter, Länder':'Ohne Altersangabe'):'Aus deinen Insights eintragen',status:'',statusLabel:''},
+    {id:'offers-sheet',icon:'clapperboard',label:'Leistungen & Preise',sub:offersCount?`${offersCount} Angebote${preisCount?` · ${preisCount} mit Preis`:' · ohne Preis'}`:'Was bietest du Marken an?',status:'',statusLabel:''},
+    {id:'konditionen-sheet',icon:'fileText',label:'Zusammenarbeit',sub:kondSub,status:'',statusLabel:''},
     {id:'brands-sheet',icon:'briefcase',label:'Marken Kooperationen',sub:brandsCount?`${brandsCount} / 10`:'Optional',status:'',statusLabel:''},
     {id:'language-sheet',icon:'globe',label:'Standard-Sprache',sub:({de:'Deutsch',en:'English',it:'Italiano'}[mkv.defaultLang]||'Deutsch'),status:'',statusLabel:''},
     {id:'impressum-sheet',icon:'fileText',label:'Impressum',sub:impOk?'Hinterlegt':'Gesetzlich vorgeschrieben',status:impOk?'ok':'miss',statusLabel:impOk?'OK':'Pflicht'}
@@ -3859,16 +3951,27 @@ window.openEditSubSheet=function(id){
     document.querySelectorAll('#mk-niche-grid .niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===mkv.niche))
     document.getElementById('s-city').value=p.city||''
     document.getElementById('s-bio').value=p.bio||''
+    const pi=document.getElementById('s-pitch')
+    if(pi)pi.value=(mkv.mkData||{}).pitch||''
   } else if(id==='contact-sheet'){
     document.getElementById('s-contact-email').value=mkv.profile?.contact_email||''
   } else if(id==='stats-sheet'){
     openStatsSheet();return
   } else if(id==='platforms-sheet'){
     openPlatformsSheet();return
+  } else if(id==='konditionen-sheet'){
+    const mk=mkv.mkData||{}
+    document.getElementById('s-vorlauf').value=mk.vorlauf_tage??''
+    document.getElementById('s-rechte').value=mk.nutzungsrechte||''
+    document.getElementById('s-exkl').value=mk.exklusivitaet||''
+    document.getElementById('s-freigabe').value=mk.freigabe_schleifen??''
   } else if(id==='audience-sheet'){
     openAudienceSheet();return
   } else if(id==='offers-sheet'){
     renderOffers()
+    mkRenderPreise()
+    const uEl=document.getElementById('s-ustg')
+    if(uEl)uEl.value=(mkv.mkData||{}).preis_hinweis||''
   } else if(id==='brands-sheet'){
     renderBrandsList()
   } else if(id==='impressum-sheet'){
@@ -3965,6 +4068,11 @@ window.mkSaveProfile=async function(){
     city:document.getElementById('s-city').value.trim()||null,
     updated_at:new Date().toISOString()
   }
+  /* Der Pitch gehoert zum Kit, nicht zum Konto -- deshalb in mediakit_viuno
+     und nicht in users.bio, die auf der BioLink-Seite steht. */
+  const pitch=document.getElementById('s-pitch')?.value.trim()||null
+  await sb.from('mediakit_viuno').upsert({user_id:mkv.uid,pitch,updated_at:new Date().toISOString()},{onConflict:'user_id'})
+  if(mkv)mkv.mkData=Object.assign(mkv.mkData||{},{pitch})
   const bioChanged=(mkv.profile?.bio||null)!==patch.bio
   const uid=mkv.uid
   const{error}=await sb.from('users').update(patch).eq('id',mkv.uid)
@@ -4027,13 +4135,21 @@ window.doAutofill=function(){
     if(ig.engagement_rate!=null)document.getElementById('s-ig-er').value=(+parseFloat(ig.engagement_rate).toFixed(2))
     if(ig.avg_likes!=null)document.getElementById('s-ig-likes').value=Math.round(ig.avg_likes)
     if(ig.followers!=null)document.getElementById('s-ig-followers').value=ig.followers
+    mkv.autofill=mkv.autofill||{}
+    mkv.autofill.instagram={stichtag:ig.created_at||null,
+      avg_comments:ig.avg_comments!=null?Math.round(ig.avg_comments):null,
+      posts_woche:ig.posts_per_week!=null?+parseFloat(ig.posts_per_week).toFixed(1):null}
   }
   if(tt){
     if(tt.engagement_rate!=null)document.getElementById('s-tt-er').value=(+parseFloat(tt.engagement_rate).toFixed(2))
     if(tt.avg_views!=null)document.getElementById('s-tt-views').value=Math.round(tt.avg_views)
     if(tt.followers!=null)document.getElementById('s-tt-followers').value=tt.followers
+    mkv.autofill=mkv.autofill||{}
+    mkv.autofill.tiktok={stichtag:tt.created_at||null,
+      avg_comments:tt.avg_comments!=null?Math.round(tt.avg_comments):null,
+      posts_woche:tt.posts_per_week!=null?+parseFloat(tt.posts_per_week).toFixed(1):null}
   }
-  showToast('Werte übernommen ✓')
+  showToast('Gemessene Werte übernommen ✓')
 }
 window.saveStats=async function(){
   if(!mkv)return
@@ -4054,6 +4170,20 @@ window.saveStats=async function(){
     avg_views_tiktok:parseInt(document.getElementById('s-tt-views').value)||null,
     followers_tiktok:parseInt(document.getElementById('s-tt-followers').value)||null,
     updated_at:new Date().toISOString()
+  }
+  /* Nur was per Autofill kam, bekommt einen Stichtag. Ohne Autofill bleibt er
+     leer, und das Kit zeigt den Block als Eigenangabe -- genau so soll es sein.
+     Das ist der Unterschied zu jedem Canva-Kit, in dem jede Zahl behauptet ist. */
+  const af=mkv.autofill||{}
+  if(af.instagram){
+    mkPatch.gemessen_am_instagram=af.instagram.stichtag
+    mkPatch.avg_comments_instagram=af.instagram.avg_comments
+    mkPatch.posts_woche_instagram=af.instagram.posts_woche
+  }
+  if(af.tiktok){
+    mkPatch.gemessen_am_tiktok=af.tiktok.stichtag
+    mkPatch.avg_comments_tiktok=af.tiktok.avg_comments
+    mkPatch.posts_woche_tiktok=af.tiktok.posts_woche
   }
   const[r1,r2]=await Promise.all([
     sb.from('users').update(userPatch).eq('id',mkv.uid),
@@ -4126,6 +4256,10 @@ window.openAudienceSheet=function(){
   document.getElementById('s-country1-pct').value=mk.top_country_1_pct??''
   document.getElementById('s-country2').value=mk.top_country_2??''
   document.getElementById('s-country2-pct').value=mk.top_country_2_pct??''
+  document.getElementById('s-alter1').value=mk.alter_18_24??''
+  document.getElementById('s-alter2').value=mk.alter_25_34??''
+  document.getElementById('s-alter3').value=mk.alter_35_44??''
+  document.getElementById('s-alter4').value=mk.alter_45plus??''
   openSheet('audience-sheet')
 }
 window.saveAudience=async function(){
@@ -4141,6 +4275,10 @@ window.saveAudience=async function(){
     top_country_1_pct:isNaN(c1pct)?null:Math.min(100,Math.max(0,c1pct)),
     top_country_2:document.getElementById('s-country2').value.trim()||null,
     top_country_2_pct:isNaN(c2pct)?null:Math.min(100,Math.max(0,c2pct)),
+    alter_18_24:mkProzent('s-alter1'),
+    alter_25_34:mkProzent('s-alter2'),
+    alter_35_44:mkProzent('s-alter3'),
+    alter_45plus:mkProzent('s-alter4'),
     updated_at:new Date().toISOString()
   }
   const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
@@ -4170,6 +4308,112 @@ window.toggleOffer=async function(type){
     mkv.offers.add(type)
   }
   renderOffers()
+  mkRenderPreise()
+}
+
+/* Prozentfeld: leer bleibt leer, sonst auf 0..100 geklemmt. */
+function mkProzent(id){
+  const v=parseInt(document.getElementById(id)?.value)
+  return isNaN(v)?null:Math.min(100,Math.max(0,v))
+}
+
+const MK_ANGEBOT_LABEL={ugc_video:'UGC Video',instagram_reel:'Instagram Reel',
+  tiktok_post:'TikTok Video',story_package:'Story-Paket'}
+
+/* Preise erscheinen nur fuer Angebote, die auch angehakt sind -- ein Preis
+   fuer etwas, das man gar nicht anbietet, waere nur Verwirrung. */
+function mkRenderPreise(){
+  const el=document.getElementById('mk-preis-liste')
+  if(!el||!mkv)return
+  const gewaehlt=[...mkv.offers]
+  if(!gewaehlt.length){
+    el.innerHTML='<div class="empty-links">Wähle oben erst ein Angebot aus.</div>'
+    return
+  }
+  el.innerHTML=gewaehlt.map(t=>{
+    const pr=mkv.preise[t]||{}
+    return `<div class="mk-preis-zeile">
+      <div class="mk-preis-name">${escHtml(MK_ANGEBOT_LABEL[t]||t)}</div>
+      <div class="mk-preis-felder">
+        <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="pr-von-${t}" min="0" step="10" inputmode="numeric" placeholder="ab" value="${pr.preis_von??''}" onchange="mkSavePreis('${t}')"/><span class="sheet-suffix">€</span></div>
+        <div class="sheet-input-wrap"><input type="number" class="sheet-prefix-input" id="pr-bis-${t}" min="0" step="10" inputmode="numeric" placeholder="bis" value="${pr.preis_bis??''}" onchange="mkSavePreis('${t}')"/><span class="sheet-suffix">€</span></div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+window.mkSavePreis=async function(typ){
+  if(!mkv)return
+  const von=parseFloat(document.getElementById('pr-von-'+typ)?.value)
+  const bis=parseFloat(document.getElementById('pr-bis-'+typ)?.value)
+  const zeile={user_id:mkv.uid,offer_type:typ,
+    preis_von:isNaN(von)?null:Math.max(0,von),
+    preis_bis:isNaN(bis)?null:Math.max(0,bis),
+    updated_at:new Date().toISOString()}
+  /* Spanne verkehrt herum ist ein Tippfehler, kein Angebot -- lieber
+     zurueckweisen als eine "ab 500 bis 200"-Zeile aufs Kit lassen. */
+  if(zeile.preis_von!=null&&zeile.preis_bis!=null&&zeile.preis_bis<zeile.preis_von){
+    showToast('„bis“ muss größer sein als „ab“',3000);return
+  }
+  const{error}=await sb.from('mediakit_preise').upsert(zeile,{onConflict:'user_id,offer_type'})
+  if(!mkv)return
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  mkv.preise[typ]=zeile
+}
+
+window.mkSavePreisHinweis=async function(){
+  if(!mkv)return
+  const wert=document.getElementById('s-ustg')?.value||null
+  const{error}=await sb.from('mediakit_viuno')
+    .upsert({user_id:mkv.uid,preis_hinweis:wert||null,updated_at:new Date().toISOString()},{onConflict:'user_id'})
+  if(!mkv)return
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  mkv.mkData=Object.assign(mkv.mkData||{},{preis_hinweis:wert||null})
+}
+
+window.mkSaveKonditionen=async function(){
+  if(!mkv)return
+  const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  const zahl=(id,max)=>{const v=parseInt(document.getElementById(id)?.value);return isNaN(v)?null:Math.min(max,Math.max(0,v))}
+  const patch={
+    user_id:mkv.uid,
+    vorlauf_tage:zahl('s-vorlauf',365),
+    nutzungsrechte:document.getElementById('s-rechte')?.value.trim()||null,
+    exklusivitaet:document.getElementById('s-exkl')?.value.trim()||null,
+    freigabe_schleifen:zahl('s-freigabe',9),
+    updated_at:new Date().toISOString()
+  }
+  const{error}=await sb.from('mediakit_viuno').upsert(patch,{onConflict:'user_id'})
+  if(!mkv)return
+  btn.disabled=false;btn.textContent='Speichern'
+  if(error){showToast('Fehler: '+error.message,4000);return}
+  mkv.mkData=Object.assign(mkv.mkData||{},patch)
+  showToast('Konditionen gespeichert ✓')
+  paintMediakit()
+  backToEditMenu('konditionen-sheet')
+}
+
+/* Sichert die Vorschaubilder der staerksten Beitraege, solange die
+   Plattform-Links noch leben -- Instagram setzt sie rund vier Tage nach der
+   Analyse ab. Laeuft im Hintergrund; schlaegt es fehl, fehlen nur die Bilder,
+   nicht das Kit. */
+async function mkBilderSichern(){
+  if(!mkv)return
+  try{
+    const{data:{session}}=await sb.auth.getSession()
+    if(!session)return
+    const res=await fetch(SUPABASE_URL+'/functions/v1/mediakit-bilder',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},
+      body:'{}'
+    })
+    const d=await res.json()
+    if(!mkv||!d.success)return
+    if(d.gesichert>0){
+      const{data}=await sb.from('mediakit_beitraege').select('*').eq('user_id',mkv.uid).order('position',{ascending:true})
+      if(mkv)mkv.beitraege=data||[]
+    }
+  }catch(_){/* Bilder sind Beiwerk, kein Grund die View zu kippen */}
 }
 
 // ── Brands ──
