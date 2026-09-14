@@ -12,5 +12,7 @@ Disallow: /profile/
 Disallow: /onboarding/
 Disallow: /analytics/
 Disallow: /reset-password/
+# Designentwuerfe zum Durchklicken, kein Produktstand.
+Disallow: /pitch/
 
 Sitemap: https://viuno.de/sitemap.xml

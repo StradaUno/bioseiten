@@ -31,3 +31,11 @@
 # Geloest wird das deshalb beim Import, nicht beim Ausliefern: beide
 # Verbraucher haengen `?v=<Fuenf-Minuten-Fenster>` an die Modul-URL. Siehe
 # public/app/index.html und die Huelle in generate-mediakit.
+
+# ── Designentwuerfe unter /pitch/ ───────────────────────────────
+# Oeffentlich erreichbar, damit man sie auf dem Telefon durchklicken
+# kann, aber nichts davon ist Produktstand. Robots-Sperre doppelt:
+# robots.txt bittet, dieser Header sagt es verbindlich.
+/pitch/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
