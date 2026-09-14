@@ -388,7 +388,8 @@ html, body {
 .pf-stat{background:var(--surface);padding:14px 10px;text-align:center}
 .pf-stat-v{font-size:var(--t-num-sm);font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.1}
 .pf-stat-k{margin-top:4px;font-size:var(--t-2xs);font-weight:var(--fw-sb);letter-spacing:.09em;text-transform:uppercase;color:var(--subtle)}
-.pf-kanal{font-size:var(--t-xs);font-weight:var(--fw-md);color:var(--text);background:var(--bg);border:1px solid var(--border-strong);border-radius:var(--r-full);padding:5px 12px}
+.pf-kanal{display:inline-flex;align-items:center;gap:6px;font-size:var(--t-xs);font-weight:var(--fw-md);color:var(--text);background:var(--bg);border:1px solid var(--border-strong);border-radius:var(--r-full);padding:5px 12px}
+.pf-kanal .icon{color:var(--muted);flex-shrink:0}
 .pf-kanal.leer{color:var(--subtle);border-style:dashed;background:transparent}
 .pf-mail{font-size:var(--t-xs);color:var(--muted);margin-top:14px}
 .pf-mail.leer{color:var(--subtle)}
@@ -685,6 +686,8 @@ html, body {
 .plat-note{font-size:var(--t-xs);color:var(--muted);line-height:1.5;margin-top:8px;text-align:center}
 .plat-link{color:var(--text);font-weight:600;text-decoration:underline;cursor:pointer}
 .plat-cards.eingeklappt{grid-template-columns:1fr}
+/* Der Zuklappen-Knopf steht ueber beiden Kaufkarten, nicht neben einer. */
+.plat-cards > .btn-menue{grid-column:1/-1}
 .btn-menue{width:100%;font:inherit;font-weight:600;font-size:var(--t-md);padding:13px 16px;border-radius:var(--r-md);
   border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;gap:8px}
@@ -1312,6 +1315,8 @@ const state = {
    ───────────────────────────────────────────── */
 const ICONS = {
   instagram: '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>',
+  tiktok:    '<path d="M15 3v9.5a4 4 0 1 1-3-3.87"/><path d="M15 3a5 5 0 0 0 5 5"/>',
+  threads:   '<path d="M16.2 11.6c-.1-3-1.7-4.6-4.3-4.6-1.6 0-3 .7-3.8 2"/><path d="M12 21c-4.8 0-7.5-3.3-7.5-9S7.2 3 12 3s7.5 3.3 7.5 9-2.7 9-7.5 9z"/><path d="M15.6 14.6c0 1.7-1.6 2.7-3.3 2.7-1.5 0-2.7-.8-2.7-2s1.2-2 2.9-2c2.3 0 4.3.9 4.3 3.4"/>',
   user:        '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
   users:       '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   link:        '<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/>',
@@ -2602,7 +2607,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Profil</div>
             <div class="sheet-sub">Dein Name und Bio erscheinen auf deiner BioLink-Seite.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('profile-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Profilbild</label>
@@ -2635,7 +2640,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Social Kanäle</div>
             <div class="sheet-sub">Verbinde deine Kanäle. Nur ausgefüllte werden angezeigt.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('handles-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Instagram</label>
@@ -2669,7 +2674,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Custom Links</div>
             <div class="sheet-sub">Bis zu 10 Links. Werbungs-Flag zeigt einen kleinen Hinweis auf der Seite.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('links-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <div class="links-list" id="links-list"></div>
@@ -2716,7 +2721,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Design & Sprache</div>
             <div class="sheet-sub">Design der BioLink-Seite. Sprache wird als Standard gesetzt (User kann wechseln).</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('theme-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div style="padding:0 20px 8px">
           <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">Design</div>
@@ -2760,7 +2765,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Kontakt-E-Mail</div>
             <div class="sheet-sub" style="padding-bottom:16px">Der Kontakt-Button auf deiner BioLink-Seite öffnet direkt eine E-Mail an diese Adresse. Ohne Adresse erscheint der Button nicht.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('bl-contact-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">E-Mail-Adresse</label>
@@ -2783,7 +2788,7 @@ async function renderBiolink(area, ctx){
             <div class="sheet-title">Impressum</div>
             <div class="sheet-sub">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Name, Adresse, Kontakt.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('impressum-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
@@ -3461,7 +3466,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Profil</div>
             <div class="sheet-sub" style="padding-bottom:16px">Diese Daten erscheinen oben auf deinem Media Kit.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('profile-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Profilbild</label>
@@ -3480,10 +3485,6 @@ async function renderMediakit(area, ctx){
         <div class="sheet-field">
           <label class="sheet-label">Stadt <span class="sheet-optional">optional</span></label>
           <input type="text" class="sheet-input" id="s-city" placeholder="z.B. Berlin" maxlength="60"/>
-        </div>
-        <div class="sheet-field">
-          <label class="sheet-label">Bio</label>
-          <textarea class="sheet-textarea" id="s-bio" placeholder="Wer du bist und was du machst — 1-2 Sätze."></textarea>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Ein Satz an Marken</label>
@@ -3507,7 +3508,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Kontakt</div>
             <div class="sheet-sub" style="padding-bottom:16px">Diese E-Mail-Adresse erscheint auf deinem Media Kit. Marken senden Anfragen direkt dorthin.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('contact-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Anfrage-E-Mail</label>
@@ -3530,7 +3531,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Kennzahlen</div>
             <div class="sheet-sub" style="padding-bottom:16px">Engagement Rate, durchschnittliche Likes/Views und Follower-Zahlen.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('stats-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="autofill-wrap hidden" id="autofill-wrap">
           <button class="autofill-button" onclick="doAutofill()">
@@ -3595,7 +3596,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Weitere Plattformen</div>
             <div class="sheet-sub" style="padding-bottom:16px">YouTube und Threads. Trage Handle ein — Follower-Zahl erscheint dann.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('platforms-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">YouTube Handle</label>
@@ -3635,7 +3636,7 @@ async function renderMediakit(area, ctx){
               <div class="br-i-txt" id="mk-i-zielgruppe">Instagram: Profil → Professional Dashboard → Insights → Zielgruppe. TikTok: Profil → Menü → Creator-Tools → Analytics → Follower. Dort stehen Alter, Geschlecht und Top-Länder.</div>
             </div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('audience-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Weiblich</label>
@@ -3686,7 +3687,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Content Angebote</div>
             <div class="sheet-sub" style="padding-bottom:16px">Was möchtest du Marken anbieten? Tippe zum Auswählen.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('offers-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="offer-list">
           <button class="offer-row" data-offer="ugc_video" onclick="toggleOffer('ugc_video')">
@@ -3738,7 +3739,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-sub" style="padding-bottom:12px">Vier Fragen, die eine Marke sonst per Mail stellt. Wenn du unsicher bist: tippe einen Vorschlag an — das sind die üblichen Antworten. Alles ist freiwillig und jederzeit änderbar.</div>
             <button class="sheet-btn-cancel" style="width:auto;padding:8px 14px;margin-bottom:6px" onclick="mkKondStandard()">Üblichen Standard übernehmen</button>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('konditionen-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <label class="sheet-label">Wie viel Zeit brauchst du?</label>
@@ -3795,7 +3796,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Marken Kooperationen</div>
             <div class="sheet-sub" style="padding-bottom:16px">Bis zu 10 Marken mit denen du gearbeitet hast. URL ist optional.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('brands-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <div class="brands-list" id="brands-list"></div>
@@ -3843,7 +3844,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Impressum</div>
             <div class="sheet-sub" style="padding-bottom:16px">Gesetzlich vorgeschrieben wenn du Inhalte geschäftlich veröffentlichst. Wird über das Impressum-Sheet auf deiner Live-Seite angezeigt.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('impressum-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="sheet-field">
           <textarea class="sheet-textarea" id="s-impressum" placeholder="Angaben gemäß § 5 TMG&#10;&#10;Vorname Nachname&#10;Musterstraße 1&#10;12345 Musterstadt&#10;&#10;E-Mail: deine@email.de" style="min-height:160px"></textarea>
@@ -3864,7 +3865,7 @@ async function renderMediakit(area, ctx){
             <div class="sheet-title">Standard-Sprache</div>
             <div class="sheet-sub" style="padding-bottom:16px">In welcher Sprache wird dein Media Kit standardmäßig angezeigt? Besucher können später auf der Live-Seite umschalten.</div>
           </div>
-          <button class="sheet-close" onclick="closeAllSheets()" aria-label="Schließen">${icon('x',17)}</button>
+          <button class="sheet-close" onclick="backToEditMenu('language-sheet')" aria-label="Schließen">${icon('x',17)}</button>
         </div>
         <div class="lang-options">
           <button class="lang-opt" data-lang="de" onclick="mkSelectLang('de')">DE</button>
@@ -4142,9 +4143,9 @@ window.openEditMenu=function(){
 
 function renderEditMenu(){
   const p=mkv.profile||{},mk=mkv.mkData||{}
-  const profileOk=!!(p.profile_image_url&&p.bio&&p.bio.trim())
+  const profileOk=!!p.profile_image_url
   const profileSub=[nischeLabel(p.niche_category),p.city||null,(mkv.mkData||{}).pitch?'Satz an Marken ✓':null]
-    .filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Bild & Bio fehlen')
+    .filter(Boolean).join(' · ')||(profileOk?'Vollständig':'Profilbild fehlt')
   const contactOk=!!(p.contact_email&&p.contact_email.trim())
   const statsOk=!!(p.instagram_handle&&(mk.er_instagram!=null))||!!(p.tiktok_handle&&(mk.er_tiktok!=null))
   const statsSub=[]
@@ -4196,7 +4197,6 @@ window.openEditSubSheet=function(id){
     mkv.niche=p.niche_category||'general'
     document.querySelectorAll('#mk-niche-grid .niche-btn').forEach(b=>b.classList.toggle('active',b.dataset.niche===mkv.niche))
     document.getElementById('s-city').value=p.city||''
-    document.getElementById('s-bio').value=p.bio||''
     const pi=document.getElementById('s-pitch')
     if(pi)pi.value=(mkv.mkData||{}).pitch||''
   } else if(id==='contact-sheet'){
@@ -4305,18 +4305,20 @@ window.mkSelectNiche=function(key){
 window.mkSaveProfile=async function(){
   if(!mkv)return
   const btn=event.target;btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'
+  /* Die Bio wird hier nicht mehr bearbeitet: auf dem Kit liest eine Marke den
+     "Satz an Marken", die Bio richtet sich an Follower. Zwei Felder mit
+     demselben Zweck an zwei Orten zu pflegen war die Quelle dafuer, dass auf
+     dem Kit etwas anderes stand als auf der BioLink-Seite. Die Bio bleibt im
+     Profil, users.bio wird von hier aus nicht mehr angefasst. */
   const patch={
-    bio:document.getElementById('s-bio').value.trim()||null,
     niche_category:mkv.niche||'general',
     city:document.getElementById('s-city').value.trim()||null,
     updated_at:new Date().toISOString()
   }
-  /* Der Pitch gehoert zum Kit, nicht zum Konto -- deshalb in mediakit_viuno
-     und nicht in users.bio, die auf der BioLink-Seite steht. */
   const pitch=document.getElementById('s-pitch')?.value.trim()||null
   await sb.from('mediakit_viuno').upsert({user_id:mkv.uid,pitch,updated_at:new Date().toISOString()},{onConflict:'user_id'})
   if(mkv)mkv.mkData=Object.assign(mkv.mkData||{},{pitch})
-  const bioChanged=(mkv.profile?.bio||null)!==patch.bio
+  const bioChanged=false
   const uid=mkv.uid
   const{error}=await sb.from('users').update(patch).eq('id',mkv.uid)
   if(!mkv)return
@@ -4887,7 +4889,12 @@ async function renderAnalytics(area, ctx){
     posts:{instagram:[],tiktok:[]},
     kaufOffen:false,
     activeRun:null,
-    busy:null
+    busy:null,
+    /* Bis lastDone geladen ist, weiss niemand, ob oben die zwei Kaufkarten
+       oder der eingeklappte Knopf hingehoeren. Vorher zeichnete
+       refreshPurchaseState() die Karten sofort, loadKi() klappte sie eine
+       Rundreise spaeter wieder zu -- sichtbar als Aufblitzen. */
+    bereit:false
   }
   /* Das 5-Sekunden-Polling darf die Route nicht ueberleben. */
   ctx.onCleanup(() => {
@@ -4920,6 +4927,9 @@ async function renderAnalytics(area, ctx){
   await checkActiveRun()
   if(ctx.stale)return
   await loadKi()
+  if(ctx.stale||!anv)return
+  anv.bereit=true
+  renderPlatformCards()
 }
 
 /* Ein Kauf deckt genau einen Kanal ab. Die Karte zeigt deshalb je Kanal den
@@ -4927,6 +4937,7 @@ async function renderAnalytics(area, ctx){
 function renderPlatformCards(){
   const el=document.getElementById('plat-cards')
   if(!el||!anv)return
+  if(!anv.bereit){ el.innerHTML=''; el.classList.remove('eingeklappt'); return }
   const p=anv.profile||{}
   const laufend=anv.activeRun?.platform||null
 
@@ -4946,7 +4957,13 @@ function renderPlatformCards(){
   }
   el.classList.remove('eingeklappt')
 
-  el.innerHTML=['instagram','tiktok'].map(pl=>{
+  /* #18: Wer "Neue Analyse" aufklappt, muss auch wieder zuklappen koennen --
+     sonst steht die Kaufaufforderung bis zum naechsten Routenwechsel. */
+  const zuklappbar = fertig && !laufend && !offeneFreischaltung && anv.kaufOffen
+  el.innerHTML = (zuklappbar ? `<button class="btn-menue offen" onclick="kaufKlappe()" aria-expanded="true">
+      ${SVG_REFRESH} Neue Analyse
+      <svg class="btn-menue-pfeil auf" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>` : '') + ['instagram','tiktok'].map(pl=>{
     const label=pl==='instagram'?'Instagram':'TikTok'
     const raw=pl==='instagram'?p.instagram_handle:p.tiktok_handle
     const handle=raw?('@'+String(raw).replace(/^@/,'')):null
@@ -6113,11 +6130,14 @@ async function newsTeilen(slug){
    Function; users.newsletter_subscribed wird von einem Trigger nachgefuehrt
    und nur noch gelesen. Vorher schrieb jede Seite eine andere Teilmenge -
    deshalb stand eine Abonnentin gleichzeitig als an- und abgemeldet da. */
+/* Wer abonniert hat, braucht das Angebot nicht weiter zwischen den Meldungen
+   stehen zu haben. Abbestellen geht im Profil unter Benachrichtigungen und
+   ueber den Link in jeder Mail -- zwei Wege reichen. */
 function nlLineHtml(){
-  const on = !!dgv?.subscribed
+  if(dgv?.subscribed) return ''
   return `<label class="nl-line">
-    <input type="checkbox" class="nl-line-check" ${on?'checked':''} onchange="toggleNewsMail(this)"/>
-    <span class="nl-line-text">${on?'Kommt jede Woche per Mail':'Creator News jede Woche per Mail bekommen'}</span>
+    <input type="checkbox" class="nl-line-check" onchange="toggleNewsMail(this)"/>
+    <span class="nl-line-text">Creator News jede Woche per Mail bekommen</span>
   </label>`
 }
 
@@ -6415,11 +6435,15 @@ function paintProfile(){
   const initial = (p.display_name||'?')[0].toUpperCase()
   const slug = (p.display_name||'').toLowerCase()
   /* YouTube ist vorerst kein Kanal — die Spalte bleibt, die Auswahl nicht. */
+  /* #25: Vor dem Handle steht das Symbol, nicht der ausgeschriebene Name.
+     "Instagram @antonietta" sagt zweimal dasselbe; das Symbol erkennt man
+     schneller und die Zeile wird kuerzer. */
   const kanaele = [
-    ['Instagram', p.instagram_handle], ['TikTok', p.tiktok_handle],
-    ['Threads', p.threads_handle],
+    ['instagram', 'Instagram', p.instagram_handle],
+    ['tiktok',    'TikTok',    p.tiktok_handle],
+    ['threads',   'Threads',   p.threads_handle],
   ]
-  const gesetzt = kanaele.filter(([,h])=>h && String(h).trim())
+  const gesetzt = kanaele.filter(([,,h])=>h && String(h).trim())
   const hauptHandle = (p.instagram_handle || p.tiktok_handle || '').replace(/^@/,'').trim()
   const seitenLive = (p.bio_active?1:0) + (p.mediakit_active?1:0)
   /* Kein onerror mehr, das das Element wegloescht: die Initiale steht
@@ -6443,9 +6467,9 @@ function paintProfile(){
         </div>
         ${p.bio?`<div class="pf-bio">${escHtml(p.bio)}</div>`:'<div class="pf-bio leer">Noch keine Bio — sie steht auf beiden Seiten und in jeder Linkvorschau.</div>'}
         <div class="pf-kanaele">
-          ${kanaele.map(([label,h])=>h&&String(h).trim()
-            ? `<span class="pf-kanal">${label} @${escHtml(String(h).replace(/^@/,''))}</span>`
-            : `<span class="pf-kanal leer">${label} +</span>`).join('')}
+          ${kanaele.map(([sym,label,h])=>h&&String(h).trim()
+            ? `<span class="pf-kanal" title="${label}">${icon(sym,14)}@${escHtml(String(h).replace(/^@/,''))}</span>`
+            : `<span class="pf-kanal leer" title="${label}">${icon(sym,14)}+</span>`).join('')}
         </div>
       </div>
 
@@ -6913,7 +6937,19 @@ async function kontoWarnungSenden(art, neueAdresse){
    Die Anfrage geht an uns, nicht an den Nutzer: eine JSON-Datei mit
    Datenbankzeilen ist keine Auskunft, mit der jemand etwas anfangen kann.
    Wir bereiten sie auf und schicken sie innerhalb von 48 Stunden. */
-window.pfDatenExport=async function(){
+/* Der Klick loeste die Anforderung bisher sofort aus. Sie geht per Mail an
+   einen Menschen, der sie von Hand beantwortet -- ein Fehlgriff kostet also
+   fremde Arbeitszeit. Deshalb eine Rueckfrage davor. */
+window.pfDatenExport=function(){
+  showModal(
+    'Daten anfordern?',
+    'Wir stellen deine gespeicherten Daten zusammen und schicken sie an deine Login-Adresse. Das dauert bis zu 48 Stunden.',
+    'Anfordern',
+    ()=>{ closeModal(); pfDatenExportAusfuehren() }
+  )
+}
+
+async function pfDatenExportAusfuehren(){
   const zeile=document.getElementById('pf-export-zeile')
   const sub=document.getElementById('pf-export-sub')
   if(!zeile||zeile.disabled)return
