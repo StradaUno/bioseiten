@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>viuno · App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -59,10 +59,13 @@
   --t-input: 16px;           /* Eingaben — darunter zoomt iOS beim Fokus */
   --t-num-sm: 21px;          /* kleine Kennzahlen            */
   --t-num: 32px;             /* grosse Kennzahlen            */
-  /* Zahlen laufen in Monospace, damit Ziffern untereinander stehen und
-     ein Sprung zwischen zwei Messungen als Sprung sichtbar wird.
-     Die Schrift wird im <head> ohnehin schon geladen. */
-  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* Zahlen und Mikro-Label laufen in Inter mit Tabellenziffern.
+     Der Grund fuer eine eigene Schrift war nie das Schreibmaschinen-
+     Aussehen, sondern die gleiche Ziffernbreite: 18.400 und 19.200 sind
+     dann exakt gleich breit, der Unterschied faellt an der Ziffer auf und
+     nicht an der Laenge. Genau das leistet font-variant-numeric, ohne dass
+     die Zahlen nach Quelltext aussehen. */
+  --ziffern: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   --lh-tight: 1.35;
   --lh-body: 1.55;
   --fw-md: 500; --fw-sb: 600; --fw-b: 700;
@@ -109,15 +112,16 @@ html, body {
 }
 
 /* ── Zahlen ──────────────────────────────────────────────────────
-   Jede Kennzahl laeuft in Monospace mit Tabellenziffern. Das ist die
-   Signatur des Designs und hat einen sachlichen Grund: gleiche
-   Ziffernbreite heisst, dass 18.400 und 19.200 exakt gleich breit sind
-   und der Unterschied an der Ziffer auffaellt, nicht an der Laenge.
+   Jede Kennzahl bekommt Tabellenziffern: gleiche Ziffernbreite heisst,
+   dass 18.400 und 19.200 exakt gleich breit sind und der Unterschied an
+   der Ziffer auffaellt, nicht an der Laenge. Eine neue Zahlenklasse
+   gehoert in diese Liste, sonst laeuft sie mit Proportionalziffern und
+   springt beim Aktualisieren.
    ──────────────────────────────────────────────────────────────── */
 .dash-card-value, .kpi-value, .stat-box-value, .c-num, .c-big, .bl-wert, .br-gewinn,
 .timing-value, .top-post-stat, .chart-val, .cmp-val, .c-cmp-val, .br-zeile-p,
 .mk-mini-posts, .bl-uhr-lbl, .c-rang-nr, .tip-num, .step-num, .br-ring b {
-  font-family: var(--mono);
+  font-family: var(--ziffern);
   font-variant-numeric: tabular-nums;
   letter-spacing: -.03em;
 }
@@ -301,8 +305,8 @@ html, body {
 .dash-kopf-av img{width:100%;height:100%;object-fit:cover;display:block;border-radius:9px}
 .dash-kopf-txt{flex:1;min-width:0}
 .dash-kopf-name{font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.03em;line-height:1.2}
-.dash-kopf-sub{font-size:var(--t-xs);color:var(--subtle);margin-top:3px;font-family:var(--mono)}
-.dash-live{flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--green);padding:5px 9px;border-radius:var(--r-full);background:var(--green-bg);border:1px solid var(--green-border)}
+.dash-kopf-sub{font-size:var(--t-xs);color:var(--subtle);margin-top:3px;font-family:var(--ziffern)}
+.dash-live{flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:var(--ziffern);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--green);padding:5px 9px;border-radius:var(--r-full);background:var(--green-bg);border:1px solid var(--green-border)}
 .dash-live i{width:5px;height:5px;border-radius:50%;background:var(--green)}
 /* Tagessatz aus get_daily_text — bleibt, aber als Zeile, nicht als Karte. */
 .dash-satz{padding:0 var(--page-x) var(--s-4);font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
@@ -310,7 +314,7 @@ html, body {
 /* Hauptkarte: Zahl, Veraenderung, Verlauf */
 .dash-haupt{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);padding:18px;text-decoration:none}
 .dash-haupt-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.dash-chip{font-family:var(--mono);font-size:var(--t-sm);font-weight:var(--fw-b);padding:4px 9px;border-radius:var(--r-xs);white-space:nowrap}
+.dash-chip{font-family:var(--ziffern);font-size:var(--t-sm);font-weight:var(--fw-b);padding:4px 9px;border-radius:var(--r-xs);white-space:nowrap}
 .dash-chip.hoch{background:var(--green-bg);color:var(--green)}
 .dash-chip.runter{background:var(--red-bg);color:var(--red)}
 .dash-chip.neutral{background:var(--surface2);color:var(--muted)}
@@ -332,12 +336,12 @@ html, body {
 .dash-zeile-t{display:block;font-size:var(--t-md);font-weight:var(--fw-sb);letter-spacing:-.01em;line-height:var(--lh-tight)}
 .dash-zeile-s{display:block;font-size:var(--t-xs);color:var(--muted);margin-top:3px;line-height:var(--lh-body)}
 .dash-zeile-pfeil{flex-shrink:0;color:var(--subtle);display:grid;place-items:center}
-.dash-marke{flex-shrink:0;font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-b);padding:4px 8px;border-radius:var(--r-xs);background:var(--akzent-bg);color:var(--akzent-text);border:1px solid var(--akzent-border)}
+.dash-marke{flex-shrink:0;font-family:var(--ziffern);font-size:var(--t-2xs);font-weight:var(--fw-b);padding:4px 8px;border-radius:var(--r-xs);background:var(--akzent-bg);color:var(--akzent-text);border:1px solid var(--akzent-border)}
 .dash-marke.preis{background:var(--surface2);color:var(--muted);border-color:var(--border)}
 
 /* News-Teaser: zwei Schlagzeilen, nicht aufklappbar, fuehrt auf die News-Seite */
 .news-teaser{display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);text-decoration:none;overflow:hidden}
-.news-teaser-datum{font-size:var(--t-xs);color:var(--subtle);margin-bottom:var(--s-2);font-family:var(--mono)}
+.news-teaser-datum{font-size:var(--t-xs);color:var(--subtle);margin-bottom:var(--s-2);font-family:var(--ziffern)}
 .news-teaser-row{display:block;padding:14px 16px}
 .news-teaser-row+.news-teaser-row{border-top:1px solid var(--border)}
 .news-teaser-meta{display:flex;align-items:center;gap:var(--s-2);margin-bottom:6px}
@@ -346,10 +350,10 @@ html, body {
 
 .dash-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);padding:16px 15px;text-decoration:none;display:flex;flex-direction:column;gap:4px;cursor:pointer}
 .dash-card:active{background:var(--bg)}
-.dash-card-label{font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.1em}
+.dash-card-label{font-family:var(--ziffern);font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.1em}
 .dash-card-value{font-size:var(--t-num-sm);font-weight:var(--fw-b);color:var(--text);line-height:1.1;margin-top:6px}
 .dash-card-sub{font-size:var(--t-xs);color:var(--muted);margin-top:2px}
-.dash-platform-badge{font-family:var(--mono);font-size:var(--t-2xs);font-weight:var(--fw-b);padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.03em}
+.dash-platform-badge{font-family:var(--ziffern);font-size:var(--t-2xs);font-weight:var(--fw-b);padding:2px 8px;border-radius:var(--r-full);text-transform:uppercase;letter-spacing:.03em}
 .pb-tiktok{background:#eef7fb;color:#0b6f87}.pb-instagram{background:#fbeff5;color:#8e1a4c}.pb-youtube{background:#fdf2ea;color:#a3450b}.pb-meta{background:#eef1fd;color:#2b3fae}.pb-allgemein{background:var(--surface2);color:var(--muted)}
 
 /* ═══ VIEW: PROFIL ═══
@@ -717,7 +721,7 @@ html, body {
 }
 .ckpt h1,.ckpt h2,.ckpt h3{font-family:"Outfit","Inter",sans-serif;text-wrap:balance;margin:0}
 .ckpt .c-num,.ckpt .c-big{margin:0}
-.ckpt .c-mono{font-family:"JetBrains Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:var(--c-fg3)}
+.ckpt .c-mono{font-variant-numeric:tabular-nums;letter-spacing:.02em;font-size:12px;color:var(--c-fg3)}
 .ckpt p{margin:0}
 
 /* Kopf: die Kernaussage ist die Ueberschrift, nicht der Kanalname. */
@@ -774,7 +778,7 @@ html, body {
 .c-tbl td{padding:9px 10px 9px 0;border-bottom:1px solid var(--c-line);color:var(--c-fg2)}
 .c-tbl tr:last-child td{border-bottom:none}
 .c-tbl td.n,.c-tbl th.n{text-align:right;padding-right:0}
-.c-tbl td.n{font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+.c-tbl td.n{font-variant-numeric:tabular-nums}
 .c-tbl .up{color:var(--c-ok);font-weight:600} .c-tbl .down{color:var(--c-bad);font-weight:600}
 .c-tbl a{color:var(--c-fg);text-decoration:none;border-bottom:1px solid var(--c-line2)}
 .c-tbl-wrap{overflow-x:auto}
@@ -792,7 +796,7 @@ html, body {
 .c-cmp-label{color:var(--c-fg2)}
 .c-cmp-track{height:8px;border-radius:99px;background:var(--c-panel2);overflow:hidden}
 .c-cmp-fill{height:100%;border-radius:99px;background:var(--c-cool)}
-.c-cmp-val{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--c-fg);font-variant-numeric:tabular-nums}
+.c-cmp-val{font-size:12px;color:var(--c-fg);font-variant-numeric:tabular-nums;font-weight:600}
 
 .c-rang-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
 .c-rang-tab{font:inherit;font-size:12px;font-weight:600;padding:7px 12px;border-radius:99px;cursor:pointer;
@@ -817,7 +821,7 @@ html, body {
 .c-btn.leise{background:transparent;color:var(--c-fg);border-color:var(--c-line2);font-weight:600}
 .c-btn:disabled{opacity:.5;cursor:not-allowed}
 .c-link-feld{margin-top:14px;display:flex;flex-wrap:wrap;gap:9px;align-items:center}
-.c-link-feld input{flex:1 1 220px;min-width:0;font-family:"JetBrains Mono",monospace;font-size:12.5px;
+.c-link-feld input{flex:1 1 220px;min-width:0;font-family:inherit;letter-spacing:.01em;font-size:12.5px;
   padding:11px 13px;border-radius:10px;border:1px solid var(--c-line);background:var(--c-panel2);color:var(--c-fg)}
 .c-link-meta{font-size:12px;color:var(--c-fg3);margin-top:10px;line-height:1.6}
 .c-link-meta a{color:var(--c-fg2)}
@@ -5495,16 +5499,16 @@ function renderAnalyticsContent(){
         const farbe=x.resonanz>=stark?'var(--c-ok)':(x.resonanz<=schwach?'var(--c-bad)':'var(--c-line2)')
         svg+=`<rect x="${bx.toFixed(1)}" y="${MID+16}" width="${bw.toFixed(1)}" height="${hr.toFixed(1)}" rx="3" fill="${farbe}"></rect>`
         if(i%jedes===0||i===d.length-1)
-          svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${BOT+20}" text-anchor="middle" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${escHtml(tag(x.datum))}</text>`
+          svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${BOT+20}" text-anchor="middle" font-size="10.5" fill="var(--c-fg3)" font-family="Inter, sans-serif">${escHtml(tag(x.datum))}</text>`
         if(zeigeWert)
-          svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${MID+11}" text-anchor="middle" font-size="10" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${deN(x.resonanz,1)}</text>`
+          svg+=`<text x="${(bx+bw/2).toFixed(1)}" y="${MID+11}" text-anchor="middle" font-size="10" fill="var(--c-fg3)" font-family="Inter, sans-serif">${deN(x.resonanz,1)}</text>`
       })
       svg+=`<line x1="${PADL}" y1="${MID+2}" x2="${W-PADR}" y2="${MID+2}" stroke="var(--c-line)" stroke-width="1"></line>`
       /* Beide Haelften haben einen eigenen Maßstab. Ohne diese zwei Beschriftungen
          liest man einen kurzen Balken oben ueber einem langen Balken unten als
          Fehler -- tatsaechlich heißt es: wenig Reichweite, starke Reaktion. */
-      svg+=`<text x="${PADL}" y="${TOP-2}" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${fmt(maxV)} Aufrufe \u2500 h\u00f6chster Wert oben</text>`
-      svg+=`<text x="${PADL}" y="${BOT+8}" font-size="10.5" fill="var(--c-fg3)" font-family="JetBrains Mono, monospace">${deN(maxR,1)} Likes je 1.000 Aufrufe \u2500 h\u00f6chster Wert unten</text>`
+      svg+=`<text x="${PADL}" y="${TOP-2}" font-size="10.5" fill="var(--c-fg3)" font-family="Inter, sans-serif">${fmt(maxV)} Aufrufe \u2500 h\u00f6chster Wert oben</text>`
+      svg+=`<text x="${PADL}" y="${BOT+8}" font-size="10.5" fill="var(--c-fg3)" font-family="Inter, sans-serif">${deN(maxR,1)} Likes je 1.000 Aufrufe \u2500 h\u00f6chster Wert unten</text>`
       h+=`<div class="c-panel">
         <h2>Jeder Beitrag einzeln</h2>
         <p class="c-lede">Oben die Aufrufe, unten wie viele davon reagiert haben. Chronologisch von links.
