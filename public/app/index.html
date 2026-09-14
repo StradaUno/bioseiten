@@ -995,55 +995,73 @@ a.news-quelle:hover{color:var(--text)}
 @keyframes spin { to{transform:rotate(360deg)} }
 .hidden { display: none !important; }
 /* ═══ VIEW: BRAND READY ═══════════════════════════════════════════
-   Alles br-praefixiert. Die Kriterienliste ist EINE Karte mit
-   Haarlinien statt 16 Einzelrahmen -- dasselbe Muster und dieselbe
-   Begruendung wie bei .bl-karte: auf 375 px waeren 16 Rahmen mehr
-   Kante als Inhalt. */
-.br-kopf{margin:var(--s-4) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
-.br-punkte{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.br-punkte b{font-size:var(--t-num);font-weight:var(--fw-b);letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
-.br-punkte span{font-size:var(--t-sm);color:var(--muted)}
-.br-spur{height:8px;background:var(--surface2);border-radius:var(--r-full);overflow:hidden;margin-top:12px}
-.br-spur>div{height:100%;background:var(--text);border-radius:var(--r-full);transition:width .3s cubic-bezier(.32,.72,0,1)}
-.br-kopf-meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:var(--t-xs);color:var(--muted);margin-top:10px}
-.br-kopf-meta .br-offen{color:var(--orange);font-weight:var(--fw-sb)}
+   Handlungsliste zuerst, Gewinn statt Verlust. Der Punktestand ist ein
+   kleiner Ring, nicht die halbe Seite -- was zaehlt, ist die Liste
+   darunter: was bringt wie viele Punkte. Erfuelltes und Unbewertbares
+   ruhen eingeklappt am Ende.
+   Begruendungen stecken hinter dem ⓘ. Vorher stand unter jeder Zeile ein
+   Absatz, und sechzehn Absaetze sind keine Anleitung, sondern eine Wand. */
+.br-head{display:flex;align-items:flex-start;gap:12px;padding:var(--s-5) var(--page-x) 0}
+.br-head-txt{flex:1;min-width:0}
+.br-teilen-btn{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;min-height:36px;padding:0 13px;border-radius:var(--r-sm);background:var(--surface);color:var(--text);border:1px solid var(--border-strong);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer;margin-top:2px}
+.br-teilen-btn:hover{border-color:var(--text)}
+.br-kopf{display:flex;align-items:center;gap:14px;margin:var(--s-4) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px}
+.br-ring{width:62px;height:62px;flex-shrink:0;position:relative;display:grid;place-items:center}
+.br-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.br-ring b{font-size:var(--t-lg);font-weight:var(--fw-b);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.br-kopf-txt{flex:1;min-width:0}
+.br-kopf-titel{font-size:var(--t-sm);font-weight:var(--fw-sb)}
+.br-kopf-sub{font-size:var(--t-xs);color:var(--muted);line-height:1.5;margin-top:3px}
+.br-saetze{margin:var(--s-3) var(--page-x) 0;font-size:var(--t-sm);color:var(--text);line-height:var(--lh-body)}
+.br-saetze p{margin:0}
+.br-saetze p+p{margin-top:5px;color:var(--muted)}
 .br-tabs{display:flex;gap:6px;margin:var(--s-3) var(--page-x) 0}
 .br-tab{flex:1;min-height:38px;padding:9px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer}
 .br-tab.aktiv{background:var(--text);color:#fff;border-color:var(--text)}
-.br-frage-karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
-.br-frage-kopf{padding:14px 16px 10px}
-.br-frage-titel{font-size:var(--t-sm);font-weight:var(--fw-sb)}
-.br-frage-sub{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:4px}
-.br-frage{display:flex;align-items:center;gap:10px;padding:11px 16px;border-top:1px solid var(--border)}
-.br-frage-text{flex:1;font-size:var(--t-sm);line-height:var(--lh-tight)}
-.br-frage-text i{display:block;font-style:normal;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
-.br-wahl{display:flex;gap:4px;flex-shrink:0}
-.br-wahl button{min-width:46px;min-height:34px;padding:0 10px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface2);color:var(--muted);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer}
-.br-wahl button.ja-an{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
-.br-wahl button.nein-an{background:var(--surface2);border-color:var(--border-strong);color:var(--text)}
-.br-zahl{width:66px;min-height:34px;padding:0 10px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface);font-family:inherit;font-size:var(--t-input);text-align:center;flex-shrink:0;color:var(--text)}
-.br-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px}
-.br-block+.br-block{margin-top:var(--s-2)}
-.br-block-kopf{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
-.br-block-name{font-size:var(--t-sm);font-weight:var(--fw-sb);flex:1;min-width:0}
-.br-block-verlust{font-size:var(--t-xs);font-weight:var(--fw-sb);color:var(--orange);white-space:nowrap;font-variant-numeric:tabular-nums}
-.br-warum{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
-.br-stand{font-size:var(--t-sm);line-height:var(--lh-body);margin-top:6px}
-.br-tun{margin-top:10px}
-.br-tun-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:var(--r-sm);background:var(--text);color:#fff;border:1px solid var(--text);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer;text-decoration:none}
-.br-tun-txt{font-size:var(--t-sm);color:var(--text);line-height:var(--lh-body);margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:var(--r-sm)}
-.br-liste{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
-.br-gruppe{font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;padding:13px 16px 9px;background:var(--surface2);border-bottom:1px solid var(--border)}
-.br-gruppe:not(:first-child){border-top:1px solid var(--border)}
-.br-zeile{display:flex;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border)}
-.br-zeile:last-child{border-bottom:0}
+/* ⓘ — ein Klick, ein Absatz, sonst Ruhe */
+.br-i{width:19px;height:19px;border-radius:50%;border:1.5px solid var(--border-strong);background:none;color:var(--muted);font-size:11px;font-weight:var(--fw-b);font-family:Georgia,'Times New Roman',serif;cursor:pointer;display:inline-grid;place-items:center;flex-shrink:0;line-height:1;padding:0}
+.br-i:hover{border-color:var(--text);color:var(--text)}
+.br-i.an{background:var(--text);border-color:var(--text);color:#fff}
+.br-i-txt{display:none;font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:9px;padding:10px 12px;background:var(--surface2);border-radius:var(--r-sm)}
+.br-i-txt.auf{display:block}
+/* Ja/Nein — gefuellt, sobald geantwortet wurde. Getoente Flaechen waren
+   auf dem hellen Grund nicht als Antwort erkennbar. */
+.br-wahl{display:flex;gap:5px;flex-shrink:0}
+.br-wahl button{min-width:52px;min-height:36px;padding:0 12px;border-radius:var(--r-sm);border:1.5px solid var(--border-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer;transition:all .12s}
+.br-wahl button:hover{border-color:var(--text);color:var(--text)}
+.br-wahl button.ja-an{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 1px 3px rgba(26,127,75,.3)}
+.br-wahl button.nein-an{background:var(--text);border-color:var(--text);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.br-zahl{width:70px;min-height:36px;padding:0 10px;border-radius:var(--r-sm);border:1.5px solid var(--border-strong);background:var(--surface);font-family:inherit;font-size:var(--t-input);text-align:center;flex-shrink:0;color:var(--text)}
+/* Handlungsliste */
+.br-tat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.br-tat-zeile{display:flex;align-items:flex-start;gap:11px;padding:13px 16px;border-bottom:1px solid var(--border)}
+.br-tat-zeile:last-child{border-bottom:0}
+.br-gewinn{font-size:var(--t-xs);font-weight:var(--fw-b);color:var(--green);background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--r-full);padding:3px 8px;white-space:nowrap;font-variant-numeric:tabular-nums;flex-shrink:0;margin-top:1px}
+.br-tat-k{flex:1;min-width:0}
+.br-tat-name{font-size:var(--t-sm);font-weight:var(--fw-sb);display:flex;align-items:center;gap:8px}
+.br-tat-name span{flex:1;min-width:0}
+.br-tat-satz{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:3px}
+.br-tat-tun{margin-top:9px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.br-tat-hint{font-size:var(--t-xs);color:var(--subtle)}
+.br-knopf{display:inline-flex;align-items:center;gap:5px;min-height:36px;padding:0 13px;border-radius:var(--r-sm);background:var(--text);color:#fff;border:1px solid var(--text);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);text-decoration:none;cursor:pointer}
+.br-knopf.leise{background:var(--surface);color:var(--text);border-color:var(--border-strong)}
+/* Eingeklapptes */
+.br-falt{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.br-falt+.br-falt{margin-top:var(--s-2)}
+.br-falt-kopf{display:flex;align-items:center;gap:10px;padding:13px 16px;cursor:pointer;background:none;border:0;width:100%;font-family:inherit;text-align:left;min-height:48px}
+.br-falt-kopf>span{flex:1;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--text)}
+.br-falt-kopf>em{font-style:normal;font-size:var(--t-xs);color:var(--muted)}
+.br-falt-liste{display:none;border-top:1px solid var(--border)}
+.br-falt-liste.auf{display:block}
 .br-sym{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;margin-top:1px;font-size:11px;font-weight:var(--fw-b);line-height:1}
 .br-sym.erfuellt{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
 .br-sym.teilweise{background:var(--orange-bg);color:var(--orange);border:1.5px solid rgba(184,92,0,.25)}
 .br-sym.offen{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(192,57,43,.2)}
-.br-sym.nicht_bewertbar{background:var(--surface2);color:var(--subtle);border:1.5px solid var(--border-strong)}
-.br-zeile-koerper{flex:1;min-width:0}
-.br-zeile-kopf{display:flex;align-items:baseline;gap:8px}
+.br-sym.nicht_bewertbar,.br-sym.hinweis{background:var(--surface2);color:var(--subtle);border:1.5px solid var(--border-strong)}
+.br-zeile{display:flex;gap:11px;padding:11px 16px;border-bottom:1px solid var(--border)}
+.br-zeile:last-child{border-bottom:0}
+.br-zeile-k{flex:1;min-width:0}
+.br-zeile-kopf{display:flex;align-items:center;gap:8px}
 .br-zeile-name{font-size:var(--t-sm);font-weight:var(--fw-sb);flex:1;min-width:0}
 .br-zeile-p{font-size:var(--t-sm);font-weight:var(--fw-sb);font-variant-numeric:tabular-nums;white-space:nowrap}
 .br-zeile-p.grau{color:var(--subtle);font-weight:var(--fw-md)}
@@ -1051,13 +1069,18 @@ a.news-quelle:hover{color:var(--text)}
 .br-badge{display:inline-block;margin-top:6px;padding:2px 7px;border-radius:var(--r-full);font-size:var(--t-2xs);font-weight:var(--fw-sb);letter-spacing:.03em}
 .br-badge.viuno{background:var(--blue-bg);color:var(--blue)}
 .br-badge.eigene_angabe,.br-badge.gemessen{background:var(--surface2);color:var(--muted)}
-.br-zeile-knopf{display:inline-flex;align-items:center;gap:5px;margin-top:9px;min-height:34px;padding:0 12px;border-radius:var(--r-sm);background:var(--surface);color:var(--text);border:1px solid var(--border-strong);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);text-decoration:none}
+/* Teilen */
+.br-teilen{margin:var(--s-5) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:15px 16px}
+.br-teilen h2{font-size:var(--t-lg);font-weight:var(--fw-sb);letter-spacing:-.02em;margin:0}
+.br-teilen p{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin:6px 0 0}
+.br-link-feld{display:flex;gap:8px;margin-top:12px}
+.br-link-feld input{flex:1;min-width:0;min-height:36px;padding:0 10px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface2);font-family:inherit;font-size:var(--t-sm);color:var(--text)}
+.br-link-meta{font-size:var(--t-xs);color:var(--muted);margin-top:8px;line-height:var(--lh-body)}
+.br-link-meta a{color:var(--text);font-weight:var(--fw-sb)}
 .br-fuss{padding:var(--s-5) var(--page-x) 0;font-size:var(--t-xs);color:var(--subtle);line-height:var(--lh-body)}
 .br-sperr{margin:var(--s-4) var(--page-x) 0;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
 .br-sperr-titel{font-size:var(--t-lg);font-weight:var(--fw-sb);letter-spacing:-.02em}
 .br-sperr-sub{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:6px}
-.br-vorschau-zeile{display:flex;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border)}
-.br-vorschau-zeile:last-child{border-bottom:0}
 </style>
 </head>
 <body>
@@ -1164,6 +1187,13 @@ a.news-quelle:hover{color:var(--text)}
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+/* Das Brand-Ready-Regelwerk liegt als eigenes Modul daneben, weil die
+   Edge Function `brand-ready-freigeben` es ebenfalls laedt: der geteilte
+   Punktestand traegt "powered by viuno" und wird deshalb serverseitig
+   nachgerechnet, nicht aus dem Browser uebernommen. Zwei Kopien der Regeln
+   wuerden driften -- also gibt es genau eine. Begruendung ausfuehrlich im
+   Kopf der Datei. */
+import { brBerechnen, brSaetze, BR_NAME, BR_WARUM, brDatum } from './brand-ready-regeln.js'
 
 /* ─────────────────────────────────────────────
    Supabase — identisch zu /trends/, /dashboard/ …
@@ -6491,432 +6521,55 @@ function pfPfadAusUrl(url, uid){
    Was eine Marke sieht, wenn sie diesen Kanal prueft -- als Punktestand,
    den der Creator nachrechnen kann.
 
-   Zwei Grundsaetze, die den ganzen Aufbau tragen:
+   Das Regelwerk steht NICHT hier, sondern in ./brand-ready-regeln.js.
+   Grund: der Punktestand ist teilbar, die geteilte Seite traegt "powered
+   by viuno", und deshalb rechnet die Freigabe serverseitig nach statt die
+   Zahl aus dem Browser zu uebernehmen. Ein Regelwerk, zwei Verbraucher.
 
-   1) ZAHLEN UND URTEILE IN CODE. Kein Modell-Aufruf, nirgends. Jeder Satz
-      auf der Seite ist eine Vorlage mit eingesetzten Zahlen. Das ist
-      dieselbe Arbeitsteilung, die befunde.ts in der Analyse-Pipeline
-      festhaelt -- ein Score, den man nicht nachrechnen kann, ist wertlos.
+   Aufbau (Entwurf C): der Score ist ein kleiner Ring, kein Banner. Darunter
+   zwei bis drei Saetze, die ihn einordnen. Dann EINE Liste -- offene Fragen
+   und Luecken gemischt, sortiert nach dem, was sie bringen, und als Gewinn
+   beschriftet ("+9") statt als Verlust. Erfuelltes und Unbewertbares ruhen
+   eingeklappt am Ende: zwei Zeilen statt vierzehn.
 
-   2) DER CHECK MISST NICHT, WIE VIEL VIUNO JEMAND NUTZT. Wer sein
-      Impressum auf der eigenen Website hat, ein Canva-Media-Kit pflegt
-      und Linktree benutzt, ist genauso bereit wie jemand mit viuno-BioLink
-      und viuno-Kit -- und bekommt dieselbe Punktzahl. Deshalb hat jedes
-      Ausstattungs-Kriterium drei Wege: automatisch aus viuno erkannt,
-      vom Creator selbst angegeben (gleich viele Punkte, als "eigene
-      Angabe" gekennzeichnet, nicht geprueft), oder unbeantwortet.
-
-   UNBEANTWORTET HEISST NICHT NULL. Was der Check nicht weiss, faellt aus
-   dem Maximum statt Punkte zu kosten. Sonst wuerde die Seite einem
-   Creator Dinge vorwerfen, die er laengst hat. Der Kopf nennt deshalb die
-   Zahl der offenen Kriterien: ohne diesen Hinweis liest sich eine gute
-   Quote aus lauter Nichtwissen wie ein gutes Ergebnis.
-
-   Gerechnet wird bei jedem Seitenaufruf neu, im Browser. Es gibt bewusst
-   keine Ergebnistabelle und keine Edge Function: alle Zeilen liest der
-   eingeloggte Nutzer ohnehin per RLS, und was nicht gespeichert wird,
-   kann nicht veralten. brBerechnen() ist deshalb eine REINE Funktion --
-   kein DOM, kein sb, kein window. Sobald es einen zweiten Verbraucher
-   gibt (Wochenbericht, Mail), wandert sie unveraendert in eine Function.
+   Gerechnet wird bei jedem Seitenaufruf neu, im Browser. Keine
+   Ergebnistabelle fuer die Live-Ansicht -- was nicht gespeichert wird, kann
+   nicht veralten. Gespeichert wird nur, was jemand aktiv teilt.
    ───────────────────────────────────────────── */
 
 let brv = null
 
-/* Baustein 1 je Kriterium: warum das aus Markensicht zaehlt. Steht nur in
-   den drei Zurueckhalte-Bloecken -- 16-mal eine Begruendung waere eine Wand. */
-const BR_WARUM = {
-  engagement:   'Die Interaktionsrate ist die erste Zahl, die eine Marke prüft — sie sagt mehr über einen Kanal als die Followerzahl.',
-  kommentare:   'Kommentare lassen sich schwerer kaufen als Likes. Ein reiner Like-Kanal wirkt auf Marken unecht.',
-  frequenz:     'Eine Marke plant Kampagnen mit Vorlauf. Wer unregelmäßig postet, ist schwer einzuplanen.',
-  verlauf:      'Marken buchen lieber Kanäle, die wachsen, als Kanäle, die schrumpfen.',
-  account_typ:  'Ein Profi-Konto zeigt Marken eine Kategorie und ein Kontaktfeld direkt im Profil.',
-  bio:          'Die Bio ist der erste Satz, den eine Marke über dich liest. Steht dort kein Thema, muss sie raten.',
-  kennzeichnung:'Werbung muss als Werbung erkennbar sein — wer das kann, gilt als professionell.',
-  biolink:      'Eine Marke will einen Ort, an dem alles steht. Ein Link in der Bio ist dieser Ort.',
-  impressum:    'Eine gewerbliche Seite ohne Impressum ist in Deutschland abmahnbar (§ 5 DDG) — Marken wollen keinen Partner mit offenem Rechtsrisiko.',
-  kontakt:      'Findet eine Marke keinen Kontaktweg, schreibt sie den nächsten Creator an.',
-  kit_vorhanden:'Das Media Kit ist das Dokument, das fast jede Marke als Erstes anfordert.',
-  kit_aktuell:  'Veraltete Zahlen im Kit fallen sofort auf und kosten Vertrauen.',
-  kit_preise:   'Marken fragen zuerst nach dem Preis. Ohne Angabe schreiben viele gar nicht erst.',
-  referenzen:   'Bisherige Kooperationen sind der Beweis, dass du liefern kannst.',
-  demografie:   'Eine Marke bucht eine Zielgruppe, nicht eine Followerzahl.',
-  rechnung:     'Ohne Rechnung kann ein Unternehmen dich nicht bezahlen — bei vielen Kooperationen ist das die erste Frage.'
-}
+const BR_SYM    = { erfuellt: '✓', teilweise: '◐', offen: '!', nicht_bewertbar: '–', hinweis: 'i' }
+const BR_QUELLE = { viuno: 'über viuno', eigene_angabe: 'eigene Angabe', gemessen: 'gemessen', keine: '' }
+const BR_PLAT   = { instagram: 'Instagram', tiktok: 'TikTok' }
+const SVG_TEILEN_BR = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>'
 
-/* Hashtag-Formen brauchen das #, die blanken deutschen Woerter eine
-   Wortgrenze. Ein blankes \bad\b waere ein Fehler: "ad esempio" steht in
-   jeder zweiten italienischen Caption und haette jede davon als
-   gekennzeichnete Werbung gezaehlt. */
-const BR_KENNZ_RE = /#(werbung|anzeige|ad|adv|sponsored|gifted|paidpartnership)\b|\b(werbung|anzeige)\b|bezahlte partnerschaft|pubblicit/i
-const BR_MAIL_RE  = /[\w.+-]+@[\w-]+\.[\w.]+/
-
-function brZahlDe(n, d = 1) {
-  if (n == null || isNaN(Number(n))) return '–'
-  return Number(n).toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d })
-}
-function brGanz(n) {
-  return (n == null || isNaN(Number(n))) ? '–' : Number(n).toLocaleString('de-DE')
-}
-function brDatum(s) {
-  return s ? new Date(s).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '–'
-}
-function brStatus(p, max) {
-  if (p == null) return 'nicht_bewertbar'
-  if (p >= max)  return 'erfuellt'
-  if (p <= 0)    return 'offen'
-  return 'teilweise'
-}
-function brK(o) {
-  return Object.assign({
-    id: '', gruppe: 'Gemessen', name: '', punkte: null, max: 0,
-    status: 'nicht_bewertbar', quelle: 'keine', satz: '', warum: '',
-    tun: null, knopf: null, frage: null, lern_link: null
-  }, o)
-}
-
-/* Ausstattungs-Kriterium mit drei Wegen. `viuno` ist gesetzt, wenn das
-   viuno-Feature in Betrieb ist -- dann ist SEIN Inhalt die Wahrheit und die
-   Frage wird nicht gestellt. Ein aktives Kit ohne Preise ist also "offen"
-   mit Weg in die App, nicht die Frage "Stehen Preise in deinem Kit?". */
-function brAusstattung(id, name, max, viuno, ang, t) {
-  if (viuno) {
-    return brK({ id, gruppe: 'Ausstattung', name, max, punkte: viuno.punkte,
-      status: brStatus(viuno.punkte, max), quelle: 'viuno', satz: viuno.satz,
-      warum: BR_WARUM[id], tun: viuno.punkte < max ? t.tun : null, knopf: t.knopf || null })
-  }
-  const w = ang ? ang.wert : null
-  if (w === true) {
-    return brK({ id, gruppe: 'Ausstattung', name, max, punkte: max, status: 'erfuellt',
-      quelle: 'eigene_angabe', satz: t.ja, warum: BR_WARUM[id], knopf: t.knopf || null })
-  }
-  if (w === false) {
-    return brK({ id, gruppe: 'Ausstattung', name, max, punkte: 0, status: 'offen',
-      quelle: 'eigene_angabe', satz: t.nein, warum: BR_WARUM[id], tun: t.tun, knopf: t.knopf || null })
-  }
-  return brK({ id, gruppe: 'Ausstattung', name, max, punkte: null, status: 'nicht_bewertbar',
-    quelle: 'keine', satz: 'Noch nicht beantwortet — die Frage steht oben.',
-    warum: BR_WARUM[id], knopf: t.knopf || null,
-    frage: { id, text: t.frage, hint: t.hint || '', typ: 'jn' } })
-}
-
-/* ─────────────────────────────────────────────
-   Die Rechnung. REINE FUNKTION -- nichts hier greift auf DOM, sb oder
-   window zu. 100 Punkte: 50 gemessen, 50 Ausstattung.
-   ───────────────────────────────────────────── */
-function brBerechnen(d) {
-  const s   = d.stats || {}
-  const p   = d.profil || {}
-  const bl  = d.bl || {}
-  const mk  = d.mk || {}
-  const ang = d.angaben || {}
-  const k   = []
-
-  /* ═══ SORTE 1 — GEMESSEN (50) ═══════════════════════════════════ */
-
-  // engagement (12) — Benchmark nach Groessenklasse (HypeAuditor)
-  const foll = s.followers == null ? null : Number(s.followers)
-  const er   = s.engagement_rate == null ? null : Number(s.engagement_rate)
-  if (er == null || foll == null) {
-    k.push(brK({ id: 'engagement', name: 'Engagement', max: 12, warum: BR_WARUM.engagement,
-      satz: 'Für diesen Kanal liegen keine Engagement-Zahlen vor.' }))
-  } else {
-    const bm = foll < 10000 ? [2.5, 4.0] : foll < 100000 ? [1.5, 3.0] : [1.0, 2.0]
-    const pk = er >= bm[1] ? 12 : er >= bm[0] ? 6 : 0
-    k.push(brK({ id: 'engagement', name: 'Engagement', max: 12, punkte: pk, quelle: 'gemessen',
-      status: brStatus(pk, 12), warum: BR_WARUM.engagement,
-      satz: `${brZahlDe(er, 2)} % Engagement bei ${brGanz(foll)} Followern. Marken erwarten in dieser Größe ${brZahlDe(bm[0], 1)}–${brZahlDe(bm[1], 1)} %.`,
-      tun: pk < 12 ? { art: 'route', label: 'Zur Analyse', route: '#/analytics' } : null }))
-  }
-
-  // kommentare (8) — Echtheitssignal: reine Like-Kanaele wirken gekauft
-  const al = s.avg_likes == null ? null : Number(s.avg_likes)
-  const ac = s.avg_comments == null ? null : Number(s.avg_comments)
-  if (al == null || ac == null || al === 0) {
-    k.push(brK({ id: 'kommentare', name: 'Kommentare', max: 8, warum: BR_WARUM.kommentare,
-      satz: 'Für diesen Kanal liegen keine Likes vor, gegen die sich Kommentare rechnen lassen.' }))
-  } else {
-    const q  = ac / al
-    const pk = q >= 0.05 ? 8 : q >= 0.02 ? 4 : 0
-    k.push(brK({ id: 'kommentare', name: 'Kommentare', max: 8, punkte: pk, quelle: 'gemessen',
-      status: brStatus(pk, 8), warum: BR_WARUM.kommentare,
-      satz: `${brZahlDe(ac, 1)} Kommentare auf ${brZahlDe(al, 1)} Likes je Beitrag — ${brZahlDe(q * 100, 1)} %.`,
-      tun: pk < 8 ? { art: 'route', label: 'Zur Analyse', route: '#/analytics' } : null }))
-  }
-
-  // frequenz (7)
-  const ppw = s.posts_per_week == null ? null : Number(s.posts_per_week)
-  if (ppw == null) {
-    k.push(brK({ id: 'frequenz', name: 'Frequenz', max: 7, warum: BR_WARUM.frequenz,
-      satz: 'Für diesen Kanal wurde keine Veröffentlichungsdichte erfasst.' }))
-  } else {
-    const pk = ppw >= 2 ? 7 : ppw >= 1 ? 4 : 0
-    k.push(brK({ id: 'frequenz', name: 'Frequenz', max: 7, punkte: pk, quelle: 'gemessen',
-      status: brStatus(pk, 7), warum: BR_WARUM.frequenz,
-      satz: `${brZahlDe(ppw, 1)} Beiträge pro Woche.`,
-      tun: pk < 7 ? { art: 'text', label: 'Ab zwei Beiträgen pro Woche gilt ein Kanal als planbar.' } : null }))
-  }
-
-  /* verlauf (6) — nur mit Vorlauf UND ohne Handle-Wechsel. Der Wechsel
-     wird in analyse_stats erkannt; ohne diese Pruefung stuende hier
-     "-9.288 Follower", weil zwei verschiedene Konten verglichen wuerden. */
-  const fprev = s.followers_prev == null ? null : Number(s.followers_prev)
-  if (fprev == null || s.handle_changed) {
-    k.push(brK({ id: 'verlauf', name: 'Verlauf', max: 6, warum: BR_WARUM.verlauf,
-      satz: s.handle_changed
-        ? 'Dein Handle hat sich seit der letzten Analyse geändert — die alten Zahlen sind nicht mehr vergleichbar.'
-        : 'Es gibt erst eine Messung. Mit deiner nächsten Analyse steht hier die Entwicklung.' }))
-  } else {
-    const delta = foll - fprev
-    const pk = delta >= 0 ? 6 : 3
-    k.push(brK({ id: 'verlauf', name: 'Verlauf', max: 6, punkte: pk, quelle: 'gemessen',
-      status: brStatus(pk, 6), warum: BR_WARUM.verlauf,
-      satz: `${brGanz(fprev)} → ${brGanz(foll)} Follower seit deiner letzten Analyse${d.statsPrev && d.statsPrev.created_at ? ' vom ' + brDatum(d.statsPrev.created_at) : ''}.` }))
-  }
-
-  /* account_typ (4) — raw_profile ist beschnitten und enthaelt NUR
-     businessCategory (kein isBusinessAccount). Fehlt die Kategorie, wird
-     das NICHT als "privates Konto" ausgelegt: das waere eine Behauptung
-     ueber das Konto, erzeugt aus einem fehlenden Scraper-Feld. */
-  const kat = s.raw_profile && s.raw_profile.businessCategory ? String(s.raw_profile.businessCategory) : null
-  if (kat) {
-    k.push(brK({ id: 'account_typ', name: 'Kontoart', max: 4, punkte: 4, quelle: 'gemessen',
-      status: 'erfuellt', warum: BR_WARUM.account_typ, satz: `Dein Konto ist als „${kat}“ eingerichtet.` }))
-  } else {
-    k.push(brK({ id: 'account_typ', name: 'Kontoart', max: 4, warum: BR_WARUM.account_typ,
-      satz: d.platform === 'tiktok'
-        ? 'TikTok liefert keine Kontokategorie — dieses Kriterium lässt sich hier nicht prüfen.'
-        : 'Instagram hat zu diesem Konto keine Kategorie geliefert.' }))
-  }
-
-  /* bio (7) — die KANAL-Bio aus analyse_stats, nicht users.bio. users.bio
-     ist der Text der viuno-BioLink-Seite; eine Marke liest die Bio im
-     Profil. Fallback nur, wenn der Scraper nichts geliefert hat. */
-  const bioTxt = (s.bio && s.bio.trim()) ? s.bio : (p.bio || '')
-  const bioLow = bioTxt.toLowerCase()
-  const treffer = (d.keywords || []).filter(w => w && bioLow.includes(w))
-  const eigenes = (p.niche_custom || '').trim().toLowerCase()
-  const thema = treffer.length > 0 || (eigenes.length >= 3 && bioLow.includes(eigenes))
-  /* Zeichen, nicht UTF-16-Einheiten: eine Bio aus zwanzig Emoji haette
-     sonst "40 Zeichen" und damit die Schwelle genommen. */
-  const bioLen = [...bioTxt.trim()].length
-  const lang = bioLen >= 40
-  const bioPk = (lang && thema) ? 7 : (lang || thema) ? 4 : 0
-  k.push(brK({ id: 'bio', name: 'Bio', max: 7, punkte: bioTxt ? bioPk : null,
-    quelle: bioTxt ? 'gemessen' : 'keine', status: bioTxt ? brStatus(bioPk, 7) : 'nicht_bewertbar',
-    warum: BR_WARUM.bio,
-    satz: !bioTxt ? 'Für diesen Kanal wurde keine Bio erfasst.'
-      : `Deine Kanal-Bio hat ${bioLen} Zeichen und nennt ${thema ? '„' + (treffer[0] || eigenes) + '“ als Thema' : 'kein Thema deiner Nische'}.`,
-    tun: (bioTxt && bioPk < 7) ? { art: 'text', label: thema
-      ? 'Unter 40 Zeichen bleibt für eine Marke zu wenig übrig. Die Bio änderst du direkt in deinem Kanal.'
-      : 'Nimm ein Wort auf, das dein Thema benennt. Die Bio änderst du direkt in deinem Kanal.' } : null }))
-
-  /* kennzeichnung (6) — Treffer geben Punkte, kein Treffer kostet KEINE.
-     Ueber alle bisher gespeicherten Beitraege im System gibt es null
-     Treffer; niemand hat bisher eine gekennzeichnete Kooperation gepostet.
-     Daraus einen Abzug zu machen hiesse, Unwissen als Mangel zu werten. */
-  const posts = d.posts || []
-  const mitK  = posts.filter(x => BR_KENNZ_RE.test(x.caption || '')).length
-  if (!posts.length) {
-    k.push(brK({ id: 'kennzeichnung', name: 'Werbekennzeichnung', max: 6, warum: BR_WARUM.kennzeichnung,
-      satz: 'Für diesen Kanal liegen keine Beiträge vor.' }))
-  } else if (mitK > 0) {
-    k.push(brK({ id: 'kennzeichnung', name: 'Werbekennzeichnung', max: 6, punkte: 6, quelle: 'gemessen',
-      status: 'erfuellt', warum: BR_WARUM.kennzeichnung,
-      satz: `In ${mitK} von ${posts.length} Beiträgen kennzeichnest du Werbung.` }))
-  } else {
-    k.push(brK({ id: 'kennzeichnung', name: 'Werbekennzeichnung', max: 6, warum: BR_WARUM.kennzeichnung,
-      satz: `In deinen letzten ${posts.length} Beiträgen ist keine gekennzeichnete Kooperation zu finden. Sobald du eine postest, zählt das hier.` }))
-  }
-
-  /* ═══ SORTE 2 — AUSSTATTUNG (50) ════════════════════════════════ */
-
-  const zumBio = { label: 'Zum BioLink', route: '#/biolink' }
-  const zumKit = { label: 'Zum Media Kit', route: '#/mediakit' }
-
-  // biolink (6)
-  k.push(brAusstattung('biolink', 'Link-in-Bio-Seite', 6,
-    (p.bio_active || bl.is_active) ? { punkte: 6, satz: 'Deine BioLink-Seite ist online.' } : null,
-    ang.biolink, {
-      frage: 'Hast du eine Link-in-Bio-Seite?', hint: 'viuno, Linktree, eigene Website …',
-      ja: 'Du hast angegeben, dass du eine Link-in-Bio-Seite hast.',
-      nein: 'Du hast angegeben, keine Link-in-Bio-Seite zu haben.',
-      tun: { art: 'route', label: 'BioLink-Seite erstellen', route: '#/biolink' }, knopf: zumBio }))
-
-  /* impressum (8) — ein Text, der kein Impressum ist, schuetzt vor nichts.
-     Steht in viuno etwas, aber zu wenig, ist das "offen" mit Weg in die
-     App -- NICHT die Frage nach einem Impressum anderswo: ein Ja darauf
-     wuerde volle Punkte geben, waehrend in viuno eine kaputte Seite
-     online steht. */
-  const impTxt = ((p.impressum_text || '').length >= (bl.impressum_text || '').length
-    ? (p.impressum_text || '') : (bl.impressum_text || '')).trim()
-  const impOk  = impTxt.length >= 50 && /[0-9]/.test(impTxt)
-  k.push(brAusstattung('impressum', 'Impressum', 8,
-    impTxt ? (impOk
-      ? { punkte: 8, satz: `Impressum hinterlegt, ${impTxt.length} Zeichen.` }
-      : { punkte: 0, satz: `In viuno steht ein Impressum mit ${impTxt.length} Zeichen — das ist zu kurz für eine vollständige Anbieterkennzeichnung.` }) : null,
-    ang.impressum, {
-      frage: 'Ist auf deiner Link-Seite oder Website ein Impressum erreichbar?', hint: '',
-      ja: 'Du hast angegeben, dass dein Impressum erreichbar ist.',
-      nein: 'Du hast angegeben, dass kein Impressum erreichbar ist.',
-      tun: { art: 'route', label: 'Impressum hinterlegen', route: '#/biolink' } }))
-
-  // kontakt (7) — zaehlt auch, wenn die Adresse nur in der Kanal-Bio steht
-  const mailInBio = BR_MAIL_RE.test(bioTxt)
-  const mail = (p.contact_email || '').trim()
-  k.push(brAusstattung('kontakt', 'Kontaktweg', 7,
-    (mail || mailInBio) ? { punkte: 7, satz: mail && mailInBio
-        ? `${mail} — hinterlegt in viuno, und in deiner Kanal-Bio steht ebenfalls eine Adresse.`
-        : mail ? `${mail} — in viuno hinterlegt.`
-        : 'In deiner Kanal-Bio steht eine E-Mail-Adresse.' } : null,
-    ang.kontakt, {
-      frage: 'Steht eine Kontakt-E-Mail in deiner Kanal-Bio oder auf deiner Link-Seite?', hint: '',
-      ja: 'Du hast angegeben, dass eine Kontakt-E-Mail auffindbar ist.',
-      nein: 'Du hast angegeben, dass keine Kontakt-E-Mail auffindbar ist.',
-      tun: { art: 'route', label: 'Kontakt-E-Mail hinterlegen', route: '#/biolink' } }))
-
-  // kit_vorhanden (5)
-  const kitViuno  = p.mediakit_active === true
-  const kitAngabe = ang.kit_vorhanden ? ang.kit_vorhanden.wert : null
-  const kitDa     = kitViuno || kitAngabe === true
-  const kitNein   = !kitViuno && kitAngabe === false
-  k.push(brAusstattung('kit_vorhanden', 'Media Kit', 5,
-    kitViuno ? { punkte: 5, satz: 'Dein Media Kit ist öffentlich erreichbar.' } : null,
-    ang.kit_vorhanden, {
-      frage: 'Hast du ein Media Kit?', hint: 'PDF, Canva, Notion …',
-      ja: 'Du hast angegeben, dass du ein Media Kit hast.',
-      nein: 'Du hast angegeben, kein Media Kit zu haben.',
-      tun: { art: 'route', label: 'Media Kit erstellen', route: '#/mediakit' }, knopf: zumKit }))
-
-  /* Die drei Kit-INHALTS-Kriterien haengen am Kit: ohne Kit gibt es nichts,
-     das aktuell sein, Preise tragen oder eine Zielgruppe nennen koennte.
-     `referenzen` haengt bewusst NICHT daran -- bezahlte Kooperationen
-     existieren unabhaengig davon, ob jemand ein Kit pflegt. */
-  const kitInhalt = (id, name, max, viuno, t) => {
-    if (kitNein) {
-      return brK({ id, gruppe: 'Ausstattung', name, max, punkte: 0, status: 'offen',
-        quelle: 'eigene_angabe', satz: t.ohneKit, warum: BR_WARUM[id],
-        tun: { art: 'route', label: 'Media Kit erstellen', route: '#/mediakit' } })
-    }
-    if (!kitDa) {
-      return brK({ id, gruppe: 'Ausstattung', name, max, warum: BR_WARUM[id],
-        satz: 'Noch nicht beantwortet — die Frage steht oben.',
-        frage: { id, text: t.frage, hint: t.hint || '', typ: 'jn' } })
-    }
-    return brAusstattung(id, name, max, kitViuno ? viuno : null, d.angaben[id], t)
-  }
-
-  // kit_aktuell (5) — Logik aus getAnalysisDrift(), hier mit Stichtag
-  const kitFoll = d.platform === 'tiktok' ? mk.followers_tiktok : mk.followers_instagram
-  let kaViuno = null
-  if (kitViuno) {
-    if (kitFoll == null || !foll) {
-      kaViuno = { punkte: 0, satz: `Für ${d.platform === 'tiktok' ? 'TikTok' : 'Instagram'} stehen keine Followerzahlen in deinem Media Kit.` }
-    } else {
-      const abw   = Math.abs(foll - Number(kitFoll)) / Number(kitFoll)
-      const jung  = s.created_at && (Date.now() - new Date(s.created_at).getTime()) < 60 * 864e5
-      const pk    = (abw <= 0.2 && jung) ? 5 : (abw <= 0.2 || jung) ? 3 : 0
-      kaViuno = { punkte: pk, satz: `Im Kit stehen ${brGanz(kitFoll)} Follower, gemessen sind ${brGanz(foll)} — ${brZahlDe(abw * 100, 0)} % Abweichung. Analyse vom ${brDatum(s.created_at)}.` }
-    }
-  }
-  k.push(kitInhalt('kit_aktuell', 'Zahlen im Kit aktuell', 5, kaViuno, {
-    ohneKit: 'Ohne Media Kit gibt es keine Zahlen, die aktuell sein könnten.',
-    frage: 'Sind die Zahlen in deinem Kit jünger als zwei Monate?', hint: '',
-    ja: 'Du hast angegeben, dass die Zahlen in deinem Kit aktuell sind.',
-    nein: 'Du hast angegeben, dass die Zahlen in deinem Kit älter sind.',
-    tun: { art: 'route', label: 'Zahlen im Kit aktualisieren', route: '#/mediakit' } }))
-
-  // kit_preise (6)
-  const nOffers = d.offers || 0
-  const nPreise = d.preise || 0
-  const kpViuno = kitViuno ? (nPreise > 0
-    ? { punkte: 6, satz: `${nPreise} von ${nOffers} Angeboten in deinem Kit haben einen Preis.` }
-    : nOffers > 0
-      ? { punkte: 3, satz: `${nOffers} Angebote im Kit, keines mit Preis.` }
-      : { punkte: 0, satz: 'In deinem Kit steht kein Angebot mit Preis.' }) : null
-  k.push(kitInhalt('kit_preise', 'Preise im Kit', 6, kpViuno, {
-    ohneKit: 'Ohne Media Kit gibt es keinen Ort, an dem Preise stehen könnten.',
-    frage: 'Stehen Preise oder Preisspannen in deinem Kit?', hint: '',
-    ja: 'Du hast angegeben, dass Preise in deinem Kit stehen.',
-    nein: 'Du hast angegeben, dass keine Preise in deinem Kit stehen.',
-    tun: { art: 'route', label: 'Preise eintragen', route: '#/mediakit' } }))
-
-  /* referenzen (5) — zwei Quellen, der hoehere Wert zaehlt. Wer keine
-     Marken im Kit hat, aber drei bezahlte Kooperationen angibt, hat drei. */
-  const nBrands = d.brands || 0
-  const zahl    = ang.referenzen && ang.referenzen.zahl != null ? Number(ang.referenzen.zahl) : null
-  const ausB    = kitViuno ? (nBrands >= 2 ? 5 : nBrands === 1 ? 3 : 0) : null
-  const ausZ    = zahl == null ? null : (zahl >= 2 ? 5 : zahl === 1 ? 3 : 0)
-  if (ausB == null && ausZ == null) {
-    k.push(brK({ id: 'referenzen', gruppe: 'Ausstattung', name: 'Referenzen', max: 5,
-      warum: BR_WARUM.referenzen, satz: 'Noch nicht beantwortet — die Frage steht oben.',
-      frage: { id: 'referenzen', text: 'Bezahlte Kooperationen bisher', hint: 'Anzahl', typ: 'zahl' } }))
-  } else {
-    const pk = Math.max(ausB == null ? -1 : ausB, ausZ == null ? -1 : ausZ)
-    const ausEigen = ausZ != null && ausZ >= (ausB == null ? -1 : ausB)
-    k.push(brK({ id: 'referenzen', gruppe: 'Ausstattung', name: 'Referenzen', max: 5, punkte: pk,
-      status: brStatus(pk, 5), quelle: ausEigen ? 'eigene_angabe' : 'viuno', warum: BR_WARUM.referenzen,
-      satz: ausEigen
-        ? `Du hast ${brGanz(zahl)} bezahlte ${zahl === 1 ? 'Kooperation' : 'Kooperationen'} angegeben.`
-        : nBrands > 0 ? `${brGanz(nBrands)} ${nBrands === 1 ? 'Marke' : 'Marken'} im Media Kit hinterlegt.`
-        : 'Keine Marke im Media Kit hinterlegt.',
-      tun: pk < 5 ? { art: 'route', label: 'Marken im Kit eintragen', route: '#/mediakit' } : null,
-      frage: zahl == null ? { id: 'referenzen', text: 'Bezahlte Kooperationen bisher', hint: 'Anzahl', typ: 'zahl' } : null }))
-  }
-
-  /* demografie (4) — bewusst niedrig gewichtet, und der Zusatz steht
-     immer dabei: eine selbst eingetippte Zielgruppe ist unverifizierbar. */
-  const demoOk = mk.gender_female_pct != null && mk.top_country_1
-  const dmViuno = kitViuno ? (demoOk
-    ? { punkte: 4, satz: `${brGanz(mk.gender_female_pct)} % weiblich, ${mk.top_country_1} als Top-Land. Eigenangabe — Marken werden einen Screenshot aus deinen Insights verlangen.` }
-    : { punkte: 0, satz: 'In deinem Kit stehen keine Angaben zur Zielgruppe.' }) : null
-  k.push(kitInhalt('demografie', 'Zielgruppe', 4, dmViuno, {
-    ohneKit: 'Ohne Media Kit gibt es keinen Ort, an dem deine Zielgruppe steht.',
-    frage: 'Stehen Alter, Geschlecht oder Land deiner Zielgruppe im Kit?', hint: '',
-    ja: 'Du hast angegeben, dass deine Zielgruppe im Kit steht. Eigenangabe — Marken werden einen Screenshot aus deinen Insights verlangen.',
-    nein: 'Du hast angegeben, dass keine Zielgruppen-Angaben im Kit stehen.',
-    tun: { art: 'route', label: 'Zielgruppe eintragen', route: '#/mediakit' } }))
-
-  // rechnung (4) — nie automatisch, immer Eigenangabe
-  k.push(brAusstattung('rechnung', 'Rechnung stellen', 4, null, ang.rechnung, {
-    frage: 'Kannst du eine Rechnung stellen?', hint: 'Gewerbe oder Kleinunternehmer',
-    ja: 'Du hast angegeben, dass du eine Rechnung stellen kannst.',
-    nein: 'Du hast angegeben, keine Rechnung stellen zu können.',
-    tun: { art: 'text', label: 'Für die meisten Creator ist die Kleinunternehmerregelung (§ 19 UStG) der Weg: Gewerbe anmelden, keine Umsatzsteuer ausweisen, solange du unter der Grenze bleibst. Das ist ein Formular beim Gewerbeamt.' } }))
-
-  /* nicht_bewertbar faellt aus dem Maximum -- es kostet keine Punkte. */
-  let punkte = 0, max = 0
-  for (const x of k) { if (x.punkte != null) { punkte += x.punkte; max += x.max } }
-  const fragen = k.filter(x => x.frage).map(x => x.frage)
-
-  return { kriterien: k, punkte, max, fragen, offen: k.filter(x => x.punkte == null).length }
-}
-
-/* ─────────────────────────────────────────────
-   Laden. Alles per RLS als der eingeloggte Nutzer -- kein Service Role,
-   keine Edge Function.
-   ───────────────────────────────────────────── */
+/* ─── Laden. Alles per RLS als der eingeloggte Nutzer. ─── */
 async function renderBrandReady(area, ctx) {
   const uid = state.session.user.id
 
   area.innerHTML = `
   <div class="view-brandready">
-    <div class="page-header">
-      <div class="page-title">Brand Ready</div>
-      <div class="page-sub">Wie eine Marke deinen Kanal heute sieht.</div>
+    <div class="br-head">
+      <div class="br-head-txt">
+        <div class="page-title">Brand Ready</div>
+        <div class="page-sub">Wie eine Marke deinen Kanal heute sieht.</div>
+      </div>
+      <button class="br-teilen-btn hidden" id="br-teilen-oben" onclick="brTeilen()">${SVG_TEILEN_BR} Teilen</button>
     </div>
     <div id="br-skeleton" style="padding:16px 20px 0;display:flex;flex-direction:column;gap:10px">
-      <div class="skeleton" style="height:104px;border-radius:16px"></div>
-      <div class="skeleton" style="height:180px;border-radius:16px"></div>
+      <div class="skeleton" style="height:92px;border-radius:16px"></div>
+      <div class="skeleton" style="height:200px;border-radius:16px"></div>
     </div>
     <div id="br-inhalt"></div>
   </div>`
 
-  brv = { uid, ctx, kanal: null, daten: null, angaben: {} }
+  brv = { uid, ctx, kanal: null, daten: null, angaben: {}, offen: {}, freigabe: null }
   ctx.onCleanup(() => { brv = null })
 
   const [statsQ, profilQ, blQ, mkQ, brandsQ, offersQ, preiseQ, angabenQ, nischeQ] = await Promise.all([
     sb.from('analyse_stats').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
-    sb.from('users').select('bio,contact_email,impressum_text,niche_category,niche_custom,bio_active,mediakit_active').eq('id', uid).single(),
+    sb.from('users').select('bio,contact_email,impressum_text,niche_category,niche_custom,bio_active,mediakit_active,display_name').eq('id', uid).single(),
     sb.from('biolink_settings').select('is_active,impressum_text').eq('user_id', uid).maybeSingle(),
     sb.from('mediakit_viuno').select('*').eq('user_id', uid).maybeSingle(),
     sb.from('mediakit_brands').select('id', { count: 'exact', head: true }).eq('user_id', uid),
@@ -6928,7 +6581,7 @@ async function renderBrandReady(area, ctx) {
   if (ctx.stale) return
 
   const alle = statsQ.data || []
-  /* Jüngste Zeile je Plattform. Bewusst ueber analyse_stats und nicht ueber
+  /* Juengste Zeile je Plattform. Bewusst ueber analyse_stats und nicht ueber
      analysis_runs.platform: das Feld ist bei allen Laeufen vor der
      Option-C-Umstellung NULL und deckt dort beide Plattformen ab. */
   const neueste = []
@@ -6946,11 +6599,8 @@ async function renderBrandReady(area, ctx) {
   for (const a of (angabenQ.data || [])) angaben[a.kriterium] = { wert: a.wert, zahl: a.zahl }
 
   brv.daten = {
-    stats: neueste,
-    alleStats: alle,
-    profil: profilQ.data || {},
-    bl: blQ.data || {},
-    mk: mkQ.data || {},
+    stats: neueste, alleStats: alle,
+    profil: profilQ.data || {}, bl: blQ.data || {}, mk: mkQ.data || {},
     brands: brandsQ.count || 0,
     offers: (offersQ.data || []).length,
     preise: (preiseQ.data || []).filter(x => x.preis_von != null).length,
@@ -6961,6 +6611,17 @@ async function renderBrandReady(area, ctx) {
   brv.kanal = neueste.length ? neueste[0].platform : null
 
   document.getElementById('br-skeleton').classList.add('hidden')
+  if (brv.kanal) {
+    document.getElementById('br-teilen-oben')?.classList.remove('hidden')
+    /* Bereits erzeugte Freigabe fuer diesen Kanal vorladen, damit der Knopf
+       nicht einen zweiten Link erzeugt, wo schon einer geteilt wurde. */
+    const { data: f } = await sb.from('brand_ready_freigaben')
+      .select('token,expires_at,revoked_at,aufrufe,platform')
+      .eq('user_id', uid).is('revoked_at', null)
+    if (ctx.stale) return
+    brv.freigaben = {}
+    for (const x of (f || [])) if (new Date(x.expires_at) > new Date()) brv.freigaben[x.platform] = x
+  }
   brZeichnen()
 }
 
@@ -6977,43 +6638,59 @@ function brErgebnis() {
   })
 }
 
-const BR_SYM   = { erfuellt: '✓', teilweise: '◐', offen: '!', nicht_bewertbar: '–' }
-const BR_QUELLE = { viuno: 'über viuno', eigene_angabe: 'eigene Angabe', gemessen: 'gemessen', keine: '' }
-const BR_PLAT  = { instagram: 'Instagram', tiktok: 'TikTok' }
-
 function brZeichnen() {
   const el = document.getElementById('br-inhalt')
   if (!el) return
   if (!brv.kanal) { el.innerHTML = brSperreHtml(); return }
 
-  const r    = brErgebnis()
-  const s    = brv.daten.stats.find(x => x.platform === brv.kanal)
-  const pct  = r.max > 0 ? Math.round(r.punkte / r.max * 100) : 0
-  const kan  = brv.daten.stats.map(x => x.platform)
+  const r     = brErgebnis()
+  const s     = brv.daten.stats.find(x => x.platform === brv.kanal)
+  const kan   = brv.daten.stats.map(x => x.platform)
+  const saetze = brSaetze(r)
 
-  /* Die drei mit dem groessten Punkteverlust. Nicht bewertbare zaehlen
-     nicht mit -- was der Check nicht weiss, haelt niemanden zurueck. */
-  const zurueck = r.kriterien
-    .filter(x => x.punkte != null && x.punkte < x.max)
-    .sort((a, b) => (b.max - b.punkte) - (a.max - a.punkte))
-    .slice(0, 3)
+  /* Alles, was Punkte bringen kann: offene Fragen und Luecken in EINER
+     Liste, sortiert nach Gewinn. Hinweise (max 0) tauchen hier nicht auf. */
+  const luecken = r.kriterien.filter(x => x.punkte != null && x.punkte < x.max)
+    .map(x => ({ art: 'luecke', gewinn: x.max - x.punkte, k: x }))
+  const fragen = r.fragen.map(f => ({ art: 'frage', gewinn: f.max, f }))
+  const tun = [...fragen, ...luecken].sort((a, b) => b.gewinn - a.gewinn)
+
+  const fertig  = r.kriterien.filter(x => x.punkte != null && x.punkte >= x.max)
+  const ruhend  = r.kriterien.filter(x => x.punkte == null)
+
+  const u = 2 * Math.PI * 26
+  const an = r.max > 0 ? r.punkte / r.max * u : 0
 
   el.innerHTML = `
     <div class="br-kopf">
-      <div class="br-punkte"><b>${r.punkte} / ${r.max}</b><span>bewertbaren Punkten</span></div>
-      <div class="br-spur"><div style="width:${pct}%"></div></div>
-      <div class="br-kopf-meta">
-        <span>Analyse vom ${brDatum(s.created_at)}</span>
-        ${r.offen ? `<span class="br-offen">${r.offen} ${r.offen === 1 ? 'Kriterium' : 'Kriterien'} ohne Wertung</span>` : ''}
+      <div class="br-ring">
+        <svg width="62" height="62" viewBox="0 0 62 62" aria-hidden="true">
+          <circle cx="31" cy="31" r="26" fill="none" stroke="var(--surface2)" stroke-width="7"/>
+          <circle cx="31" cy="31" r="26" fill="none" stroke="var(--text)" stroke-width="7"
+            stroke-linecap="round" stroke-dasharray="${an.toFixed(1)} ${u.toFixed(1)}"/>
+        </svg><b>${r.punkte}</b></div>
+      <div class="br-kopf-txt">
+        <div class="br-kopf-titel">${r.punkte} von ${r.max} bewertbaren Punkten</div>
+        <div class="br-kopf-sub">Analyse vom ${brDatum(s.created_at)}${r.offen ? ' · ' + r.offen + ' ohne Wertung' : ''}</div>
       </div>
     </div>
+
+    <div class="br-saetze">${saetze.map(x => `<p>${escHtml(x)}</p>`).join('')}</div>
 
     ${kan.length > 1 ? `<div class="br-tabs">${kan.map(pf =>
       `<button class="br-tab${pf === brv.kanal ? ' aktiv' : ''}" onclick="brKanal('${pf}')">${BR_PLAT[pf] || pf}</button>`).join('')}</div>` : ''}
 
-    ${brFragenHtml(r)}
-    ${brZurueckHtml(zurueck)}
-    ${brListeHtml(r)}
+    ${tun.length ? `<div class="section">
+      <div class="section-label">Was du jetzt gewinnen kannst</div>
+      <div class="br-tat">${tun.map(brTatZeile).join('')}</div>
+    </div>` : ''}
+
+    <div class="section">
+      ${brFaltHtml('br-f-ok', 'erfuellt', `${fertig.length} ${fertig.length === 1 ? 'Kriterium' : 'Kriterien'} erfüllt`, fertig)}
+      ${ruhend.length ? brFaltHtml('br-f-nb', 'nicht_bewertbar', `${ruhend.length} ohne Wertung`, ruhend) : ''}
+    </div>
+
+    ${brTeilenHtml()}
 
     <div class="br-fuss">
       Punkte aus deinen Analyse-Daten vom ${brDatum(s.created_at)}. Angaben, die du selbst gemacht hast,
@@ -7022,121 +6699,106 @@ function brZeichnen() {
     </div>`
 }
 
-function brFragenHtml(r) {
-  const offen = r.fragen
-  const fertig = r.kriterien.filter(x => x.quelle === 'eigene_angabe' && !x.frage)
-  if (!offen.length && !fertig.length) return ''
-
-  const zeile = (id, text, hint, typ, wert, zahl) => `
-    <div class="br-frage">
-      <div class="br-frage-text">${escHtml(text)}${hint ? `<i>${escHtml(hint)}</i>` : ''}</div>
-      ${typ === 'zahl'
-        ? `<input class="br-zahl" type="number" min="0" step="1" inputmode="numeric" placeholder="–"
-             value="${zahl == null ? '' : zahl}" onchange="brZahlSpeichern('${id}', this)">`
-        : `<div class="br-wahl">
-             <button type="button" class="${wert === true ? 'ja-an' : ''}" onclick="brAntwort('${id}', true)">Ja</button>
-             <button type="button" class="${wert === false ? 'nein-an' : ''}" onclick="brAntwort('${id}', false)">Nein</button>
-           </div>`}
-    </div>`
-
-  const a = brv.angaben
-  return `
-  <div class="section">
-    <div class="section-label">${offen.length ? 'Offene Fragen' : 'Deine Angaben'}</div>
-    <div class="br-frage-karte">
-      <div class="br-frage-kopf">
-        <div class="br-frage-titel">${offen.length
-          ? offen.length + ' Frage' + (offen.length > 1 ? 'n' : '') + ', die viuno nicht messen kann'
-          : 'Deine Angaben'}</div>
-        <div class="br-frage-sub">Diese Dinge sieht viuno nicht von außen. Was du hier angibst, zählt
-          genauso viel wie ein Eintrag in viuno — es wird als eigene Angabe gekennzeichnet und nicht geprüft.</div>
-      </div>
-      ${offen.map(f => zeile(f.id, f.text, f.hint, f.typ,
-          a[f.id] ? a[f.id].wert : null, a[f.id] ? a[f.id].zahl : null)).join('')}
-      ${fertig.map(x => zeile(x.id,
-          (BR_FRAGE_TEXT[x.id] || x.name), '', x.id === 'referenzen' ? 'zahl' : 'jn',
-          a[x.id] ? a[x.id].wert : null, a[x.id] ? a[x.id].zahl : null)).join('')}
-    </div>
-  </div>`
+let brIdZaehler = 0
+function brInfo(text) {
+  const id = 'br-i-' + (++brIdZaehler)
+  return {
+    knopf: `<button class="br-i" onclick="brInfoKlapp('${id}',this)" aria-label="Warum das zählt">i</button>`,
+    text: `<div class="br-i-txt" id="${id}">${escHtml(text)}</div>`
+  }
 }
 
-/* Fuer bereits beantwortete Kriterien braucht die Zeile den Fragetext
-   wieder -- er steht sonst nur im Zweig, der die Frage erzeugt hat. */
-const BR_FRAGE_TEXT = {
-  biolink: 'Hast du eine Link-in-Bio-Seite?',
-  impressum: 'Ist auf deiner Link-Seite oder Website ein Impressum erreichbar?',
-  kontakt: 'Steht eine Kontakt-E-Mail in deiner Kanal-Bio oder auf deiner Link-Seite?',
-  kit_vorhanden: 'Hast du ein Media Kit?',
-  kit_aktuell: 'Sind die Zahlen in deinem Kit jünger als zwei Monate?',
-  kit_preise: 'Stehen Preise oder Preisspannen in deinem Kit?',
-  referenzen: 'Bezahlte Kooperationen bisher',
-  demografie: 'Stehen Alter, Geschlecht oder Land deiner Zielgruppe im Kit?',
-  rechnung: 'Kannst du eine Rechnung stellen?'
+function brTatZeile(t) {
+  if (t.art === 'frage') {
+    const f = t.f
+    const a = brv.angaben[f.id] || {}
+    const I = brInfo('Diese Angabe kann viuno nicht messen. Sie zählt genauso viel wie ein Eintrag in viuno, wird als eigene Angabe gekennzeichnet und nicht geprüft.')
+    const eingabe = f.typ === 'zahl'
+      ? `<input class="br-zahl" type="number" min="0" step="1" inputmode="numeric" placeholder="–"
+           value="${a.zahl == null ? '' : a.zahl}" onchange="brZahlSpeichern('${f.id}', this)">`
+      : `<div class="br-wahl">
+           <button type="button" class="${a.wert === true ? 'ja-an' : ''}" onclick="brAntwort('${f.id}', true)">Ja</button>
+           <button type="button" class="${a.wert === false ? 'nein-an' : ''}" onclick="brAntwort('${f.id}', false)">Nein</button>
+         </div>`
+    return `<div class="br-tat-zeile">
+      <div class="br-gewinn">+${t.gewinn}</div>
+      <div class="br-tat-k">
+        <div class="br-tat-name"><span>${escHtml(f.text)}</span>${I.knopf}</div>
+        <div class="br-tat-tun">${eingabe}${f.hint ? `<span class="br-tat-hint">${escHtml(f.hint)}</span>` : ''}</div>
+        ${I.text}
+      </div></div>`
+  }
+  const k = t.k
+  const I = brInfo(k.warum)
+  return `<div class="br-tat-zeile">
+    <div class="br-gewinn">+${t.gewinn}</div>
+    <div class="br-tat-k">
+      <div class="br-tat-name"><span>${escHtml(k.name)}</span>${I.knopf}</div>
+      <div class="br-tat-satz">${escHtml(k.satz)}</div>
+      ${!k.tun ? '' : k.tun.art === 'route'
+        ? `<div class="br-tat-tun"><a class="br-knopf" href="${k.tun.route}">${escHtml(k.tun.label)} →</a></div>`
+        : `<div class="br-i-txt auf" style="margin-top:9px">${escHtml(k.tun.label)}</div>`}
+      ${I.text}
+    </div></div>`
 }
 
-function brZurueckHtml(liste) {
-  if (!liste.length) return ''
-  return `
-  <div class="section">
-    <div class="section-label">Was dich am meisten zurückhält</div>
-    ${liste.map(b => `
-      <div class="br-block">
-        <div class="br-block-kopf">
-          <div class="br-block-name">${escHtml(b.name)}</div>
-          <div class="br-block-verlust">−${b.max - b.punkte} Punkte</div>
-        </div>
-        <div class="br-warum">${escHtml(b.warum)}</div>
-        <div class="br-stand">${escHtml(b.satz)}</div>
-        ${!b.tun ? '' : b.tun.art === 'route'
-          ? `<div class="br-tun"><a class="br-tun-btn" href="${b.tun.route}">${escHtml(b.tun.label)} →</a></div>`
-          : `<div class="br-tun-txt">${escHtml(b.tun.label)}</div>`}
-      </div>`).join('')}
-  </div>`
-}
-
-function brListeHtml(r) {
-  let html = '', letzte = null
-  for (const x of r.kriterien) {
-    if (x.gruppe !== letzte) { html += `<div class="br-gruppe">${escHtml(x.gruppe)}</div>`; letzte = x.gruppe }
-    const nb = x.punkte == null
-    html += `
-      <div class="br-zeile">
+function brFaltHtml(id, sym, titel, liste) {
+  return `<div class="br-falt">
+    <button class="br-falt-kopf" onclick="brFalten('${id}',this)" aria-expanded="false">
+      <div class="br-sym ${sym}">${BR_SYM[sym]}</div><span>${escHtml(titel)}</span><em>ansehen</em>
+    </button>
+    <div class="br-falt-liste" id="${id}">
+      ${liste.map(x => `<div class="br-zeile">
         <div class="br-sym ${x.status}">${BR_SYM[x.status]}</div>
-        <div class="br-zeile-koerper">
-          <div class="br-zeile-kopf">
-            <div class="br-zeile-name">${escHtml(x.name)}</div>
-            <div class="br-zeile-p${nb ? ' grau' : ''}">${nb ? '– / ' + x.max : x.punkte + ' / ' + x.max}</div>
-          </div>
+        <div class="br-zeile-k">
+          <div class="br-zeile-kopf"><div class="br-zeile-name">${escHtml(x.name)}</div>
+            <div class="br-zeile-p${x.punkte == null ? ' grau' : ''}">${x.hinweis ? 'Hinweis' : (x.punkte == null ? '– / ' + x.max : x.punkte + ' / ' + x.max)}</div></div>
           <div class="br-zeile-satz">${escHtml(x.satz)}</div>
           ${BR_QUELLE[x.quelle] ? `<span class="br-badge ${x.quelle}">${BR_QUELLE[x.quelle]}</span>` : ''}
-          ${x.knopf ? `<div><a class="br-zeile-knopf" href="${x.knopf.route}">${escHtml(x.knopf.label)} ${icon('chevronRight', 14)}</a></div>` : ''}
-        </div>
-      </div>`
-  }
-  return `<div class="section"><div class="section-label">Alle Kriterien</div><div class="br-liste">${html}</div></div>`
+          ${x.knopf ? `<div><a class="br-knopf leise" style="margin-top:8px" href="${x.knopf.route}">${escHtml(x.knopf.label)} ›</a></div>` : ''}
+        </div></div>`).join('')}
+    </div></div>`
 }
 
-/* Ohne Analyse: Titel und Begruendung je Kriterium, keine Punkte. Der
-   Check ist Teil des Kaufprodukts -- das Wort "kostenlos" faellt hier
-   bewusst nirgends. */
-function brSperreHtml() {
-  const reihen = Object.keys(BR_WARUM).map(id => {
-    const name = {
-      engagement: 'Engagement', kommentare: 'Kommentare', frequenz: 'Frequenz', verlauf: 'Verlauf',
-      account_typ: 'Kontoart', bio: 'Bio', kennzeichnung: 'Werbekennzeichnung',
-      biolink: 'Link-in-Bio-Seite', impressum: 'Impressum', kontakt: 'Kontaktweg',
-      kit_vorhanden: 'Media Kit', kit_aktuell: 'Zahlen im Kit aktuell', kit_preise: 'Preise im Kit',
-      referenzen: 'Referenzen', demografie: 'Zielgruppe', rechnung: 'Rechnung stellen'
-    }[id]
-    return `<div class="br-vorschau-zeile">
-      <div class="br-sym nicht_bewertbar">–</div>
-      <div class="br-zeile-koerper">
-        <div class="br-zeile-name">${escHtml(name)}</div>
-        <div class="br-zeile-satz">${escHtml(BR_WARUM[id])}</div>
-      </div>
-    </div>`
-  }).join('')
+/* Teilen. Geteilt wird ausschliesslich: Titel, Punktestand und die zwei
+   bis drei Saetze. Keine Kriterienliste, keine Eigenangaben, keine
+   Rohzahlen aus der Analyse -- die sind das bezahlte Produkt. */
+function brTeilenHtml() {
+  const f = brv.freigaben ? brv.freigaben[brv.kanal] : null
+  return `<div class="br-teilen">
+    <h2>Brand Ready teilen</h2>
+    <p>Erzeugt eine öffentliche Seite mit deinem Punktestand und den drei Sätzen darüber —
+      sonst nichts. Die Kriterien und deine Angaben bleiben privat. Der Link läuft nach 90 Tagen
+      ab und lässt sich jederzeit zurückziehen.</p>
+    <div class="br-tat-tun" style="margin-top:12px">
+      <button class="br-knopf" id="br-teilen-knopf" onclick="brTeilen()">${SVG_TEILEN_BR} ${f ? 'Link anzeigen' : 'Link erzeugen'}</button>
+    </div>
+    <div id="br-teilen-ergebnis">${f ? brLinkHtml(f) : ''}</div>
+  </div>`
+}
 
+function brLinkHtml(f) {
+  const url = location.origin + '/brandready/?b=' + f.token
+  return `<div class="br-link-feld">
+      <input type="text" readonly value="${escHtml(url)}" onclick="this.select()" aria-label="Öffentlicher Link"/>
+      <button class="br-knopf leise" onclick="brLinkKopieren('${escHtml(url)}')">Kopieren</button>
+    </div>
+    <div class="br-link-meta">
+      Gültig bis ${brDatum(f.expires_at)}${f.aufrufe > 0 ? ` · ${f.aufrufe} mal geöffnet` : ''} ·
+      <a href="${escHtml(url)}" target="_blank" rel="noopener">Ansehen</a> ·
+      <a href="#" onclick="brLinkZuruecknehmen();return false">Link zurückziehen</a>
+    </div>`
+}
+
+/* Ohne Analyse: Titel und Begruendung je Kriterium, keine Punkte. Der Check
+   ist Teil des Kaufprodukts -- das Wort "kostenlos" faellt hier nirgends. */
+function brSperreHtml() {
+  const reihen = Object.keys(BR_WARUM).map(id => `<div class="br-zeile">
+      <div class="br-sym nicht_bewertbar">–</div>
+      <div class="br-zeile-k">
+        <div class="br-zeile-name">${escHtml(BR_NAME[id])}</div>
+        <div class="br-zeile-satz">${escHtml(BR_WARUM[id])}</div>
+      </div></div>`).join('')
   return `
     <div class="br-sperr">
       <div class="br-sperr-titel">16 Kriterien, die eine Marke prüft</div>
@@ -7145,10 +6807,26 @@ function brSperreHtml() {
     </div>
     <div class="action-stack"><a class="action-btn action-btn-primary" href="#/analytics">Analyse starten</a></div>
     <div class="section"><div class="section-label">Das wird geprüft</div>
-      <div class="br-liste">${reihen}</div></div>`
+      <div class="br-falt"><div class="br-falt-liste auf">${reihen}</div></div></div>`
 }
 
-/* ─── Antworten: sofort speichern, sofort neu rechnen, kein Reload ─── */
+/* ─── Bedienung ─── */
+window.brInfoKlapp = function (id, btn) {
+  const el = document.getElementById(id)
+  if (!el) return
+  el.classList.toggle('auf')
+  btn.classList.toggle('an')
+}
+
+window.brFalten = function (id, btn) {
+  const el = document.getElementById(id)
+  if (!el) return
+  const auf = el.classList.toggle('auf')
+  btn.setAttribute('aria-expanded', auf ? 'true' : 'false')
+  const em = btn.querySelector('em')
+  if (em) em.textContent = auf ? 'zuklappen' : 'ansehen'
+}
+
 window.brKanal = function (pf) {
   if (!brv || brv.kanal === pf) return
   brv.kanal = pf
@@ -7165,11 +6843,7 @@ window.brAntwort = async function (kriterium, wert) {
   const { error } = await sb.from('brand_ready_angaben')
     .upsert({ user_id: brv.uid, kriterium, wert: neu, zahl: vorher.zahl ?? null, updated_at: new Date().toISOString() },
             { onConflict: 'user_id,kriterium' })
-  if (error) {
-    brv.angaben[kriterium] = vorher
-    brZeichnen()
-    showToast('Konnte nicht gespeichert werden')
-  }
+  if (error) { brv.angaben[kriterium] = vorher; brZeichnen(); showToast('Konnte nicht gespeichert werden') }
 }
 
 window.brZahlSpeichern = async function (kriterium, input) {
@@ -7182,11 +6856,60 @@ window.brZahlSpeichern = async function (kriterium, input) {
   const { error } = await sb.from('brand_ready_angaben')
     .upsert({ user_id: brv.uid, kriterium, wert: vorher.wert ?? null, zahl, updated_at: new Date().toISOString() },
             { onConflict: 'user_id,kriterium' })
-  if (error) {
-    brv.angaben[kriterium] = vorher
-    brZeichnen()
-    showToast('Konnte nicht gespeichert werden')
+  if (error) { brv.angaben[kriterium] = vorher; brZeichnen(); showToast('Konnte nicht gespeichert werden') }
+}
+
+window.brLinkKopieren = function (url) {
+  navigator.clipboard?.writeText(url).then(() => showToast('Link kopiert ✓'), () => showToast('Kopieren nicht möglich'))
+}
+
+/* Die Freigabe rechnet SERVERSEITIG nach -- der Browser schickt nur den
+   Kanal, nie die Punktzahl. Sonst koennte jeder seinen eigenen Stand
+   setzen, und auf der geteilten Seite steht "powered by viuno". */
+window.brTeilen = async function () {
+  if (!brv || !brv.kanal) return
+  const knopf = document.getElementById('br-teilen-knopf')
+  const ziel  = document.getElementById('br-teilen-ergebnis')
+  if (!ziel) return
+  const vorhanden = brv.freigaben ? brv.freigaben[brv.kanal] : null
+  if (vorhanden) { ziel.innerHTML = brLinkHtml(vorhanden); ziel.scrollIntoView({ behavior: 'smooth', block: 'center' }); return }
+
+  const vorher = knopf ? knopf.innerHTML : ''
+  if (knopf) { knopf.disabled = true; knopf.innerHTML = '<span class="spinner"></span> Einen Moment…' }
+  try {
+    const { data: { session } } = await sb.auth.getSession()
+    const res = await fetch(SUPABASE_URL + '/functions/v1/brand-ready-freigeben', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({ platform: brv.kanal, aktion: 'erzeugen' })
+    })
+    const d = await res.json()
+    if (!d.success) throw new Error(d.error || 'Fehlgeschlagen')
+    brv.freigaben = brv.freigaben || {}
+    brv.freigaben[brv.kanal] = { token: d.token, expires_at: d.expires_at, aufrufe: d.aufrufe || 0, platform: brv.kanal }
+    ziel.innerHTML = brLinkHtml(brv.freigaben[brv.kanal])
+    if (knopf) { knopf.innerHTML = SVG_TEILEN_BR + ' Link anzeigen'; knopf.disabled = false }
+    const url = location.origin + '/brandready/?b=' + d.token
+    if (navigator.share) navigator.share({ title: 'Mein Brand-Ready-Stand', url }).catch(() => {})
+  } catch (e) {
+    if (knopf) { knopf.innerHTML = vorher; knopf.disabled = false }
+    showToast('Link konnte nicht erzeugt werden')
   }
+}
+
+window.brLinkZuruecknehmen = async function () {
+  if (!brv || !brv.kanal) return
+  try {
+    const { data: { session } } = await sb.auth.getSession()
+    await fetch(SUPABASE_URL + '/functions/v1/brand-ready-freigeben', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
+      body: JSON.stringify({ platform: brv.kanal, aktion: 'zuruecknehmen' })
+    })
+    if (brv.freigaben) delete brv.freigaben[brv.kanal]
+    brZeichnen()
+    showToast('Link zurückgezogen')
+  } catch (e) { showToast('Hat nicht geklappt') }
 }
 
 /* ─────────────────────────────────────────────
