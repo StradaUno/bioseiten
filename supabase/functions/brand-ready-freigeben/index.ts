@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
-// @ts-ignore -- statisches Modul von der eigenen Domain, siehe Kommentar unten
-import { brBerechnen, brSaetze } from 'https://viuno.de/app/brand-ready-regeln.js'
+// @ts-ignore -- dasselbe Regelwerk, das die SPA laedt; siehe Kommentar unten
+import { brBerechnen, brSaetze } from 'https://cdn.jsdelivr.net/gh/StradaUno/bioseiten@4d71a6d2616acbcae4ed0b793db185097bfa0579/public/app/brand-ready-regeln.js'
 
 /* Erzeugt oder nimmt einen oeffentlichen Link auf den Brand-Ready-Stand zurueck.
 
@@ -10,9 +10,15 @@ import { brBerechnen, brSaetze } from 'https://viuno.de/app/brand-ready-regeln.j
    geteilten Seite steht "powered by viuno" -- viuno darf nicht mit seinem Namen
    fuer eine Zahl buergen, die der Creator in seinen DevTools setzen konnte.
    Damit es das Regelwerk trotzdem nur einmal gibt, laedt diese Function dieselbe
-   Datei, die die SPA laedt.
-   **Deno friert importierte Module beim Deploy ein: nach jeder Aenderung an
-   public/app/brand-ready-regeln.js muss diese Function neu deployt werden.**
+   Datei, die die SPA laedt -- ueber jsDelivr, weil der Supabase-Bundler nur von
+   erlaubten CDNs importiert und viuno.de keines davon ist.
+
+   Der Import ist auf einen COMMIT-SHA festgenagelt, nicht auf @main. Damit ist
+   nachtraeglich beweisbar, nach welchen Regeln eine Freigabe gerechnet wurde,
+   und ein Push kann die Rechnung nicht unbemerkt aendern.
+   **Wer public/app/brand-ready-regeln.js aendert, muss pushen und diese
+   Function danach mit dem neuen SHA neu deployen** -- sonst rechnet die
+   Freigabe weiter nach den alten Regeln, waehrend die App die neuen zeigt.
 
    Geteilt wird ausschliesslich Punktestand und die zwei bis drei Saetze. Die
    Kriterienliste, die Eigenangaben und die Analyse-Rohzahlen bleiben im Haus --
