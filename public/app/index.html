@@ -994,6 +994,70 @@ a.news-quelle:hover{color:var(--text)}
 .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; }
 @keyframes spin { to{transform:rotate(360deg)} }
 .hidden { display: none !important; }
+/* ═══ VIEW: BRAND READY ═══════════════════════════════════════════
+   Alles br-praefixiert. Die Kriterienliste ist EINE Karte mit
+   Haarlinien statt 16 Einzelrahmen -- dasselbe Muster und dieselbe
+   Begruendung wie bei .bl-karte: auf 375 px waeren 16 Rahmen mehr
+   Kante als Inhalt. */
+.br-kopf{margin:var(--s-4) var(--page-x) 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:16px}
+.br-punkte{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.br-punkte b{font-size:var(--t-num);font-weight:var(--fw-b);letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
+.br-punkte span{font-size:var(--t-sm);color:var(--muted)}
+.br-spur{height:8px;background:var(--surface2);border-radius:var(--r-full);overflow:hidden;margin-top:12px}
+.br-spur>div{height:100%;background:var(--text);border-radius:var(--r-full);transition:width .3s cubic-bezier(.32,.72,0,1)}
+.br-kopf-meta{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:var(--t-xs);color:var(--muted);margin-top:10px}
+.br-kopf-meta .br-offen{color:var(--orange);font-weight:var(--fw-sb)}
+.br-tabs{display:flex;gap:6px;margin:var(--s-3) var(--page-x) 0}
+.br-tab{flex:1;min-height:38px;padding:9px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface);color:var(--muted);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer}
+.br-tab.aktiv{background:var(--text);color:#fff;border-color:var(--text)}
+.br-frage-karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.br-frage-kopf{padding:14px 16px 10px}
+.br-frage-titel{font-size:var(--t-sm);font-weight:var(--fw-sb)}
+.br-frage-sub{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:4px}
+.br-frage{display:flex;align-items:center;gap:10px;padding:11px 16px;border-top:1px solid var(--border)}
+.br-frage-text{flex:1;font-size:var(--t-sm);line-height:var(--lh-tight)}
+.br-frage-text i{display:block;font-style:normal;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.br-wahl{display:flex;gap:4px;flex-shrink:0}
+.br-wahl button{min-width:46px;min-height:34px;padding:0 10px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface2);color:var(--muted);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer}
+.br-wahl button.ja-an{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+.br-wahl button.nein-an{background:var(--surface2);border-color:var(--border-strong);color:var(--text)}
+.br-zahl{width:66px;min-height:34px;padding:0 10px;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface);font-family:inherit;font-size:var(--t-input);text-align:center;flex-shrink:0;color:var(--text)}
+.br-block{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:14px 16px}
+.br-block+.br-block{margin-top:var(--s-2)}
+.br-block-kopf{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.br-block-name{font-size:var(--t-sm);font-weight:var(--fw-sb);flex:1;min-width:0}
+.br-block-verlust{font-size:var(--t-xs);font-weight:var(--fw-sb);color:var(--orange);white-space:nowrap;font-variant-numeric:tabular-nums}
+.br-warum{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
+.br-stand{font-size:var(--t-sm);line-height:var(--lh-body);margin-top:6px}
+.br-tun{margin-top:10px}
+.br-tun-btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:var(--r-sm);background:var(--text);color:#fff;border:1px solid var(--text);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer;text-decoration:none}
+.br-tun-txt{font-size:var(--t-sm);color:var(--text);line-height:var(--lh-body);margin-top:8px;padding:10px 12px;background:var(--surface2);border-radius:var(--r-sm)}
+.br-liste{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden}
+.br-gruppe{font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);text-transform:uppercase;letter-spacing:.07em;padding:13px 16px 9px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.br-gruppe:not(:first-child){border-top:1px solid var(--border)}
+.br-zeile{display:flex;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.br-zeile:last-child{border-bottom:0}
+.br-sym{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;margin-top:1px;font-size:11px;font-weight:var(--fw-b);line-height:1}
+.br-sym.erfuellt{background:var(--green-bg);color:var(--green);border:1.5px solid var(--green-border)}
+.br-sym.teilweise{background:var(--orange-bg);color:var(--orange);border:1.5px solid rgba(184,92,0,.25)}
+.br-sym.offen{background:var(--red-bg);color:var(--red);border:1.5px solid rgba(192,57,43,.2)}
+.br-sym.nicht_bewertbar{background:var(--surface2);color:var(--subtle);border:1.5px solid var(--border-strong)}
+.br-zeile-koerper{flex:1;min-width:0}
+.br-zeile-kopf{display:flex;align-items:baseline;gap:8px}
+.br-zeile-name{font-size:var(--t-sm);font-weight:var(--fw-sb);flex:1;min-width:0}
+.br-zeile-p{font-size:var(--t-sm);font-weight:var(--fw-sb);font-variant-numeric:tabular-nums;white-space:nowrap}
+.br-zeile-p.grau{color:var(--subtle);font-weight:var(--fw-md)}
+.br-zeile-satz{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:3px}
+.br-badge{display:inline-block;margin-top:6px;padding:2px 7px;border-radius:var(--r-full);font-size:var(--t-2xs);font-weight:var(--fw-sb);letter-spacing:.03em}
+.br-badge.viuno{background:var(--blue-bg);color:var(--blue)}
+.br-badge.eigene_angabe,.br-badge.gemessen{background:var(--surface2);color:var(--muted)}
+.br-zeile-knopf{display:inline-flex;align-items:center;gap:5px;margin-top:9px;min-height:34px;padding:0 12px;border-radius:var(--r-sm);background:var(--surface);color:var(--text);border:1px solid var(--border-strong);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);text-decoration:none}
+.br-fuss{padding:var(--s-5) var(--page-x) 0;font-size:var(--t-xs);color:var(--subtle);line-height:var(--lh-body)}
+.br-sperr{margin:var(--s-4) var(--page-x) 0;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
+.br-sperr-titel{font-size:var(--t-lg);font-weight:var(--fw-sb);letter-spacing:-.02em}
+.br-sperr-sub{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:6px}
+.br-vorschau-zeile{display:flex;gap:11px;padding:12px 16px;border-bottom:1px solid var(--border)}
+.br-vorschau-zeile:last-child{border-bottom:0}
 </style>
 </head>
 <body>
@@ -1033,6 +1097,10 @@ a.news-quelle:hover{color:var(--text)}
       <a class="sidebar-item" data-route="analytics" href="#/analytics">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Analyse
+      </a>
+      <a class="sidebar-item" data-route="brandready" href="#/brandready">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.26 6.6.72-4.9 4.6 1.3 6.42L12 16.9 6.1 20l1.3-6.42L2.5 8.98l6.6-.72z"/></svg>
+        Brand Ready
       </a>
 
       <div class="sidebar-section">Konto</div>
@@ -1269,6 +1337,7 @@ const ROUTES = {
   onboarding: { title: 'Setup',        render: renderOnboarding, chromeless: true },
   dashboard:  { title: 'Dashboard',    render: renderDashboard },
   analytics:  { title: 'Analyse',      render: renderAnalytics },
+  brandready: { title: 'Brand Ready',  render: renderBrandReady },
   biolink:    { title: 'BioLink',      render: renderBiolink },
   mediakit:   { title: 'Media Kit',    render: renderMediakit },
   digest:     { title: 'Creator News', render: renderDigest },
@@ -2020,6 +2089,9 @@ async function renderDashboard(area, ctx) {
      auf dem Kaufbutton -- der Weg dahin versprach implizit etwas Kostenloses. */
   if(!hasAnalyse) setup.push({icon:'barChart',href:'#/analytics',title:'Analyse starten',sub:'Was deine Top-Posts verbindet — 9,99 € je Kanal'})
   if(!mkActive)   setup.push({icon:'fileText',href:'#/mediakit',title:'Media Kit erstellen',sub:'Reichweite und Zahlen für Marken'})
+  /* Der Brand-Ready-Check gehoert hierher, sobald es Daten fuer ihn gibt --
+     ohne Analyse hat er nichts zu rechnen und waere ein Link ins Leere. */
+  if(hasAnalyse)  setup.push({icon:'star',href:'#/brandready',title:'Brand-Ready-Check ansehen',sub:'Wie eine Marke deinen Kanal heute sieht'})
 
   document.getElementById('skeleton-area').classList.add('hidden')
   const content=document.getElementById('dashboard-content')
@@ -5125,6 +5197,17 @@ function renderAnalyticsContent(){
     </div>`
   }
 
+  /* Der Brand-Ready-Check rechnet auf genau diesen Zahlen weiter. Er steht
+     deshalb hier, am Ende der Analyse, und nicht nur im Menue. */
+  h+=`<div class="c-teilen">
+    <h2>Brand Ready</h2>
+    <p class="c-lede">Derselbe Datenstand, aus Sicht einer Marke: 16 Kriterien als Punktestand,
+      und die drei Dinge, die dich am meisten zurückhalten.</p>
+    <div class="c-teilen-knoepfe">
+      <button class="c-btn" onclick="navigate('#/brandready')">Brand-Ready-Check ansehen</button>
+    </div>
+  </div>`
+
   h+='</div>'
   el.innerHTML=h
 }
@@ -6400,6 +6483,710 @@ function pfPfadAusUrl(url, uid){
   if(!m)return null
   const pfad=decodeURIComponent(m[1].split('?')[0])
   return pfad.startsWith(uid+'/') ? pfad : null
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   VIEW: BRAND READY
+   ═════════════════════════════════════════════════════════════════
+   Was eine Marke sieht, wenn sie diesen Kanal prueft -- als Punktestand,
+   den der Creator nachrechnen kann.
+
+   Zwei Grundsaetze, die den ganzen Aufbau tragen:
+
+   1) ZAHLEN UND URTEILE IN CODE. Kein Modell-Aufruf, nirgends. Jeder Satz
+      auf der Seite ist eine Vorlage mit eingesetzten Zahlen. Das ist
+      dieselbe Arbeitsteilung, die befunde.ts in der Analyse-Pipeline
+      festhaelt -- ein Score, den man nicht nachrechnen kann, ist wertlos.
+
+   2) DER CHECK MISST NICHT, WIE VIEL VIUNO JEMAND NUTZT. Wer sein
+      Impressum auf der eigenen Website hat, ein Canva-Media-Kit pflegt
+      und Linktree benutzt, ist genauso bereit wie jemand mit viuno-BioLink
+      und viuno-Kit -- und bekommt dieselbe Punktzahl. Deshalb hat jedes
+      Ausstattungs-Kriterium drei Wege: automatisch aus viuno erkannt,
+      vom Creator selbst angegeben (gleich viele Punkte, als "eigene
+      Angabe" gekennzeichnet, nicht geprueft), oder unbeantwortet.
+
+   UNBEANTWORTET HEISST NICHT NULL. Was der Check nicht weiss, faellt aus
+   dem Maximum statt Punkte zu kosten. Sonst wuerde die Seite einem
+   Creator Dinge vorwerfen, die er laengst hat. Der Kopf nennt deshalb die
+   Zahl der offenen Kriterien: ohne diesen Hinweis liest sich eine gute
+   Quote aus lauter Nichtwissen wie ein gutes Ergebnis.
+
+   Gerechnet wird bei jedem Seitenaufruf neu, im Browser. Es gibt bewusst
+   keine Ergebnistabelle und keine Edge Function: alle Zeilen liest der
+   eingeloggte Nutzer ohnehin per RLS, und was nicht gespeichert wird,
+   kann nicht veralten. brBerechnen() ist deshalb eine REINE Funktion --
+   kein DOM, kein sb, kein window. Sobald es einen zweiten Verbraucher
+   gibt (Wochenbericht, Mail), wandert sie unveraendert in eine Function.
+   ───────────────────────────────────────────── */
+
+let brv = null
+
+/* Baustein 1 je Kriterium: warum das aus Markensicht zaehlt. Steht nur in
+   den drei Zurueckhalte-Bloecken -- 16-mal eine Begruendung waere eine Wand. */
+const BR_WARUM = {
+  engagement:   'Die Interaktionsrate ist die erste Zahl, die eine Marke prüft — sie sagt mehr über einen Kanal als die Followerzahl.',
+  kommentare:   'Kommentare lassen sich schwerer kaufen als Likes. Ein reiner Like-Kanal wirkt auf Marken unecht.',
+  frequenz:     'Eine Marke plant Kampagnen mit Vorlauf. Wer unregelmäßig postet, ist schwer einzuplanen.',
+  verlauf:      'Marken buchen lieber Kanäle, die wachsen, als Kanäle, die schrumpfen.',
+  account_typ:  'Ein Profi-Konto zeigt Marken eine Kategorie und ein Kontaktfeld direkt im Profil.',
+  bio:          'Die Bio ist der erste Satz, den eine Marke über dich liest. Steht dort kein Thema, muss sie raten.',
+  kennzeichnung:'Werbung muss als Werbung erkennbar sein — wer das kann, gilt als professionell.',
+  biolink:      'Eine Marke will einen Ort, an dem alles steht. Ein Link in der Bio ist dieser Ort.',
+  impressum:    'Eine gewerbliche Seite ohne Impressum ist in Deutschland abmahnbar (§ 5 DDG) — Marken wollen keinen Partner mit offenem Rechtsrisiko.',
+  kontakt:      'Findet eine Marke keinen Kontaktweg, schreibt sie den nächsten Creator an.',
+  kit_vorhanden:'Das Media Kit ist das Dokument, das fast jede Marke als Erstes anfordert.',
+  kit_aktuell:  'Veraltete Zahlen im Kit fallen sofort auf und kosten Vertrauen.',
+  kit_preise:   'Marken fragen zuerst nach dem Preis. Ohne Angabe schreiben viele gar nicht erst.',
+  referenzen:   'Bisherige Kooperationen sind der Beweis, dass du liefern kannst.',
+  demografie:   'Eine Marke bucht eine Zielgruppe, nicht eine Followerzahl.',
+  rechnung:     'Ohne Rechnung kann ein Unternehmen dich nicht bezahlen — bei vielen Kooperationen ist das die erste Frage.'
+}
+
+/* Hashtag-Formen brauchen das #, die blanken deutschen Woerter eine
+   Wortgrenze. Ein blankes \bad\b waere ein Fehler: "ad esempio" steht in
+   jeder zweiten italienischen Caption und haette jede davon als
+   gekennzeichnete Werbung gezaehlt. */
+const BR_KENNZ_RE = /#(werbung|anzeige|ad|adv|sponsored|gifted|paidpartnership)\b|\b(werbung|anzeige)\b|bezahlte partnerschaft|pubblicit/i
+const BR_MAIL_RE  = /[\w.+-]+@[\w-]+\.[\w.]+/
+
+function brZahlDe(n, d = 1) {
+  if (n == null || isNaN(Number(n))) return '–'
+  return Number(n).toLocaleString('de-DE', { minimumFractionDigits: d, maximumFractionDigits: d })
+}
+function brGanz(n) {
+  return (n == null || isNaN(Number(n))) ? '–' : Number(n).toLocaleString('de-DE')
+}
+function brDatum(s) {
+  return s ? new Date(s).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '–'
+}
+function brStatus(p, max) {
+  if (p == null) return 'nicht_bewertbar'
+  if (p >= max)  return 'erfuellt'
+  if (p <= 0)    return 'offen'
+  return 'teilweise'
+}
+function brK(o) {
+  return Object.assign({
+    id: '', gruppe: 'Gemessen', name: '', punkte: null, max: 0,
+    status: 'nicht_bewertbar', quelle: 'keine', satz: '', warum: '',
+    tun: null, knopf: null, frage: null, lern_link: null
+  }, o)
+}
+
+/* Ausstattungs-Kriterium mit drei Wegen. `viuno` ist gesetzt, wenn das
+   viuno-Feature in Betrieb ist -- dann ist SEIN Inhalt die Wahrheit und die
+   Frage wird nicht gestellt. Ein aktives Kit ohne Preise ist also "offen"
+   mit Weg in die App, nicht die Frage "Stehen Preise in deinem Kit?". */
+function brAusstattung(id, name, max, viuno, ang, t) {
+  if (viuno) {
+    return brK({ id, gruppe: 'Ausstattung', name, max, punkte: viuno.punkte,
+      status: brStatus(viuno.punkte, max), quelle: 'viuno', satz: viuno.satz,
+      warum: BR_WARUM[id], tun: viuno.punkte < max ? t.tun : null, knopf: t.knopf || null })
+  }
+  const w = ang ? ang.wert : null
+  if (w === true) {
+    return brK({ id, gruppe: 'Ausstattung', name, max, punkte: max, status: 'erfuellt',
+      quelle: 'eigene_angabe', satz: t.ja, warum: BR_WARUM[id], knopf: t.knopf || null })
+  }
+  if (w === false) {
+    return brK({ id, gruppe: 'Ausstattung', name, max, punkte: 0, status: 'offen',
+      quelle: 'eigene_angabe', satz: t.nein, warum: BR_WARUM[id], tun: t.tun, knopf: t.knopf || null })
+  }
+  return brK({ id, gruppe: 'Ausstattung', name, max, punkte: null, status: 'nicht_bewertbar',
+    quelle: 'keine', satz: 'Noch nicht beantwortet — die Frage steht oben.',
+    warum: BR_WARUM[id], knopf: t.knopf || null,
+    frage: { id, text: t.frage, hint: t.hint || '', typ: 'jn' } })
+}
+
+/* ─────────────────────────────────────────────
+   Die Rechnung. REINE FUNKTION -- nichts hier greift auf DOM, sb oder
+   window zu. 100 Punkte: 50 gemessen, 50 Ausstattung.
+   ───────────────────────────────────────────── */
+function brBerechnen(d) {
+  const s   = d.stats || {}
+  const p   = d.profil || {}
+  const bl  = d.bl || {}
+  const mk  = d.mk || {}
+  const ang = d.angaben || {}
+  const k   = []
+
+  /* ═══ SORTE 1 — GEMESSEN (50) ═══════════════════════════════════ */
+
+  // engagement (12) — Benchmark nach Groessenklasse (HypeAuditor)
+  const foll = s.followers == null ? null : Number(s.followers)
+  const er   = s.engagement_rate == null ? null : Number(s.engagement_rate)
+  if (er == null || foll == null) {
+    k.push(brK({ id: 'engagement', name: 'Engagement', max: 12, warum: BR_WARUM.engagement,
+      satz: 'Für diesen Kanal liegen keine Engagement-Zahlen vor.' }))
+  } else {
+    const bm = foll < 10000 ? [2.5, 4.0] : foll < 100000 ? [1.5, 3.0] : [1.0, 2.0]
+    const pk = er >= bm[1] ? 12 : er >= bm[0] ? 6 : 0
+    k.push(brK({ id: 'engagement', name: 'Engagement', max: 12, punkte: pk, quelle: 'gemessen',
+      status: brStatus(pk, 12), warum: BR_WARUM.engagement,
+      satz: `${brZahlDe(er, 2)} % Engagement bei ${brGanz(foll)} Followern. Marken erwarten in dieser Größe ${brZahlDe(bm[0], 1)}–${brZahlDe(bm[1], 1)} %.`,
+      tun: pk < 12 ? { art: 'route', label: 'Zur Analyse', route: '#/analytics' } : null }))
+  }
+
+  // kommentare (8) — Echtheitssignal: reine Like-Kanaele wirken gekauft
+  const al = s.avg_likes == null ? null : Number(s.avg_likes)
+  const ac = s.avg_comments == null ? null : Number(s.avg_comments)
+  if (al == null || ac == null || al === 0) {
+    k.push(brK({ id: 'kommentare', name: 'Kommentare', max: 8, warum: BR_WARUM.kommentare,
+      satz: 'Für diesen Kanal liegen keine Likes vor, gegen die sich Kommentare rechnen lassen.' }))
+  } else {
+    const q  = ac / al
+    const pk = q >= 0.05 ? 8 : q >= 0.02 ? 4 : 0
+    k.push(brK({ id: 'kommentare', name: 'Kommentare', max: 8, punkte: pk, quelle: 'gemessen',
+      status: brStatus(pk, 8), warum: BR_WARUM.kommentare,
+      satz: `${brZahlDe(ac, 1)} Kommentare auf ${brZahlDe(al, 1)} Likes je Beitrag — ${brZahlDe(q * 100, 1)} %.`,
+      tun: pk < 8 ? { art: 'route', label: 'Zur Analyse', route: '#/analytics' } : null }))
+  }
+
+  // frequenz (7)
+  const ppw = s.posts_per_week == null ? null : Number(s.posts_per_week)
+  if (ppw == null) {
+    k.push(brK({ id: 'frequenz', name: 'Frequenz', max: 7, warum: BR_WARUM.frequenz,
+      satz: 'Für diesen Kanal wurde keine Veröffentlichungsdichte erfasst.' }))
+  } else {
+    const pk = ppw >= 2 ? 7 : ppw >= 1 ? 4 : 0
+    k.push(brK({ id: 'frequenz', name: 'Frequenz', max: 7, punkte: pk, quelle: 'gemessen',
+      status: brStatus(pk, 7), warum: BR_WARUM.frequenz,
+      satz: `${brZahlDe(ppw, 1)} Beiträge pro Woche.`,
+      tun: pk < 7 ? { art: 'text', label: 'Ab zwei Beiträgen pro Woche gilt ein Kanal als planbar.' } : null }))
+  }
+
+  /* verlauf (6) — nur mit Vorlauf UND ohne Handle-Wechsel. Der Wechsel
+     wird in analyse_stats erkannt; ohne diese Pruefung stuende hier
+     "-9.288 Follower", weil zwei verschiedene Konten verglichen wuerden. */
+  const fprev = s.followers_prev == null ? null : Number(s.followers_prev)
+  if (fprev == null || s.handle_changed) {
+    k.push(brK({ id: 'verlauf', name: 'Verlauf', max: 6, warum: BR_WARUM.verlauf,
+      satz: s.handle_changed
+        ? 'Dein Handle hat sich seit der letzten Analyse geändert — die alten Zahlen sind nicht mehr vergleichbar.'
+        : 'Es gibt erst eine Messung. Mit deiner nächsten Analyse steht hier die Entwicklung.' }))
+  } else {
+    const delta = foll - fprev
+    const pk = delta >= 0 ? 6 : 3
+    k.push(brK({ id: 'verlauf', name: 'Verlauf', max: 6, punkte: pk, quelle: 'gemessen',
+      status: brStatus(pk, 6), warum: BR_WARUM.verlauf,
+      satz: `${brGanz(fprev)} → ${brGanz(foll)} Follower seit deiner letzten Analyse${d.statsPrev && d.statsPrev.created_at ? ' vom ' + brDatum(d.statsPrev.created_at) : ''}.` }))
+  }
+
+  /* account_typ (4) — raw_profile ist beschnitten und enthaelt NUR
+     businessCategory (kein isBusinessAccount). Fehlt die Kategorie, wird
+     das NICHT als "privates Konto" ausgelegt: das waere eine Behauptung
+     ueber das Konto, erzeugt aus einem fehlenden Scraper-Feld. */
+  const kat = s.raw_profile && s.raw_profile.businessCategory ? String(s.raw_profile.businessCategory) : null
+  if (kat) {
+    k.push(brK({ id: 'account_typ', name: 'Kontoart', max: 4, punkte: 4, quelle: 'gemessen',
+      status: 'erfuellt', warum: BR_WARUM.account_typ, satz: `Dein Konto ist als „${kat}“ eingerichtet.` }))
+  } else {
+    k.push(brK({ id: 'account_typ', name: 'Kontoart', max: 4, warum: BR_WARUM.account_typ,
+      satz: d.platform === 'tiktok'
+        ? 'TikTok liefert keine Kontokategorie — dieses Kriterium lässt sich hier nicht prüfen.'
+        : 'Instagram hat zu diesem Konto keine Kategorie geliefert.' }))
+  }
+
+  /* bio (7) — die KANAL-Bio aus analyse_stats, nicht users.bio. users.bio
+     ist der Text der viuno-BioLink-Seite; eine Marke liest die Bio im
+     Profil. Fallback nur, wenn der Scraper nichts geliefert hat. */
+  const bioTxt = (s.bio && s.bio.trim()) ? s.bio : (p.bio || '')
+  const bioLow = bioTxt.toLowerCase()
+  const treffer = (d.keywords || []).filter(w => w && bioLow.includes(w))
+  const eigenes = (p.niche_custom || '').trim().toLowerCase()
+  const thema = treffer.length > 0 || (eigenes.length >= 3 && bioLow.includes(eigenes))
+  /* Zeichen, nicht UTF-16-Einheiten: eine Bio aus zwanzig Emoji haette
+     sonst "40 Zeichen" und damit die Schwelle genommen. */
+  const bioLen = [...bioTxt.trim()].length
+  const lang = bioLen >= 40
+  const bioPk = (lang && thema) ? 7 : (lang || thema) ? 4 : 0
+  k.push(brK({ id: 'bio', name: 'Bio', max: 7, punkte: bioTxt ? bioPk : null,
+    quelle: bioTxt ? 'gemessen' : 'keine', status: bioTxt ? brStatus(bioPk, 7) : 'nicht_bewertbar',
+    warum: BR_WARUM.bio,
+    satz: !bioTxt ? 'Für diesen Kanal wurde keine Bio erfasst.'
+      : `Deine Kanal-Bio hat ${bioLen} Zeichen und nennt ${thema ? '„' + (treffer[0] || eigenes) + '“ als Thema' : 'kein Thema deiner Nische'}.`,
+    tun: (bioTxt && bioPk < 7) ? { art: 'text', label: thema
+      ? 'Unter 40 Zeichen bleibt für eine Marke zu wenig übrig. Die Bio änderst du direkt in deinem Kanal.'
+      : 'Nimm ein Wort auf, das dein Thema benennt. Die Bio änderst du direkt in deinem Kanal.' } : null }))
+
+  /* kennzeichnung (6) — Treffer geben Punkte, kein Treffer kostet KEINE.
+     Ueber alle bisher gespeicherten Beitraege im System gibt es null
+     Treffer; niemand hat bisher eine gekennzeichnete Kooperation gepostet.
+     Daraus einen Abzug zu machen hiesse, Unwissen als Mangel zu werten. */
+  const posts = d.posts || []
+  const mitK  = posts.filter(x => BR_KENNZ_RE.test(x.caption || '')).length
+  if (!posts.length) {
+    k.push(brK({ id: 'kennzeichnung', name: 'Werbekennzeichnung', max: 6, warum: BR_WARUM.kennzeichnung,
+      satz: 'Für diesen Kanal liegen keine Beiträge vor.' }))
+  } else if (mitK > 0) {
+    k.push(brK({ id: 'kennzeichnung', name: 'Werbekennzeichnung', max: 6, punkte: 6, quelle: 'gemessen',
+      status: 'erfuellt', warum: BR_WARUM.kennzeichnung,
+      satz: `In ${mitK} von ${posts.length} Beiträgen kennzeichnest du Werbung.` }))
+  } else {
+    k.push(brK({ id: 'kennzeichnung', name: 'Werbekennzeichnung', max: 6, warum: BR_WARUM.kennzeichnung,
+      satz: `In deinen letzten ${posts.length} Beiträgen ist keine gekennzeichnete Kooperation zu finden. Sobald du eine postest, zählt das hier.` }))
+  }
+
+  /* ═══ SORTE 2 — AUSSTATTUNG (50) ════════════════════════════════ */
+
+  const zumBio = { label: 'Zum BioLink', route: '#/biolink' }
+  const zumKit = { label: 'Zum Media Kit', route: '#/mediakit' }
+
+  // biolink (6)
+  k.push(brAusstattung('biolink', 'Link-in-Bio-Seite', 6,
+    (p.bio_active || bl.is_active) ? { punkte: 6, satz: 'Deine BioLink-Seite ist online.' } : null,
+    ang.biolink, {
+      frage: 'Hast du eine Link-in-Bio-Seite?', hint: 'viuno, Linktree, eigene Website …',
+      ja: 'Du hast angegeben, dass du eine Link-in-Bio-Seite hast.',
+      nein: 'Du hast angegeben, keine Link-in-Bio-Seite zu haben.',
+      tun: { art: 'route', label: 'BioLink-Seite erstellen', route: '#/biolink' }, knopf: zumBio }))
+
+  /* impressum (8) — ein Text, der kein Impressum ist, schuetzt vor nichts.
+     Steht in viuno etwas, aber zu wenig, ist das "offen" mit Weg in die
+     App -- NICHT die Frage nach einem Impressum anderswo: ein Ja darauf
+     wuerde volle Punkte geben, waehrend in viuno eine kaputte Seite
+     online steht. */
+  const impTxt = ((p.impressum_text || '').length >= (bl.impressum_text || '').length
+    ? (p.impressum_text || '') : (bl.impressum_text || '')).trim()
+  const impOk  = impTxt.length >= 50 && /[0-9]/.test(impTxt)
+  k.push(brAusstattung('impressum', 'Impressum', 8,
+    impTxt ? (impOk
+      ? { punkte: 8, satz: `Impressum hinterlegt, ${impTxt.length} Zeichen.` }
+      : { punkte: 0, satz: `In viuno steht ein Impressum mit ${impTxt.length} Zeichen — das ist zu kurz für eine vollständige Anbieterkennzeichnung.` }) : null,
+    ang.impressum, {
+      frage: 'Ist auf deiner Link-Seite oder Website ein Impressum erreichbar?', hint: '',
+      ja: 'Du hast angegeben, dass dein Impressum erreichbar ist.',
+      nein: 'Du hast angegeben, dass kein Impressum erreichbar ist.',
+      tun: { art: 'route', label: 'Impressum hinterlegen', route: '#/biolink' } }))
+
+  // kontakt (7) — zaehlt auch, wenn die Adresse nur in der Kanal-Bio steht
+  const mailInBio = BR_MAIL_RE.test(bioTxt)
+  const mail = (p.contact_email || '').trim()
+  k.push(brAusstattung('kontakt', 'Kontaktweg', 7,
+    (mail || mailInBio) ? { punkte: 7, satz: mail && mailInBio
+        ? `${mail} — hinterlegt in viuno, und in deiner Kanal-Bio steht ebenfalls eine Adresse.`
+        : mail ? `${mail} — in viuno hinterlegt.`
+        : 'In deiner Kanal-Bio steht eine E-Mail-Adresse.' } : null,
+    ang.kontakt, {
+      frage: 'Steht eine Kontakt-E-Mail in deiner Kanal-Bio oder auf deiner Link-Seite?', hint: '',
+      ja: 'Du hast angegeben, dass eine Kontakt-E-Mail auffindbar ist.',
+      nein: 'Du hast angegeben, dass keine Kontakt-E-Mail auffindbar ist.',
+      tun: { art: 'route', label: 'Kontakt-E-Mail hinterlegen', route: '#/biolink' } }))
+
+  // kit_vorhanden (5)
+  const kitViuno  = p.mediakit_active === true
+  const kitAngabe = ang.kit_vorhanden ? ang.kit_vorhanden.wert : null
+  const kitDa     = kitViuno || kitAngabe === true
+  const kitNein   = !kitViuno && kitAngabe === false
+  k.push(brAusstattung('kit_vorhanden', 'Media Kit', 5,
+    kitViuno ? { punkte: 5, satz: 'Dein Media Kit ist öffentlich erreichbar.' } : null,
+    ang.kit_vorhanden, {
+      frage: 'Hast du ein Media Kit?', hint: 'PDF, Canva, Notion …',
+      ja: 'Du hast angegeben, dass du ein Media Kit hast.',
+      nein: 'Du hast angegeben, kein Media Kit zu haben.',
+      tun: { art: 'route', label: 'Media Kit erstellen', route: '#/mediakit' }, knopf: zumKit }))
+
+  /* Die drei Kit-INHALTS-Kriterien haengen am Kit: ohne Kit gibt es nichts,
+     das aktuell sein, Preise tragen oder eine Zielgruppe nennen koennte.
+     `referenzen` haengt bewusst NICHT daran -- bezahlte Kooperationen
+     existieren unabhaengig davon, ob jemand ein Kit pflegt. */
+  const kitInhalt = (id, name, max, viuno, t) => {
+    if (kitNein) {
+      return brK({ id, gruppe: 'Ausstattung', name, max, punkte: 0, status: 'offen',
+        quelle: 'eigene_angabe', satz: t.ohneKit, warum: BR_WARUM[id],
+        tun: { art: 'route', label: 'Media Kit erstellen', route: '#/mediakit' } })
+    }
+    if (!kitDa) {
+      return brK({ id, gruppe: 'Ausstattung', name, max, warum: BR_WARUM[id],
+        satz: 'Noch nicht beantwortet — die Frage steht oben.',
+        frage: { id, text: t.frage, hint: t.hint || '', typ: 'jn' } })
+    }
+    return brAusstattung(id, name, max, kitViuno ? viuno : null, d.angaben[id], t)
+  }
+
+  // kit_aktuell (5) — Logik aus getAnalysisDrift(), hier mit Stichtag
+  const kitFoll = d.platform === 'tiktok' ? mk.followers_tiktok : mk.followers_instagram
+  let kaViuno = null
+  if (kitViuno) {
+    if (kitFoll == null || !foll) {
+      kaViuno = { punkte: 0, satz: `Für ${d.platform === 'tiktok' ? 'TikTok' : 'Instagram'} stehen keine Followerzahlen in deinem Media Kit.` }
+    } else {
+      const abw   = Math.abs(foll - Number(kitFoll)) / Number(kitFoll)
+      const jung  = s.created_at && (Date.now() - new Date(s.created_at).getTime()) < 60 * 864e5
+      const pk    = (abw <= 0.2 && jung) ? 5 : (abw <= 0.2 || jung) ? 3 : 0
+      kaViuno = { punkte: pk, satz: `Im Kit stehen ${brGanz(kitFoll)} Follower, gemessen sind ${brGanz(foll)} — ${brZahlDe(abw * 100, 0)} % Abweichung. Analyse vom ${brDatum(s.created_at)}.` }
+    }
+  }
+  k.push(kitInhalt('kit_aktuell', 'Zahlen im Kit aktuell', 5, kaViuno, {
+    ohneKit: 'Ohne Media Kit gibt es keine Zahlen, die aktuell sein könnten.',
+    frage: 'Sind die Zahlen in deinem Kit jünger als zwei Monate?', hint: '',
+    ja: 'Du hast angegeben, dass die Zahlen in deinem Kit aktuell sind.',
+    nein: 'Du hast angegeben, dass die Zahlen in deinem Kit älter sind.',
+    tun: { art: 'route', label: 'Zahlen im Kit aktualisieren', route: '#/mediakit' } }))
+
+  // kit_preise (6)
+  const nOffers = d.offers || 0
+  const nPreise = d.preise || 0
+  const kpViuno = kitViuno ? (nPreise > 0
+    ? { punkte: 6, satz: `${nPreise} von ${nOffers} Angeboten in deinem Kit haben einen Preis.` }
+    : nOffers > 0
+      ? { punkte: 3, satz: `${nOffers} Angebote im Kit, keines mit Preis.` }
+      : { punkte: 0, satz: 'In deinem Kit steht kein Angebot mit Preis.' }) : null
+  k.push(kitInhalt('kit_preise', 'Preise im Kit', 6, kpViuno, {
+    ohneKit: 'Ohne Media Kit gibt es keinen Ort, an dem Preise stehen könnten.',
+    frage: 'Stehen Preise oder Preisspannen in deinem Kit?', hint: '',
+    ja: 'Du hast angegeben, dass Preise in deinem Kit stehen.',
+    nein: 'Du hast angegeben, dass keine Preise in deinem Kit stehen.',
+    tun: { art: 'route', label: 'Preise eintragen', route: '#/mediakit' } }))
+
+  /* referenzen (5) — zwei Quellen, der hoehere Wert zaehlt. Wer keine
+     Marken im Kit hat, aber drei bezahlte Kooperationen angibt, hat drei. */
+  const nBrands = d.brands || 0
+  const zahl    = ang.referenzen && ang.referenzen.zahl != null ? Number(ang.referenzen.zahl) : null
+  const ausB    = kitViuno ? (nBrands >= 2 ? 5 : nBrands === 1 ? 3 : 0) : null
+  const ausZ    = zahl == null ? null : (zahl >= 2 ? 5 : zahl === 1 ? 3 : 0)
+  if (ausB == null && ausZ == null) {
+    k.push(brK({ id: 'referenzen', gruppe: 'Ausstattung', name: 'Referenzen', max: 5,
+      warum: BR_WARUM.referenzen, satz: 'Noch nicht beantwortet — die Frage steht oben.',
+      frage: { id: 'referenzen', text: 'Bezahlte Kooperationen bisher', hint: 'Anzahl', typ: 'zahl' } }))
+  } else {
+    const pk = Math.max(ausB == null ? -1 : ausB, ausZ == null ? -1 : ausZ)
+    const ausEigen = ausZ != null && ausZ >= (ausB == null ? -1 : ausB)
+    k.push(brK({ id: 'referenzen', gruppe: 'Ausstattung', name: 'Referenzen', max: 5, punkte: pk,
+      status: brStatus(pk, 5), quelle: ausEigen ? 'eigene_angabe' : 'viuno', warum: BR_WARUM.referenzen,
+      satz: ausEigen
+        ? `Du hast ${brGanz(zahl)} bezahlte ${zahl === 1 ? 'Kooperation' : 'Kooperationen'} angegeben.`
+        : nBrands > 0 ? `${brGanz(nBrands)} ${nBrands === 1 ? 'Marke' : 'Marken'} im Media Kit hinterlegt.`
+        : 'Keine Marke im Media Kit hinterlegt.',
+      tun: pk < 5 ? { art: 'route', label: 'Marken im Kit eintragen', route: '#/mediakit' } : null,
+      frage: zahl == null ? { id: 'referenzen', text: 'Bezahlte Kooperationen bisher', hint: 'Anzahl', typ: 'zahl' } : null }))
+  }
+
+  /* demografie (4) — bewusst niedrig gewichtet, und der Zusatz steht
+     immer dabei: eine selbst eingetippte Zielgruppe ist unverifizierbar. */
+  const demoOk = mk.gender_female_pct != null && mk.top_country_1
+  const dmViuno = kitViuno ? (demoOk
+    ? { punkte: 4, satz: `${brGanz(mk.gender_female_pct)} % weiblich, ${mk.top_country_1} als Top-Land. Eigenangabe — Marken werden einen Screenshot aus deinen Insights verlangen.` }
+    : { punkte: 0, satz: 'In deinem Kit stehen keine Angaben zur Zielgruppe.' }) : null
+  k.push(kitInhalt('demografie', 'Zielgruppe', 4, dmViuno, {
+    ohneKit: 'Ohne Media Kit gibt es keinen Ort, an dem deine Zielgruppe steht.',
+    frage: 'Stehen Alter, Geschlecht oder Land deiner Zielgruppe im Kit?', hint: '',
+    ja: 'Du hast angegeben, dass deine Zielgruppe im Kit steht. Eigenangabe — Marken werden einen Screenshot aus deinen Insights verlangen.',
+    nein: 'Du hast angegeben, dass keine Zielgruppen-Angaben im Kit stehen.',
+    tun: { art: 'route', label: 'Zielgruppe eintragen', route: '#/mediakit' } }))
+
+  // rechnung (4) — nie automatisch, immer Eigenangabe
+  k.push(brAusstattung('rechnung', 'Rechnung stellen', 4, null, ang.rechnung, {
+    frage: 'Kannst du eine Rechnung stellen?', hint: 'Gewerbe oder Kleinunternehmer',
+    ja: 'Du hast angegeben, dass du eine Rechnung stellen kannst.',
+    nein: 'Du hast angegeben, keine Rechnung stellen zu können.',
+    tun: { art: 'text', label: 'Für die meisten Creator ist die Kleinunternehmerregelung (§ 19 UStG) der Weg: Gewerbe anmelden, keine Umsatzsteuer ausweisen, solange du unter der Grenze bleibst. Das ist ein Formular beim Gewerbeamt.' } }))
+
+  /* nicht_bewertbar faellt aus dem Maximum -- es kostet keine Punkte. */
+  let punkte = 0, max = 0
+  for (const x of k) { if (x.punkte != null) { punkte += x.punkte; max += x.max } }
+  const fragen = k.filter(x => x.frage).map(x => x.frage)
+
+  return { kriterien: k, punkte, max, fragen, offen: k.filter(x => x.punkte == null).length }
+}
+
+/* ─────────────────────────────────────────────
+   Laden. Alles per RLS als der eingeloggte Nutzer -- kein Service Role,
+   keine Edge Function.
+   ───────────────────────────────────────────── */
+async function renderBrandReady(area, ctx) {
+  const uid = state.session.user.id
+
+  area.innerHTML = `
+  <div class="view-brandready">
+    <div class="page-header">
+      <div class="page-title">Brand Ready</div>
+      <div class="page-sub">Wie eine Marke deinen Kanal heute sieht.</div>
+    </div>
+    <div id="br-skeleton" style="padding:16px 20px 0;display:flex;flex-direction:column;gap:10px">
+      <div class="skeleton" style="height:104px;border-radius:16px"></div>
+      <div class="skeleton" style="height:180px;border-radius:16px"></div>
+    </div>
+    <div id="br-inhalt"></div>
+  </div>`
+
+  brv = { uid, ctx, kanal: null, daten: null, angaben: {} }
+  ctx.onCleanup(() => { brv = null })
+
+  const [statsQ, profilQ, blQ, mkQ, brandsQ, offersQ, preiseQ, angabenQ, nischeQ] = await Promise.all([
+    sb.from('analyse_stats').select('*').eq('user_id', uid).order('created_at', { ascending: false }),
+    sb.from('users').select('bio,contact_email,impressum_text,niche_category,niche_custom,bio_active,mediakit_active').eq('id', uid).single(),
+    sb.from('biolink_settings').select('is_active,impressum_text').eq('user_id', uid).maybeSingle(),
+    sb.from('mediakit_viuno').select('*').eq('user_id', uid).maybeSingle(),
+    sb.from('mediakit_brands').select('id', { count: 'exact', head: true }).eq('user_id', uid),
+    sb.from('mediakit_content_offers').select('offer_type').eq('user_id', uid),
+    sb.from('mediakit_preise').select('offer_type,preis_von').eq('user_id', uid),
+    sb.from('brand_ready_angaben').select('kriterium,wert,zahl').eq('user_id', uid),
+    sb.from('niche_mappings').select('keyword')
+  ])
+  if (ctx.stale) return
+
+  const alle = statsQ.data || []
+  /* Jüngste Zeile je Plattform. Bewusst ueber analyse_stats und nicht ueber
+     analysis_runs.platform: das Feld ist bei allen Laeufen vor der
+     Option-C-Umstellung NULL und deckt dort beide Plattformen ab. */
+  const neueste = []
+  for (const r of alle) if (!neueste.some(x => x.platform === r.platform)) neueste.push(r)
+
+  let posts = []
+  const runIds = [...new Set(neueste.map(r => r.analysis_run_id).filter(Boolean))]
+  if (runIds.length) {
+    const pq = await sb.from('apify_daten').select('analysis_run_id,platform,caption').in('analysis_run_id', runIds)
+    if (ctx.stale) return
+    posts = pq.data || []
+  }
+
+  const angaben = {}
+  for (const a of (angabenQ.data || [])) angaben[a.kriterium] = { wert: a.wert, zahl: a.zahl }
+
+  brv.daten = {
+    stats: neueste,
+    alleStats: alle,
+    profil: profilQ.data || {},
+    bl: blQ.data || {},
+    mk: mkQ.data || {},
+    brands: brandsQ.count || 0,
+    offers: (offersQ.data || []).length,
+    preise: (preiseQ.data || []).filter(x => x.preis_von != null).length,
+    posts,
+    keywords: (nischeQ.data || []).map(x => (x.keyword || '').toLowerCase()).filter(Boolean)
+  }
+  brv.angaben = angaben
+  brv.kanal = neueste.length ? neueste[0].platform : null
+
+  document.getElementById('br-skeleton').classList.add('hidden')
+  brZeichnen()
+}
+
+function brErgebnis() {
+  const d = brv.daten
+  const s = d.stats.find(x => x.platform === brv.kanal)
+  const prev = d.alleStats.filter(x => x.platform === brv.kanal)[1] || null
+  return brBerechnen({
+    platform: brv.kanal, stats: s, statsPrev: prev,
+    posts: d.posts.filter(x => x.analysis_run_id === s.analysis_run_id && x.platform === brv.kanal),
+    profil: d.profil, bl: d.bl, mk: d.mk,
+    brands: d.brands, offers: d.offers, preise: d.preise,
+    keywords: d.keywords, angaben: brv.angaben
+  })
+}
+
+const BR_SYM   = { erfuellt: '✓', teilweise: '◐', offen: '!', nicht_bewertbar: '–' }
+const BR_QUELLE = { viuno: 'über viuno', eigene_angabe: 'eigene Angabe', gemessen: 'gemessen', keine: '' }
+const BR_PLAT  = { instagram: 'Instagram', tiktok: 'TikTok' }
+
+function brZeichnen() {
+  const el = document.getElementById('br-inhalt')
+  if (!el) return
+  if (!brv.kanal) { el.innerHTML = brSperreHtml(); return }
+
+  const r    = brErgebnis()
+  const s    = brv.daten.stats.find(x => x.platform === brv.kanal)
+  const pct  = r.max > 0 ? Math.round(r.punkte / r.max * 100) : 0
+  const kan  = brv.daten.stats.map(x => x.platform)
+
+  /* Die drei mit dem groessten Punkteverlust. Nicht bewertbare zaehlen
+     nicht mit -- was der Check nicht weiss, haelt niemanden zurueck. */
+  const zurueck = r.kriterien
+    .filter(x => x.punkte != null && x.punkte < x.max)
+    .sort((a, b) => (b.max - b.punkte) - (a.max - a.punkte))
+    .slice(0, 3)
+
+  el.innerHTML = `
+    <div class="br-kopf">
+      <div class="br-punkte"><b>${r.punkte} / ${r.max}</b><span>bewertbaren Punkten</span></div>
+      <div class="br-spur"><div style="width:${pct}%"></div></div>
+      <div class="br-kopf-meta">
+        <span>Analyse vom ${brDatum(s.created_at)}</span>
+        ${r.offen ? `<span class="br-offen">${r.offen} ${r.offen === 1 ? 'Kriterium' : 'Kriterien'} ohne Wertung</span>` : ''}
+      </div>
+    </div>
+
+    ${kan.length > 1 ? `<div class="br-tabs">${kan.map(pf =>
+      `<button class="br-tab${pf === brv.kanal ? ' aktiv' : ''}" onclick="brKanal('${pf}')">${BR_PLAT[pf] || pf}</button>`).join('')}</div>` : ''}
+
+    ${brFragenHtml(r)}
+    ${brZurueckHtml(zurueck)}
+    ${brListeHtml(r)}
+
+    <div class="br-fuss">
+      Punkte aus deinen Analyse-Daten vom ${brDatum(s.created_at)}. Angaben, die du selbst gemacht hast,
+      sind gekennzeichnet und nicht geprüft. Kriterien, zu denen keine Daten vorliegen, fallen aus der
+      Wertung — sie kosten dich keine Punkte. Benchmarks: HypeAuditor-Engagement-Daten nach Kanalgröße.
+    </div>`
+}
+
+function brFragenHtml(r) {
+  const offen = r.fragen
+  const fertig = r.kriterien.filter(x => x.quelle === 'eigene_angabe' && !x.frage)
+  if (!offen.length && !fertig.length) return ''
+
+  const zeile = (id, text, hint, typ, wert, zahl) => `
+    <div class="br-frage">
+      <div class="br-frage-text">${escHtml(text)}${hint ? `<i>${escHtml(hint)}</i>` : ''}</div>
+      ${typ === 'zahl'
+        ? `<input class="br-zahl" type="number" min="0" step="1" inputmode="numeric" placeholder="–"
+             value="${zahl == null ? '' : zahl}" onchange="brZahlSpeichern('${id}', this)">`
+        : `<div class="br-wahl">
+             <button type="button" class="${wert === true ? 'ja-an' : ''}" onclick="brAntwort('${id}', true)">Ja</button>
+             <button type="button" class="${wert === false ? 'nein-an' : ''}" onclick="brAntwort('${id}', false)">Nein</button>
+           </div>`}
+    </div>`
+
+  const a = brv.angaben
+  return `
+  <div class="section">
+    <div class="section-label">${offen.length ? 'Offene Fragen' : 'Deine Angaben'}</div>
+    <div class="br-frage-karte">
+      <div class="br-frage-kopf">
+        <div class="br-frage-titel">${offen.length
+          ? offen.length + ' Frage' + (offen.length > 1 ? 'n' : '') + ', die viuno nicht messen kann'
+          : 'Deine Angaben'}</div>
+        <div class="br-frage-sub">Diese Dinge sieht viuno nicht von außen. Was du hier angibst, zählt
+          genauso viel wie ein Eintrag in viuno — es wird als eigene Angabe gekennzeichnet und nicht geprüft.</div>
+      </div>
+      ${offen.map(f => zeile(f.id, f.text, f.hint, f.typ,
+          a[f.id] ? a[f.id].wert : null, a[f.id] ? a[f.id].zahl : null)).join('')}
+      ${fertig.map(x => zeile(x.id,
+          (BR_FRAGE_TEXT[x.id] || x.name), '', x.id === 'referenzen' ? 'zahl' : 'jn',
+          a[x.id] ? a[x.id].wert : null, a[x.id] ? a[x.id].zahl : null)).join('')}
+    </div>
+  </div>`
+}
+
+/* Fuer bereits beantwortete Kriterien braucht die Zeile den Fragetext
+   wieder -- er steht sonst nur im Zweig, der die Frage erzeugt hat. */
+const BR_FRAGE_TEXT = {
+  biolink: 'Hast du eine Link-in-Bio-Seite?',
+  impressum: 'Ist auf deiner Link-Seite oder Website ein Impressum erreichbar?',
+  kontakt: 'Steht eine Kontakt-E-Mail in deiner Kanal-Bio oder auf deiner Link-Seite?',
+  kit_vorhanden: 'Hast du ein Media Kit?',
+  kit_aktuell: 'Sind die Zahlen in deinem Kit jünger als zwei Monate?',
+  kit_preise: 'Stehen Preise oder Preisspannen in deinem Kit?',
+  referenzen: 'Bezahlte Kooperationen bisher',
+  demografie: 'Stehen Alter, Geschlecht oder Land deiner Zielgruppe im Kit?',
+  rechnung: 'Kannst du eine Rechnung stellen?'
+}
+
+function brZurueckHtml(liste) {
+  if (!liste.length) return ''
+  return `
+  <div class="section">
+    <div class="section-label">Was dich am meisten zurückhält</div>
+    ${liste.map(b => `
+      <div class="br-block">
+        <div class="br-block-kopf">
+          <div class="br-block-name">${escHtml(b.name)}</div>
+          <div class="br-block-verlust">−${b.max - b.punkte} Punkte</div>
+        </div>
+        <div class="br-warum">${escHtml(b.warum)}</div>
+        <div class="br-stand">${escHtml(b.satz)}</div>
+        ${!b.tun ? '' : b.tun.art === 'route'
+          ? `<div class="br-tun"><a class="br-tun-btn" href="${b.tun.route}">${escHtml(b.tun.label)} →</a></div>`
+          : `<div class="br-tun-txt">${escHtml(b.tun.label)}</div>`}
+      </div>`).join('')}
+  </div>`
+}
+
+function brListeHtml(r) {
+  let html = '', letzte = null
+  for (const x of r.kriterien) {
+    if (x.gruppe !== letzte) { html += `<div class="br-gruppe">${escHtml(x.gruppe)}</div>`; letzte = x.gruppe }
+    const nb = x.punkte == null
+    html += `
+      <div class="br-zeile">
+        <div class="br-sym ${x.status}">${BR_SYM[x.status]}</div>
+        <div class="br-zeile-koerper">
+          <div class="br-zeile-kopf">
+            <div class="br-zeile-name">${escHtml(x.name)}</div>
+            <div class="br-zeile-p${nb ? ' grau' : ''}">${nb ? '– / ' + x.max : x.punkte + ' / ' + x.max}</div>
+          </div>
+          <div class="br-zeile-satz">${escHtml(x.satz)}</div>
+          ${BR_QUELLE[x.quelle] ? `<span class="br-badge ${x.quelle}">${BR_QUELLE[x.quelle]}</span>` : ''}
+          ${x.knopf ? `<div><a class="br-zeile-knopf" href="${x.knopf.route}">${escHtml(x.knopf.label)} ${icon('chevronRight', 14)}</a></div>` : ''}
+        </div>
+      </div>`
+  }
+  return `<div class="section"><div class="section-label">Alle Kriterien</div><div class="br-liste">${html}</div></div>`
+}
+
+/* Ohne Analyse: Titel und Begruendung je Kriterium, keine Punkte. Der
+   Check ist Teil des Kaufprodukts -- das Wort "kostenlos" faellt hier
+   bewusst nirgends. */
+function brSperreHtml() {
+  const reihen = Object.keys(BR_WARUM).map(id => {
+    const name = {
+      engagement: 'Engagement', kommentare: 'Kommentare', frequenz: 'Frequenz', verlauf: 'Verlauf',
+      account_typ: 'Kontoart', bio: 'Bio', kennzeichnung: 'Werbekennzeichnung',
+      biolink: 'Link-in-Bio-Seite', impressum: 'Impressum', kontakt: 'Kontaktweg',
+      kit_vorhanden: 'Media Kit', kit_aktuell: 'Zahlen im Kit aktuell', kit_preise: 'Preise im Kit',
+      referenzen: 'Referenzen', demografie: 'Zielgruppe', rechnung: 'Rechnung stellen'
+    }[id]
+    return `<div class="br-vorschau-zeile">
+      <div class="br-sym nicht_bewertbar">–</div>
+      <div class="br-zeile-koerper">
+        <div class="br-zeile-name">${escHtml(name)}</div>
+        <div class="br-zeile-satz">${escHtml(BR_WARUM[id])}</div>
+      </div>
+    </div>`
+  }).join('')
+
+  return `
+    <div class="br-sperr">
+      <div class="br-sperr-titel">16 Kriterien, die eine Marke prüft</div>
+      <div class="br-sperr-sub">Der Brand-Ready-Check ist Teil deiner viuno Analyse (9,99 € je Kanal).
+        Sobald eine Analyse fertig ist, steht hier dein Punktestand mit den Zahlen dahinter.</div>
+    </div>
+    <div class="action-stack"><a class="action-btn action-btn-primary" href="#/analytics">Analyse starten</a></div>
+    <div class="section"><div class="section-label">Das wird geprüft</div>
+      <div class="br-liste">${reihen}</div></div>`
+}
+
+/* ─── Antworten: sofort speichern, sofort neu rechnen, kein Reload ─── */
+window.brKanal = function (pf) {
+  if (!brv || brv.kanal === pf) return
+  brv.kanal = pf
+  brZeichnen()
+}
+
+window.brAntwort = async function (kriterium, wert) {
+  if (!brv) return
+  const vorher = brv.angaben[kriterium] || {}
+  // Nochmal auf dieselbe Antwort tippen nimmt sie zurueck
+  const neu = vorher.wert === wert ? null : wert
+  brv.angaben[kriterium] = Object.assign({}, vorher, { wert: neu })
+  brZeichnen()
+  const { error } = await sb.from('brand_ready_angaben')
+    .upsert({ user_id: brv.uid, kriterium, wert: neu, zahl: vorher.zahl ?? null, updated_at: new Date().toISOString() },
+            { onConflict: 'user_id,kriterium' })
+  if (error) {
+    brv.angaben[kriterium] = vorher
+    brZeichnen()
+    showToast('Konnte nicht gespeichert werden')
+  }
+}
+
+window.brZahlSpeichern = async function (kriterium, input) {
+  if (!brv) return
+  const roh = input.value.trim()
+  const zahl = roh === '' ? null : Math.max(0, Math.min(32767, parseInt(roh, 10) || 0))
+  const vorher = brv.angaben[kriterium] || {}
+  brv.angaben[kriterium] = Object.assign({}, vorher, { zahl })
+  brZeichnen()
+  const { error } = await sb.from('brand_ready_angaben')
+    .upsert({ user_id: brv.uid, kriterium, wert: vorher.wert ?? null, zahl, updated_at: new Date().toISOString() },
+            { onConflict: 'user_id,kriterium' })
+  if (error) {
+    brv.angaben[kriterium] = vorher
+    brZeichnen()
+    showToast('Konnte nicht gespeichert werden')
+  }
 }
 
 /* ─────────────────────────────────────────────
