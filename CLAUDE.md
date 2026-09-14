@@ -49,6 +49,102 @@ The app runs on one token block in `:root` at the top of `public/app/index.html`
 - **The Analyse cockpit (`.ckpt`) keeps its own `--c-*` palette, but it is light now.** It used to be dark and `body.analyse-dunkel` recoloured the whole chrome while that route was open; both are gone, the app is light throughout. The separate palette stays on purpose: it holds the four meaning colours (good / bad / signature / caution) in one place, every chart SVG in the view draws with `var(--c-…)` and nothing else, and a dark mode for the cockpit would again be exactly this one block. `--c-cool` is bound to `--v1`, so the charts follow the creator's theme.
 - **The old dark token set is not lost.** `body.analyse-dunkel` in the tag `stand-vor-redesign` is a complete, working dark palette for the whole app. If an app-wide dark mode comes, that is the starting point — belonging on `:root` as `html[data-farbmodus="dunkel"]`, not on a single route again.
 
+## Das Admin (Neubau, 15.09.2026)
+
+`public/admin/` ist neu gebaut und laeuft auf **demselben Token-Block wie die
+App** — dieselben Farben, Radien, Schatten, dieselbe Zahlenregel mit
+`tabular-nums`, dieselbe Bedienung: fuenf Ziele in einer unteren Leiste, zwei
+davon mit einer Pillenreihe, die der *Router* zeichnet und nicht die Ansicht.
+Wer den Token-Block in `public/app/index.html` aendert, aendert ihn hier mit.
+
+- **Bereiche**: Start, Geld (→ Umsatz | Kosten), Menschen (→ User |
+  Newsletter), Traffic, System.
+- **Gelesen wird ueber eine einzige RPC**: `admin_uebersicht(p_tage)`,
+  SECURITY DEFINER mit `is_admin()` als erster Zeile. Sie rechnet alles in
+  Postgres. Die Vorgaengerversion zog 10.000 Zeilen `biolink_aufrufe` nach
+  Deno, um sie dort in einer Schleife zu gruppieren — das ist weg.
+  `admin-dashboard` bleibt nur fuer die schreibenden Aktionen, die den
+  Service Role brauchen.
+- **Der Startbereich beantwortet eine Frage: muss ich heute etwas tun?**
+  Die Meldungen erscheinen nur, wenn es etwas zu melden gibt, und jede ist
+  ein Knopf in den zustaendigen Bereich. Steht nichts an, steht dort genau
+  ein gruener Satz. Die Zeilen unter "Heute" und "Diese Woche" werden
+  ausgeblendet, wenn sie 0 sind — bis auf den Umsatz, der immer dasteht.
+  **Das ist Absicht und keine vergessene Zeile.**
+- **Alles in Euro.** Anthropic und Apify rechnen in Dollar; umgerechnet wird
+  mit `kurs` in `admin_uebersicht()` und `KURS` in `admin-tagesmail` — beide
+  stehen auf 0,92 und **muessen zusammen geaendert werden**. Der Kurs steht
+  in der Oberflaeche, damit die Zahl ehrlich bleibt.
+- **Stripe steht auf Testmodus**, solange `stripe_prices` keine Zeile mit
+  `mode = 'live'` hat. Das Admin sagt das oben auf der Startseite und neben
+  jeder Umsatzzahl. Ohne diesen Hinweis liest sich die erste Umsatzzahl als
+  echtes Geld.
+- `[hidden]{display:none!important}` steht bewusst im Stylesheet: ohne diese
+  Zeile schlaegt jedes `display:` das `hidden`-Attribut, und die
+  Zaehlerpunkte an den Tabs stehen dauerhaft auf 0.
+
+### Guthaben und Marge
+
+`kosten_guthaben` haelt je Anbieter (`anthropic`, `apify`) eine Zeile **je
+Auffuellung** — nie ueberschreiben, dann ist der Verlauf gratis dabei. Das
+Admin liest die neueste Zeile und rechnet den Verbrauch seit `stand_am`
+dagegen: Rest, Verbrauch pro Tag, Reichweite in Tagen, Datum, an dem es leer
+ist. Eingetragen wird in Euro, gespeichert in Dollar (`betrag_usd`), weil die
+Anbieter in Dollar abrechnen.
+
+`analysis_runs.apify_kosten_usd` wird **nicht** im `analysis-webhook`
+geschrieben, obwohl die Run-ID dort vorliegt. Der Webhook ist der bezahlte
+Pfad: 36 Beitraege, KI-Analyse, Mailversand fuer 9,99 EUR. Eine
+Kostenerfassung ist das Risiko nicht wert, ihn anzufassen. Stattdessen holt
+`apify-kosten-nachtragen` (pg_cron stuendlich) `usageTotalUsd` aus der
+Apify-Run-API nach. Die Funktion schreibt **nur, wenn alle Laeufe einer
+Analyse eine Zahl geliefert haben** — sonst stuende dort eine halbe Summe,
+und weil die Spalte dann nicht mehr `null` ist, wuerde sie nie korrigiert.
+
+Ergebnis der ersten Messung: eine Instagram-Analyse kostet rund **9 Cent**
+Apify plus ein bis drei Cent KI. Von 9,99 EUR bleiben etwa 9,87 EUR.
+
+### Zwei Schloesser an den Cron-Functions
+
+`admin-tagesmail` und `apify-kosten-nachtragen` akzeptieren entweder den
+Service-Role-Key im Header (so ruft `admin-dashboard` sie) oder einen Token
+in der Adresse (so ruft der Cron-Job sie, der den Service-Role-Key nirgends
+lesen kann — der Vault ist leer). Der Token steht im Quelltext der Function
+und im Cron-Befehl. **Wer den Token aendert, muss beide Stellen aendern.**
+
+### Die Tagesmail
+
+`admin-tagesmail` (pg_cron 05:00 UTC) schickt an alle `is_admin`-Konten, was
+gestern passiert ist. **Sie wird nicht verschickt, wenn nichts passiert ist**
+— eine Mail, die jeden Morgen "0 / 0 / 0" meldet, wird nach einer Woche nicht
+mehr gelesen, und dann faellt auch die eine nicht auf, in der etwas steht.
+Ausnahme: offene Fehler und ein knappes Guthaben sind immer einen Versand
+wert.
+
+### Zaehlung der oeffentlichen Seiten
+
+`/`, `/it/`, `/analyse/` und `/brandready/` schreiben seit dem 15.09. nach
+`page_views` (`page` = `landing`, `landing_it`, `analyse_freigabe`,
+`brandready_freigabe`). **Keine neue Tabelle, kein Cookie, kein localStorage,
+keine IP, kein User-Agent** — dieselbe Grenze wie bei den
+BioLink-Auswertungen, und aus demselben Grund braucht keine dieser Seiten
+einen Banner.
+
+Gespeichert wird in `source` entweder `utm:<quelle>` oder Ursprung plus
+erstes Pfadsegment des Referrers (`https://viuno.de/antonietta`) — der
+Query-String bleibt draussen, `fbclid` ist eine Kennung und hat dort nichts
+zu suchen. Aufgeloest wird erst in der Datenbank durch `viuno_herkunft()`:
+so laesst sich die Zuordnung aendern, ohne jede Seite neu auszuliefern, und
+sie gilt rueckwirkend. Die eigenen Seiten werden dabei **einzeln benannt**
+("BioLink: antonietta", "Analyse (geteilt)", "Creator News") — genau das
+beantwortet die Frage, ueber welche viuno-Seite jemand auf die Startseite
+kam.
+
+`users.last_active_at` wird jetzt befuellt: `merkeAktiv()` in
+`public/app/index.html`, hoechstens einmal pro Stunde, gedrosselt ueber einen
+Zeitstempel im localStorage. Die Spalte gab es seit April und war bei jedem
+Konto leer.
+
 ## Routing model
 
 Each subdirectory of `public/` is a route via its `index.html`. Cloudflare Pages reads `public/_redirects` (SPA fallback for `/app/*`, plus `.html` → directory redirects for the legal pages and `/analyse/*`) and `public/_headers` (frame/robots lockdown for `/karussell/*`). There is no `_routes.json`. Two patterns coexist:

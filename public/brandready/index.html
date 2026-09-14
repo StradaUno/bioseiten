@@ -233,5 +233,44 @@ function zeigeLeer() {
   }
 })()
 </script>
+
+<script>
+/* Reichweitenmessung. Geteiltes Brand-Ready-Profil. Der Token wird nicht gespeichert.
+
+   Kein Cookie, kein localStorage, keine IP, kein User-Agent, keine
+   Geraetekennung. Gespeichert wird ausschliesslich, WOHER jemand kam und
+   dass ein Aufruf stattfand -- nie, WER. Ohne Wiedererkennung ueber zwei
+   Aufrufe hinweg gibt es keinen Personenbezug, und genau deshalb braucht
+   diese Seite keinen Cookie-Banner. Wer hier etwas ergaenzt, das einen
+   Besucher ueber zwei Aufrufe hinweg wiedererkennbar macht, macht den
+   Banner noetig. Das ist die Grenze, nicht eine Vorliebe.
+
+   Aufgeloest wird die Herkunft erst in der Datenbank, von
+   viuno_herkunft(): so laesst sich die Zuordnung spaeter aendern, ohne
+   jede Seite neu auszuliefern -- und sie gilt rueckwirkend. */
+(function(){
+  try {
+    var p = new URLSearchParams(location.search), utm = p.get('utm_source'), q;
+    if (utm) {
+      q = 'utm:' + utm.toLowerCase().slice(0, 40);
+    } else if (document.referrer) {
+      var u = new URL(document.referrer);
+      /* Ursprung plus erstes Pfadsegment -- mehr braucht die Auswertung nicht,
+         und der Query-String bleibt draussen: fbclid und Konsorten sind eine
+         Kennung, die hier nichts zu suchen hat. */
+      var teil = u.pathname.split('/').filter(Boolean)[0] || '';
+      q = u.origin + (teil ? '/' + teil : '');
+    } else {
+      q = 'direct';
+    }
+    fetch('https://bzejndghppuipnedasuv.supabase.co/rest/v1/page_views', {
+      method: 'POST',
+      headers: { apikey: 'sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI', 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ page: 'brandready_freigabe', source: q.slice(0, 300) }),
+      keepalive: true
+    }).catch(function(){});
+  } catch (_) {}
+})();
+</script>
 </body>
 </html>
