@@ -1,7 +1,7 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 /**
- * Anmeldung zu den Creator News.
+ * An- und Abmeldung zu den Creator News.
  *
  * Zwei Wege, ein Ergebnis:
  *   - Ohne Konto: Zeile auf "pending", Bestaetigungsmail, erst ihr Link
@@ -11,6 +11,10 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
  *   - Mit Konto: die Adresse gehoert zum Konto und ist durch die Anmeldung
  *     bereits bestaetigt, also direkt "active". Die Adresse kommt dann aus
  *     dem Konto, nicht aus dem Formular.
+ *
+ * Seit dem Umbau schreibt kein Browser mehr direkt in die Tabelle - sonst
+ * koennte man per REST einfach status='active' setzen und die Bestaetigung
+ * ueberspringen. Alles laeuft hier durch.
  *
  * verify_jwt bleibt aus, weil die Function auch ohne Anmeldung erreichbar
  * sein muss. Ein mitgeschickter Token wird hier selbst geprueft.
@@ -90,9 +94,15 @@ Deno.serve(async (req) => {
       const { data } = await supabase.auth.getUser(jwt)
       if (data?.user) {
         kontoId = data.user.id
+        /* Die Login-Adresse, nicht contact_email. Das Abo gehoert dem
+           Kontoinhaber, nicht dem Postfach, das auf dem Media Kit steht --
+           dieselbe Entscheidung wie in datenauskunft. Wer dort die Adresse
+           seiner Agentur eintraegt, wuerde die sonst als "active" mit
+           gesetztem confirmed_at in den Verteiler schreiben, ohne dass sie
+           je zugestimmt hat. Genau das soll der Doppel-Opt-in verhindern. */
         const { data: profil } = await supabase
           .from('users').select('email, contact_email').eq('id', kontoId).maybeSingle()
-        adresse = String(profil?.contact_email || profil?.email || data.user.email || '').trim().toLowerCase()
+        adresse = String(profil?.email || data.user.email || profil?.contact_email || '').trim().toLowerCase()
       }
     }
 

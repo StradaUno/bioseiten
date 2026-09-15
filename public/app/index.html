@@ -7340,7 +7340,10 @@ function pfNewsMalen(){
   const sub=document.getElementById('pf-news-sub')
   if(!s||!pv)return
   s.classList.toggle('an',!!pv.isSubscribed)
-  const ziel=pv.profile.contact_email||pv.user.email||''
+  /* Die Login-Adresse: newsletter-subscribe traegt fuer ein Konto genau die
+     ein, nicht die Kontaktadresse vom Media Kit. Stuende hier die andere,
+     wuerde die Zeile eine Adresse nennen, an die nichts geht. */
+  const ziel=pv.user.email||pv.profile.contact_email||''
   sub.textContent=pv.isSubscribed?('Jeden Montag an '+ziel):'Zurzeit nicht abonniert'
 }
 window.pfNewsUmschalten=async function(){
