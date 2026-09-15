@@ -4,7 +4,6 @@ Allow: /
 # Interne Seiten: die App selbst, das Swipe-File und die Admin-Oberflaeche.
 Disallow: /app/
 Disallow: /admin/
-Disallow: /admina/
 Disallow: /karussell/
 Disallow: /digest/
 Disallow: /dashboard/
@@ -20,8 +19,6 @@ Disallow: /analyse/
 Disallow: /brandready/
 # Designentwuerfe zum Durchklicken, kein Produktstand.
 Disallow: /pitch/
-Disallow: /test/
-Disallow: /testi/
 # Server-Template, kein Inhalt.
 Disallow: /bio-template.html
 

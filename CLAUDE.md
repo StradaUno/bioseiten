@@ -149,7 +149,7 @@ Konto leer.
 
 Each subdirectory of `public/` is a route via its `index.html`. Cloudflare Pages reads `public/_redirects` (SPA fallback for `/app/*`, plus `.html` → directory redirects for the legal pages and `/analyse/*`) and `public/_headers` (frame/robots lockdown for `/karussell/*`). There is no `_routes.json`. Two patterns coexist:
 
-- **Hand-built creator pages** — one HTML file per creator, with the creator's UUID, copy, links, and contact form hardcoded inline. Examples: `public/stradauno/`, `public/easyglenn/`, `public/antonietta/`, `public/kit/easyg/`, `public/kit/kross/`, `public/kit/stradauno/`. These are usually heavily minified into 1–7 lines.
+- **Hand-built creator pages** — one HTML file per creator, with the creator's UUID, copy, links, and contact form hardcoded inline. Examples: `public/stradauno/`, `public/antonietta/`, `public/bernidal/`, `public/heyno/`, `public/kit/antonietta/`, `public/kit/stradauno/`. These are usually heavily minified into 1–7 lines.
 - **Dynamic, slug-driven page** — `public/kit/index.html` reads the slug from `window.location.pathname` and queries the `media_kit_public` view in Supabase. This is the *generic* media-kit renderer; the per-creator files under `public/kit/<slug>/` are pre-rendered overrides of it.
 
 **One Cloudflare Pages Function exists**, at `functions/news/[slug].js` — note: repo root, *not* under `public/`, because Pages looks for `functions/` next to the build output. It serves `/news/<slug>` by fetching `public/news/index.html` through `env.ASSETS` and rewriting the `<title>`, `canonical` and `og:*` tags with that news item's headline and summary. It exists because WhatsApp, iMessage and Instagram never run JavaScript — a client-side `og:title` is invisible to them, so a shared link would have no preview. This is the only server-side piece in an otherwise purely static deploy; keep it that way unless there is the same kind of hard reason.
@@ -160,9 +160,9 @@ Each subdirectory of `public/` is a route via its `index.html`. Cloudflare Pages
 
 Two very different page types share `public/`:
 
-1. **Public landing/creator pages** (`/`, `/it/`, `/stradauno/`, `/easyglenn/`, `/agb/`, `/datenschutz/`, …) — pure HTML/CSS, may include:
+1. **Public landing/creator pages** (`/`, `/it/`, `/stradauno/`, `/antonietta/`, `/agb/`, `/datenschutz/`, …) — pure HTML/CSS, may include:
    - A contact button that is a plain `mailto:` link to the creator's `users.contact_email`. There is **no** contact form and no `collab_requests` table any more — see "Anfragen removed" below.
-   - A fire-and-forget tracking pixel: `POST /functions/v1/track-bio-view` or `/functions/v1/track-mediakit-view` with the creator's `user_id`.
+   - A fire-and-forget tracking pixel: `POST /functions/v1/track-biolink-view` with the creator's `user_id`. Media-Kit-Aufrufe laufen **nicht** ueber eine Function, sondern als direkter REST-Insert nach `mediakit_aufrufe` aus `public/kit/kit-renderer.js` — eine Function `track-mediakit-view` gibt es nicht (mehr).
 
 2. **The authenticated app** (`/app/`, plus `/login/`, `/register/`, `/onboarding/`, `/reset-password/`) — loads `@supabase/supabase-js@2` from `https://esm.sh` as an ES module, does `signInWithPassword` against Supabase Auth, and reads/writes tables like `users`, `creator_analytics`, `daily_digest`, `biolink_settings`, `biolink_viuno`. Sessions persist in localStorage (`persistSession:true`).
 
@@ -177,7 +177,7 @@ A single Supabase project: `https://bzejndghppuipnedasuv.supabase.co`. Two anon 
 
 The `sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI` token is a Supabase publishable key, distinct from the JWT — leave it alone unless rotating both ends.
 
-Edge Functions referenced from the client (not in this repo — managed in Supabase dashboard): `track-bio-view`, `track-mediakit-view`, `fetch-analytics`, `contact-submit`.
+Edge Functions referenced from the client (not in this repo — managed in Supabase dashboard): `fetch-analytics`. `track-bio-view` und `track-mediakit-view` existieren nicht mehr; `track-biolink-view`, `track-biolink-click` und `contact-submit` haben Repo-Kopien unter `supabase/functions/`.
 
 **Authenticating a user inside an Edge Function: always `supabase.auth.getUser(token)`.** Never decode the JWT by hand. Several functions used to do
 

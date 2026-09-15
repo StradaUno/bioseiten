@@ -30,15 +30,9 @@
 # richtig, aber /app/ ist auch die Login-Seite, die gefunden werden darf.
 /admin/*
   X-Robots-Tag: noindex, nofollow
-/admina/*
-  X-Robots-Tag: noindex, nofollow
 /karussell/*
   X-Robots-Tag: noindex, nofollow
   Referrer-Policy: no-referrer
-/test/*
-  X-Robots-Tag: noindex, nofollow
-/testi/*
-  X-Robots-Tag: noindex, nofollow
 /extras/*
   X-Robots-Tag: noindex, nofollow
 /pitch/*
