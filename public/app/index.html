@@ -7548,22 +7548,34 @@ window.pfLoeschPruefen=function(){
 }
 async function commitDeleteAccount(){
   const btn=document.getElementById('pf-loesch-btn')
+  /* Zuruecksetzen ist Pflicht: der Spinner ersetzt die Beschriftung, und
+     openDeleteModal() stellt sie nicht wieder her. Nach einem Fehlversuch
+     stand dort sonst bis zum naechsten Aufbau der Ansicht ein Spinner. */
+  const zurueck=()=>{ if(btn){btn.disabled=false;btn.textContent='Konto löschen'} }
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span>'}
   try{
     const{data:{session}}=await sb.auth.getSession()
-    if(!session){showToast('Session abgelaufen');navigate('#/login');return}
+    if(!session){zurueck();showToast('Session abgelaufen');navigate('#/login');return}
     const res=await fetch(`${SUPABASE_URL}/functions/v1/delete-account`,{
       method:'POST',
       headers:{'Authorization':`Bearer ${session.access_token}`,'Content-Type':'application/json'}
     })
     const body=await res.json().catch(()=>({}))
-    if(!res.ok&&body.success!==true){pfLoeschZu();showToast('Fehler: '+(body.error||'Unbekannt'),5000);return}
+    if(!res.ok&&body.success!==true){zurueck();pfLoeschZu();showToast('Fehler: '+(body.error||'Unbekannt'),5000);return}
     await sb.auth.signOut()
     location.replace('https://viuno.de')
   }catch(err){
-    pfLoeschZu();showToast('Fehler: '+err.message,5000)
+    zurueck();pfLoeschZu();showToast('Fehler: '+err.message,5000)
   }
 }
+/* Die ganze App liegt in EINEM <script type="module">. Modul-Scope ist nicht
+   window, ein Inline-onclick wird aber gegen window aufgeloest. Ohne diese
+   Zeile warf der rote Knopf im Loesch-Dialog nur einen ReferenceError in die
+   Konsole -- kein Toast, kein Request, sichtbar passierte gar nichts.
+   Seit dem Port des Profils in die SPA hat das Loeschen nie funktioniert.
+   Jeder neue Inline-Handler braucht dieselbe Zeile; die Gegenprobe steht in
+   CLAUDE.md. */
+window.commitDeleteAccount = commitDeleteAccount
 
 /* ── Foto ──
    Vorher gingen bis zu 5 MB unveraendert auf BioLink und Media Kit, und jede
@@ -8097,6 +8109,7 @@ window.brLinkZuruecknehmen = async function () {
 /* ─────────────────────────────────────────────
    BOOT
    ───────────────────────────────────────────── */
+window.router = router   /* onclick="router()" im Fehler-Fallback der Profil-Ansicht */
 window.addEventListener('hashchange', router)
 
 ;(async function init() {
