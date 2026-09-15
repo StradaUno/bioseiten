@@ -265,6 +265,12 @@ html, body {
 
 .field { margin-bottom: 12px; }
 .field label { display: block; font-size:var(--t-xs); font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+/* Der Name im Loesch-Dialog darf NICHT durch .field label hochgestellt werden:
+   die Eingabe wird auf Gross- und Kleinschreibung geprueft, eine hochgestellte
+   Vorlage waere damit eine Falle. Eigene Zeile, eigener Stil, Ziffernschrift. */
+.pf-loesch-hinweis{text-transform:none;letter-spacing:0;font-size:var(--t-sm);color:var(--muted);margin:-2px 0 8px;line-height:1.5}
+.pf-loesch-hinweis b{font-family:var(--ziffern);font-weight:var(--fw-b);color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:var(--r-xs);padding:1px 6px;white-space:nowrap}
+.pf-loesch-warn{min-height:17px;font-size:var(--t-xs);color:var(--red);margin-top:6px}
 .field input, .field textarea, .field select { width: 100%; padding: 11px 14px; border: 1px solid var(--border-strong); border-radius: var(--r-sm); font-family: inherit; font-size:var(--t-md); color: var(--text); background: var(--bg); outline: none; transition: border-color .15s; }
 .field input:focus, .field textarea:focus, .field select:focus { border-color: var(--text); }
 .field textarea { resize: none; line-height: 1.5; }
@@ -6919,8 +6925,10 @@ async function renderProfile(area, ctx) {
         <div class="modal-sub">Das passiert sofort und lässt sich nicht rückgängig machen:</div>
         <div id="pf-loesch-liste" style="font-size:var(--t-sm);color:var(--muted);line-height:1.8;margin-bottom:16px"></div>
         <div class="modal-warn">${icon('alert',14)} Kaufbelege deiner Analyse-Freischaltungen bleiben aus steuerlichen Gründen aufbewahrt — ohne Verweis auf dich.</div>
-        <div class="field"><label id="pf-loesch-label">Bestätigung</label>
+        <div class="field"><label>Bestätigung</label>
+          <div class="pf-loesch-hinweis" id="pf-loesch-hinweis"></div>
           <input type="text" id="pf-loesch-eingabe" autocapitalize="none" autocorrect="off" spellcheck="false" oninput="pfLoeschPruefen()"/>
+          <div class="pf-loesch-warn" id="pf-loesch-warn"></div>
         </div>
         <div class="modal-actions">
           <button class="modal-btn modal-btn-cancel" onclick="pfLoeschZu()">Abbrechen</button>
@@ -7528,9 +7536,11 @@ window.openDeleteModal=function(){
   if(pv.isSubscribed)   punkte.push('Der Newsletter wird abbestellt')
   punkte.push('Deine Zugangsdaten werden gelöscht')
   document.getElementById('pf-loesch-liste').innerHTML=punkte.map(t=>`<div>· ${t}</div>`).join('')
-  document.getElementById('pf-loesch-label').textContent=`Tippe „${p.display_name}“, um zu bestätigen`
+  document.getElementById('pf-loesch-hinweis').innerHTML=
+    `Tippe <b>${escHtml(p.display_name||'')}</b> — genau so, mit Groß- und Kleinschreibung.`
   const eingabe=document.getElementById('pf-loesch-eingabe')
   eingabe.value=''; eingabe.placeholder=p.display_name||''
+  document.getElementById('pf-loesch-warn').textContent=''
   document.getElementById('pf-loesch-btn').disabled=true
   document.getElementById('pf-loesch-modal').classList.remove('hidden')
   document.body.style.overflow='hidden'
@@ -7540,11 +7550,22 @@ window.pfLoeschZu=function(){
   document.getElementById('pf-loesch-modal')?.classList.add('hidden')
   document.body.style.overflow=''
 }
-/* Tippen statt eines zweiten Ja-Klicks: der zweite Klick war Reflex. */
+/* Tippen statt eines zweiten Ja-Klicks: der zweite Klick war Reflex.
+   Verglichen wird ZEICHENGENAU, auch in der Gross- und Kleinschreibung --
+   vorher lagen beide Seiten auf toLowerCase(), "testi" loeschte "Testi".
+   Wer nur die Schreibung verfehlt, bekommt das gesagt: ein Knopf, der ohne
+   Begruendung tot bleibt, ist genau der Fehler, den dieser Dialog gerade
+   hinter sich hat. Getrimmt wird weiter, das faengt Leerzeichen aus der
+   Zwischenablage und von der Tastatur-Autokorrektur ab. */
 window.pfLoeschPruefen=function(){
-  const soll=(pv?.profile?.display_name||'').trim().toLowerCase()
-  const ist=document.getElementById('pf-loesch-eingabe').value.trim().toLowerCase()
-  document.getElementById('pf-loesch-btn').disabled = !soll || ist!==soll
+  const soll=(pv?.profile?.display_name||'').trim()
+  const ist=document.getElementById('pf-loesch-eingabe').value.trim()
+  const passt = !!soll && ist===soll
+  document.getElementById('pf-loesch-btn').disabled = !passt
+  const warn=document.getElementById('pf-loesch-warn')
+  if(warn) warn.textContent =
+    (!passt && ist && ist.toLowerCase()===soll.toLowerCase())
+      ? 'Achte auf die Groß- und Kleinschreibung.' : ''
 }
 async function commitDeleteAccount(){
   const btn=document.getElementById('pf-loesch-btn')
@@ -7568,7 +7589,7 @@ async function commitDeleteAccount(){
     zurueck();pfLoeschZu();showToast('Fehler: '+err.message,5000)
   }
 }
-/* Die ganze App liegt in EINEM <script type="module">. Modul-Scope ist nicht
+/* Die ganze App liegt in EINEM Modul-Script. Modul-Scope ist nicht
    window, ein Inline-onclick wird aber gegen window aufgeloest. Ohne diese
    Zeile warf der rote Knopf im Loesch-Dialog nur einen ReferenceError in die
    Konsole -- kein Toast, kein Request, sichtbar passierte gar nichts.
