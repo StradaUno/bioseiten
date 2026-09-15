@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brand Ready · viuno</title>
+<meta name="description" content="Ein Brand-Ready-Stand von viuno — wie eine Marke diesen Kanal heute sieht.">
+<meta name="robots" content="noindex, nofollow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Brand Ready · viuno">
+<meta property="og:description" content="Wie eine Marke diesen Kanal heute sieht — Punktestand aus echten Analyse-Daten.">
+<meta property="og:site_name" content="viuno">
+<link rel="icon" href="/222/test/favicon.ico">
+<!--
+  Oeffentliche Seite eines geteilten Brand-Ready-Stands. Kein Login.
+  Gezeigt wird ausschliesslich, was brand-ready-oeffentlich herausgibt:
+  Punktestand, die zwei bis drei Saetze, Stichtag und das ohnehin oeffentliche
+  Profilbild. Die Kriterienliste, die Eigenangaben und alle Analyse-Rohzahlen
+  bleiben im Haus.
+
+  Die Zahl ist SERVERSEITIG gerechnet (brand-ready-freigeben laedt dasselbe
+  Regelwerk wie die App) -- nur deshalb darf "powered by viuno" darunter stehen.
+
+  Impressum und Datenschutz gehoeren hierher, weil das eine oeffentlich
+  erreichbare Seite eines Gewerbes ist -- genau die Pflicht, auf die der Check
+  selbst hinweist (§ 5 DDG). Eine Seite, die Impressumspflicht prueft und selbst
+  keines hat, waere schwer zu erklaeren.
+
+  noindex ist Absicht: ein geteilter Link gehoert dem Creator, nicht Google.
+-->
+<style>
+:root{
+  /* Dieselben Werte wie in der App -- die geteilte Seite und die eigene
+     Ansicht sollen erkennbar dasselbe Produkt sein. */
+  --bg:#f6f5fa; --surface:#ffffff; --surface2:#f2f0f8;
+  --border:rgba(27,24,38,.09); --border-strong:rgba(27,24,38,.16);
+  --text:#17151f; --muted:#4e4a5e; --subtle:#817c92;
+  --v1:#6b3fe8; --v2:#b02a7d; --v3:#c87a08;
+  --t-2xs:10px; --t-xs:11px; --t-sm:13px; --t-md:14px; --t-lg:15px; --t-xl:17px; --t-2xl:22px;
+  --lh-body:1.55; --fw-md:500; --fw-sb:600; --fw-b:700;
+  --r-sm:11px; --r-md:18px; --r-full:99px;
+  --sh-card:0 2px 10px rgba(27,24,38,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+.huelle{max-width:520px;margin:0 auto;padding:26px 20px 32px;min-height:100dvh;display:flex;flex-direction:column}
+
+/* Kopfleiste: Marke links (verlinkt), Profilbild rechts */
+.leiste{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:24px}
+.marke{display:inline-flex;align-items:baseline;gap:6px;text-decoration:none;color:inherit;
+  padding:4px 0;min-height:32px}
+.marke b{font-size:var(--t-lg);font-weight:var(--fw-b);letter-spacing:-.03em}
+.marke span{font-size:var(--t-sm);color:var(--muted)}
+.marke:hover b{text-decoration:underline}
+.avatar{width:44px;height:44px;border-radius:13px;flex-shrink:0;object-fit:cover;
+  background:var(--surface2);box-shadow:inset 0 0 0 1px var(--border)}
+.avatar-v{width:44px;height:44px;border-radius:13px;flex-shrink:0;background:var(--surface2);color:var(--muted);
+  box-shadow:inset 0 0 0 1px var(--border);display:grid;place-items:center;font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.03em}
+
+.titel{font-size:var(--t-2xl);font-weight:var(--fw-b);letter-spacing:-.04em;margin:0}
+.untertitel{font-size:var(--t-sm);color:var(--muted);margin-top:4px}
+
+.karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);
+  padding:18px;margin-top:18px;display:flex;align-items:center;gap:16px}
+.ring{width:84px;height:84px;flex-shrink:0;position:relative;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring b{font-size:27px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.04em;line-height:1}
+.karte-txt{flex:1;min-width:0}
+.karte-gross{font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.karte-klein{font-size:var(--t-sm);color:var(--muted);margin-top:4px;line-height:1.45}
+
+/* Die Saetze: je ein Kasten, Haarlinie dazwischen -- dieselbe Behandlung
+   wie in der App, damit geteilte und eigene Ansicht gleich aussehen. */
+.saetze{margin-top:14px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh-card);
+  border-radius:var(--r-md);overflow:hidden}
+.satz{padding:14px 16px;font-size:var(--t-sm);line-height:var(--lh-body);color:var(--muted)}
+.satz+.satz{border-top:1px solid var(--border)}
+.satz.haupt{color:var(--text);font-size:var(--t-md);font-weight:var(--fw-md)}
+.satz b{font-weight:var(--fw-sb);color:var(--text)}
+
+.erklaer{margin-top:14px;padding:17px 18px;background:var(--surface);border:1px solid var(--border);box-shadow:var(--sh-card);
+  border-radius:var(--r-md);font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
+.erklaer b{display:block;color:var(--text);font-weight:var(--fw-sb);font-size:var(--t-md);margin-bottom:9px}
+.erklaer p{margin:0}
+.erklaer p+p{margin-top:10px}
+
+.cta{margin-top:auto;padding-top:26px}
+.cta-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:50px;
+  padding:0 18px;border-radius:var(--r-sm);background:var(--text);color:#fff;text-decoration:none;
+  font-size:var(--t-md);font-weight:var(--fw-sb)}
+.cta-btn:hover{opacity:.9}
+.powered{text-align:center;font-size:var(--t-xs);color:var(--subtle);margin-top:13px;line-height:1.6}
+.powered a{color:var(--muted);font-weight:var(--fw-sb);text-decoration:none}
+.powered a:hover{color:var(--text);text-decoration:underline}
+
+.fuss{margin-top:22px;padding-top:16px;border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;justify-content:center;gap:6px 14px;
+  font-size:var(--t-xs);color:var(--subtle)}
+.fuss a{color:var(--muted);text-decoration:none}
+.fuss a:hover{color:var(--text);text-decoration:underline}
+
+.lade,.leer{text-align:center;padding:52px 12px;color:var(--muted);font-size:var(--t-sm);line-height:var(--lh-body)}
+.leer-titel{font-size:var(--t-xl);font-weight:var(--fw-b);color:var(--text);letter-spacing:-.02em;margin-bottom:8px}
+.punkt{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--subtle);margin:0 3px;
+  animation:pulsen 1.2s ease-in-out infinite}
+.punkt:nth-child(2){animation-delay:.15s}
+.punkt:nth-child(3){animation-delay:.3s}
+@keyframes pulsen{0%,100%{opacity:.25}50%{opacity:1}}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="huelle">
+  <div class="leiste">
+    <a class="marke" href="https://viuno.de/?quelle=brandready"><b>viuno</b><span>· Brand Ready</span></a>
+    <div id="avatar-platz"><div class="avatar-v">V</div></div>
+  </div>
+
+  <div id="lade" class="lade"><span class="punkt"></span><span class="punkt"></span><span class="punkt"></span></div>
+
+  <div id="leer" class="leer hidden">
+    <div class="leer-titel">Dieser Link ist nicht mehr gültig</div>
+    Er wurde zurückgezogen oder ist abgelaufen. Frag die Person, die ihn dir geschickt hat, nach einem neuen.
+  </div>
+
+  <div id="inhalt" class="hidden" style="display:flex;flex-direction:column;flex:1">
+    <div>
+      <h1 class="titel">Brand Ready</h1>
+      <div class="untertitel" id="untertitel"></div>
+    </div>
+
+    <div class="karte">
+      <div class="ring">
+        <svg width="84" height="84" viewBox="0 0 84 84" aria-hidden="true">
+          <circle cx="42" cy="42" r="35" fill="none" stroke="var(--surface2)" stroke-width="9"/>
+          <defs><linearGradient id="ring-verlauf" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="var(--v1)"/><stop offset=".5" stop-color="var(--v2)"/><stop offset="1" stop-color="var(--v3)"/>
+          </linearGradient></defs>
+          <circle cx="42" cy="42" r="35" fill="none" stroke="url(#ring-verlauf)" stroke-width="9"
+            stroke-linecap="round" id="ring-bogen" stroke-dasharray="0 999"/>
+        </svg><b id="ring-zahl">–</b>
+      </div>
+      <div class="karte-txt">
+        <div class="karte-gross" id="karte-gross">–</div>
+        <div class="karte-klein">an 16 Kriterien, die Marken vor einer Kooperation prüfen</div>
+      </div>
+    </div>
+
+    <div class="saetze" id="saetze"></div>
+
+    <div class="erklaer">
+      <b>Nachgerechnet, nicht geschätzt.</b>
+      <p>viuno prüft einen Kanal an 16 Kriterien, die Marken vor einer Kooperation ohnehin anschauen:
+        Reichweite und Resonanz, Auffindbarkeit und Media Kit.</p>
+      <p>Kriterien, zu denen keine Daten vorliegen, fließen nicht in die Wertung ein. Deshalb steht oben
+        „von&nbsp;<span id="mini-max">–</span>“ und nicht „von 100“.</p>
+    </div>
+
+    <div class="cta">
+      <a class="cta-btn" href="https://viuno.de/?quelle=brandready">Eigenen Brand-Ready-Stand ansehen</a>
+      <div class="powered">powered by <a href="https://viuno.de/?quelle=brandready">viuno</a></div>
+    </div>
+  </div>
+
+  <div class="fuss">
+    <a href="https://viuno.de/impressum/">Impressum</a>
+    <a href="https://viuno.de/datenschutz/">Datenschutz</a>
+    <a href="https://viuno.de/agb/">AGB</a>
+  </div>
+</div>
+
+<script>
+const FUNKTION = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/brand-ready-oeffentlich'
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
+
+/* "Am staerksten: Engagement — 23,91 % ..." -> das Etikett vor dem
+   Gedankenstrich wird fett. Drei gleich aussehende Kaesten liest niemand. */
+function satzHtml(satz) {
+  const m = String(satz).match(/^([^—]{3,40}:)\s*(.*)$/s)
+  return m ? `<b>${esc(m[1])}</b> ${esc(m[2])}` : esc(satz)
+}
+
+function zeigeLeer() {
+  document.getElementById('lade').classList.add('hidden')
+  document.getElementById('leer').classList.remove('hidden')
+}
+
+;(async () => {
+  const token = (new URLSearchParams(location.search).get('b') || '').trim()
+  if (!token) return zeigeLeer()
+  try {
+    const res = await fetch(FUNKTION + '?token=' + encodeURIComponent(token))
+    if (!res.ok) return zeigeLeer()
+    const d = await res.json()
+    if (d.fehler) return zeigeLeer()
+
+    const name = d.anzeigename ? String(d.anzeigename) : null
+
+    /* Profilbild nur, wenn es wirklich laedt -- ein kaputtes Bild sieht
+       schlechter aus als gar keines. Bis dahin steht das viuno-V. */
+    if (d.profilbild) {
+      const img = new Image()
+      img.className = 'avatar'
+      img.alt = name ? name : 'Profilbild'
+      img.referrerPolicy = 'no-referrer'
+      img.onload = () => { document.getElementById('avatar-platz').replaceChildren(img) }
+      img.src = d.profilbild
+    }
+
+    document.getElementById('untertitel').textContent =
+      (name ? name + ' · ' : '') + d.plattform +
+      (d.stichtag ? ' · Stand ' + new Date(d.stichtag).toLocaleDateString('de-DE',
+        { day: '2-digit', month: '2-digit', year: 'numeric' }) : '')
+
+    document.getElementById('ring-zahl').textContent = d.punkte
+    document.getElementById('karte-gross').textContent = d.punkte + ' von ' + d.max_punkte + ' Punkten'
+    document.getElementById('mini-max').textContent = d.max_punkte
+
+    const u = 2 * Math.PI * 35
+    const an = d.max_punkte > 0 ? d.punkte / d.max_punkte * u : 0
+    document.getElementById('ring-bogen').setAttribute('stroke-dasharray', an.toFixed(1) + ' ' + u.toFixed(1))
+
+    document.getElementById('saetze').innerHTML =
+      (d.saetze || []).map((s, i) => `<div class="satz${i === 0 ? ' haupt' : ''}">${satzHtml(s)}</div>`).join('')
+
+    document.title = (name ? name + ' · ' : '') + 'Brand Ready ' + d.punkte + '/' + d.max_punkte + ' · viuno'
+
+    document.getElementById('lade').classList.add('hidden')
+    document.getElementById('inhalt').classList.remove('hidden')
+  } catch (e) {
+    zeigeLeer()
+  }
+})()
+</script>
+
+<script>
+/* Reichweitenmessung. Geteiltes Brand-Ready-Profil. Der Token wird nicht gespeichert.
+
+   Kein Cookie, kein localStorage, keine IP, kein User-Agent, keine
+   Geraetekennung. Gespeichert wird ausschliesslich, WOHER jemand kam und
+   dass ein Aufruf stattfand -- nie, WER. Ohne Wiedererkennung ueber zwei
+   Aufrufe hinweg gibt es keinen Personenbezug, und genau deshalb braucht
+   diese Seite keinen Cookie-Banner. Wer hier etwas ergaenzt, das einen
+   Besucher ueber zwei Aufrufe hinweg wiedererkennbar macht, macht den
+   Banner noetig. Das ist die Grenze, nicht eine Vorliebe.
+
+   Aufgeloest wird die Herkunft erst in der Datenbank, von
+   viuno_herkunft(): so laesst sich die Zuordnung spaeter aendern, ohne
+   jede Seite neu auszuliefern -- und sie gilt rueckwirkend. */
+(function(){
+  try {
+    var p = new URLSearchParams(location.search), utm = p.get('utm_source'), q;
+    if (utm) {
+      q = 'utm:' + utm.toLowerCase().slice(0, 40);
+    } else if (document.referrer) {
+      var u = new URL(document.referrer);
+      /* Ursprung plus erstes Pfadsegment -- mehr braucht die Auswertung nicht,
+         und der Query-String bleibt draussen: fbclid und Konsorten sind eine
+         Kennung, die hier nichts zu suchen hat. */
+      var teil = u.pathname.split('/').filter(Boolean)[0] || '';
+      q = u.origin + (teil ? '/' + teil : '');
+    } else {
+      q = 'direct';
+    }
+    fetch('https://bzejndghppuipnedasuv.supabase.co/rest/v1/page_views', {
+      method: 'POST',
+      headers: { apikey: 'sb_publishable_vVbpikuwqnh5jBTdvxcm7g_R4pZsMXI', 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify({ page: 'brandready_freigabe', source: q.slice(0, 300) }),
+      keepalive: true
+    }).catch(function(){});
+  } catch (_) {}
+})();
+</script>
+</body>
+</html>

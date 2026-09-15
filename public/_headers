@@ -39,3 +39,10 @@
 /pitch/*
   X-Robots-Tag: noindex, nofollow
   Referrer-Policy: no-referrer
+
+# ── Testkopie unter /222/test/ (Launch-Check, 15.09.2026) ──────────
+# Kopie des Branches launch-check mit umgeschriebenen Pfaden, nur zum
+# Durchklicken auf dem Telefon. Kein Produktstand, nicht indexieren.
+/222/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer

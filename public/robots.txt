@@ -14,5 +14,6 @@ Disallow: /analytics/
 Disallow: /reset-password/
 # Designentwuerfe zum Durchklicken, kein Produktstand.
 Disallow: /pitch/
+Disallow: /222/
 
 Sitemap: https://viuno.de/sitemap.xml
