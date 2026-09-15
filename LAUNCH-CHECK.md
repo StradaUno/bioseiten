@@ -445,3 +445,12 @@ Die drei Blocker sind technisch abgeräumt: kein fremder Datensatz ist mehr anon
 Danach mergen (`launch-check` → `main`), `generate-biolink` aus dem Repo deployen (Braucht Mehmet Nr. 9) und mit dem Bewerben anfangen. Rechtstexte gegenlesen (Nr. 5), AV-Verträge (Nr. 6), OG-Bild (Nr. 41) und Uptime-Check (Nr. 47) dürfen in der ersten Woche nachlaufen — sie halten den Start nicht auf, aber nicht länger als das.
 
 Was ich nicht selbst prüfen konnte, steht als solches markiert; nichts davon ist eine bekannte Lücke, alles davon ist ein Dashboard-Klick von dir.
+
+---
+
+## Live-Schaltung (15.09.2026)
+
+- `launch-check` ist in `main` gemerged (Merge-Commit 4e5d1db) und auf viuno.de live. Geprüft nach dem Deploy: Startseite, App, Login, Registrieren, FAQ, Legal, News, `/it/`, Fonts, `/vendor/supabase-js.mjs`, HSTS/Frame/CSP-Header, 404-Seite — alles 200 bzw. wie erwartet, keine Konsolenfehler.
+- `generate-biolink` v20 ist deployt (Braucht Mehmet Nr. 9 erledigt); neu erzeugte BioLinks laden das Modul von viuno.de. Vor v20 erzeugte Seiten laden bis zur nächsten Neu-Generierung weiter esm.sh.
+- Die Testkopie unter `/222/test/` ist wieder entfernt (Commit e1c43f8).
+- Offen bleiben Bedingung 1 (Stripe live, Checkliste Schritte 1–10) und Bedingung 2 (SMTP für Auth-Mails) sowie die übrigen Punkte unter „Braucht Mehmet".
