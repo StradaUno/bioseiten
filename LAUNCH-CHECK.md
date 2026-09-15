@@ -1,7 +1,7 @@
 # LAUNCH-CHECK — viuno vor der aktiven Bewerbung
 
 **Stand:** 15. September 2026 · **Branch:** `launch-check` · **Prüfer:** Claude (Security · Datenschutz/Recht · Backend · UX · Marketing)
-**Status:** Phase 0–3 abgeschlossen (Inventar, Sicherheit, Recht, Zahlung). Phase 4–7 laufen. Go/No-Go am Ende der Datei.
+**Status:** Alle Phasen 0–7 durchgearbeitet. Branch `launch-check` bereit zum Review, **kein Merge**. Go/No-Go am Ende der Datei.
 
 Schweregrade: **Blocker** (nicht live gehen) · **Hoch** (vor Bewerbung fixen) · **Mittel** (in den ersten Wochen) · **Niedrig** (Hygiene).
 Status: **gefixt** · **offen** · **braucht Mehmet**.
@@ -290,7 +290,7 @@ Das Wort "kostenlos": `public/index.html:378`, `public/register/index.html:71`, 
 
 ## Befunde (Stand nach Phase 3)
 
-Zähler: **Blocker 3 · Hoch 12 · Mittel 16 · Niedrig 8** — **gefixt 24 · offen 6 · braucht Mehmet 9**
+Zähler (Stand Ende, Befunde 1–51): **Blocker 3 · Hoch 13 · Mittel 22 · Niedrig 13** — **gefixt 34 · braucht Mehmet 10 · offen/akzeptiert 7**
 
 | # | Bereich | Fund | Schwere | Status | Ort |
 |---|---|---|---|---|---|
@@ -348,3 +348,100 @@ Zähler: **Blocker 3 · Hoch 12 · Mittel 16 · Niedrig 8** — **gefixt 24 · o
 9. **Nach dem Merge**: `generate-biolink` aus dem Repo deployen (template.ts mit `/vendor/`), dann `/antonietta` einmal neu generieren; CSP-Report-Only eine Woche in der Browser-Konsole beobachten, dann scharf stellen.
 10. **Supabase-Plan und Backups** nennen (Free: keine PITR).
 11. **Stripe-Konto**: 14 inaktive Produkte eines anderen Geschäfts — entfernen oder getrenntes Konto.
+
+
+---
+
+## Phase 4–7 (Kurzfassung)
+
+**Phase 4 — Funktion** (Commit `91545c9`)
+- **Vorschau ohne Konto** in der SPA: `#/dashboard`, `#/analytics`, `#/brandready`, `#/biolink`, `#/mediakit` zeigen Beispieldaten, `#/digest` die echte öffentliche Ausgabe; darunter „Einloggen für mehr". Klicks auf Gesperrtes öffnen ein kleines Fenster mit Konto anlegen/Einloggen; Route-Wechsel schließt es. Profil und Onboarding führen weiter zum Login. Im Browser bei 375 px geprüft (Dashboard, Analyse, News, Register, Landing, Legal, FAQ), keine Konsolenfehler.
+- Analyse-Fehlerfälle geprüft (Code): ungültiger Handle/privates Profil → Lauf `failed` mit Klartext, Freischaltung bleibt; Apify-Start scheitert → 502 mit Klartext, Freischaltung bleibt; Timeout → `fail_stale_analysis_runs` nach 15 min; KI unvollständig → zweiter Versuch, sonst `failed` ohne Verbrauch. Die SPA zeigt jede Meldung als Toast/Status.
+- `/kit/` repariert, `track-mediakit-view`-Leiche entfernt, dritter Anon-Key angeglichen, 17 FK-Indizes, Migrationen im Repo, `users.last_active_at` schreibbar.
+- Cron: alle Jobs laufen (14 Tage ohne Fehler), Zeiten UTC dokumentiert; Fehler erreichen jetzt `office@viuno.de` über die Tagesmail (v4).
+- E-Mail: SPF, DKIM, DMARC korrekt; drei Transaktionsmails gelesen (Kaufbestätigung, Analyse-Ergebnis, Wochenmail) — Links, Impressum, Abmeldung vorhanden. **Auth-Mails (Registrierung, Reset) konnte ich nicht auslösen** → braucht Mehmet (Nr. 2).
+- Lighthouse mobil (Live-Stand vor dem Branch): Landing 87/87/100/100, App 77/97/100/54. Behoben: Kontrast der Nebentexte, `main`-Landmark, Meta-Description der App. Google Fonts und esm.sh raus senkt Ladezeit zusätzlich; Lighthouse nach dem Merge wiederholen.
+- Browser: Login ist Passwort-basiert ohne Redirect-Flow → funktioniert in Instagram-/TikTok-In-App-Browsern; Stripe Checkout läuft dort ebenfalls (Stripe-Hosted). Nicht live getestet.
+- Barrierefreiheit: keine `img` ohne `alt` auf öffentlichen Seiten (5 Avatar-Vorschauen in der SPA ohne `alt`, dekorativ), Formulare mit Labels, Tab-Reihenfolge natürlich.
+
+**Phase 5 — Inhalt und Marketing** (Commit `f1758a5`)
+- Erstbesucher von TikTok: `/` → Kachel „Analyse starten" → `/app/#/analytics` (Vorschau, Kaufkarte sichtbar) → Konto anlegen = 3 Klicks bis zur Kaufkarte, Preis auf jedem Schritt sichtbar.
+- Preis überall identisch: „9,99 € je Kanal, einmalig, kein Abo" (Landing, App, News-Promos, AGB, FAQ, Mails). Keine Reste von Pro/Upgrade/Abo. „kostenlos" nirgends mehr.
+- Ansprache durchgehend „du"; keine Platzhalter, kein „Coming soon".
+- **FAQ** unter `/faq/` (11 Fragen), verlinkt aus Landing, News, `/legal`, `404`, Profil; `/hilfe` leitet um; in der Sitemap. Ein Kontaktformular gibt es nicht (bewusst: `mailto:office@viuno.de`), daher kein Autoresponder — **Antwortzeit steht in der FAQ (24–48 h werktags)**.
+- SEO: Title/Description/Canonical auf `/`, `/it/`, `/news`, `/legal`, `/faq/`; interne Seiten `noindex`; `robots.txt` + `sitemap.xml` aktuell. **Kein OG-Bild** (1200×630) vorhanden → braucht Mehmet.
+- Instagram `viuno.pro`: Link auf dem stradauno-BioLink vorhanden; ob die Instagram-Bio auf `viuno.de` zeigt, kann ich nicht prüfen → braucht Mehmet.
+
+### Cross-Promotion-Matrix
+
+| Seite / Ort | Was wird beworben | Wo | Wie | Bewertung |
+|---|---|---|---|---|
+| Landing `/` | alle vier Tools | vier Kacheln | Kachel mit Preis-Pill | passt |
+| Landing Strip | persönliche Beratung | vor dem Footer | mailto office@ | passt |
+| `/news` (öffentlich) | BioLink, Mail, Konto, Analyse, Media Kit | zwischen den Karten | Werbeplätze in fester Reihenfolge, erst inklusive, dann 9,99 € | passt; Texte korrigiert (kein Anfragen-Feature, „inklusive") |
+| App Dashboard | BioLink, Analyse, Media Kit (nur was fehlt) | „Einrichten"-Liste + Haupt-Knopf | Zeile mit Preis-Marke | passt |
+| App Analyse-Ergebnis | Media Kit | unter den Zahlen | „Diese Zahlen ins Media Kit übernehmen" | passt |
+| App Brand Ready ohne Analyse | Analyse | Sperrtafel | „Teil deiner Analyse (9,99 €)" | passt: erst nach Analyse freigeschaltet, vorher nur erklärt |
+| App BioLink ↔ Media Kit | jeweils das andere | Pillenreihe im Tab „Seiten" | Router-Subnav | passt |
+| App News | BioLink, Analyse, Media Kit (nur was fehlt) | „Offen"-Liste | Zeilen | passt |
+| Analyse-Ergebnis-Mail | Media Kit | Fußtext | Link | passt |
+| Wochenmail | Analyse (ohne Analyse) / Media Kit (mit) | zweiter CTA | Karte | passt |
+| **Vorschau ohne Konto (neu)** | Konto | unter jeder Demo | „Einloggen für mehr" + Preis-Satz | neu ergänzt |
+| Nach der Analyse → BioLink | – | – | – | **Lücke bewusst offen gelassen**: das Dashboard nennt den fehlenden BioLink ohnehin; ein zweiter Hinweis direkt unter dem bezahlten Ergebnis wirkte wie Nachverkauf |
+
+**Phase 6 — Betrieb**
+- Fehler: `admin_errors` + Tagesmail (jetzt immer auch an `office@viuno.de`); `RUNBOOK.md` mit den fünf Fällen. Kein Sentry nötig (statische Seiten, Functions loggen nach `admin_errors`).
+- Uptime: kein Dienst eingerichtet (extern) → **braucht Mehmet**: UptimeRobot (kostenlos, 50 Monitore) auf `https://viuno.de/` und `https://bzejndghppuipnedasuv.supabase.co/rest/v1/legal_texts?select=id` (mit `apikey`-Header) oder einfach `https://viuno.de/news/`.
+- Backups: Supabase-Plan unbekannt; Free = keine Point-in-Time-Recovery, tägliche Backups nur Pro. Ein Wiederherstellungs-Test auf einem Branch kostet Geld (Branching ist ein Pro-Feature) → nicht ausgeführt, **braucht Mehmet**.
+
+### Kostenschätzung (pro Monat, EUR, Kurs 0,92)
+
+Annahmen: 20 % der aktiven Konten kaufen eine Analyse pro Monat; Wochenmail an alle; eine Analyse kostet ≈ 0,09 $ Apify + ≈ 0,15 $ KI (Opus 5, ~15k Eingabe-/3k Ausgabe-Token) + 0,40 € Stripe; News ≈ 1,55 $/Woche.
+
+| Posten | 100 Nutzer | 1.000 Nutzer | 10.000 Nutzer | Ab wann kostenpflichtig |
+|---|---|---|---|---|
+| Cloudflare Pages/DNS | 0 | 0 | 0 | praktisch nie (500 Builds/Monat) |
+| Supabase | 0 (Free) | 25 (Pro empfohlen: Backups, keine Pause) | 25 + Egress ≈ 10 | Free-Egress 5 GB: ab ~5.000 Kit-/BioLink-Aufrufen pro Tag |
+| Resend | 0 | 20 (4.000 Mails > 3.000 Free) | 20 (bis 50.000) | ab ~750 Abonnenten |
+| Apify | 2 | 17 | 165 | sofort, skaliert linear mit Käufen |
+| Anthropic (Analyse + News) | 9 | 33 | 280 | sofort, linear |
+| Stripe-Gebühren | 8 | 80 | 800 | linear |
+| **Kosten gesamt** | **≈ 19** | **≈ 175** | **≈ 1.300** | |
+| Umsatz (20 % × 9,99 €) | 200 | 1.998 | 19.980 | |
+| Marge je Analyse | ≈ 9,35 € | ≈ 9,35 € | ≈ 9,35 € | |
+
+Fixkosten ohne einen einzigen Kauf: News ≈ 6 €/Monat, sonst nichts. Monatsgebühren, die irgendwann anfallen: Supabase Pro (25 $) und Resend (20 $) — beide erst deutlich jenseits von 500 Nutzern.
+
+**Phase 7 — Was sonst noch auffiel**
+
+| # | Bereich | Fund | Schwere | Status |
+|---|---|---|---|---|
+| 39 | UX | Nebentexte der Landing mit Kontrast 3,96:1 | Mittel | **gefixt** |
+| 40 | Inhalt | Keine Hilfe/FAQ, keine Antwortzeit genannt | Mittel | **gefixt** |
+| 41 | SEO | Landing ohne Canonical/OG-Tags; kein OG-Bild | Niedrig | Tags **gefixt**; OG-Bild **braucht Mehmet** (1200×630, `public/og.png`, dann `og:image` in `/`, `/it/`, `/news`, `/faq/`) |
+| 42 | SEO/A11y | App ohne `main`-Landmark und Description | Niedrig | **gefixt** |
+| 43 | UX | Jede Produkt-Route endete ohne Konto in der Login-Wand | Mittel | **gefixt** (Vorschau) |
+| 44 | Sicherheit | Advisor: Trigger-Funktionen (`handle_new_user`, `sync_*`, …) für anon „ausführbar" | Niedrig | **akzeptiert** — PostgREST kann Trigger-Funktionen nicht aufrufen („trigger functions can only be called as triggers"); ein Revoke könnte die Registrierung brechen |
+| 45 | Datenbank | Extensions `pg_net`, `vector` im Schema `public` | Niedrig | offen (Umzug berührt `digest_waechter` und Cron; nicht ohne Test) |
+| 46 | Datenbank | 52 RLS-Policies mit `auth.uid()` statt `(select auth.uid())` | Niedrig | offen (Performance erst bei vielen Zeilen relevant) |
+| 47 | Betrieb | Kein Uptime-Check | Mittel | **braucht Mehmet** (UptimeRobot, kostenlos) |
+| 48 | Stripe | Stripe-Risk: Konto trägt 14 inaktive Fremdprodukte („Unposted Set", „After Hours") — ein Prüfer sieht eine andere Branche als die im Checkout | Mittel | **braucht Mehmet** (= Nr. 33) |
+| 49 | Datenschutz | Ein Prüfer würde als Erstes nach der Rechtsgrundlage für den Instagram-/TikTok-Abruf über Apify fragen — die Datenschutzerklärung nennt sie (Art. 6 lit. b, Auftrag des Nutzers), die AGB verlangen eigene Kanäle (§ 4.4). Das Plattformrisiko (Sperre durch Meta/TikTok) bleibt | Mittel | **braucht Mehmet** (bewusste Entscheidung) |
+| 50 | Zahlung | Vollständiger Testkauf mit Karteneingabe nicht durch mich möglich | Hoch | **braucht Mehmet** (Checkliste Schritt 10) |
+| 51 | Wettbewerber-Blick | Alles Wesentliche steht im Quelltext offen (statische Seiten, Anon-Key by design); das Regelwerk `brand-ready-regeln.js` und die Prompts in `analysis-webhook` sind der eigentliche Wert — die Prompts liegen nur serverseitig, das Regelwerk ist öffentlich (bewusst, SHA-gepinnt) | Niedrig | akzeptiert |
+
+---
+
+## Go / No-Go
+
+**Go — unter zwei Bedingungen, die nur du erfüllen kannst.**
+
+Die drei Blocker sind technisch abgeräumt: kein fremder Datensatz ist mehr anonym lesbar (getestet), der alte Payment Link ist tot, die Live-Preise stehen inklusive Steuer in Stripe und in `stripe_prices`. Alle zwölf Hoch-Befunde zu RLS, RPCs, Schlüsseln und Callbacks sind gefixt und verifiziert; die Rechtstexte sind vollständig und stimmen mit der Technik überein; Schriften und Skripte kommen von viuno.de; die App ist ohne Konto anschaubar; Preis und Sprache sind überall gleich; FAQ, Runbook und Rollback liegen im Repo.
+
+**Bedingung 1 — Zahlung scharf schalten (Checkliste Schritte 1–10):** Live-Keys in Supabase, `VIUNO_STRIPE_MODE=live`, Webhook-Events ergänzt, ein Testkauf im Testmodus **vor** dem Umschalten. Ohne das kann niemand bezahlen — die Seite wäre bewerbbar, aber das Produkt nicht kaufbar.
+
+**Bedingung 2 — Auth-Mails (Braucht Mehmet Nr. 2):** Supabase-Standardversand ist auf zwei Mails pro Stunde begrenzt. Wenn dort kein eigener SMTP (Resend) hinterlegt ist, kommt ab der dritten Registrierung pro Stunde keine Bestätigungsmail an — bei einer TikTok-Kampagne wäre das der erste Support-Fall. Fünf Minuten im Dashboard.
+
+Danach mergen (`launch-check` → `main`), `generate-biolink` aus dem Repo deployen (Braucht Mehmet Nr. 9) und mit dem Bewerben anfangen. Rechtstexte gegenlesen (Nr. 5), AV-Verträge (Nr. 6), OG-Bild (Nr. 41) und Uptime-Check (Nr. 47) dürfen in der ersten Woche nachlaufen — sie halten den Start nicht auf, aber nicht länger als das.
+
+Was ich nicht selbst prüfen konnte, steht als solches markiert; nichts davon ist eine bekannte Lücke, alles davon ist ein Dashboard-Klick von dir.
