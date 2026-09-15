@@ -855,12 +855,11 @@ function akteHtml() {
       </div>
 
       <div class="abschnitt">Aktionen</div>
-      <div class="karte-sub" style="padding:0 var(--s-4) var(--s-2)">Seiten neu erzeugen geht nur im Konto selbst —
-        <code>generate-biolink</code> leitet den Creator aus dem Login ab und kennt keine fremde ID.</div>
+      <div class="karte-sub" style="padding:0 var(--s-4) var(--s-2)">Seiten neu erzeugen und Datenauskunft gehen nur im Konto selbst —
+        <code>generate-biolink</code> und <code>datenauskunft</code> leiten den Creator aus dem Login ab und kennen keine fremde ID.</div>
       <div class="aktionen">
         <button class="akt" data-tu="frei" data-platform="instagram" data-id="${u.id}">Instagram freischalten</button>
         <button class="akt" data-tu="frei" data-platform="tiktok" data-id="${u.id}">TikTok freischalten</button>
-        <button class="akt" data-tu="auskunft" data-id="${u.id}">Datenauskunft senden</button>
         <button class="akt ${u.admin ? 'rot' : ''}" data-tu="admin" data-wert="${u.admin ? '0' : '1'}" data-id="${u.id}"
           ${u.id === z.ich?.id ? 'disabled title="Das eigene Recht laesst sich hier nicht entziehen"' : ''}>
           ${u.admin ? 'Admin-Recht entziehen' : 'Zum Admin machen'}</button>
@@ -1124,10 +1123,6 @@ async function ausfuehren(el) {
       if (!await frage('Freischalten?', 'Eine ' + p + '-Analyse wird ohne Zahlung freigeschaltet. Sie zaehlt nicht in den Umsatz.', 'Ja')) return
       await aktion('analyse_freischalten', { id, platform: p })
       toast('Freigeschaltet.'); return laden()
-    }
-    if (art === 'auskunft') {
-      if (!await frage('Datenauskunft senden?', 'Der vollstaendige Export geht per Mail an die Login-Adresse.', 'Ja, senden')) return
-      await aktion('datenauskunft', { id }); toast('Auskunft ist raus.'); return
     }
     if (art === 'admin') {
       const an = el.dataset.wert === '1'

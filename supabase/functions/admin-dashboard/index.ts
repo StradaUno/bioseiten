@@ -6,7 +6,7 @@
  * gruppieren, wie es die Vorgaengerversion getan hat.
  *
  * Hier bleiben nur die Aktionen, die den Service Role brauchen --
- * Seiten neu erzeugen, Analysen freischalten, Admin-Rechte setzen.
+ * Analysen freischalten, Admin-Rechte setzen.
  * Was die RLS dem Admin ohnehin erlaubt (kosten_guthaben schreiben,
  * admin_errors erledigen), macht die Oberflaeche direkt.
  *
@@ -82,11 +82,15 @@ Deno.serve(async (req) => {
         return json({ ok: true })
       }
 
-      /* 'seite_neu' gab es hier kurz und wurde wieder entfernt: generate-biolink
-         und generate-mediakit leiten den Creator aus dem JWT ab und ignorieren
-         eine uebergebene user_id. Mit dem Service-Role-Key aufgerufen scheitert
-         dort getUser() -- die Aktion konnte nie funktionieren. Wer sie will,
-         muss zuerst den Generatoren einen Admin-Pfad geben. */
+      /* 'seite_neu' und 'datenauskunft' gab es hier und sind wieder raus:
+         generate-biolink, generate-mediakit und datenauskunft leiten den
+         Creator aus dem JWT ab und ignorieren eine uebergebene user_id. Mit
+         dem Service-Role-Key aufgerufen scheitert dort getUser() -- beide
+         Aktionen konnten nie funktionieren. Aufgefallen ist es nicht, weil
+         die Antwort { ok: false } mit HTTP 200 und ohne error-Feld kam: die
+         Oberflaeche warf nicht und meldete "Auskunft ist raus.". Wer die
+         Aktionen zurueckwill, muss den drei Functions zuerst einen Admin-Pfad
+         geben -- Service-Role-Key plus user_id im Body, sauber abgegrenzt. */
 
       /* Analyse ohne Zahlung freischalten. amount_paid 0 -- die Zeile zaehlt
          damit nicht in den Umsatz, taucht aber in der Kaufliste auf und ist
@@ -110,13 +114,6 @@ Deno.serve(async (req) => {
         const { error } = await admin.from('users').update({ is_admin: koerper.wert === true }).eq('id', id)
         if (error) throw error
         return json({ ok: true })
-      }
-
-      /* Datenauskunft fuer einen User anstossen. */
-      case 'datenauskunft': {
-        if (!id) return json({ error: 'id_fehlt' }, 400)
-        const r = await ruf('datenauskunft', { user_id: id })
-        return json({ ok: r.ok, antwort: r.daten })
       }
 
       /* Die Tagesmail sofort schicken, zum Ausprobieren. */
