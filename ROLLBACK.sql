@@ -187,3 +187,14 @@ drop index if exists public.admin_errors_user_id_idx, public.ai_usage_log_user_i
   public.deals_user_id_idx, public.kosten_guthaben_erfasst_von_idx, public.mediakit_aufrufe_user_id_idx,
   public.newsletter_subscribers_user_id_idx, public.subscriptions_user_id_idx, public.user_goals_user_id_idx,
   public.users_active_goal_id_idx;
+
+-- ── Nachtrag 15.09.2026: Aufräumen nach Freigabe ─────────────────────────
+-- Gelöscht (nicht per SQL rückholbar): analyse_stats_backup_20260913/14,
+-- backup_antonietta_{ki,posts,runs,stats}_20260914, legal_texts_backup_20260913/14
+-- → Inhalt liegt als JSON in .launch-check-export-backup-tabellen-20260915.json
+--   (lokal im Arbeitsordner, nicht im Git).
+-- Buckets trend-images (74 Objekte) und Glenn (13 Objekte): Dateien über die
+-- Storage-API entfernt, keine Sicherung (nirgends referenziert).
+-- Testkonto launchcheck.test@example.com: auth.users, public.users (Cascade),
+-- vault.secrets 'launchcheck_testkonto' gelöscht.
+-- legal_texts_backup_20260915 existiert weiterhin, Abschnitt 3 oben gilt unverändert.

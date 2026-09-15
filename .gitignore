@@ -141,3 +141,6 @@ vite.config.ts.timestamp-*
 
 # Deno-Lockfile aus 'deno check' der Edge Functions — kein Deploy-Artefakt
 deno.lock
+
+# Lokale Sicherung der geloeschten Backup-Tabellen (Launch-Check 15.09.2026)
+.launch-check-export-*.json
