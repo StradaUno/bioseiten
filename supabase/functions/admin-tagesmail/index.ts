@@ -16,6 +16,10 @@ const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') || ''
 const FROM_EMAIL = 'noreply@viuno.de'
 const FROM_NAME = 'viuno'
 const KURS = 0.92            // 1 USD in EUR. Muss zu admin_uebersicht() passen.
+/* Feste Empfaenger zusaetzlich zu den Admin-Konten: die Support-Adresse bekommt
+   die Tagesmail immer -- so laeuft die Fehlermeldung nicht ins Leere, wenn das
+   Admin-Konto einmal eine andere Adresse traegt (Launch-Check 15.09.2026). */
+const FESTE_EMPFAENGER = ['office@viuno.de']
 
 const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!)
 const cors = {
@@ -126,7 +130,7 @@ Deno.serve(async (req) => {
 
     const { data: admins } = await supabase.from('users')
       .select('email, display_name').eq('is_admin', true).is('deleted_at', null)
-    const empfaenger = (admins || []).map(a => a.email).filter(Boolean)
+    const empfaenger = [...new Set([...(admins || []).map(a => a.email).filter(Boolean), ...FESTE_EMPFAENGER])]
     if (!empfaenger.length) return json({ ok: false, grund: 'keine_admins' })
 
     const tag = gestern.toLocaleDateString('de-DE', { weekday: 'long', day: '2-digit', month: 'long' })

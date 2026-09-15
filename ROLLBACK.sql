@@ -177,3 +177,13 @@ from public.legal_texts_backup_20260915 b where b.id = t.id;
 --   get-admin-stats v16->17, get-news-image v7->8, sync-news-images v7->8
 -- Cron-Rollback (Abschnitt 1c) setzt die alten Function-Versionen voraus; die Stubs koennen
 -- unabhaengig davon jederzeit auf die Vorversion zurueckgesetzt werden.
+
+-- =====================================================================
+-- 4. Indizes (Migration launch_check_indizes, Phase 4)
+-- =====================================================================
+drop index if exists public.admin_errors_user_id_idx, public.ai_usage_log_user_id_idx, public.analyse_freigaben_user_id_idx,
+  public.analysis_purchases_analysis_run_id_idx, public.biolink_klicks_link_id_idx, public.brand_ratings_brand_id_idx,
+  public.brand_ratings_deal_id_idx, public.brand_ratings_user_id_idx, public.brands_user_id_idx, public.deals_brand_id_idx,
+  public.deals_user_id_idx, public.kosten_guthaben_erfasst_von_idx, public.mediakit_aufrufe_user_id_idx,
+  public.newsletter_subscribers_user_id_idx, public.subscriptions_user_id_idx, public.user_goals_user_id_idx,
+  public.users_active_goal_id_idx;
