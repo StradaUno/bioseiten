@@ -1,7 +1,7 @@
 # LAUNCH-CHECK — viuno vor der aktiven Bewerbung
 
 **Stand:** 15. September 2026 · **Branch:** `launch-check` · **Prüfer:** Claude (Security · Datenschutz/Recht · Backend · UX · Marketing)
-**Status:** Phase 0 (Inventar) abgeschlossen. Phasen 1–7 folgen nach Freigabe.
+**Status:** Phase 0–3 abgeschlossen (Inventar, Sicherheit, Recht, Zahlung). Phase 4–7 laufen. Go/No-Go am Ende der Datei.
 
 Schweregrade: **Blocker** (nicht live gehen) · **Hoch** (vor Bewerbung fixen) · **Mittel** (in den ersten Wochen) · **Niedrig** (Hygiene).
 Status: **gefixt** · **offen** · **braucht Mehmet**.
@@ -248,55 +248,103 @@ Das Wort "kostenlos": `public/index.html:378`, `public/register/index.html:71`, 
 
 ---
 
-## Befunde (Stand nach Phase 0 — noch nichts gefixt)
+## Was in Phase 1–3 passiert ist (Kurzfassung)
 
-Zähler: **Blocker 3 · Hoch 9 · Mittel 14 · Niedrig 8** — gefixt 0 · offen 34 · braucht Mehmet (siehe Liste unten)
+**Phase 1 — Sicherheit** (Commit `9b4964b`, Migrationen `launch_check_sicherheit_1`, `launch_check_digest_waechter_schluessel`, `launch_check_users_last_active_at`; Rückweg `ROLLBACK.sql`)
+- RLS: `creator_analytics` nicht mehr anonym lesbar, `competitor_accounts` nicht mehr anonym schreibbar, `mediakit_aufrufe` nur für aktive Kits.
+- 22 Funktionsrechte entzogen (Legacy-RPCs mit `p_user_id`, schreibende SD-Funktionen), `get_mediakit_views_last_7_days_daily` prüft `auth.uid()`.
+- Tabellenrechte auf 16 Tabellen ohne Policy entzogen, TRUNCATE überall, DELETE auf `users`. `search_path` auf 21 Funktionen.
+- Zwei Schlüssel im Supabase-Vault (`cron_schluessel`, `apify_webhook_schluessel`), nur Service Role darf sie prüfen/holen. Cron-Jobs 6/16/21/22/23 und `digest_waechter()` schicken den Schlüssel im Header `x-schluessel`. Alter `CRON_TOKEN` aus dem Code entfernt und **nicht mehr akzeptiert**. `generate-daily-digest`, `send-weekly-digest-email`, `admin-tagesmail`, `apify-kosten-nachtragen` verlangen ihn; `analysis-webhook` verlangt den Apify-Schlüssel, `start-analysis` hängt ihn an.
+- 10 Altlast-Functions als 410-Stub mit `verify_jwt`; `contact-submit` mit Honeypot und Rate-Limit.
+- Cloudflare `_headers`: HSTS, X-Frame-Options, Permissions-Policy, CSP (frame-ancestors scharf, Rest Report-Only), noindex für interne Pfade; `robots.txt` erweitert; `404.html`.
+- Verifiziert per curl mit dem Anon-Key und per `SET ROLE authenticated` (Testkonto): eigene Daten lesbar, fremde nicht, öffentliche Views und Register-RPCs unverändert, alle Guards liefern 403, Stubs 410, Cron-Pfad end-to-end 200.
+
+**Phase 2 — Recht** (Commit `f535518`, `LEGAL-CHANGES.md`, Sicherung `legal_texts_backup_20260915`)
+- 19 Änderungen an den sechs Rechtstexten (Adressen, Sprachregel, tote OS-Plattform, Double-Opt-In-Nachweis, Local Storage, `page_views`, Edge-Function-Standort, Media-Kit-Datenherkunft).
+- Google Fonts (22 Seiten) und esm.sh (16 Seiten/Skripte) durch lokale Dateien ersetzt — kein Aufruf an US-CDNs mehr beim Seitenaufruf.
+- `/it/` mit Links auf `/legal`, ohne itrk.legal-iframe. "kostenlos" überall raus.
+
+**Phase 3 — Zahlung** (dieser Commit)
+- Stripe live: zwei neue Preise 9,99 € mit `tax_behavior: inclusive` (`price_1UFkAqLH6NVqx26ev8jnPcG7` Instagram, `price_1UFkAtLH6NVqx26eRgc5bEqh` TikTok), Zeilen `mode='live'` in `stripe_prices`. Alter Payment Link **deaktiviert**.
+- `stripe-webhook` v9: Betrag/Währung werden geprüft (999 EUR, sonst Meldung statt Freischaltung), verzögerte Zahlarten über `checkout.session.async_payment_succeeded`, Test-Events werden im Live-Betrieb ignoriert. Repo-Kopie angelegt.
+- `send-purchase-confirmation` v3, `send-analysis-email` v7: Reply-To `office@viuno.de`, Hinweis auf die Stripe-Rechnung. Repo-Kopien angelegt.
+- Umschaltung Test → Live geschieht **nur** über Secrets (`VIUNO_STRIPE_MODE`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SIGNING_SECRET`); kein Key im Repo, Test-IDs nur in `stripe_prices`.
+- Fehlerfälle geprüft: Webhook ohne/mit falscher Signatur → 400; Mail-Functions ohne Service-Role → 401; `start-analysis` ohne Login → Klartext ohne interne Details; Abbruch im Checkout → `?checkout=cancel` mit Toast; doppelter Kauf → zweite Freischaltung derselben Plattform (gewollt, kein Abo); Kauf ohne Login unmöglich (Checkout entsteht nur serverseitig mit JWT).
+
+### Live-Schaltung: exakte Checkliste (Braucht Mehmet)
+
+| Schritt | Wo | Wert |
+|---|---|---|
+| 1 | Stripe Dashboard → Entwickler → API-Schlüssel | `sk_live_…` kopieren |
+| 2 | Supabase → Edge Functions → Secrets | `STRIPE_SECRET_KEY` = `sk_live_…` |
+| 3 | Stripe Dashboard → Webhooks → Endpoint `we_1UE28dLH6NVqx26eJCcUtU1T` (Live) | Signing Secret `whsec_…` kopieren; **Events ergänzen**: `checkout.session.async_payment_succeeded`, `checkout.session.async_payment_failed` (API-Änderung wurde vom Werkzeug abgelehnt) |
+| 4 | Supabase → Secrets | `STRIPE_WEBHOOK_SIGNING_SECRET` = `whsec_…` (Live) |
+| 5 | Supabase → Secrets | `VIUNO_STRIPE_MODE` = `live` |
+| 6 | Supabase → Secrets | `STRIPE_WEBHOOK_SIGNING_SECRET_TEST` und `STRIPE_SECRET_KEY_TEST` **entfernen** (oder lassen — der Webhook ignoriert Test-Events im Live-Betrieb, aber weniger Secrets sind weniger Angriffsfläche) |
+| 7 | Stripe → Produkt `prod_VEUNSFSahcHv1b` | Default-Preis auf `price_1UFkAqLH6NVqx26ev8jnPcG7` setzen, alten Preis `price_1UE1ZDLH6NVqx26e8yqbVlgp` archivieren (per API nicht möglich, weil er Default ist) |
+| 8 | Stripe → Einstellungen → Öffentliche Details | Statement Descriptor `VIUNO`, Support-E-Mail `office@viuno.de`, Website `viuno.de` |
+| 9 | Stripe → Einstellungen → E-Mails | „Rechnungen an Kunden senden" aktivieren (sonst gibt es keinen Beleg per Mail; die App zeigt keinen) |
+| 10 | Test **vor** Schritt 5 | Einen Kauf im Testmodus mit Testkarte durchspielen: Checkout → Rückkehr → „Freigeschaltet ✓" → Kaufbestätigungs-Mail → Analyse starten → Ergebnis-Mail. Ich konnte den Checkout selbst nicht abschließen (keine Karteneingabe durch mich). |
+
+---
+
+## Befunde (Stand nach Phase 3)
+
+Zähler: **Blocker 3 · Hoch 12 · Mittel 16 · Niedrig 8** — **gefixt 24 · offen 6 · braucht Mehmet 9**
 
 | # | Bereich | Fund | Schwere | Status | Ort |
 |---|---|---|---|---|---|
-| 1 | Sicherheit | `creator_analytics` ist für **anon** komplett lesbar (Policy `anon read creator_analytics` = `true`): Follower, ER, Captions, KI-Insights aller Nutzer | **Blocker** | offen | Supabase RLS |
-| 2 | Zahlung | Stripe läuft im **Testmodus**; `stripe_prices` hat keine `live`-Zeile; Live-Preis hat `tax_behavior: exclusive`; nur eine Live-Preis-ID statt zwei | **Blocker** | offen | `create-checkout-session`, `stripe_prices`, Stripe |
-| 3 | Zahlung | Alter **Payment Link** ist live und aktiv: Kauf ohne Widerrufs-Zustimmung, ohne Plattform, ohne § 312j-Button — Webhook verbucht ihn als Instagram | **Blocker** | offen | Stripe `plink_1UE1bd…` |
-| 4 | Sicherheit | `competitor_accounts`: Policy `service_all` (`true/true` für `public`) → anon kann lesen, schreiben, löschen | Hoch | offen | Supabase RLS |
-| 5 | Sicherheit | SD-RPCs mit `p_user_id` (`get_platform_stats`, `get_bio_*`, `get_biolink_views*`, `get_mediakit_views_*`) geben Zahlen **fremder** Konten heraus; `update_biolink_view_aggregates`, `record_consent`, `track_bio_view`, `log_error`, `purge_*` von anon **schreibend** aufrufbar | Hoch | offen | Supabase Functions |
-| 6 | Sicherheit | `CRON_TOKEN` steht im Repo (2 Functions) und in `cron.job` → **muss rotiert** und aus dem Code raus (Vault/Secret) | Hoch | offen | `supabase/functions/admin-tagesmail`, `apify-kosten-nachtragen` |
-| 7 | Sicherheit | `generate-daily-digest` und `send-weekly-digest-email` ohne jede Auth: jeder kann KI-Generierung (Kosten) bzw. Mailversand auslösen | Hoch | offen | Edge Functions + `cron.job` |
-| 8 | Sicherheit | `analysis-webhook` (Apify-Callback) ohne Secret: mit fremder Run-ID/UUID manipulierbar | Hoch | offen | `analysis-webhook` |
-| 9 | Sicherheit | Altlast-Functions live und aufrufbar: `scan-managed-creator` (Apify-Kosten ohne Auth), `fetch-competitor-accounts` (jeder Login → Apify), `competitor-webhook`, `apify-webhook`, `fetch-analytics`, `send-collab-reply`, `newsletter-signup`, `get-admin-stats` | Hoch | offen | Supabase Dashboard |
-| 10 | Recht | Google Fonts von `fonts.googleapis.com` auf fast allen Seiten (IP-Übermittlung in die USA, Abmahnrisiko DE) — in der Datenschutzerklärung? (Phase 2) | Hoch | offen | alle `index.html` |
-| 11 | Recht | `/it/`: Rechtstexte nur als Modal, nicht aus `legal_texts`, ohne AGB/Widerruf | Hoch | offen | `public/it/index.html` |
-| 12 | Betrieb | Supabase Auth: Site-URL/Redirects/SMTP/Leaked-Password-Protection nicht prüfbar per MCP; **Leaked-Password-Protection ist aus** (Advisor) | Hoch | braucht Mehmet | Supabase Dashboard |
-| 13 | Sicherheit | Keine HSTS, CSP, X-Frame-Options auf `/app/`, `/admin/`, Landing | Mittel | offen | `public/_headers` |
-| 14 | Sicherheit | `contact-submit` ohne Honeypot/Rate-Limit (derzeit von keiner Seite genutzt) | Mittel | offen | Edge Function |
-| 15 | Sicherheit | `stripe-webhook` prüft Betrag/Preis nicht; verarbeitet Test-Events, solange `…_TEST`-Secret gesetzt ist | Mittel | offen | `stripe-webhook` |
-| 16 | Sicherheit | `mediakit_aufrufe` INSERT für anon `true` (Zählungen für jede UUID fälschbar) | Mittel | offen | RLS |
-| 17 | Funktion | `/kit/` generischer Renderer kaputt (alter Key, fehlende View, `veuno.de`); `track-mediakit-view` nicht deployed | Mittel | offen | `public/kit/index.html`, `public/kit/stradauno/` |
-| 18 | Funktion | Keine `404.html` → jede unbekannte URL liefert die Landing mit 200 | Mittel | offen | `public/404.html` |
-| 19 | SEO | `/test/`, `/testi/`, `/admina/`, `/extras/`, `/admin/karusell/` indexierbar bzw. nicht in robots.txt | Mittel | offen | `robots.txt`, `_headers` |
-| 20 | Marketing | "kostenlos" an 4 Stellen; Kontaktadresse uneinheitlich (`kontakt@viuno.de`, `kontakt@stradauno.de`, `hello@viuno.de`), `office@viuno.de` fehlt überall | Mittel | offen | s. 0.6 |
-| 21 | Recht | Reply-To der Kauf- und Analyse-Mails `kontakt@stradauno.de` statt office@viuno.de; Impressum nennt `kontakt@stradauno.de` | Mittel | offen / braucht Mehmet | Functions, `legal_texts.impressum` |
-| 22 | Betrieb | Fehler landen nur in `admin_errors` + Tagesmail an Admin-Konto, kein Alert an office@viuno.de, kein Uptime-Check | Mittel | offen | Phase 6 |
-| 23 | Betrieb | Repo-Kopien der 21 Functions ohne SHA-Abgleich mit Deploy; 10 relevante Functions (u. a. `stripe-webhook`, `create-checkout-session`, `start-analysis`) **ohne** Repo-Kopie | Mittel | offen | `supabase/functions/` |
-| 24 | Datenbank | 8 Backup-Tabellen, 5 leere CRM-Tabellen, `subscriptions`, `biolink_settings`/`biopage_public` (Altbestand), 147 MB `trend-images`, Bucket `Glenn` | Mittel | offen (Löschen nur mit Freigabe) | Supabase |
-| 25 | Datenbank | 21 Funktionen ohne `search_path`, `pg_net`/`vector` in `public`, 17 FKs ohne Index, 52 RLS-Policies mit `auth.uid()` statt `(select auth.uid())` | Mittel | offen | Supabase Advisor |
-| 26 | Recht | `/it/` Newsletter/Kontakt-Modal: Rechtsgrundlagen prüfen (Phase 2) | Mittel | offen | |
-| 27 | Sicherheit | `anon`/`authenticated` haben `DELETE`/`TRUNCATE`-Grants auf allen Tabellen (RLS deckt, aber unsauber) | Niedrig | offen | Grants |
-| 28 | Sicherheit | `bio-template.html` mit drittem Anon-Key, `/kit/` mit altem Anon-Key — Keys angleichen | Niedrig | offen | |
-| 29 | Funktion | `/extras/` schreibt direkt in `contact_submissions` (scheitert an RLS) | Niedrig | offen | `public/extras/index.html` |
-| 30 | Funktion | `sidebar.js` im Repo-Root, `package.json` mit ungenutzten Abhängigkeiten, kein Lockfile (`npm audit` nicht möglich) | Niedrig | offen | Repo |
-| 31 | Betrieb | Alle Cron-Zeiten UTC (Wochenmail 04:30 UTC = 06:30 MESZ, ok) — dokumentieren | Niedrig | offen | |
-| 32 | Betrieb | DMARC `rua=hello@viuno.de` — existiert das Postfach? | Niedrig | braucht Mehmet | DNS |
-| 33 | Stripe | 14 inaktive Fremdprodukte im selben Konto (Risk-Profil "Digital Content") | Niedrig | braucht Mehmet | Stripe |
-| 34 | Sicherheit | `get_bio_stats_flat` verweist auf nicht existierende Tabelle (toter Code) | Niedrig | offen | Supabase |
+| 1 | Sicherheit | `creator_analytics` für anon komplett lesbar | **Blocker** | **gefixt** (Policy entfernt, getestet) | RLS |
+| 2 | Zahlung | Stripe im Testmodus, keine `live`-Zeile in `stripe_prices`, Live-Preis `tax_behavior: exclusive` | **Blocker** | **gefixt** bis auf Keys: neue Live-Preise inklusive, `stripe_prices` befüllt; Keys + `VIUNO_STRIPE_MODE=live` → **braucht Mehmet** (Checkliste oben) | Stripe, `stripe_prices` |
+| 3 | Zahlung | Alter Payment Link aktiv (ohne Widerrufs-Zustimmung, ohne Plattform) | **Blocker** | **gefixt** (deaktiviert) | Stripe `plink_1UE1bd…` |
+| 4 | Sicherheit | `competitor_accounts` anon lesbar/schreibbar | Hoch | **gefixt** | RLS |
+| 5 | Sicherheit | SD-RPCs geben fremde Zahlen heraus; schreibende SD-Funktionen von anon aufrufbar | Hoch | **gefixt** (22 Revokes, Guard in `get_mediakit_views_last_7_days_daily`) | Funktionen |
+| 6 | Sicherheit | `CRON_TOKEN` im Repo und in `cron.job` | Hoch | **gefixt**: Vault-Schlüssel, alter Token wird nicht mehr akzeptiert. Wert: Supabase → Vault → `cron_schluessel` | Functions, Cron |
+| 7 | Sicherheit | News-Functions ohne Auth (KI-Kosten, Mailversand) | Hoch | **gefixt** (Schlüssel im Header, 403 sonst) | `generate-daily-digest`, `send-weekly-digest-email` |
+| 8 | Sicherheit | `analysis-webhook` ohne Secret | Hoch | **gefixt** (`schluessel` aus Vault, 403 sonst) | `analysis-webhook`, `start-analysis` |
+| 9 | Sicherheit | Acht Altlast-Functions live aufrufbar | Hoch | **gefixt** (10 Stubs, 410, `verify_jwt`) | Supabase |
+| 10 | Recht | Google Fonts von Google geladen | Hoch | **gefixt** (lokal) | alle Seiten |
+| 11 | Recht | `/it/` ohne AGB/Widerruf, Privacy-iframe von itrk.legal (404) | Hoch | **gefixt** (Links auf `/legal`) | `public/it/index.html` |
+| 12 | Betrieb | Auth-Einstellungen nicht prüfbar; Leaked-Password-Protection aus | Hoch | **braucht Mehmet** | Supabase Dashboard |
+| 13 | Sicherheit | Keine HSTS/CSP/X-Frame-Options | Mittel | **gefixt** (CSP Report-Only, Rest scharf) — wirkt nach Merge | `public/_headers` |
+| 14 | Sicherheit | `contact-submit` ohne Spam-Schutz | Mittel | **gefixt** (Honeypot `firma`, 3/h je IP, Header-Injection blockiert) | Edge Function |
+| 15 | Sicherheit | `stripe-webhook` prüft Betrag nicht, verarbeitet Test-Events | Mittel | **gefixt** (v9) | `stripe-webhook` |
+| 16 | Sicherheit | `mediakit_aufrufe` INSERT anon `true` | Mittel | **gefixt** (`is_mediakit_active`) | RLS |
+| 17 | Funktion | `/kit/` generischer Renderer kaputt; `track-mediakit-view` nicht deployed | Mittel | offen → Phase 4 | `public/kit/` |
+| 18 | Funktion | Keine `404.html` | Mittel | **gefixt** | `public/404.html` |
+| 19 | SEO | Entwürfe/interne Seiten indexierbar | Mittel | **gefixt** (`robots.txt`, `X-Robots-Tag`) | |
+| 20 | Marketing | "kostenlos", uneinheitliche Kontaktadresse | Mittel | **gefixt** (office@ überall; `hello@` nur in DMARC belassen → braucht Mehmet) | |
+| 21 | Recht | Reply-To/Impressum `kontakt@stradauno.de` | Mittel | **gefixt** (office@viuno.de) | Functions, `legal_texts` |
+| 22 | Betrieb | Fehler nur in `admin_errors`/Tagesmail an Admin-Konto | Mittel | offen → Phase 6 | |
+| 23 | Betrieb | Functions ohne Repo-Kopie / ohne Abgleich | Mittel | **gefixt** für `start-analysis`, `stripe-webhook`, `send-purchase-confirmation`, `send-analysis-email`, `contact-submit`, `analysis-webhook` (alle 5 Dateien); Abgleich geprüft für `analysis-webhook`, `generate-biolink` | `supabase/functions/` |
+| 24 | Datenbank | Backup-Tabellen, leere CRM-Tabellen, 147 MB `trend-images`, Bucket `Glenn` | Mittel | **braucht Mehmet** (Löschen nicht freigegeben; Rechte für anon/auth sind entzogen) | Supabase |
+| 25 | Datenbank | Advisor: `search_path`, Extensions in `public`, FK-Indizes, RLS-Initplan | Mittel | `search_path` **gefixt**; Rest offen → Phase 4 | |
+| 26 | Recht | Datenschutzerklärung unvollständig (DOI-Nachweis, Local Storage, `page_views`, Edge-Standort, App Stores) | Mittel | **gefixt** — anwaltlich gegenlesen (LEGAL-CHANGES D-5, D-6) → braucht Mehmet | `legal_texts` |
+| 27 | Sicherheit | `DELETE`/`TRUNCATE`-Grants für anon/auth | Niedrig | **gefixt** | Grants |
+| 28 | Sicherheit | Drei Anon-Key-Varianten | Niedrig | offen → Phase 4 | `bio-template.html`, `/kit/` |
+| 29 | Funktion | `/extras/` schreibt direkt in `contact_submissions` | Niedrig | offen (Seite ist intern, noindex) | |
+| 30 | Funktion | `sidebar.js`, ungenutzte `package.json`-Abhängigkeiten | Niedrig | offen → Phase 4 | Repo |
+| 31 | Betrieb | Cron-Zeiten UTC | Niedrig | dokumentiert (0.2) | |
+| 32 | Betrieb | DMARC `rua=hello@viuno.de` | Niedrig | **braucht Mehmet** (Postfach bestätigen oder auf office@ umstellen — DNS-Änderung, nicht von mir) | DNS |
+| 33 | Stripe | 14 inaktive Fremdprodukte im Konto | Niedrig | **braucht Mehmet** (Stripe-Risk sieht "Digital Content"; Produkte löschen oder Konto trennen) | Stripe |
+| 34 | Sicherheit | `get_bio_stats_flat` toter Code | Niedrig | **gefixt** (Rechte entzogen) | |
+| 35 | Funktion | `users.last_active_at` wurde nie geschrieben — `authenticated` hatte kein UPDATE-Recht auf der Spalte, `merkeAktiv()` scheiterte still | Mittel | **gefixt** (Spaltenrecht) | Migration |
+| 36 | Zahlung | Verzögerte Zahlarten (SEPA, Klarna) wurden nie freigeschaltet: `checkout.session.completed` kam mit `unpaid`, `async_payment_succeeded` war nicht abonniert | Hoch | **gefixt** im Code; Event am Endpoint ergänzen → **braucht Mehmet** (Schritt 3) | `stripe-webhook`, Stripe |
+| 37 | Zahlung | Beleg: Stripe-Rechnung wird erzeugt, aber ob sie gemailt wird, hängt an einer Dashboard-Einstellung; die App zeigt keinen Beleg | Mittel | **braucht Mehmet** (Schritt 9) | Stripe |
+| 38 | Funktion | Generierte BioLinks (`generate-biolink`) laden supabase-js von esm.sh; die Umstellung auf `/vendor/` ist im Repo (`template.ts`), aber **nicht deployed**, weil `/vendor/` erst nach dem Merge auf viuno.de liegt | Mittel | offen → **nach Merge deployen** (v19 = alter Stand) | `supabase/functions/generate-biolink` |
 
 ---
 
 ## Braucht Mehmet (wird fortgeführt)
 
-1. **Supabase Dashboard → Auth:** Site URL = `https://viuno.de`, Redirect-URLs auf `https://viuno.de/**` begrenzen; Leaked-Password-Protection einschalten; prüfen, welcher SMTP-Anbieter Auth-Mails verschickt (Default: 2 Mails/Stunde — zu wenig für eine Bewerbung).
-2. **Stripe Dashboard:** Statement Descriptor "VIUNO", Support-E-Mail `office@viuno.de`, Branding; alten Payment Link deaktivieren (kann ich per API, wenn du freigibst).
-3. **Postfächer:** existieren `office@viuno.de` und `hello@viuno.de`? Wenn nein: anlegen oder DMARC-`rua` ändern.
-4. **`CRON_TOKEN` rotieren** (ich bereite Code + Cron-Befehl vor, du setzt das neue Secret im Dashboard).
-5. **Live-Keys** (nach Phase 3): `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SIGNING_SECRET` in Supabase Secrets; `VIUNO_STRIPE_MODE=live`; `STRIPE_WEBHOOK_SIGNING_SECRET_TEST` entfernen.
-6. **Supabase-Plan** und Backup-Stand nennen (Free: keine PITR, 7 Tage Backups nur Pro).
-7. Freigabe zum **Löschen** von Altlasten: 7 Stub-Functions, 8 Backup-Tabellen, Buckets `trend-images`/`Glenn`, Alt-Functions aus #9.
+1. **Live-Schaltung Stripe**: Checkliste oben (Schritte 1–10). Danach `stripe_webhook_events` beobachten.
+2. **Supabase Dashboard → Auth**: Site URL `https://viuno.de`, Redirect-URLs auf `https://viuno.de/**`; Leaked-Password-Protection an; SMTP-Anbieter für Auth-Mails prüfen (Default: 2 Mails/h) → betrifft auch LEGAL-CHANGES D-6.
+3. **Postfächer**: `office@viuno.de` bestätigt. `hello@viuno.de` (DMARC-Reports) unbestätigt → bestätigen oder DNS-Eintrag auf `office@` ändern.
+4. **Neuer Cron-Schlüssel**: liegt im Supabase-Vault (`cron_schluessel`, `apify_webhook_schluessel`). Du musst nichts eintragen; die Functions lesen ihn per RPC. Bei Rotation: `select vault.update_secret(id, neuer_wert)` — sonst nichts.
+5. **Rechtstexte gegenlesen lassen**: `LEGAL-CHANGES.md`, besonders D-5 (Edge-Functions außerhalb EU) und D-6 (Auth-Mails). Optional: Edge Functions per `x-region: eu-central-1` an Frankfurt binden.
+6. **AV-Verträge** akzeptieren/abschließen: Supabase, Cloudflare, Stripe, Resend, Apify, Anthropic, GitHub (Liste in LEGAL-CHANGES).
+7. **Instagram/TikTok-Scraping über Apify**: Plattformrisiko bewusst tragen (Sperre des Abruf-Dienstes möglich).
+8. **Löschen freigeben**: 8 Backup-Tabellen (`analyse_stats_backup_*`, `backup_antonietta_*`, `legal_texts_backup_20260913/14`; `legal_texts_backup_20260915` erst nach Freigabe der Texte), Buckets `trend-images` (147 MB) und `Glenn`, 7 Stub-Functions (`notify-new-request`, `viuno-config-check`, `viuno-modellvergleich`, `analysis-webhook-befunde-test`, `generate-style-mirror`, `store-news-image`, `resize-news-images`) plus die 10 neuen Stubs, `viuno-stripe-setup` (Einmal-Werkzeug). Testkonto `launchcheck.test@example.com` (Auth-User + `users`-Zeile + Vault-Eintrag `launchcheck_testkonto`) nach dem Launch-Check löschen.
+9. **Nach dem Merge**: `generate-biolink` aus dem Repo deployen (template.ts mit `/vendor/`), dann `/antonietta` einmal neu generieren; CSP-Report-Only eine Woche in der Browser-Konsole beobachten, dann scharf stellen.
+10. **Supabase-Plan und Backups** nennen (Free: keine PITR).
+11. **Stripe-Konto**: 14 inaktive Produkte eines anderen Geschäfts — entfernen oder getrenntes Konto.

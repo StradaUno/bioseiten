@@ -164,3 +164,16 @@ update public.legal_texts t set
   agb = b.agb, impressum = b.impressum, datenschutz = b.datenschutz, widerruf = b.widerruf,
   biopage_terms = b.biopage_terms, mediakit_terms = b.mediakit_terms, updated_at = b.updated_at
 from public.legal_texts_backup_20260915 b where b.id = t.id;
+
+-- =====================================================================
+-- Edge Functions: vorherige Versionen (Dashboard -> Edge Functions -> Function -> "Versionen")
+-- =====================================================================
+-- admin-tagesmail v2 -> v3 | apify-kosten-nachtragen v2 -> v3 | send-weekly-digest-email v12 -> v13
+-- generate-daily-digest v54 -> v55 | analysis-webhook v22 -> v23 | start-analysis v11 -> v12
+-- contact-submit v6 -> v7 | generate-biolink v17 -> v18 (lokales supabase-js, zu frueh) -> v19 (= v17 Inhalt)
+-- stripe-webhook v8 -> v9 | send-purchase-confirmation v2 -> v3 | send-analysis-email v6 -> v7
+-- Stubs (410): scan-managed-creator v9->10, fetch-competitor-accounts v6->7, competitor-webhook v6->7,
+--   apify-webhook v53->54, fetch-analytics v54->55, send-collab-reply v32->33, newsletter-signup v6->7,
+--   get-admin-stats v16->17, get-news-image v7->8, sync-news-images v7->8
+-- Cron-Rollback (Abschnitt 1c) setzt die alten Function-Versionen voraus; die Stubs koennen
+-- unabhaengig davon jederzeit auf die Vorversion zurueckgesetzt werden.
