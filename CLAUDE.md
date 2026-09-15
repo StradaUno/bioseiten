@@ -245,7 +245,7 @@ Consequences worth knowing:
   its source now lives in `supabase/functions/generate-biolink/` — same
   deal as the Creator-News functions: the repo copy is documentation, the
   dashboard is the deployment source. **Edit one, deploy it; change it in the
-  dashboard, copy it back.** Deployed version at the time of writing: v17.
+  dashboard, copy it back.** Deployed version at the time of writing: v20 (15.09.2026, laedt `/vendor/supabase-js.mjs`).
 
 ## BioLink-Auswertungen
 
@@ -389,8 +389,9 @@ Was sich dadurch dauerhaft aendert und was jede spaetere Sitzung wissen muss:
 - **Die SPA hat eine Vorschau ohne Konto** (`renderVorschau`, Routen in
   `VORSCHAU_ROUTEN`): Beispieldaten plus „Einloggen fuer mehr"; Klicks auf
   Gesperrtes oeffnen `vorschauSperre()`. Die Sperre ist RLS, nicht diese View.
-- **`generate-biolink` im Repo importiert `/vendor/…`, das Deployment (v19)
-  noch esm.sh** — erst nach dem Merge deployen, sonst 404 auf viuno.de.
+- `generate-biolink` v20 (deployt nach dem Merge am 15.09.2026) importiert
+  `/vendor/supabase-js.mjs`; Seiten, die vor v20 erzeugt wurden, laden noch
+  esm.sh, bis sie neu generiert werden.
 - Legacy-Functions sind 410-Stubs (Liste in LAUNCH-CHECK). `stripe-webhook`,
   `start-analysis`, `send-purchase-confirmation`, `send-analysis-email`,
   `contact-submit` haben jetzt Repo-Kopien; `analysis-webhook` alle fuenf Dateien.
