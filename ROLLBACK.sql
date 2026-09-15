@@ -146,3 +146,21 @@ begin
   end if;
 end;
 $function$;
+
+-- =====================================================================
+-- 2. Zahlung / Funktion
+-- =====================================================================
+-- Live-Preise in stripe_prices (angelegt 15.09.2026). Die Stripe-Preise selbst bleiben in Stripe
+-- bestehen (Archivieren dort ist reversibel: Dashboard -> Produkt -> Preis -> aktivieren).
+delete from public.stripe_prices where mode = 'live' and price_id in ('price_1UFkAqLH6NVqx26ev8jnPcG7', 'price_1UFkAtLH6NVqx26eRgc5bEqh');
+
+-- users.last_active_at durfte vom Nutzer nicht geschrieben werden (Migration launch_check_users_last_active_at)
+revoke update (last_active_at) on table public.users from authenticated;
+
+-- =====================================================================
+-- 3. Rechtstexte (Sicherung legal_texts_backup_20260915, angelegt VOR der Aenderung)
+-- =====================================================================
+update public.legal_texts t set
+  agb = b.agb, impressum = b.impressum, datenschutz = b.datenschutz, widerruf = b.widerruf,
+  biopage_terms = b.biopage_terms, mediakit_terms = b.mediakit_terms, updated_at = b.updated_at
+from public.legal_texts_backup_20260915 b where b.id = t.id;

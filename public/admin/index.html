@@ -6,9 +6,7 @@
 <meta name="robots" content="noindex,nofollow" />
 <title>viuno · Admin</title>
 <link rel="icon" href="data:," />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 /* ────────────────────────────────────────────────────────────────────────
    Das Admin laeuft auf demselben Token-Block wie die App. Wer dort etwas
@@ -353,7 +351,7 @@ button.zeile:hover{background:var(--surface2)}
 </div>
 
 <script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '/vendor/supabase-js.mjs'
 
 const URL_SB = 'https://bzejndghppuipnedasuv.supabase.co'
 const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'

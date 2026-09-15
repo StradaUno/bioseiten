@@ -4,8 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>viuno · App</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -1292,7 +1291,7 @@ a.news-quelle:hover{color:var(--text)}
 </div>
 
 <script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '/vendor/supabase-js.mjs'
 /* Das Brand-Ready-Regelwerk liegt als eigenes Modul daneben, weil die
    Edge Function `brand-ready-freigeben` es ebenfalls laedt: der geteilte
    Punktestand traegt "powered by viuno" und wird deshalb serverseitig
@@ -1797,7 +1796,7 @@ function renderRegister(area, ctx) {
       <!-- FORM -->
       <div class="card" id="form-card">
         <div class="card-title">Account erstellen.</div>
-        <div class="card-sub">Starte kostenlos — kein Abo nötig.</div>
+        <div class="card-sub">Kein Abo, keine Grundgebühr — nur die Analyse kostet.</div>
 
         <div class="field">
           <label>Username</label>

@@ -6,8 +6,7 @@
 <title>viuno · News-Redaktion</title>
 <meta name="robots" content="noindex,nofollow" />
 <link rel="icon" href="data:," />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 /* Tokens identisch zu /admin/ */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -102,7 +101,7 @@ button.w:disabled{opacity:.5;cursor:default}
 <div class="toast hidden" id="toast"><span id="toast-msg"></span></div>
 
 <script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '/vendor/supabase-js.mjs'
 
 const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'

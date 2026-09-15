@@ -25,7 +25,7 @@
    Eigenangabe da. Das ist unbequem und genau deshalb glaubwuerdig.
    ═══════════════════════════════════════════════════════════════════ */
 
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '/vendor/supabase-js.mjs'
 
 const SB_URL  = 'https://bzejndghppuipnedasuv.supabase.co'
 const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
@@ -110,7 +110,7 @@ const euro = n => n == null ? null
 const nu = x => x ? (x.startsWith('http') ? x : 'https://' + x) : '#'
 
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap');
+@import url('/fonts/fonts.css');
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{background:#EAEAEE;color:#1A1A2E;font-family:'DM Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 body{min-height:100dvh;padding:16px 16px 48px}
