@@ -368,3 +368,34 @@ would be overbuilt for a profile page with no payment data behind it.
 - **Hardcoded UUIDs everywhere.** Each per-creator page has the creator's `user_id` (UUID) baked into the tracking pixel `user_id` and image URLs under `…/storage/v1/object/public/profile-images/<UUID>/…`. When duplicating a page for a new creator, update *both* and the avatar/image URL. Easy to miss one.
 - **No shared CSS/JS files.** Every page inlines its own styles and scripts. Don't add a `/assets/` shared bundle without checking whether the static-only deploy assumption still holds.
 - **Language:** UI copy is German by default; `/it/` mirrors `/` in Italian. Match the existing language of the page you're editing.
+
+## Launch-Check (15.09.2026)
+
+Der Branch `launch-check` traegt die Vorbereitung auf die aktive Bewerbung.
+Was sich dadurch dauerhaft aendert und was jede spaetere Sitzung wissen muss:
+
+- **Schluessel liegen im Supabase-Vault, nicht im Code.** `cron_schluessel`
+  (pg_cron → Edge Functions, Header `x-schluessel`) und
+  `apify_webhook_schluessel` (`start-analysis` → Apify → `analysis-webhook`,
+  Parameter `schluessel`). Nur der Service Role darf `schluessel_pruefen()`
+  und `schluessel_holen()` ausfuehren. Der fruehere `CRON_TOKEN` im Quelltext
+  ist weg und wird nicht mehr akzeptiert. Rotation: `vault.update_secret()`,
+  sonst nichts.
+- **Kein fremdes CDN im Seitenaufruf.** Schriften kommen aus `public/fonts/`
+  (`fonts.css`, variable woff2), supabase-js aus `public/vendor/supabase-js.mjs`
+  (2.45.0, Bundle von esm.sh, SHA-256 in LAUNCH-CHECK). Neue Seiten binden
+  `/fonts/fonts.css` und `/vendor/supabase-js.mjs` ein, nie googleapis oder
+  esm.sh — die Datenschutzerklaerung sagt genau das zu.
+- **Die SPA hat eine Vorschau ohne Konto** (`renderVorschau`, Routen in
+  `VORSCHAU_ROUTEN`): Beispieldaten plus „Einloggen fuer mehr"; Klicks auf
+  Gesperrtes oeffnen `vorschauSperre()`. Die Sperre ist RLS, nicht diese View.
+- **`generate-biolink` im Repo importiert `/vendor/…`, das Deployment (v19)
+  noch esm.sh** — erst nach dem Merge deployen, sonst 404 auf viuno.de.
+- Legacy-Functions sind 410-Stubs (Liste in LAUNCH-CHECK). `stripe-webhook`,
+  `start-analysis`, `send-purchase-confirmation`, `send-analysis-email`,
+  `contact-submit` haben jetzt Repo-Kopien; `analysis-webhook` alle fuenf Dateien.
+- `ROLLBACK.sql` nimmt jede Datenbankaenderung des Launch-Checks zurueck;
+  `LEGAL-CHANGES.md` listet jede Aenderung an `legal_texts`; `RUNBOOK.md`
+  ist das Betriebshandbuch. Support-Adresse ueberall: `office@viuno.de`.
+- Das Wort „kostenlos" kommt auf der Plattform nicht vor. Inklusive heisst
+  „inklusive" oder „ohne Aufpreis".

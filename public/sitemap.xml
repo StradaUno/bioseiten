@@ -5,5 +5,6 @@
   <url><loc>https://viuno.de/</loc><changefreq>monthly</changefreq><priority>1.0</priority></url>
   <url><loc>https://viuno.de/news</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://viuno.de/it/</loc><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://viuno.de/faq/</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://viuno.de/legal</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
 </urlset>
