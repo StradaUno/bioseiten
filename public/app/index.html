@@ -2023,7 +2023,6 @@ function renderRegister(area, ctx) {
       <!-- FORM -->
       <div class="card" id="form-card">
         <div class="card-title">Account erstellen.</div>
-        <div class="card-sub">Kein Abo, keine Grundgebühr — nur die Analyse kostet.</div>
 
         <div class="field">
           <label>Username</label>
@@ -2719,8 +2718,14 @@ window.copyLink=function(url){
 
    1. Schrittliste auf einem Timer, solange die Function laeuft. Der
       vorletzte Schritt bleibt aktiv, bis die Antwort da ist.
-   2. Danach der Schluss-Schritt mit Fortschrittsbalken, der die
-      Bauzeit abwartet. Erst dann ist alles gruen und das Overlay geht.
+   2. Danach ZWEI Schluss-Schritte mit Fortschrittsbalken, je 15 Sekunden.
+      Erst dann ist alles gruen und das Overlay geht.
+
+   Warum zwei und nicht einer mit 30 Sekunden: mit fuenfzehn Sekunden war
+   das Overlay weg, bevor Cloudflare fertig gebaut hatte -- wer danach
+   gleich auf seine Seite ging, bekam "Diese Seite gibt es nicht" zu sehen.
+   Ein einzelner Balken, der doppelt so lange laeuft, sieht dagegen aus wie
+   ein Haenger. Zwei Zeilen zeigen, dass noch etwas passiert.
    ───────────────────────────────────────────────────────────────── */
 const LOADING_FLOWS={
   biolinkCreate:{
@@ -2728,14 +2733,18 @@ const LOADING_FLOWS={
     sub:'Das dauert einen Moment — bitte lass die Seite offen.',
     steps:['Angaben werden geprüft','Layout wird gebaut','Design wird angewendet','Inhalte werden eingefügt'],
     tail:'Seite geht online',
-    tailSub:'Fast geschafft — deine Seite wird gerade ausgeliefert.'
+    tailSub:'Fast geschafft — deine Seite wird gerade ausgeliefert.',
+    tail2:'Seite wird weltweit verteilt',
+    tail2Sub:'Letzter Schritt — gleich ist deine Seite überall erreichbar.'
   },
   biolinkTheme:{
     title:'Neues Design wird übernommen',
     sub:'Deine Seite wird mit dem neuen Design neu erzeugt.',
     steps:['Design wird gespeichert','Seite wird neu gebaut'],
     tail:'Neue Fassung geht online',
-    tailSub:'Fast geschafft — die neue Fassung wird ausgeliefert.'
+    tailSub:'Fast geschafft — die neue Fassung wird ausgeliefert.',
+    tail2:'Neue Fassung wird verteilt',
+    tail2Sub:'Letzter Schritt — gleich siehst du das neue Design.'
   },
   biolinkDelete:{
     title:'BioLink-Seite wird gelöscht',
@@ -2749,7 +2758,9 @@ const LOADING_FLOWS={
     sub:'Das dauert einen Moment — bitte lass die Seite offen.',
     steps:['Angaben werden geprüft','Layout wird gebaut','Kennzahlen werden eingesetzt','Design wird angewendet'],
     tail:'Media Kit geht online',
-    tailSub:'Fast geschafft — dein Media Kit wird gerade erstellt.'
+    tailSub:'Fast geschafft — dein Media Kit wird gerade erstellt.',
+    tail2:'Media Kit wird weltweit verteilt',
+    tail2Sub:'Letzter Schritt — gleich ist dein Media Kit überall erreichbar.'
   },
   mediakitDelete:{
     title:'Media Kit wird gelöscht',
@@ -2772,7 +2783,7 @@ let _loadingFlow=null
 function paintLoadingSteps(activeIdx,withBar){
   const el=document.getElementById('loading-steps')
   if(!el||!_loadingFlow)return
-  const all=[..._loadingFlow.steps,_loadingFlow.tail]
+  const all=[..._loadingFlow.steps,_loadingFlow.tail].concat(_loadingFlow.tail2?[_loadingFlow.tail2]:[])
   el.innerHTML=all.map((label,i)=>{
     const state=i<activeIdx?'done':i===activeIdx?'active':'wait'
     const bar=(withBar&&i===activeIdx)
@@ -2813,14 +2824,21 @@ function finishLoadingOverlay(timer){
   _loadingTimer=null
   if(!_loadingFlow)return Promise.resolve()
   const tailIdx=_loadingFlow.steps.length
-  paintLoadingSteps(tailIdx,true)
   const sub=document.getElementById('loading-sub')
+  paintLoadingSteps(tailIdx,true)
   if(sub)sub.textContent=_loadingFlow.tailSub
   return new Promise(res=>{
-    _loadingHold=setTimeout(()=>{
+    const fertig=()=>{
       _loadingHold=null
-      paintLoadingSteps(tailIdx+1)
+      paintLoadingSteps(tailIdx+(_loadingFlow.tail2?2:1))
       setTimeout(()=>{ hideLoadingOverlay(); res() },600)
+    }
+    _loadingHold=setTimeout(()=>{
+      if(!_loadingFlow.tail2)return fertig()
+      // Zweite Wartezeit: derselbe Balken, neue Zeile.
+      paintLoadingSteps(tailIdx+1,true)
+      if(sub)sub.textContent=_loadingFlow.tail2Sub
+      _loadingHold=setTimeout(fertig,LOADING_HOLD_MS)
     },LOADING_HOLD_MS)
   })
 }

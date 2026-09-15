@@ -268,14 +268,19 @@ h1{font-size:24px;font-weight:var(--fw-b);color:var(--text);letter-spacing:-0.02
 
 /* Buttons */
 .links{width:100%;display:flex;flex-direction:column;gap:var(--s-3)}
-.btn{display:grid;grid-template-columns:44px 1fr minmax(44px,auto);align-items:center;min-height:56px;padding:0 var(--s-2);border-radius:var(--radius-btn);font-size:var(--t-lg);font-weight:var(--fw-md);text-decoration:none;transition:transform .12s ease,background .15s ease,border-color .15s ease;-webkit-tap-highlight-color:transparent;width:100%;font-family:inherit;cursor:pointer}
+.btn{display:grid;grid-template-columns:44px 1fr 44px;align-items:center;min-height:56px;padding:0 var(--s-2);border-radius:var(--radius-btn);font-size:var(--t-lg);font-weight:var(--fw-md);text-decoration:none;transition:transform .12s ease,background .15s ease,border-color .15s ease;-webkit-tap-highlight-color:transparent;width:100%;font-family:inherit;cursor:pointer}
 .btn:active{transform:scale(.98)}
 .btn-icon{display:grid;place-items:center}
 .btn-icon svg{display:block}
-.btn-label{min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 var(--s-1)}
+/* Beschriftung und Kennzeichnung stehen uebereinander in der Mittelspalte.
+   Vorher sass das Werbung-Schild als Pille rechts im Button und sah dort aus
+   wie ein zweites Bedienelement. Unter dem Namen liest es sich als das, was es
+   ist: die Kennzeichnung zu genau diesem Link. */
+.btn-mitte{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:var(--s-1) var(--s-1)}
+.btn-label{min-width:0;max-width:100%;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .btn-aux{display:grid;place-items:center}
-.btn-ad-label{font-size:var(--t-2xs);font-weight:var(--fw-md);color:var(--text-muted);letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--border);border-radius:var(--r-full);padding:2px 7px;white-space:nowrap}
-.btn-primary .btn-ad-label{color:var(--ad-on-primary);border-color:var(--ad-on-primary)}
+.btn-ad-label{font-size:var(--t-2xs);font-weight:var(--fw-md);color:var(--text-muted);letter-spacing:.06em;text-transform:uppercase;line-height:1.2;white-space:nowrap}
+.btn-primary .btn-ad-label{color:var(--ad-on-primary);opacity:.85}
 .btn-primary{background:var(--accent);color:var(--accent-text);border:1px solid var(--accent);font-weight:var(--fw-sb)}
 .btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
 .btn-secondary{background:var(--btn-secondary-bg);color:var(--text);border:1px solid var(--btn-secondary-border);backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur)}
@@ -505,13 +510,17 @@ function renderLinks(){
   }
 }
 function makeBtn(o){const a=document.createElement('a'); a.className='btn btn-secondary'; a.href=o.href; a.target='_blank'; a.rel='noopener'; a.innerHTML=btnInner(o.icon, o.label, o.adLabel); return a}
-/* Icon im festen Slot links, Text im Restraum zentriert, dritter Slot fuer
-   das Werbung-Label. Dadurch stehen alle Icons auf einer Linie, egal wie
-   lang die Beschriftung ist. */
+/* Icon im festen Slot links, Beschriftung im Restraum zentriert -- und
+   darunter, falls noetig, die Werbekennzeichnung. Der dritte Slot bleibt
+   leer und haelt nur die Breite, damit alle Icons auf einer Linie stehen,
+   egal wie lang die Beschriftung ist. */
 function btnInner(iconSvg, label, adLabel){
   return '<span class="btn-icon">'+iconSvg+'</span>'
-    + '<span class="btn-label">'+escapeHtml(label)+'</span>'
-    + '<span class="btn-aux">'+(adLabel?'<span class="btn-ad-label">'+escapeHtml(adLabel)+'</span>':'')+'</span>'
+    + '<span class="btn-mitte">'
+    +   '<span class="btn-label">'+escapeHtml(label)+'</span>'
+    +   (adLabel?'<span class="btn-ad-label">'+escapeHtml(adLabel)+'</span>':'')
+    + '</span>'
+    + '<span class="btn-aux"></span>'
 }
 function escapeHtml(s){return String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
 `
