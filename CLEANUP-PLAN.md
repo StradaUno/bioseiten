@@ -1137,15 +1137,13 @@ Zwischen Analyse und Ausführung lief echter Betrieb weiter:
 - Antoniettas BioLink hat während der Arbeit einen echten Aufruf bekommen
   (2.047 → 2.048); der INSERT-Trigger hat den Zähler selbst nachgezogen.
 
-### Drei Abweichungen vom Plan
+### Abweichungen vom Plan
 
-**1. `ai_usage_log` wurde nicht vollständig geleert — eine Zeile bleibt.**
-Die KI-Kosten der um 15:28 gelieferten Live-Analyse (0,155435 $ ≈ 0,14 €).
-Diese Kosten zu löschen, während die zugehörigen 9,99 € Umsatz stehen bleiben,
-hätte genau die Verzerrung erzeugt, gegen die diese Bereinigung läuft: ein
-Verkauf ohne Kosten, Deckungsbeitrag 100 %. Umsatz und Kosten desselben
-Geschäfts gehören zusammen. Soll es trotzdem eine harte Null sein:
-`delete from ai_usage_log;`
+**1. ~~`ai_usage_log` behält eine Zeile~~ — hinfällig.** Der Betreiber hat
+klargestellt, dass auch der Lauf um 15:26 ein Test war. Damit ist der
+`cs_live_`-Kauf ebenfalls ein Testkauf, der Lauf `811ab96b…` wurde gelöscht
+(Kaskade: `analyse_ki`, `analyse_stats`, `apify_daten`, `analyse_freigaben`)
+und `ai_usage_log` steht auf **0 Zeilen**.
 
 **2. `analysis_runs.apify_kosten_usd` wurde *nicht* auf `null` gesetzt.**
 Der Plan sah das vor. Drei Gründe dagegen:
@@ -1171,22 +1169,35 @@ Go-Live in den Anbieter-Konsolen gegenprüfen und bei Abweichung im Admin unter
 
 | Tabelle | vorher | nachher | Antonietta | Heyno | Status |
 |---|---:|---:|:--:|:--:|---|
-| `biolink_aufrufe` | 2.107 | 2.048 | 2.047 → **2.048** (echter Neuaufruf) ✓ | 56 → 0 (so entschieden) | **erledigt** |
+| `biolink_aufrufe` | 2.107 | 2.049 | 2.047 → **2.048** (2 echte Neuaufrufe währenddessen) ✓ | 56 → 0 (so entschieden) | **erledigt** |
 | `biolink_klicks` | 24 | 14 | 14 → 14 ✓ | 9 → 0 (so entschieden) | **erledigt** |
 | `mediakit_aufrufe` | 54 | 31 | 31 → 31 ✓ | 21 → 0 (so entschieden) | **erledigt** |
-| `users.bio_views_*` | — | neu gerechnet | 2.048 / stimmt zur Tabelle ✓ | 0 / 0 / 0 ✓ | **erledigt** |
+| `users.bio_views_*` | — | neu gerechnet | stimmt zur Tabelle ✓ | 0 / 0 / 0 ✓ | **erledigt** |
 | `users.mediakit_views_*` | — | neu gerechnet | 31 / stimmt zur Tabelle ✓ | 0 / 0 / 0 ✓ | **erledigt** |
-| `ai_usage_log` | 52 | **1** (0,14 €) | unberührt ✓ | unberührt ✓ | **erledigt**, siehe Abweichung 1 |
+| `ai_usage_log` | 52 | **0** → 0,00 € | unberührt ✓ | unberührt ✓ | **erledigt** |
 | `daily_digest.tokens_*` | 45 gefüllt | 45 × `null` | Inhalt (45 Ausgaben, `cards`) unberührt ✓ | ✓ | **erledigt** |
 | `admin_errors` | 37 | **0** | ✓ | ✓ | **erledigt** |
-| `analysis_runs` | 6 | 6 | 1 → 1 ✓ | 1 → 1 ✓ | bewusst unberührt, Abweichung 2 |
-| `analysis_purchases` | 8 (+1) | **9** | — | — | **offen, blockiert** |
-| `withdrawal_consents` | 11 | 11 | — | — | **offen, blockiert** |
-| `stripe_webhook_events` | 9 | 9 | — | — | **offen, blockiert** |
-| `subscriptions` | 4 | 4 | ✓ | ✓ | **offen, blockiert** |
+| `analysis_purchases` | 9 | **1** (0 €, Freischaltung) | 4 Testkäufe raus | — | **erledigt** → Umsatz 0,00 € |
+| `withdrawal_consents` | 11 | **0** | ✓ | ✓ | **erledigt** |
+| `stripe_webhook_events` | 9 | **1** | — | — | **erledigt**, siehe unten |
+| `subscriptions` | 4 | **3** | ✓ | ✓ | **erledigt** |
+| `analysis_runs` | 6 | **5** | 1 → 1 ✓ | 1 → 1 ✓ | Testlauf 15:26 gelöscht |
 | `apify_raw_runs` | 2 | 2 | — | — | **offen, blockiert** |
 | `newsletter_subscribers` | 4 | 4 | ✓ | ✓ | **offen, blockiert** |
-| `page_views` | 171 | 171 | ✓ | ✓ | **offen, blockiert** |
+| `page_views` | 171 | 174 | ✓ | ✓ | **offen** (1 Zeile `launchcheck_test`) |
+
+**`stripe_webhook_events` behält eine Zeile mit Absicht:**
+`evt_1UFs2yLH6NVqx26efiTyMJOg`, das Ereignis des Live-Checkouts. Der zugehörige
+Kauf ist gelöscht; ohne die Idempotenz-Sperre würde ein Stripe-Retry dieses
+Ereignisses den Kauf **neu anlegen** und der Umsatz stünde wieder bei 9,99 €.
+
+**Der Deckungsbeitrag steht weiter auf 9,90 € — mit Daten allein nicht lösbar.**
+Die Kachel rechnet `9,99 € − avg(apify_kosten_usd)` über `analysis_runs`, nicht
+über Verkäufe. Sie zeigt „–" erst, wenn **kein** Lauf mehr eine Apify-Zahl hat.
+Das hieße: die Spalte auch bei **Antoniettas** Lauf nullen (unantastbar) — und
+selbst dann trägt `apify-kosten-nachtragen` sie zur nächsten vollen Stunde
+wieder ein, solange der Cron läuft (ebenfalls unantastbar). Siehe die Frage
+unten.
 
 **Kontrolle der unantastbaren Konten** (`sicherung.unantastbar_vorher` gegen Ist):
 
@@ -1199,40 +1210,54 @@ Go-Live in den Anbieter-Konsolen gegenprüfen und bei Abweichung im Admin unter
 | Profil (`bio_active`, `mediakit_active`, `contact_email`, `niche_category`, `profile_image_url`, alle Handles) | ✓ | ✓ |
 | BioLink-/Media-Kit-Aufrufe | ✓ unverändert | 0, wie entschieden |
 
-### Was noch offen ist
+### Die offene Frage: Deckungsbeitrag
 
-Der Auto-Modus dieser Sitzung hat die restlichen Löschungen abgelehnt
-(*Modify Shared Resources* bzw. *Cloud Storage Mass Delete*). Sie sind **nicht**
-ausgeführt. Die Sicherungskopien liegen vollständig vor, die Statements sind
-unverändert gültig:
+Drei Wege, nur einer taugt.
+
+**A — `kosten.marge` aus Verkäufen statt aus Läufen rechnen (empfohlen).**
+Eine Ersetzung von `admin_uebersicht()`; im Block `'marge'` wird aus
 
 ```sql
-begin;
-  -- 7 Testmodus-Kaeufe raus. Es bleiben: der eingeloeste Live-Kauf (999)
-  -- und die Admin-Freischaltung fuer Antonietta (0).
-  delete from analysis_purchases where stripe_checkout_session_id like 'cs_test_%';
+from analysis_runs r where r.platform is not null group by r.platform
+```
 
-  -- Zustimmungen ohne zugehoerigen Kauf
-  delete from withdrawal_consents w
-   where w.stripe_checkout_session_id is null
-      or not exists (select 1 from analysis_purchases p
-                      where p.stripe_checkout_session_id = w.stripe_checkout_session_id);
+dieses:
 
-  -- Das Ereignis des Live-Kaufs BLEIBT: es ist die Idempotenz-Sperre.
-  -- Ohne sie koennte ein Stripe-Retry denselben Kauf ein zweites Mal anlegen.
-  delete from stripe_webhook_events
-   where stripe_event_id <> 'evt_1UFs2yLH6NVqx26efiTyMJOg';
+```sql
+from analysis_runs r
+join analysis_purchases p on p.analysis_run_id = r.id and p.amount_paid > 0
+where r.platform is not null group by r.platform
+```
 
-  delete from subscriptions where user_id is null;
+Wirkung: heute keine bezahlte Analyse → `marge` ist leer → die Kachel zeigt
+**„–"**. Nach dem Go-Live erscheint sie mit dem ersten echten Verkauf und
+rechnet dann nur noch über bezahlte Läufe — also richtiger als heute, wo
+Testläufe und Freischaltungen den Schnitt mitbilden. Antoniettas Daten und die
+Cron-Jobs bleiben unberührt. Reversibel: die alte Definition liegt in diesem
+Dokument nicht, aber in jedem Supabase-Backup und lässt sich mit
+`pg_get_functiondef` vorher sichern.
 
-  delete from apify_raw_runs where scrape_date = date '2026-04-21';
-  delete from newsletter_subscribers where confirmed_at is null and status = 'pending';
-  delete from page_views where page = 'launchcheck_test';
-commit;
+**B — alle `apify_kosten_usd` nullen und `apify-kosten-nachtragen` pausieren.**
+Erreicht dasselbe, greift aber zwei Dinge an, die als unantastbar benannt sind
+(Antoniettas Lauf, ein Cron-Job). Nicht empfohlen.
 
--- Kontrolle
-select count(*) kaeufe, coalesce(sum(amount_paid),0) cent from analysis_purchases;
--- erwartet: 2 / 999   (9,99 EUR echter Umsatz, 0 EUR Freischaltung)
+**C — nur nullen, Cron weiterlaufen lassen.** Zur nächsten vollen Stunde steht
+wieder 9,90 € da. Sinnlos.
+
+Unabhängig davon bleibt **G7 #1** offen: die Kachel lässt KI-Kosten und
+Stripe-Gebühr weg und liegt damit rund 0,61 € zu hoch. A behebt die falsche
+Quelle, nicht die fehlenden Posten.
+
+### Was noch offen ist
+
+Zwei Löschungen hat der Auto-Modus dieser Sitzung abgelehnt
+(*Modify Shared Resources*). Sicherungen liegen vor, die Statements gelten:
+
+```sql
+delete from apify_raw_runs where scrape_date = date '2026-04-21';          -- 2 Zeilen
+delete from newsletter_subscribers where confirmed_at is null
+   and status = 'pending';                                                -- 2 Zeilen
+delete from page_views where page = 'launchcheck_test';                   -- 1 Zeile
 ```
 
 Ebenfalls offen, weil nicht über SQL machbar:
