@@ -208,8 +208,27 @@ function getWeekStart(d: Date): string {
   return monday.toISOString().split('T')[0]
 }
 
+/* Wer darf diese Function aufrufen?
+   - Interne Aufrufe (Dashboard-Test, digest_waechter, Nachzuegler) schicken den Service-Role-Key als Bearer.
+   - pg_cron schickt den Schluessel "cron_schluessel" aus dem Supabase-Vault im
+     Header x-schluessel; die Function prueft ihn ueber die RPC schluessel_pruefen,
+     die nur der Service Role ausfuehren darf. Der Wert steht damit nirgends im
+     Quelltext und in keiner URL. (Launch-Check 15.09.2026: der fruehere Token
+     im Code lag im Repo und gilt als kompromittiert.) */
+async function darfLaufen(req: Request): Promise<boolean> {
+  const kopf = req.headers.get('Authorization') || ''
+  const bearer = kopf.startsWith('Bearer ') ? kopf.slice(7) : kopf
+  const sr = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+  if (sr && bearer === sr) return true
+  const wert = req.headers.get('x-schluessel') || ''
+  if (!wert) return false
+  const { data } = await supabase.rpc('schluessel_pruefen', { p_zweck: 'cron_schluessel', p_wert: wert })
+  return data === true
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders })
+  if (!(await darfLaufen(req))) return new Response(JSON.stringify({ error: 'nicht_erlaubt' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
 
   try {
     const { ohne_verlauf: ohneVerlauf = false } = await req.json().catch(() => ({}))

@@ -35,22 +35,22 @@ async function anzahl(tabelle: string, spalte: string, von: string, bis: string)
   return count || 0
 }
 
-/* Zwei gleichwertige Schloesser, weil es zwei Anrufer gibt:
-   - admin-dashboard ruft mit dem Service-Role-Key im Header auf,
-   - der Cron-Job kann das nicht (der Schluessel liegt weder im Vault noch
-     sonst irgendwo, wo Postgres ihn lesen koennte) und nutzt deshalb den
-     Token unten in der Adresse.
-   Der Token steht nur hier und im Cron-Befehl -- der Quelltext einer Edge
-   Function ist nicht oeffentlich, er ist damit ein echtes gemeinsames
-   Geheimnis. Ohne eines von beiden passiert gar nichts: sonst koennte jeder,
-   der die Adresse kennt, den Versand ausloesen. */
-const CRON_TOKEN = 'BjE9Ade2ji68dzblTXD_AxSoFZ90AOrJ0dmpDF8H_-k'
-
-function darfLaufen(req: Request): boolean {
+/* Wer darf diese Function aufrufen?
+   - admin-dashboard schickt den Service-Role-Key als Bearer.
+   - pg_cron schickt den Schluessel "cron_schluessel" aus dem Supabase-Vault im
+     Header x-schluessel; die Function prueft ihn ueber die RPC schluessel_pruefen,
+     die nur der Service Role ausfuehren darf. Der Wert steht damit nirgends im
+     Quelltext und in keiner URL. (Launch-Check 15.09.2026: der fruehere Token
+     im Code lag im Repo und gilt als kompromittiert.) */
+async function darfLaufen(req: Request): Promise<boolean> {
   const kopf = req.headers.get('Authorization') || ''
-  const schluessel = kopf.startsWith('Bearer ') ? kopf.slice(7) : kopf
-  if (schluessel && schluessel === Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')) return true
-  try { return new URL(req.url).searchParams.get('schluessel') === CRON_TOKEN } catch (_) { return false }
+  const bearer = kopf.startsWith('Bearer ') ? kopf.slice(7) : kopf
+  const sr = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+  if (sr && bearer === sr) return true
+  const wert = req.headers.get('x-schluessel') || ''
+  if (!wert) return false
+  const { data } = await supabase.rpc('schluessel_pruefen', { p_zweck: 'cron_schluessel', p_wert: wert })
+  return data === true
 }
 
 Deno.serve(async (req) => {
@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
   try {
     if (!RESEND_API_KEY) throw new Error('RESEND_API_KEY fehlt')
 
-    if (!darfLaufen(req)) return json({ error: 'nicht_erlaubt' }, 403)
+    if (!(await darfLaufen(req))) return json({ error: 'nicht_erlaubt' }, 403)
 
     const koerper = await req.json().catch(() => ({} as any))
     const test = koerper?.test === true

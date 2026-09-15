@@ -9,10 +9,20 @@ Disallow: /karussell/
 Disallow: /digest/
 Disallow: /dashboard/
 Disallow: /profile/
+Disallow: /biolink/
+Disallow: /mediakit/
 Disallow: /onboarding/
 Disallow: /analytics/
 Disallow: /reset-password/
+Disallow: /extras/
+# Geteilte Ausschnitte mit Token: gehoeren nur dem, der den Link bekommen hat.
+Disallow: /analyse/
+Disallow: /brandready/
 # Designentwuerfe zum Durchklicken, kein Produktstand.
 Disallow: /pitch/
+Disallow: /test/
+Disallow: /testi/
+# Server-Template, kein Inhalt.
+Disallow: /bio-template.html
 
 Sitemap: https://viuno.de/sitemap.xml

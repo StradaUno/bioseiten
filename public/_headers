@@ -3,16 +3,52 @@
 # (Cloudflare Pages liest `_headers` nur aus dem Build-Output-Root —
 # eine Datei in einem Unterordner wird stattdessen einfach ausgeliefert).
 
-# ── Swipe-File unter /karussell/ ────────────────────────────────
-# Interne Seite. Sie hält den ADMIN_TOKEN der Edge Functions im
-# localStorage dieser Herkunft; in ein fremdes Fenster eingebettet wäre
-# sie ein lohnendes Ziel. Deshalb hier und nur hier die Sperren.
-/karussell/*
+# ── Grundschutz fuer alle Seiten (Launch-Check 15.09.2026) ─────────
+# HSTS: ein Jahr, mit Subdomains (send.viuno.de ist nur Mail, kein Web).
+# frame-ancestors 'none': keine viuno-Seite gehoert in ein fremdes Fenster —
+# das schliesst die App, das Admin und die Landing ein. X-Frame-Options ist
+# der Fallback fuer alte Browser.
+# Permissions-Policy: die App braucht weder Kamera noch Standort noch Mikro.
+# Eine vollstaendige Content-Security-Policy steht bewusst NUR im
+# Report-Only-Modus: jede Seite traegt Inline-Skripte und -Styles, die
+# Analyse zeigt Bilder von Instagram-/TikTok-CDNs, und es gibt keinen
+# Testlauf gegen alle Seiten. Verstoesse erscheinen in der Browser-Konsole;
+# erst wenn dort nach einer Woche nichts mehr auftaucht, wird sie scharf
+# gestellt (Enforce = Header umbenennen).
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
   X-Frame-Options: DENY
-  Content-Security-Policy: frame-ancestors 'none'
-  Referrer-Policy: no-referrer
   X-Content-Type-Options: nosniff
-  # Suchmaschinen haben hier nichts zu holen.
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' https://esm.sh https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://bzejndghppuipnedasuv.supabase.co https://esm.sh https://api.github.com https://dodglijurmtrbwnjivlg.supabase.co; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+
+# ── Interne Seiten: nicht in Suchmaschinen ──────────────────────────
+# robots.txt bittet, dieser Header sagt es verbindlich. Die App selbst
+# (/app/) steht in robots.txt; ein noindex-Header dort waere ebenfalls
+# richtig, aber /app/ ist auch die Login-Seite, die gefunden werden darf.
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+/admina/*
+  X-Robots-Tag: noindex, nofollow
+/karussell/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+/test/*
+  X-Robots-Tag: noindex, nofollow
+/testi/*
+  X-Robots-Tag: noindex, nofollow
+/extras/*
+  X-Robots-Tag: noindex, nofollow
+/pitch/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
+/analyse/*
+  X-Robots-Tag: noindex, nofollow
+/brandready/*
+  X-Robots-Tag: noindex, nofollow
+/reset-password/*
   X-Robots-Tag: noindex, nofollow
 
 # ── Warum hier KEINE Cache-Regel fuer die zwei geteilten Module steht ──
@@ -31,11 +67,3 @@
 # Geloest wird das deshalb beim Import, nicht beim Ausliefern: beide
 # Verbraucher haengen `?v=<Fuenf-Minuten-Fenster>` an die Modul-URL. Siehe
 # public/app/index.html und die Huelle in generate-mediakit.
-
-# ── Designentwuerfe unter /pitch/ ───────────────────────────────
-# Oeffentlich erreichbar, damit man sie auf dem Telefon durchklicken
-# kann, aber nichts davon ist Produktstand. Robots-Sperre doppelt:
-# robots.txt bittet, dieser Header sagt es verbindlich.
-/pitch/*
-  X-Robots-Tag: noindex, nofollow
-  Referrer-Policy: no-referrer
