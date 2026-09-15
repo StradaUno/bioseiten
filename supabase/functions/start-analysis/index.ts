@@ -23,6 +23,18 @@ const WEBHOOK_BASE_URL = 'https://bzejndghppuipnedasuv.supabase.co/functions/v1/
    man bei Apify fuer Daten, die niemand auswertet. */
 const BEITRAEGE_PRO_LAUF = 36
 
+/* Angepinnte Beitraege bleiben draussen.
+   Instagram liefert sie IMMER zuerst, unabhaengig vom Datum. Ein Konto, das
+   seit zwei Wochen postet und einen alten Beitrag oben anheftet, bekam damit
+   einen fuenf Monate alten Beitrag in denselben Topf wie 35 frische -- der
+   ausgewiesene Zeitraum lief dann "vom 15.04. bis 14.09.", obwohl die
+   eigentliche Aktivitaet siebzehn Tage umfasste. Schlimmer als die falsche
+   Zeitangabe ist die Wirkung auf die Zahlen: ein angehefteter Beitrag steht
+   monatelang oben und sammelt entsprechend Likes, also zieht er
+   Durchschnitt, Engagement-Rate, beste Uhrzeit und besten Tag mit sich.
+   Fuer eine Analyse, die 9,99 EUR kostet, ist das kein Detail. */
+const ANGEPINNTE_UEBERSPRINGEN = true
+
 // Auch die Fehler-Ereignisse registrieren. Vorher stand hier nur ACTOR.RUN.SUCCEEDED:
 // ein gescheiterter Apify-Run hat dann NIE einen Callback ausgeloest, der Run blieb
 // dauerhaft auf 'scraping' stehen und der User konnte keine neue Analyse mehr starten.
@@ -180,7 +192,7 @@ Deno.serve(async (req) => {
 
       const postsRunId = await startApifyRun(
         IG_POSTS_ACTOR,
-        { username: [cleanHandle], resultsLimit: BEITRAEGE_PRO_LAUF, skipPinnedPosts: false },
+        { username: [cleanHandle], resultsLimit: BEITRAEGE_PRO_LAUF, skipPinnedPosts: ANGEPINNTE_UEBERSPRINGEN },
         buildWebhookParam(userId, analysisRunId, 'instagram', 'beitraege', webhookSchluessel)
       )
       if (!postsRunId) return await abbrechen(startFehler)

@@ -5420,17 +5420,8 @@ window.teilenLinkErzeugen=async function(runId){
     })
     const d=await res.json()
     if(!d.success)throw new Error(d.error||'Fehlgeschlagen')
+    ziel.innerHTML=teilenLinkHtml(runId,d)
     const url=location.origin+'/analyse/?a='+d.token
-    const bis=new Date(d.expires_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})
-    ziel.innerHTML=`<div class="c-link-feld">
-        <input type="text" readonly value="${escHtml(url)}" onclick="this.select()" aria-label="Öffentlicher Link"/>
-        <button class="c-btn" style="flex:0 0 auto" onclick="teilenLinkKopieren('${escHtml(url)}')">Kopieren</button>
-      </div>
-      <div class="c-link-meta">
-        Gültig bis ${escHtml(bis)}${d.aufrufe>0?` · ${fmt(d.aufrufe)} mal geöffnet`:''} ·
-        <a href="${escHtml(url)}" target="_blank" rel="noopener">Ansehen</a> ·
-        <a href="#" onclick="teilenLinkZuruecknehmen('${runId}');return false">Link zurückziehen</a>
-      </div>`
     knopf.innerHTML=vorher
     knopf.disabled=false
     if(navigator.share)navigator.share({title:'Meine viuno-Analyse',url}).catch(()=>{})
@@ -5439,6 +5430,23 @@ window.teilenLinkErzeugen=async function(runId){
     knopf.disabled=false
     showToast('Link konnte nicht erzeugt werden')
   }
+}
+
+/* Ein Kasten, zwei Aufrufer: frisch erzeugt und beim Laden nachgetragen.
+   Vorher stand das Markup nur im Erzeugen-Zweig -- deshalb war nach einem
+   Neuladen nichts mehr da. */
+function teilenLinkHtml(runId,d){
+  const url=location.origin+'/analyse/?a='+d.token
+  const bis=new Date(d.expires_at).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})
+  return `<div class="c-link-feld">
+      <input type="text" readonly value="${escHtml(url)}" onclick="this.select()" aria-label="Öffentlicher Link"/>
+      <button class="c-btn" style="flex:0 0 auto" onclick="teilenLinkKopieren('${escHtml(url)}')">Kopieren</button>
+    </div>
+    <div class="c-link-meta">
+      Gültig bis ${escHtml(bis)}${d.aufrufe>0?` · ${fmt(d.aufrufe)} mal geöffnet`:''} ·
+      <a href="${escHtml(url)}" target="_blank" rel="noopener">Ansehen</a> ·
+      <a href="#" onclick="teilenLinkZuruecknehmen('${runId}');return false">Link zurückziehen</a>
+    </div>`
 }
 
 window.teilenLinkKopieren=function(url){
@@ -5455,6 +5463,8 @@ window.teilenLinkZuruecknehmen=async function(runId){
     })
     const ziel=document.getElementById('teilen-ergebnis')
     if(ziel)ziel.innerHTML='<div class="c-link-meta">Der Link wurde zurückgezogen und funktioniert nicht mehr. Du kannst jederzeit einen neuen erzeugen.</div>'
+    const knopf=document.getElementById('teilen-knopf')
+    if(knopf)knopf.innerHTML=SVG_TEILEN+' Link erzeugen'
     showToast('Link zurückgezogen ✓')
   }catch(e){ showToast('Zurückziehen fehlgeschlagen') }
 }
@@ -5504,11 +5514,81 @@ window.buyPlatform=async function(platform){
   }
 }
 
-// ── Analyse fuer genau eine Plattform starten ──
-window.startPlatform=async function(platform){
+/* ── Vor dem Start: Handle zeigen und bestaetigen lassen ──────────────
+   Eine Analyse laeuft auf genau einem Handle, und der steht im Profil --
+   irgendwann hinterlegt, vielleicht mit Tippfehler. Ging der Lauf damit los,
+   war das Ergebnis "Wir konnten keine Beitraege abrufen", und der Weg zur
+   Korrektur fuehrte ueber das Profil und wieder zurueck. Jetzt steht der
+   Handle vor dem Start da und laesst sich an Ort und Stelle richtigstellen.
+
+   Geaendert wird nur, wenn sich der Wert wirklich unterscheidet -- der
+   Trigger sync_analytics_username schreibt sonst die bestehende
+   creator_analytics-Zeile um, und alte Zahlen stuenden unter neuem Namen. */
+const PLATTFORM_NAME={instagram:'Instagram',tiktok:'TikTok'}
+
+window.startPlatform=function(platform){
+  if(!anv||anv.busy)return
+  handleAbfragen(platform)
+}
+
+function handleAbfragen(platform){
+  const name=PLATTFORM_NAME[platform]||platform
+  const feld=platform==='tiktok'?'tiktok_handle':'instagram_handle'
+  const jetzt=(anv?.profile?.[feld]||'').replace(/^@/,'')
+  let m=document.getElementById('ha-modal')
+  if(!m){
+    m=document.createElement('div'); m.id='ha-modal'; m.className='vs-modal'
+    m.innerHTML=`<div class="vs-modal-card" role="dialog" aria-modal="true" aria-labelledby="ha-t" style="text-align:left">
+      <div class="vs-modal-t" id="ha-t"></div>
+      <div class="vs-modal-s" id="ha-s"></div>
+      <label for="ha-input" style="font-size:var(--t-xs);font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Handle</label>
+      <input id="ha-input" type="text" autocapitalize="none" autocorrect="off" spellcheck="false"
+        style="width:100%;height:44px;padding:0 12px;border:1px solid var(--border-strong);border-radius:11px;background:var(--bg);color:var(--text);font:inherit;font-size:var(--t-input)"/>
+      <div id="ha-hinweis" style="font-size:var(--t-xs);color:var(--subtle);line-height:1.45;min-height:16px"></div>
+      <div class="vs-wand-btns" style="justify-content:stretch">
+        <button type="button" class="vs-btn" style="flex:1" onclick="handleAbfrageZu()">Abbrechen</button>
+        <button type="button" class="vs-btn vs-btn-p" style="flex:1" id="ha-los">Analyse starten</button>
+      </div>
+      <button type="button" class="vs-modal-x" onclick="handleAbfrageZu()" aria-label="Schließen">×</button>
+    </div>`
+    m.addEventListener('click',e=>{ if(e.target===m) handleAbfrageZu() })
+    document.body.appendChild(m)
+  }
+  document.getElementById('ha-t').textContent=name+'-Analyse starten'
+  document.getElementById('ha-s').textContent='Analysiert wird genau dieses Konto. Stimmt der Name nicht, kannst du ihn hier ändern.'
+  const inp=document.getElementById('ha-input')
+  inp.value=jetzt
+  inp.placeholder='dein.'+platform.slice(0,2)+'.name'
+  const hinweis=document.getElementById('ha-hinweis')
+  const pruefen=()=>{
+    const neu=inp.value.trim().replace(/^@/,'')
+    hinweis.textContent = !neu ? 'Ohne Handle kann nichts abgerufen werden.'
+      : neu.toLowerCase()!==jetzt.toLowerCase()
+        ? 'Wird im Profil gespeichert. Frühere Zahlen dieses Kanals laufen danach unter dem neuen Namen.'
+        : 'Das Profil muss öffentlich sein, sonst findet der Abruf nichts.'
+    document.getElementById('ha-los').disabled=!neu
+  }
+  inp.oninput=pruefen; pruefen()
+  document.getElementById('ha-los').onclick=()=>{
+    const neu=inp.value.trim().replace(/^@/,'')
+    if(!neu)return
+    handleAbfrageZu()
+    startPlatformWirklich(platform, neu, neu.toLowerCase()!==jetzt.toLowerCase() ? feld : null)
+  }
+  m.classList.add('offen')
+  setTimeout(()=>inp.focus(),60)
+}
+window.handleAbfrageZu=function(){ document.getElementById('ha-modal')?.classList.remove('offen') }
+
+async function startPlatformWirklich(platform, handle, feldZumSpeichern){
   if(!anv||anv.busy)return
   anv.busy=platform; renderPlatformCards()
   try{
+    if(feldZumSpeichern){
+      const { error:sp } = await sb.from('users').update({ [feldZumSpeichern]: handle }).eq('id', anv.uid)
+      if(sp) throw new Error('Handle konnte nicht gespeichert werden')
+      if(anv.profile) anv.profile[feldZumSpeichern]=handle
+    }
     const{data:{session}}=await sb.auth.getSession()
     if(!session){showToast('Sitzung abgelaufen');location.reload();return}
     const res=await fetch(`${SUPABASE_URL}/functions/v1/start-analysis`,{
@@ -6137,6 +6217,30 @@ function renderAnalyticsContent(){
   h+='</div>'
   el.innerHTML=h
   ckptFalten(el)
+  /* Eine schon erzeugte Freigabe nachtragen. Ohne das war der Link nach einem
+     Neuladen verschwunden -- er existierte weiter, nur zeigte ihn niemand
+     mehr an, und damit war auch "Link zurueckziehen" nicht mehr erreichbar.
+     Brand Ready macht das beim Laden schon lange so. */
+  if (runId) teilenLinkVorladen(runId)
+}
+
+/* Liest die bestehende Freigabe zu diesem Lauf und fuellt den Teilen-Kasten.
+   Leise: gibt es keine, bleibt der Kasten leer und der Knopf erzeugt eine. */
+async function teilenLinkVorladen(runId){
+  try{
+    const { data } = await sb.from('analyse_freigaben')
+      .select('token, expires_at, aufrufe, revoked_at')
+      .eq('analysis_run_id', runId)
+      .is('revoked_at', null)
+      .order('created_at', { ascending:false })
+      .limit(1).maybeSingle()
+    if(!data || new Date(data.expires_at) <= new Date()) return
+    const ziel = document.getElementById('teilen-ergebnis')
+    if(!ziel) return
+    ziel.innerHTML = teilenLinkHtml(runId, data)
+    const knopf = document.getElementById('teilen-knopf')
+    if(knopf) knopf.innerHTML = SVG_TEILEN + ' Link anzeigen'
+  }catch(_){ /* kein Grund, die Analyse deshalb anzuhalten */ }
 }
 
 /* ── Die Auswertung war eine Mauer ────────────────────────────────────

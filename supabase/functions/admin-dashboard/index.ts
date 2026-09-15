@@ -82,13 +82,11 @@ Deno.serve(async (req) => {
         return json({ ok: true })
       }
 
-      /* BioLink oder Media Kit neu erzeugen. */
-      case 'seite_neu': {
-        const art = koerper.art === 'mediakit' ? 'generate-mediakit' : 'generate-biolink'
-        if (!id) return json({ error: 'id_fehlt' }, 400)
-        const r = await ruf(art, { user_id: id, userId: id })
-        return json({ ok: r.ok, status: r.status, antwort: r.daten })
-      }
+      /* 'seite_neu' gab es hier kurz und wurde wieder entfernt: generate-biolink
+         und generate-mediakit leiten den Creator aus dem JWT ab und ignorieren
+         eine uebergebene user_id. Mit dem Service-Role-Key aufgerufen scheitert
+         dort getUser() -- die Aktion konnte nie funktionieren. Wer sie will,
+         muss zuerst den Generatoren einen Admin-Pfad geben. */
 
       /* Analyse ohne Zahlung freischalten. amount_paid 0 -- die Zeile zaehlt
          damit nicht in den Umsatz, taucht aber in der Kaufliste auf und ist

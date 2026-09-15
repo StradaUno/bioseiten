@@ -855,9 +855,9 @@ function akteHtml() {
       </div>
 
       <div class="abschnitt">Aktionen</div>
+      <div class="karte-sub" style="padding:0 var(--s-4) var(--s-2)">Seiten neu erzeugen geht nur im Konto selbst —
+        <code>generate-biolink</code> leitet den Creator aus dem Login ab und kennt keine fremde ID.</div>
       <div class="aktionen">
-        <button class="akt" data-tu="seite_neu" data-art="biolink" data-id="${u.id}">BioLink neu erzeugen</button>
-        <button class="akt" data-tu="seite_neu" data-art="mediakit" data-id="${u.id}">Media Kit neu erzeugen</button>
         <button class="akt" data-tu="frei" data-platform="instagram" data-id="${u.id}">Instagram freischalten</button>
         <button class="akt" data-tu="frei" data-platform="tiktok" data-id="${u.id}">TikTok freischalten</button>
         <button class="akt" data-tu="auskunft" data-id="${u.id}">Datenauskunft senden</button>
@@ -1118,14 +1118,6 @@ async function ausfuehren(el) {
       if (!await frage('Alle erledigt?', 'Alle offenen Fehler von ' + el.dataset.fn + ' werden als erledigt markiert.', 'Ja')) return
       await aktion('fehler_erledigt', { function_name: el.dataset.fn })
       toast('Erledigt.'); return laden()
-    }
-    if (art === 'seite_neu') {
-      const was = el.dataset.art === 'mediakit' ? 'Das Media Kit' : 'Der BioLink'
-      if (!await frage('Neu erzeugen?', was + ' wird neu gebaut und sofort veroeffentlicht.', 'Ja, erzeugen')) return
-      el.disabled = true
-      const r = await aktion('seite_neu', { id, art: el.dataset.art })
-      toast(r.ok ? 'Seite neu erzeugt.' : 'Antwort: ' + JSON.stringify(r.antwort).slice(0, 120), 5000)
-      el.disabled = false; return laden()
     }
     if (art === 'frei') {
       const p = el.dataset.platform
