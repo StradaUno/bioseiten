@@ -380,7 +380,7 @@ const HTML_AFTER_CSS = `</style></head><body><div class="page-loader" id="page-l
 const NORMALIZE_URL_FN = `function normalizeUrl(u){return u?(u.startsWith('http')?u:'https://'+u):'#'}`
 
 const JS_PART1 = `<script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '/vendor/supabase-js.mjs'
 const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false } })

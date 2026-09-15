@@ -4,8 +4,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>viuno · Rechtliches</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<meta name="description" content="Impressum, Datenschutzerklärung, AGB, Widerrufsbelehrung und Nutzungsbedingungen von viuno."/>
+<link rel="canonical" href="https://viuno.de/legal/"/>
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -108,12 +109,12 @@ input,textarea,select{font-size:16px!important}
   </div>
 
   <div class="page-footer">
-    viuno · <a href="https://viuno.de">viuno.de</a> · Stand September 2026
+    viuno · <a href="https://viuno.de">viuno.de</a> · <a href="/faq/">Hilfe</a> · Stand September 2026
   </div>
 </div>
 
 <script type="module">
-import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+import {createClient} from '/vendor/supabase-js.mjs'
 
 const sb = createClient(
   'https://bzejndghppuipnedasuv.supabase.co',

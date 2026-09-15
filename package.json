@@ -1,12 +1,8 @@
 {
   "name": "bioseiten",
   "version": "1.0.0",
-  "description": "CreatorOS Bio Pages",
+  "description": "viuno — statische Seiten unter public/, Deploy ueber Cloudflare Pages. Keine Abhaengigkeiten: Schriften und supabase-js liegen unter public/fonts und public/vendor.",
   "scripts": {
     "build": "echo 'No build step needed'"
-  },
-  "dependencies": {
-    "@netlify/blobs": "^8.1.0",
-    "@supabase/supabase-js": "^2.45.0"
   }
 }

@@ -14,9 +14,7 @@
 <meta name="twitter:card" content="summary">
 <meta name="theme-color" content="#f5f4f2">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 /* Tokens und Grundgeruest identisch zur Startseite */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -209,6 +207,7 @@ footer{margin-top:64px;border-top:1px solid var(--border);padding:28px 0 40px}
         <span>viuno · gemacht in Deutschland</span>
       </div>
       <div class="footer-links">
+        <a href="/faq/">Hilfe</a>
         <a href="/legal#impressum">Impressum</a>
         <a href="/legal#datenschutz">Datenschutz</a>
         <a href="/legal#agb">AGB</a>
@@ -340,20 +339,20 @@ function karte(c, { gross = false, offen = false, mitDatum = false, ohneKopf = f
 }
 
 /* Die Werbeplaetze in fester Reihenfolge. Nach der ersten Meldung steht
-   der BioLink - das kostenlose Angebot mit der niedrigsten Huerde. Danach
-   wechseln sich Mail, Konto und Analyse ab: erst umsonst, dann bezahlt. */
+   der BioLink - das inklusive Angebot mit der niedrigsten Huerde. Danach
+   wechseln sich Mail, Konto und Analyse ab: erst inklusive, dann bezahlt. */
 const PROMOS = [
-  { art:'biolink', label:'viuno · kostenlos', t:'Eine Seite für alle deine Links',
-    u:'Kanäle, Zahlen und ein Kontaktformular für Marken — in fünf Minuten fertig, ohne Kosten.',
+  { art:'biolink', label:'viuno · inklusive', t:'Eine Seite für alle deine Links',
+    u:'Kanäle, Zahlen und ein Kontakt-Knopf für Marken — in fünf Minuten fertig, ohne Aufpreis.',
     knopf:'BioLink ansehen', ziel:'/biolink' },
   { art:'mail' },
   { art:'konto', label:'viuno', t:'Alles an einem Ort',
-    u:'BioLink, Media Kit, Anfragen und diese News — kostenloses Konto, kein Abo.',
+    u:'BioLink, Media Kit und diese News — ein Konto, kein Abo.',
     knopf:'Konto anlegen', ziel:'/app/' },
   { art:'analyse', label:'viuno · 9,99 €', t:'Wie performen deine Posts wirklich?',
     u:'Die Analyse zeigt, was deine besten Beiträge verbindet — einmalig 9,99 € je Kanal.',
     knopf:'Analyse ansehen', ziel:'/analytics' },
-  { art:'mediakit', label:'viuno · kostenlos', t:'Ein Media Kit, das Marken überzeugt',
+  { art:'mediakit', label:'viuno · inklusive', t:'Ein Media Kit, das Marken überzeugt',
     u:'Reichweite, Zielgruppe und Formate auf einer Seite — teilbar per Link.',
     knopf:'Media Kit ansehen', ziel:'/mediakit' },
 ]

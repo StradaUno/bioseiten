@@ -4,8 +4,8 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>viuno · App</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+<meta name="description" content="Die viuno-App: BioLink, Media Kit, Creator News und Analyse für Creator im deutschsprachigen Raum. Kein Abo, keine Grundgebühr — nur die Analyse kostet 9,99 € je Kanal.">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -1220,6 +1220,64 @@ a.news-quelle:hover{color:var(--text)}
 .br-sperr{margin:var(--s-4) var(--page-x) 0;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
 .br-sperr-titel{font-size:var(--t-lg);font-weight:var(--fw-sb);letter-spacing:-.02em}
 .br-sperr-sub{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin-top:6px}
+
+/* ── Vorschau ohne Konto (Launch-Check 15.09.2026) ─────────────────── */
+.vs{display:flex;flex-direction:column;gap:var(--s-4)}
+.vs-pill{align-self:flex-start;font-size:var(--t-2xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--akzent-text);background:var(--akzent-bg);border:1px solid var(--akzent-border);border-radius:99px;padding:4px 10px}
+.vs-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md,18px);box-shadow:var(--sh-card,none);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-3)}
+.vs-h{font-size:var(--t-2xl,22px);font-weight:700;letter-spacing:-.02em}
+.vs-h2{font-size:var(--t-xl,17px);font-weight:700;letter-spacing:-.01em;display:flex;align-items:center;gap:var(--s-2);flex-wrap:wrap}
+.vs-h3{font-size:var(--t-xs);font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--subtle);margin-top:var(--s-1)}
+.vs-s{font-size:var(--t-sm);color:var(--muted);line-height:1.55}
+.vs-s a{color:var(--text);font-weight:600}
+.vs-grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--s-2)}
+.vs-grid2{display:grid;grid-template-columns:1fr;gap:var(--s-4)}
+@media(min-width:600px){.vs-grid2{grid-template-columns:1fr 1fr}}
+.vs-tile{background:var(--surface2);border-radius:12px;padding:var(--s-3);min-width:0}
+.vs-tile-l{font-size:var(--t-2xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--subtle);margin-bottom:4px}
+.vs-tile-d{font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.vs-gut{color:var(--green)}
+.vs-num{font-family:var(--mono,inherit);font-variant-numeric:tabular-nums;font-size:20px;font-weight:700;letter-spacing:-.02em;display:block}
+.vs-pill-inline{font-size:var(--t-xs);font-weight:600;background:var(--akzent-bg);color:var(--akzent-text);border-radius:99px;padding:2px 9px}
+.vs-pill-inline .vs-num{display:inline;font-size:inherit}
+.vs-tag{align-self:flex-start;font-size:var(--t-2xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--subtle);background:var(--surface2);border-radius:99px;padding:3px 8px}
+.vs-kern{font-size:var(--t-lg,15px);font-weight:700;line-height:1.35;letter-spacing:-.01em}
+.vs-row{display:flex;align-items:center;gap:var(--s-3);width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--border);padding:12px 0;font:inherit;font-size:var(--t-md);color:var(--text);cursor:pointer}
+.vs-row:first-of-type{border-top:0}
+.vs-row-r{margin-left:auto;font-size:var(--t-xs);color:var(--subtle);white-space:nowrap}
+.vs-check{flex:0 0 24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;background:var(--surface2);color:var(--subtle)}
+.vs-check-ok{background:var(--green-bg);color:var(--green)}
+.vs-check-no{background:var(--red-bg);color:var(--red)}
+.vs-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-md);font-weight:600;text-decoration:none;cursor:pointer}
+.vs-btn-p{background:var(--text);color:#fff;border-color:var(--text)}
+.vs-btn-block{width:100%}
+.vs-plat{gap:var(--s-2)}
+.vs-chips{display:flex;flex-wrap:wrap;gap:6px}
+.vs-chips span{font-size:var(--t-xs);font-weight:600;border:1px solid var(--border-strong);border-radius:99px;padding:5px 10px}
+.vs-bars{display:flex;align-items:flex-end;gap:6px;height:72px;padding:0 2px}
+.vs-bars span{flex:1;border-radius:4px 4px 0 0;background:var(--verlauf)}
+.vs-phone{background:var(--verlauf);border-radius:var(--r-md,18px);padding:28px 20px 18px;color:#fff;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center}
+.vs-phone-av{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.6);display:grid;place-items:center;font-size:28px;font-weight:600}
+.vs-phone-n{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.vs-phone-b{font-size:var(--t-sm);opacity:.85;max-width:260px;margin-bottom:6px}
+.vs-phone-btn{width:100%;max-width:280px;min-height:44px;display:grid;place-items:center;border-radius:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);font-size:var(--t-md);font-weight:500}
+.vs-phone-btn-p{background:#fff;color:#1a1025;font-weight:600}
+.vs-phone-f{font-size:var(--t-2xs);opacity:.7;margin-top:6px}
+.vs-news{display:flex;flex-direction:column;gap:4px;padding:12px 0;border-top:1px solid var(--border);text-decoration:none;color:inherit}
+.vs-news:first-child{border-top:0;padding-top:0}
+.vs-news-h{font-size:var(--t-lg,15px);font-weight:700;line-height:1.3}
+.vs-wand{background:var(--surface);border:1px solid var(--akzent-border);border-radius:var(--r-md,18px);padding:var(--s-5);display:flex;flex-direction:column;gap:var(--s-2);text-align:center;position:relative;overflow:hidden}
+.vs-wand::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;background:var(--verlauf)}
+.vs-wand-t{font-size:var(--t-xl,17px);font-weight:700;letter-spacing:-.01em;margin-top:4px}
+.vs-wand-s{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
+.vs-wand-btns{display:flex;gap:var(--s-2);justify-content:center;flex-wrap:wrap;margin-top:6px}
+.vs-wand-n{font-size:var(--t-xs);color:var(--subtle)}
+.vs-modal{position:fixed;inset:0;background:rgba(23,21,31,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:2000}
+.vs-modal.offen{display:flex}
+.vs-modal-card{position:relative;background:var(--surface);border-radius:var(--r-md,18px);padding:26px 22px 22px;max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;gap:var(--s-2);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.vs-modal-t{font-size:var(--t-xl,17px);font-weight:700;letter-spacing:-.01em}
+.vs-modal-s{font-size:var(--t-sm);color:var(--muted);line-height:1.5}
+.vs-modal-x{position:absolute;top:8px;right:8px;width:36px;height:36px;border:0;background:none;font-size:22px;color:var(--subtle);cursor:pointer}
 </style>
 </head>
 <body>
@@ -1243,9 +1301,9 @@ a.news-quelle:hover{color:var(--text)}
     <div id="subnav"></div>
 
     <!-- PAGE -->
-    <div class="page">
+    <main class="page">
       <div id="content-area"></div>
-    </div>
+    </main>
 
     <!-- Kein Fuss mehr unter jeder Ansicht: Impressum, Datenschutz, AGB und
          Widerruf standen auf allen zehn Routen unter dem Inhalt und waren
@@ -1292,7 +1350,7 @@ a.news-quelle:hover{color:var(--text)}
 </div>
 
 <script type="module">
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { createClient } from '/vendor/supabase-js.mjs'
 /* Das Brand-Ready-Regelwerk liegt als eigenes Modul daneben, weil die
    Edge Function `brand-ready-freigeben` es ebenfalls laedt: der geteilte
    Punktestand traegt "powered by viuno" und wird deshalb serverseitig
@@ -1547,9 +1605,15 @@ function currentRoute() {
 async function router() {
   let name = currentRoute()
 
-  // Ohne Session: nur öffentliche Routen
+  // Ohne Session: öffentliche Routen normal, die Produkt-Routen als Vorschau
+  // mit Beispieldaten (Launch-Check 15.09.2026). Profil und Onboarding haben
+  // ohne Konto nichts zu zeigen und fuehren weiter zum Login.
+  let vorschau = false
   if (!state.session) {
-    if (!name || !ROUTES[name].public) { navigate('#/login'); return }
+    if (!name || !ROUTES[name].public) {
+      if (name && VORSCHAU_ROUTEN.includes(name)) vorschau = true
+      else { navigate('#/login'); return }
+    }
   } else {
     // Mit Session: Login/Register überspringen
     if (!name || ROUTES[name].public) { navigate('#/' + DEFAULT_ROUTE); return }
@@ -1559,7 +1623,7 @@ async function router() {
 
   state.route = name
   const route = ROUTES[name]
-  const chromeless = route.public || route.chromeless
+  const chromeless = route.public || (route.chromeless && !vorschau)
 
   document.getElementById('shell').classList.toggle('auth-mode', !!chromeless)
   document.getElementById('shell').classList.toggle('wide', !!route.chromeless)
@@ -1568,6 +1632,7 @@ async function router() {
   setActiveMenuItem(name)
   closeSidebar()
   closeModal()
+  document.getElementById('vs-modal')?.classList.remove('offen')
 
   runCleanups()
   const ctx = makeCtx()
@@ -1575,7 +1640,8 @@ async function router() {
   const area = document.getElementById('content-area')
   area.innerHTML = ''
   window.scrollTo(0, 0)
-  await route.render(area, ctx)
+  if (vorschau) await renderVorschau(area, ctx, name)
+  else await route.render(area, ctx)
 }
 
 /* ─────────────────────────────────────────────
@@ -1701,6 +1767,165 @@ async function ladeSignatur(uid) {
    ───────────────────────────────────────────── */
 
 /* ═══════════════════════════════════════════════════════════════
+   VORSCHAU — was ein Besucher ohne Konto sieht (Launch-Check 15.09.2026)
+
+   Vorher endete jede Produkt-Route ohne Session in der Login-Wand. Jetzt
+   zeigt jede Route einen kleinen echten Vorgeschmack mit Beispieldaten
+   (nie Daten anderer Nutzer; die News sind ohnehin oeffentlich) und
+   darunter eine klare Einladung. Jede Interaktion auf gesperrte Dinge
+   oeffnet ein kleines Fenster mit Login/Registrieren. Die eigentliche
+   Sperre bleibt serverseitig (RLS, Edge Functions) -- diese View kann
+   nichts freischalten, sie zeigt nur.
+   ═══════════════════════════════════════════════════════════════ */
+const VORSCHAU_ROUTEN = ['dashboard', 'analytics', 'brandready', 'biolink', 'mediakit', 'digest']
+
+const VS_WAND_TEXT = {
+  dashboard:  'Dein Start zeigt deine eigenen Zahlen: Aufrufe, Analyse, Neuigkeiten.',
+  analytics:  'Die Analyse gehört zu deinem Konto — dort liegen Ergebnis, Verlauf und Ergebnis-Mail.',
+  brandready: 'Der Brand-Ready-Check rechnet mit deiner Analyse und deinen Angaben.',
+  biolink:    'Dein BioLink entsteht in fünf Minuten: Name, Bild, Kanäle, Links.',
+  mediakit:   'Dein Media Kit zieht die Zahlen aus deiner Analyse — teilbar per Link.',
+  digest:     'Mit Konto bekommst du die Creator News jede Woche per Mail und siehst neue Ausgaben markiert.'
+}
+
+function vsNum(v){ return `<span class="vs-num">${v}</span>` }
+function vsWand(name){
+  return `<div class="vs-wand">
+    <div class="vs-wand-t">Einloggen für mehr</div>
+    <div class="vs-wand-s">${escHtml(VS_WAND_TEXT[name] || '')}</div>
+    <div class="vs-wand-btns">
+      <a class="vs-btn vs-btn-p" href="#/register">Konto anlegen</a>
+      <a class="vs-btn" href="#/login">Einloggen</a>
+    </div>
+    <div class="vs-wand-n">Kein Abo, keine Grundgebühr — nur die Analyse kostet 9,99 € je Kanal.</div>
+  </div>`
+}
+
+/* Kleines Fenster statt Sprung: der Besucher verliert nicht die Seite, die er
+   gerade angeschaut hat. */
+window.vorschauSperre = function(text){
+  let m = document.getElementById('vs-modal')
+  if (!m) {
+    m = document.createElement('div'); m.id = 'vs-modal'; m.className = 'vs-modal'
+    m.innerHTML = `<div class="vs-modal-card" role="dialog" aria-modal="true" aria-labelledby="vs-modal-t">
+      <div class="vs-modal-t" id="vs-modal-t">Dafür brauchst du ein Konto</div>
+      <div class="vs-modal-s" id="vs-modal-s"></div>
+      <div class="vs-wand-btns">
+        <a class="vs-btn vs-btn-p" href="#/register">Konto anlegen</a>
+        <a class="vs-btn" href="#/login">Einloggen</a>
+      </div>
+      <button type="button" class="vs-modal-x" onclick="vorschauSperreZu()" aria-label="Schließen">×</button>
+    </div>`
+    m.addEventListener('click', e => { if (e.target === m) vorschauSperreZu() })
+    document.body.appendChild(m)
+  }
+  document.getElementById('vs-modal-s').textContent = text || 'Kein Abo, keine Grundgebühr — nur die Analyse kostet.'
+  m.classList.add('offen')
+}
+window.vorschauSperreZu = function(){ document.getElementById('vs-modal')?.classList.remove('offen') }
+
+const VS_DEMO = {
+  dashboard: () => `
+    <div class="vs-card">
+      <div class="vs-h">Guten Tag, Creator 👋</div>
+      <div class="vs-s">So sieht dein Start aus, sobald dein Konto steht.</div>
+    </div>
+    <div class="vs-grid3">
+      <div class="vs-tile"><div class="vs-tile-l">BioLink-Aufrufe · 7 Tage</div>${vsNum('128')}<div class="vs-tile-d vs-gut">+12 %</div></div>
+      <div class="vs-tile"><div class="vs-tile-l">Media-Kit-Aufrufe</div>${vsNum('14')}<div class="vs-tile-d">diese Woche</div></div>
+      <div class="vs-tile"><div class="vs-tile-l">Letzte Analyse</div>${vsNum('—')}<div class="vs-tile-d">noch keine</div></div>
+    </div>
+    <div class="vs-card">
+      <div class="vs-h2">Deine ersten Schritte</div>
+      <button class="vs-row" onclick="vorschauSperre('Dein Profil legst du in zwei Minuten an — Name, Bild, Kanäle.')"><span class="vs-check vs-check-ok">✓</span><span>Profil anlegen</span><span class="vs-row-r">2 Min.</span></button>
+      <button class="vs-row" onclick="vorschauSperre('Der BioLink gehört zu deinem Konto und wird unter viuno.de/deinname veröffentlicht.')"><span class="vs-check">2</span><span>BioLink veröffentlichen</span><span class="vs-row-r">inklusive</span></button>
+      <button class="vs-row" onclick="vorschauSperre('Das Media Kit zieht die Zahlen aus deiner Analyse.')"><span class="vs-check">3</span><span>Media Kit füllen</span><span class="vs-row-r">inklusive</span></button>
+      <button class="vs-row" onclick="vorschauSperre('Die Analyse kostet 9,99 € je Kanal, einmalig, kein Abo.')"><span class="vs-check">4</span><span>Analyse starten</span><span class="vs-row-r">9,99 €</span></button>
+    </div>`,
+  analytics: () => `
+    <div class="vs-grid2">
+      ${['Instagram','TikTok'].map(p => `<div class="vs-card vs-plat">
+        <div class="vs-h2">${p}</div>
+        <div class="vs-s">Einmalig pro Analyse, kein Abo.</div>
+        <button class="vs-btn vs-btn-p vs-btn-block" onclick="vorschauSperre('Zum Freischalten brauchst du ein Konto — die Analyse gehört zu deinem Profil und deinem ${p}-Kanal.')">Freischalten – 9,99 €</button>
+      </div>`).join('')}
+    </div>
+    <div class="vs-card">
+      <div class="vs-tag">Beispiel-Ergebnis</div>
+      <div class="vs-kern">Deine kürzeren Videos holen mehr Resonanz als die langen</div>
+      <div class="vs-grid3">
+        <div class="vs-tile"><div class="vs-tile-l">Follower</div>${vsNum('4.820')}<div class="vs-tile-d">Beispiel</div></div>
+        <div class="vs-tile"><div class="vs-tile-l">Resonanz</div>${vsNum('31,4')}<div class="vs-tile-d">Likes je 1.000 Aufrufe</div></div>
+        <div class="vs-tile"><div class="vs-tile-l">Kommentarrate</div>${vsNum('1,2')}<div class="vs-tile-d">je 1.000 Aufrufe</div></div>
+      </div>
+      <div class="vs-s">Neun Abschnitte in Klartext: was gut lief, wo Wirkung verloren geht, was du weglassen solltest, sechs konkrete nächste Schritte. Alle Zahlen aus 36 echten Beiträgen deines Kanals.</div>
+      <button class="vs-btn vs-btn-block" onclick="vorschauSperre('Ein fertiges Beispiel siehst du in deinem Konto nach der ersten Analyse.')">Ganze Auswertung ansehen</button>
+    </div>`,
+  brandready: () => `
+    <div class="vs-card">
+      <div class="vs-h2">Brand Ready <span class="vs-pill-inline">${vsNum('6')} von ${vsNum('10')} Punkten</span></div>
+      <div class="vs-s">Wie eine Marke deinen Kanal heute sieht — Beispiel.</div>
+      ${[['ok','Impressum auf dem BioLink hinterlegt'],['ok','Kontakt-E-Mail sichtbar'],['ok','Media Kit veröffentlicht'],['no','Preise im Media Kit fehlen'],['no','Letzte Analyse älter als 90 Tage']].map(([z,t]) =>
+        `<button class="vs-row" onclick="vorschauSperre('Der Brand-Ready-Check rechnet mit deinem Konto und deiner Analyse.')"><span class="vs-check ${z==='ok'?'vs-check-ok':'vs-check-no'}">${z==='ok'?'✓':'–'}</span><span>${t}</span></button>`).join('')}
+      <div class="vs-s">Der Brand-Ready-Check ist Teil deiner viuno Analyse (9,99 € je Kanal) — kein Aufpreis.</div>
+    </div>`,
+  biolink: () => `
+    <div class="vs-grid2">
+      <div class="vs-phone">
+        <div class="vs-phone-av">B</div>
+        <div class="vs-phone-n">Beispiel Creator</div>
+        <div class="vs-phone-b">Alltag, Rezepte und ehrliche Empfehlungen aus Köln.</div>
+        <div class="vs-phone-btn">Instagram</div>
+        <div class="vs-phone-btn">TikTok</div>
+        <div class="vs-phone-btn">Mein Lieblingsrezept</div>
+        <div class="vs-phone-btn vs-phone-btn-p">Kooperation anfragen</div>
+        <div class="vs-phone-f">powered by viuno · Impressum</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-h2">Aufrufe · letzte 7 Tage</div>
+        <div class="vs-bars">${[38,52,44,61,73,58,66].map(h => `<span style="height:${h}%"></span>`).join('')}</div>
+        <div class="vs-s">Ohne Cookie, ohne Banner: viuno zählt Herkunft, Stunde und Klicks — nie die Person.</div>
+        <button class="vs-btn vs-btn-p vs-btn-block" onclick="vorschauSperre('Dein BioLink wird unter viuno.de/deinname veröffentlicht — dafür braucht es ein Konto.')">BioLink anlegen</button>
+      </div>
+    </div>`,
+  mediakit: () => `
+    <div class="vs-card">
+      <div class="vs-h2">Media Kit · Beispiel</div>
+      <div class="vs-grid3">
+        <div class="vs-tile"><div class="vs-tile-l">Follower</div>${vsNum('4.820')}<div class="vs-tile-d">gemessen am 01.09.</div></div>
+        <div class="vs-tile"><div class="vs-tile-l">Ø Aufrufe</div>${vsNum('1.900')}<div class="vs-tile-d">je Beitrag</div></div>
+        <div class="vs-tile"><div class="vs-tile-l">Resonanz</div>${vsNum('31,4')}<div class="vs-tile-d">Likes je 1.000</div></div>
+      </div>
+      <div class="vs-h3">Leistungen</div>
+      <div class="vs-chips"><span>Reel</span><span>Story-Paket</span><span>UGC-Video</span><span>Verlosung</span></div>
+      <div class="vs-s">Jede Zahl trägt ihren Stichtag. Alter, Länder und Geschlecht stehen als deine Eigenangabe dabei — das ist unbequem und genau deshalb glaubwürdig.</div>
+      <button class="vs-btn vs-btn-p vs-btn-block" onclick="vorschauSperre('Dein Media Kit wird unter viuno.de/kit/deinname veröffentlicht — dafür braucht es ein Konto.')">Media Kit anlegen</button>
+    </div>`
+}
+
+async function renderVorschau(area, ctx, name){
+  const demo = name === 'digest' ? '<div class="vs-card" id="vs-news"><div class="vs-s">Lade die aktuelle Ausgabe…</div></div>' : (VS_DEMO[name] ? VS_DEMO[name]() : '')
+  area.innerHTML = `<div class="vs">
+    <div class="vs-pill">${name === 'digest' ? 'Öffentliche Ausgabe — ohne Konto lesbar' : 'Vorschau mit Beispieldaten'}</div>
+    ${demo}
+    ${vsWand(name)}
+  </div>`
+  if (name !== 'digest') return
+  /* Die News sind oeffentlich (digest_cards_today ist fuer anon lesbar) --
+     hier stehen also echte Karten, keine Beispiele. */
+  const { data } = await sb.from('digest_cards_today')
+    .select('slug, headline, summary, platform_label, relevance_score').order('relevance_score', { ascending: false }).limit(5)
+  if (ctx.stale) return
+  const box = document.getElementById('vs-news'); if (!box) return
+  if (!data || !data.length) { box.innerHTML = '<div class="vs-s">Diese Woche gibt es noch keine Ausgabe. <a href="/news">Zum Archiv</a></div>'; return }
+  box.innerHTML = data.map(k => `<a class="vs-news" href="/news/${encodeURIComponent(k.slug)}">
+      <span class="vs-tag">${escHtml(k.platform_label || 'Allgemein')}</span>
+      <span class="vs-news-h">${escHtml(k.headline)}</span>
+      <span class="vs-s">${escHtml(k.summary || '')}</span>
+    </a>`).join('') + '<a class="vs-btn vs-btn-block" href="/news">Alle News lesen</a>'
+}
+
+/* ═══════════════════════════════════════════════════════════════
    VIEW: LOGIN — übernommen aus public/login/index.html
    Fehlermeldungen, Enter-Verhalten und Validierung unverändert.
    Angepasst: location.replace('/dashboard') → Hash-Route, damit der
@@ -1732,6 +1957,7 @@ function renderLogin(area, ctx) {
       </div>
       <div class="link-row">
         Noch kein Account? <a href="#/register">Jetzt registrieren</a>
+        <br><a href="#/dashboard" style="display:inline-block;margin-top:10px;color:var(--subtle)">Erst mal umsehen →</a>
       </div>
     </div>`
 
@@ -1797,7 +2023,7 @@ function renderRegister(area, ctx) {
       <!-- FORM -->
       <div class="card" id="form-card">
         <div class="card-title">Account erstellen.</div>
-        <div class="card-sub">Starte kostenlos — kein Abo nötig.</div>
+        <div class="card-sub">Kein Abo, keine Grundgebühr — nur die Analyse kostet.</div>
 
         <div class="field">
           <label>Username</label>
@@ -6522,6 +6748,7 @@ async function renderProfile(area, ctx) {
           <a class="pf-zeile" href="/legal#datenschutz" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">Datenschutzerklärung</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
           <a class="pf-zeile" href="/legal#impressum" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">Impressum</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
           <a class="pf-zeile" href="/legal#widerruf" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">Widerrufsbelehrung</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
+          <a class="pf-zeile" href="/faq/" target="_blank" rel="noopener"><span class="pf-zeile-t"><span class="pf-zeile-label">Hilfe und häufige Fragen</span></span><span class="pf-pfeil">${icon('arrowUpRight',16)}</span></a>
         </div>
         <div class="sheet-actions"><button class="sheet-btn-cancel" onclick="pfSheetZu('pf-recht-sheet')">Schließen</button></div>
       </div>

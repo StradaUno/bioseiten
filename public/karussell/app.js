@@ -47,7 +47,7 @@ let viunoClient = null;
 
 function viunoHolen() {
   if (!viunoClient) {
-    viunoClient = import("https://esm.sh/@supabase/supabase-js@2")
+    viunoClient = import("/vendor/supabase-js.mjs")
       .then((m) =>
         m.createClient(VIUNO_URL, VIUNO_ANON, {
           auth: { persistSession: true, autoRefreshToken: true },

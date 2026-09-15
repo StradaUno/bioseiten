@@ -7,8 +7,7 @@
 <script>location.replace("/app/#/register")</script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>viuno · Registrieren</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/fonts/fonts.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{--bg:#f5f4f2;--surface:#fff;--surface2:#f0efed;--border:rgba(0,0,0,.08);--border-strong:rgba(0,0,0,.13);--text:#111110;--muted:#7a7975;--subtle:#b0afa9;--green:#1a7f4b;--green-bg:#edf7f1;--red:#c0392b;--red-bg:#fdf0ef;--radius:16px;--radius-sm:10px;--safe-bottom:env(safe-area-inset-bottom,0px)}
@@ -68,7 +67,7 @@ input,textarea,select{font-size:16px!important}
   <!-- FORM -->
   <div class="card" id="form-card">
     <div class="card-title">Account erstellen.</div>
-    <div class="card-sub">Starte kostenlos — kein Abo nötig.</div>
+    <div class="card-sub">Kein Abo, keine Grundgebühr — nur die Analyse kostet.</div>
 
     <div class="field">
       <label>Username</label>
@@ -147,7 +146,7 @@ input,textarea,select{font-size:16px!important}
 </div>
 
 <script type="module">
-import {createClient} from 'https://esm.sh/@supabase/supabase-js@2'
+import {createClient} from '/vendor/supabase-js.mjs'
 const sb=createClient('https://bzejndghppuipnedasuv.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo',{auth:{persistSession:true,autoRefreshToken:true}})
 
 // Already logged in → dashboard

@@ -280,6 +280,13 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify(out, null, 2), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } })
     }
 
+    /* Launch-Check 15.09.2026: Der Callback traegt einen Schluessel aus dem Vault
+       (start-analysis haengt ihn an die Webhook-Adresse). Vorher konnte jeder, der
+       eine Run-ID und eine UUID kannte, den bezahlten Pfad mit fremden Daten fuettern. */
+    const schluessel = url.searchParams.get('schluessel') || ''
+    const { data: erlaubt } = await supabase.rpc('schluessel_pruefen', { p_zweck: 'apify_webhook_schluessel', p_wert: schluessel })
+    if (erlaubt !== true) return new Response('nicht erlaubt', { status: 403, headers: corsHeaders })
+
     const userId = url.searchParams.get('userId')
     const runId = url.searchParams.get('runId')
     const platform = url.searchParams.get('platform')

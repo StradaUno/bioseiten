@@ -21,3 +21,7 @@
 # dem Pfad liest. Jede Freigabe hat einen eigenen Token, deshalb ueberschreibt
 # eine neue Analyse den Link der vorherigen nicht.
 /analyse/*    /analyse/index.html    200
+
+# ── Hilfe ─────────────────────────────────────────────────────────
+/hilfe        /faq/    301
+/faq          /faq/    301
