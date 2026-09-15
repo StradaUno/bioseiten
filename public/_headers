@@ -50,6 +50,10 @@
   X-Robots-Tag: noindex, nofollow
 /reset-password/*
   X-Robots-Tag: noindex, nofollow
+# Testkopie des Launch-Check-Standes unter /222/test/, nach dem Merge entfernen.
+/222/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
 
 # ── Warum hier KEINE Cache-Regel fuer die zwei geteilten Module steht ──
 # Versucht und verworfen: Cloudflare Pages ignoriert `Cache-Control` aus

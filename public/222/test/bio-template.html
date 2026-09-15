@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>{{DISPLAY_NAME}} — viuno</title>
+<meta name="description" content="{{BIO}}" />
+<meta name="theme-color" content="#14171f" />
+
+<!-- Open Graph / Social Preview — Platzhalter für späteren Cloudflare Worker (Stufe B) -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{{DISPLAY_NAME}} — viuno" />
+<meta property="og:description" content="{{BIO}}" />
+<meta property="og:image" content="{{OG_IMAGE}}" />
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3Ev%3C/text%3E%3C/svg%3E" />
+
+<style>
+  :root {
+    --bg: #14171f;
+    --surface: #1e2230;
+    --border: #2a2f40;
+    --border-strong: #3a4058;
+    --text: #f0f2f8;
+    --text-muted: #a8b0c4;
+    --text-subtle: #7a8096;
+    --text-faint: #4a5068;
+    --primary: #c4b5f5;
+    --primary-hover: #d4c8f8;
+    --primary-text: #14171f;
+    --radius-btn: 12px;
+    --radius-img: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 0;
+  }
+
+  main {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+
+  .page-loader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    z-index: 9999;
+    transition: opacity .25s ease;
+  }
+  .page-loader.hide { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin .8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    background: color-mix(in srgb, var(--primary) 15%, var(--surface));
+    border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+    border-radius: 20px;
+    padding: 2px 8px;
+    letter-spacing: .02em;
+  }
+
+  .tags {
+    display: flex;
+    gap: 6px;
+    margin: 8px 0 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .tags:empty { display: none; }
+  .tag {
+    font-size: 11px;
+    color: var(--text-subtle);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 10px;
+  }
+
+  .bio {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin-bottom: 28px;
+    max-width: 320px;
+    white-space: pre-line;
+  }
+  .bio:empty { display: none; }
+
+  .links {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+    border-radius: var(--radius-btn);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform .12s ease, background .15s ease, border-color .15s ease;
+    -webkit-tap-highlight-color: transparent;
+    width: 100%;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .btn:active { transform: scale(.98); }
+
+  .btn-primary {
+    background: var(--primary);
+    color: var(--primary-text);
+    border: 1px solid var(--primary);
+  }
+  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: var(--surface);
+    border-color: var(--border-strong);
+  }
+
+  .btn svg { flex-shrink: 0; }
+  .btn.hidden { display: none; }
+
+  .divider {
+    width: 100%;
+    text-align: center;
+    color: var(--text-faint);
+    font-size: 16px;
+    letter-spacing: 6px;
+    padding: 36px 0 32px;
+    user-select: none;
+  }
+
+  footer {
+    width: 100%;
+    padding: 0 20px 24px;
+    font-size: 11px;
+    color: var(--text-faint);
+    letter-spacing: .02em;
+    text-align: center;
+  }
+  footer a { color: var(--text-subtle); text-decoration: none; transition: color .15s ease; }
+  footer a:hover { color: var(--text-muted); }
+
+  .lang-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px;
+  }
+  .lang-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-subtle);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s ease;
+  }
+  .lang-btn:hover { color: var(--text); }
+  .lang-btn.active {
+    background: var(--primary);
+    color: var(--primary-text);
+    font-weight: 600;
+  }
+
+  @media (max-width: 380px) {
+    body { padding: 28px 16px 40px; }
+    h1 { font-size: 17px; }
+    .btn { padding: 14px 18px; font-size: 14px; }
+  }
+
+  /* ================================================
+     ANFRAGE OVERLAY — 2 Slides
+     ================================================ */
+  
+
+  @media (max-width: 380px) {
+    .cf-slide { padding: 24px 16px 32px; }</style>
+</head>
+<body>
+
+<div class="page-loader" id="page-loader"><div class="spinner"></div></div>
+
+<main id="main" style="visibility: hidden;">
+
+  <section class="header">
+    <div class="avatar" id="avatar">
+      <img id="avatar-img" src="" alt="" style="display:none;" />
+    </div>
+
+    <h1>
+      <span id="display-name"></span>
+      <span class="verified" id="verified" style="display:none;">
+        <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span data-i18n="verified">Verified</span>
+      </span>
+    </h1>
+
+    <div class="tags" id="tags"></div>
+
+    <p class="bio" id="bio"></p>
+  </section>
+
+  <nav class="links" aria-label="Links">
+
+    <a class="btn btn-secondary hidden" id="btn-instagram" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+      </svg>
+      <span>Instagram</span>
+    </a>
+
+    <a class="btn btn-secondary hidden" id="btn-tiktok" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+      </svg>
+      <span>TikTok</span>
+    </a>
+
+    <a class="btn btn-secondary hidden" id="btn-custom" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+        <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+      </svg>
+      <span id="btn-custom-label"></span>
+    </a>
+
+    <a class="btn btn-primary" id="btn-inquiry" href="#" hidden>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+      <span data-i18n="inquiry_btn">Anfragen</span>
+    </a>
+
+  </nav>
+
+  <div class="divider" aria-hidden="true">⸻</div>
+
+</main>
+
+<footer id="footer" style="visibility: hidden;">
+  <span data-i18n="powered_by">powered by</span> <a href="https://viuno.de" target="_blank" rel="noopener">viuno</a>
+  <div style="margin-top: 4px;"><a href="https://viuno.de/impressum" target="_blank" rel="noopener" data-i18n="imprint">Impressum</a></div>
+  <div class="lang-switch" role="group" aria-label="Sprache">
+    <button class="lang-btn" data-lang="de" type="button">DE</button>
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+    <button class="lang-btn" data-lang="it" type="button">IT</button>
+  </div>
+</footer>
+
+<script type="module">
+import { createClient } from '/222/test/vendor/supabase-js.mjs'
+
+const SUPABASE_URL = 'https://bzejndghppuipnedasuv.supabase.co'
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ6ZWpuZGdocHB1aXBuZWRhc3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2NTMxOTcsImV4cCI6MjA4OTIyOTE5N30.TShH1cIABQCtKgLkhCS9ymUJ36ZUYnlvCnGTok6EKTo'
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false }
+})
+
+// ====================================================================
+// I18N
+// ====================================================================
+const STRINGS = {
+  de: {
+    mail_subject: 'Kooperationsanfrage',
+    inquiry_btn: 'Anfragen',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum'
+  },
+  en: {
+    mail_subject: 'Collaboration enquiry',
+    inquiry_btn: 'Request',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Imprint'
+  },
+  it: {
+    mail_subject: 'Proposta di collaborazione',
+    inquiry_btn: 'Scrivimi',
+    verified: 'Verified',
+    powered_by: 'powered by',
+    imprint: 'Impressum'
+  }
+}
+
+let currentLang = 'de'
+let creatorData = null
+
+function t(key, ...args) {
+  const v = STRINGS[currentLang]?.[key]
+  if (typeof v === 'function') return v(...args)
+  return v ?? key
+}
+
+function applyLanguage(lang) {
+  if (!STRINGS[lang]) lang = 'de'
+  currentLang = lang
+  document.documentElement.lang = lang
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n
+    const val = t(key)
+    if (typeof val === 'string') el.textContent = val
+  })
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder
+    const val = t(key)
+    if (typeof val === 'string') el.placeholder = val
+  })
+
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.lang === lang)
+  })
+
+  /* Kontakt-Button: direkter mailto:-Link auf die im BioLink hinterlegte
+     Adresse. Ist keine hinterlegt, bleibt der Button ausgeblendet. */
+  const inq = document.getElementById('btn-inquiry')
+  if (inq) {
+    const kontaktMail = (creatorData?.contact_email || '').trim()
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(kontaktMail)) {
+      inq.href = 'mailto:' + kontaktMail + '?subject=' + encodeURIComponent(t('mail_subject'))
+      inq.hidden = false
+    } else {
+      inq.hidden = true
+    }
+  }
+}
+
+// ====================================================================
+// SLUG + DATA LOADING
+// ====================================================================
+function getSlugFromPath() {
+  const path = window.location.pathname
+  const cleaned = path.replace(/^\/+|\/+$/g, '')
+  if (!cleaned) return null
+  return cleaned.split('/')[0]
+}
+
+async function loadBioPage() {
+  const slug = getSlugFromPath()
+  if (!slug) {
+    window.location.replace('https://viuno.de')
+    return
+  }
+
+  const { data, error } = await supabase
+    .from('biopage_public')
+    .select('*')
+    .eq('slug', slug)
+    .maybeSingle()
+
+  if (error || !data) {
+    window.location.replace('https://viuno.de')
+    return
+  }
+
+  creatorData = data
+  renderBioPage(data)
+
+  const lang = ['de', 'en', 'it'].includes(data.default_language) ? data.default_language : 'de'
+  applyLanguage(lang)
+
+  document.getElementById('main').style.visibility = 'visible'
+  document.getElementById('footer').style.visibility = 'visible'
+  const loader = document.getElementById('page-loader')
+  loader.classList.add('hide')
+  setTimeout(() => loader.remove(), 250)
+}
+
+function renderBioPage(u) {
+  document.title = `${u.display_name} — viuno`
+  updateMetaTags(u)
+
+  const avatar = document.getElementById('avatar')
+  const avatarImg = document.getElementById('avatar-img')
+  if (u.profile_image_url) {
+    avatarImg.src = u.profile_image_url
+    avatarImg.alt = u.display_name || ''
+    avatarImg.style.display = 'block'
+    avatarImg.onerror = () => {
+      avatarImg.style.display = 'none'
+      avatar.textContent = (u.display_name || '?')[0].toUpperCase()
+    }
+  } else {
+    avatar.textContent = (u.display_name || '?')[0].toUpperCase()
+  }
+
+  document.getElementById('display-name').textContent = u.display_name || ''
+
+  if (u.is_verified) {
+    document.getElementById('verified').style.display = 'inline-flex'
+  }
+
+  const tagsEl = document.getElementById('tags')
+  tagsEl.innerHTML = ''
+  if (u.niche_category) {
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = capitalizeFirst(u.niche_category)
+    tagsEl.appendChild(s)
+  }
+  if (u.city) {
+    const s = document.createElement('span')
+    s.className = 'tag'
+    s.textContent = u.city
+    tagsEl.appendChild(s)
+  }
+
+  if (u.bio) document.getElementById('bio').textContent = u.bio
+
+  if (u.instagram_handle) {
+    const clean = u.instagram_handle.replace(/^@/, '')
+    const ig = document.getElementById('btn-instagram')
+    ig.href = `https://instagram.com/${encodeURIComponent(clean)}`
+    ig.classList.remove('hidden')
+  }
+
+  if (u.tiktok_handle) {
+    const clean = u.tiktok_handle.replace(/^@/, '')
+    const tt = document.getElementById('btn-tiktok')
+    tt.href = `https://tiktok.com/@${encodeURIComponent(clean)}`
+    tt.classList.remove('hidden')
+  }
+
+  if (u.custom_link_url && u.custom_link_title) {
+    const custom = document.getElementById('btn-custom')
+    custom.href = normalizeUrl(u.custom_link_url)
+    document.getElementById('btn-custom-label').textContent = u.custom_link_title
+    custom.classList.remove('hidden')
+  }
+}
+
+function updateMetaTags(u) {
+  const desc = u.bio || `${u.display_name} — viuno`
+  document.querySelector('meta[name="description"]')?.setAttribute('content', desc)
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', `${u.display_name} — viuno`)
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content', desc)
+  if (u.profile_image_url) {
+    document.querySelector('meta[property="og:image"]')?.setAttribute('content', u.profile_image_url)
+  }
+}
+
+function capitalizeFirst(s) {
+  if (!s) return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
+function normalizeUrl(url) {
+  if (!url) return '#'
+  return /^https?:\/\//.test(url) ? url : 'https://' + url
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLanguage(btn.dataset.lang))
+})
+
+// ====================================================================
+// INIT
+// ====================================================================
+loadBioPage()
+</script>
+
+</body>
+</html>
