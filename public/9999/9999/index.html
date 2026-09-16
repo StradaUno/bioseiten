@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>viuno</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<link rel="stylesheet" href="viuno.css?v=5">
+<meta name="theme-color" content="#f7f6fb">
+</head>
+<body>
+
+<!-- Stufe 2: Beispieldaten. Der Streifen scrollt mit weg. -->
+<div class="stripe"><b>Beispieldaten</b> · Stufe 2 des Neubaus · nichts hier ist gespeichert</div>
+
+<header class="top">
+  <div class="topbar">
+    <div class="logo">v</div>
+    <div class="brand">viuno</div>
+    <nav class="nav" id="nav-desktop"></nav>
+    <button class="avatar" id="avatar" title="Profil" onclick="App.route('#/profil')">A</button>
+  </div>
+</header>
+
+<main class="rahmen">
+  <div class="subnav" id="subnav"></div>
+  <div id="content"></div>
+</main>
+
+<nav class="bottom-nav" id="nav-bottom"></nav>
+
+<div class="modal-backdrop" id="modal"><div class="modal" id="modal-inner" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<!-- Gradient-Definitionen fuer alle Diagramme der App: einmal, nicht je SVG. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="viuno-grad" x1="0" x2="1"><stop stop-color="#7040e8"/><stop offset=".55" stop-color="#bb277e"/><stop offset="1" stop-color="#d77800"/></linearGradient>
+    <linearGradient id="viuno-area" x1="0" x2="1"><stop stop-color="#7040e8"/><stop offset="1" stop-color="#d77800"/></linearGradient>
+  </defs>
+</svg>
+
+<script>
+/* ==========================================================================
+   viuno — neue Creator-App. Stufe 2: drei Ansichten mit Beispieldaten.
+
+   Aufbau: Hilfsfunktionen → Beispieldaten (in den Formen der echten RPCs
+   und Tabellen) → Navigation und Router → die Ansichten → App-Namensraum
+   fuer alle Klick-Handler. Es gibt genau EIN globales Objekt (App); damit
+   kann es keine doppelten window.*-Namen geben.
+   ========================================================================== */
+
+/* ---------- Hilfen ---------------------------------------------------- */
+const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Deutsche Zahlen: Tausenderpunkt, Dezimalkomma. Eine Funktion, nicht drei. */
+const fmt  = (n, k = 0) => (n == null || isNaN(n)) ? '–' : Number(n).toLocaleString('de-DE', {minimumFractionDigits:k, maximumFractionDigits:k});
+const euro = n => n == null ? '–' : fmt(n) + ' €';
+const dTag = iso => { if(!iso) return '–'; const d = new Date(iso); return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.'; };
+const dVoll = iso => { if(!iso) return '–'; const d = new Date(iso); return dTag(iso) + d.getFullYear(); };
+const HEUTE = new Date('2026-09-16T12:00:00');
+const tageBis = iso => Math.round((new Date(iso) - HEUTE) / 864e5);
+const $ = id => document.getElementById(id);
+
+/* ---------- Beispieldaten --------------------------------------------
+   Jede Struktur hier hat die Form, die die echte Quelle liefert. Stufe 3
+   ersetzt die Konstante durch die Abfrage und laesst das Markup stehen.
+   Die Zahlen stammen aus dem Konto "Antonietta" (Analyse vom 13.09.). Was
+   es dort noch nicht gibt (kanal_verlauf — der Puls laeuft erstmals am
+   Sonntag), ist so gebaut, wie die Tabelle es liefern wird.             */
+const BEISPIEL = {
+  user: { id:'5620b0b6', display_name:'Antonietta', instagram_handle:'@antonietta_chiq', tiktok_handle:'@antoniettadigraci', niche_category:'fashion', profile_image_url:null },
+
+  /* growth_wochenbericht */
+  wochenbericht: {
+    woche:'2026-09-14', erzeugt_am:'2026-09-16T20:07:46Z', modell:'claude-haiku-4-5-20251001',
+    text:'Dein letzter Instagram-Beitrag ist 5 Tage her, während du sonst 6,4-mal pro Woche postest – da ist eine Lücke entstanden. Positiv ist: Dein Beitrag vom 09.09. performt mit 38,4 Reaktionen je 1.000 Aufrufe über deinem Schnitt von 27,6, und das gilt besonders für Posts im Ton „DIGIDI DIGIDI", die im Mittel 37,6 erreichen. Um Kooperationen voranzubringen, brauchst du noch zwei konkrete Dinge: dein Media Kit braucht mindestens eine Marke als Referenz, und deine Kooperationsliste sollte gefüllt werden – dein Profil signalisiert ja zu 87 % Bereitschaft. Auch bei deinen 4 angebotenen Leistungen fehlen noch die Preise.'
+  },
+  /* growth_signale.beleg — die Rueckfallebene, wenn das Modell ausfaellt */
+  signale: [
+    { id:78, regel_id:'posting_luecke', staerke:3, plattform:'instagram', beleg:'Du veröffentlichst sonst 6,4× pro Woche auf Instagram. Dein letzter Beitrag dort ist 5 Tage her.' },
+    { id:75, regel_id:'gewinner_serie', staerke:2, plattform:'instagram', beleg:'Dein Instagram-Beitrag vom 09.09. kommt auf 38,4 Reaktionen je 1.000 Aufrufe. Dein Schnitt liegt bei 27,6.' },
+    { id:76, regel_id:'ton_traegt', staerke:2, plattform:'instagram', beleg:'Deine Instagram-Beiträge mit dem Ton „DIGIDI DIGIDI" kommen im Mittel auf 37,6 gegen 27,6 im Schnitt (4 Beiträge).' },
+    { id:79, regel_id:'erste_koop', staerke:2, plattform:'alle', beleg:'Dein Profil ist zu 87 % kooperationsbereit, aber in deiner Kooperationsliste steht noch kein Eintrag.' },
+    { id:74, regel_id:'profil_referenzen', staerke:2, plattform:'alle', beleg:'In deinem Media Kit steht noch keine Marke als Referenz.' },
+    { id:73, regel_id:'profil_preise', staerke:1, plattform:'alle', beleg:'Du bietest 4 Leistungen an, aber zu keiner steht ein Preis auf deiner Seite.' },
+    { id:77, regel_id:'ausreisser_erklaeren', staerke:1, plattform:'instagram', beleg:'Dein Instagram-Beitrag vom 05.09. hatte mit 128.620 Aufrufen deine größte Reichweite und mit 4,9 Reaktionen je 1.000 Aufrufe zugleich eine der schwächsten Resonanzen (dein Schnitt: 27,6). Viel Reichweite, wenig Reaktion — das ist kein starker Beitrag, sondern eine offene Frage.' }
+  ],
+  /* growth_aufgaben — hoechstens drei je Woche, plus Abgelaufenes der Vorwoche */
+  aufgaben: [
+    { id:31, woche:'2026-09-14', prioritaet:1, status:'offen', regel_id:'posting_luecke', kategorie:'content', ziel_route:'#/analyse',
+      titel:'Veröffentliche diese Woche wieder etwas auf Instagram',
+      begruendung:'Du veröffentlichst sonst 6,4× pro Woche auf Instagram. Dein letzter Beitrag dort ist 5 Tage her.',
+      beleg:{ ppw:6.4, tage:5 } },
+    { id:32, woche:'2026-09-14', prioritaet:2, status:'offen', regel_id:'erste_koop', kategorie:'geschaeft', ziel_route:'#/koop',
+      titel:'Schreib zwei Marken an, die du ohnehin zeigst',
+      begruendung:'Dein Profil ist zu 87 % kooperationsbereit, aber in deiner Kooperationsliste steht noch kein Eintrag.',
+      beleg:{ prozent:87 } },
+    { id:33, woche:'2026-09-14', prioritaet:3, status:'offen', regel_id:'gewinner_serie', kategorie:'content', ziel_route:'#/analyse',
+      titel:'Mach eine zweite Folge zu deinem stärksten Beitrag',
+      begruendung:'Dein Instagram-Beitrag vom 09.09. kommt auf 38,4 Reaktionen je 1.000 Aufrufe. Dein Schnitt liegt bei 27,6.',
+      beleg:{ url:'https://www.instagram.com/p/DdDhcxXqx5m/', datum:'2026-09-09T05:35:51Z', schnitt:27.6, resonanz:38.4 } },
+    { id:27, woche:'2026-09-07', prioritaet:2, status:'abgelaufen', regel_id:'profil_preise', kategorie:'geschaeft', ziel_route:'#/preise',
+      titel:'Preis für dein wichtigstes Format festlegen',
+      begruendung:'Du bietest 4 Leistungen an, aber zu keiner steht ein Preis auf deiner Seite.',
+      beleg:{ punkte:6, max:12 } }
+  ],
+  /* viuno_score() */
+  score: { gesamt:76, punkte:57, max:75, stichtag:'2026-09-16',
+    saeulen:[
+      { id:'wachstum', titel:'Wachstum', punkte:0, max:0, zustand:'nicht_bewertbar', quelle:'Wir messen jede Woche — ab der zweiten steht hier eine Zahl' },
+      { id:'interaktion', titel:'Interaktion', punkte:17, max:25, zustand:'ok', quelle:'27,6 Resonanz je 1.000 Aufrufe — noch ohne Nischenvergleich' },
+      { id:'bestaendigkeit', titel:'Beständigkeit', punkte:18, max:25, zustand:'ok', quelle:'6,4 Beiträge/Woche, aber 6 Tage Pause' },
+      { id:'reife', titel:'Kooperations-Reife', punkte:22, max:25, zustand:'ok', quelle:'82 von 94 Punkten im Profilcheck' }
+    ] },
+  /* viuno_verlauf() — so, wie sie nach vier Sonntagen aussieht */
+  verlauf: [
+    { tag:'2026-08-23', quelle:'puls', plattform:'instagram', followers:11980, avg_views:98400 },
+    { tag:'2026-08-30', quelle:'puls', plattform:'instagram', followers:12210, avg_views:101200 },
+    { tag:'2026-09-06', quelle:'puls', plattform:'instagram', followers:12540, avg_views:104900 },
+    { tag:'2026-09-14', quelle:'analyse', plattform:'instagram', followers:12928, avg_views:112978 }
+  ],
+  /* digest_cards_today — eine Karte als Teaser */
+  news: { slug:'2026-09-14-lg-koln-werbung-muss-schon-im-grid-erkennbar-sein', headline:'LG Köln: Werbung muss schon im Grid erkennbar sein', rubrik:'recht', relevance_score:8, platform_label:'Instagram', source:'WBS.LEGAL',
+    summary:'Werbliche Beiträge müssen bereits in der Profilübersicht durch das Vorschaubild als Werbung erkennbar sein — ein Hinweis allein in der Caption reicht nicht mehr.',
+    image_url:'https://bzejndghppuipnedasuv.supabase.co/storage/v1/object/public/news/instagram/brett-jordan-fmqhTMu4IVU-unsplash.jpg' },
+
+  /* analyse_stats (eine Zeile je Plattform und Lauf) */
+  stats: { platform:'instagram', username:'antonietta_chiq', created_at:'2026-09-13T23:16:43Z',
+    followers:12928, avg_likes:2937.2, avg_comments:154, avg_views:112978.1, engagement_rate:23.91, engagement_per_view:2.74,
+    posts_per_week:6.4, top_format:'Video', best_posting_hour:7, best_posting_day:'Montag', best_time_sample:18,
+    followers_prev:null, followers_change:null, avg_likes_prev:null, avg_likes_change:null, engagement_rate_prev:null, engagement_rate_change:null,
+    resonanz_schnitt:27.6, resonanz_top:97.3, resonanz_flop:5.5, kommentarrate_schnitt:3.8,
+    format_stats:[ { typ:'Video', n:36, avg_likes:2937, avg_views:112978 } ],
+    duration_stats:[ { bucket:'unter 10 s', n:34, avg_likes:2974, avg_views:114166 }, { bucket:'10-20 s', n:2, avg_likes:2316, avg_views:92783 } ],
+    sound_stats:[ { sound:'DIGIDI DIGIDI', n:4, werte:[40.1,37.6,27,6.2], faktor:6.5 }, { sound:'BARRIO LAMBADA', n:3, werte:[38.2,21.4,9.4], faktor:4.1 }, { sound:'OSSESSIONE', n:2, werte:[66.6,18.9], faktor:3.5 }, { sound:'Danza Kuduro (feat. Don Omar)', n:3, werte:[23.1,22.3,15.9], faktor:1.5 }, { sound:'MI SERVONO I SOLDI (feat. Frank Gramuglia)', n:2, werte:[28.7,27.9], faktor:1 } ],
+    eigener_ton:{ mit:1, gesamt:36 },
+    ausreisser:{ url:'https://www.instagram.com/p/Dc5QdKps2PN/', datum:'2026-09-05T05:55:05Z', likes:634, views:128620, resonanz:4.9 },
+    top_hashtags:[], top_mentions:[],
+    zeitraum:{ von:'2026-07-31', bis:'2026-09-14', n:36 },
+    /* post_resonanz — hier 10 der 36 Beitraege; thumb kommt aus apify_daten.thumbnail_url */
+    post_resonanz:[
+      { url:'https://www.instagram.com/p/DdDhcxXqx5m/', datum:'2026-09-09T05:35:51Z', likes:21818, views:568262, comments:605, resonanz:38.4, kommentarrate:1.1, ton:'LA TESTA GIRA', media_type:'Video', caption:'🌺 Buongiorno. Quando metti 50 euro di benzina, sono 4 ore di vita passate a lavorare.', thumb:null },
+      { url:'https://www.instagram.com/p/DbcaIW3MCOU/', datum:'2026-07-31T04:30:35Z', likes:19386, views:280149, comments:526, resonanz:69.2, kommentarrate:1.9, ton:'OSSESSIONE', media_type:'Video', caption:'🌺 Sto ancora cercando quelli che dicevano: „Tranquilla, io per te ci sarò sempre".', thumb:null },
+      { url:'https://www.instagram.com/p/Dc1ab/', datum:'2026-09-05T05:44:00Z', likes:10615, views:264700, comments:817, resonanz:40.1, kommentarrate:3.1, ton:'DIGIDI DIGIDI', media_type:'Video', caption:'Lavori 50 anni ed hai 1 mese di ferie all\'anno. Quindi in totale 4 anni di ferie.', thumb:null },
+      { url:'https://www.instagram.com/p/DcHij/', datum:'2026-08-18T05:37:00Z', likes:6986, views:258596, comments:210, resonanz:27.0, kommentarrate:0.8, ton:'DIGIDI DIGIDI', media_type:'Video', caption:'🌸 Buongiorno. La stessa idea del 31.07., raccontata di nuovo.', thumb:null },
+      { url:'https://www.instagram.com/p/DdIsr6HM_Lk/', datum:'2026-09-11T05:50:25Z', likes:3228, views:110625, comments:92, resonanz:29.2, kommentarrate:0.8, ton:'La Gozadera', media_type:'Video', caption:'🌺 Buongiorno. L\'ultima frase è la pointe.', thumb:null },
+      { url:'https://www.instagram.com/p/Dbxyz/', datum:'2026-08-02T05:09:00Z', likes:4240, views:112800, comments:130, resonanz:37.6, kommentarrate:1.2, ton:'DIGIDI DIGIDI', media_type:'Video', caption:'Testo corto con la pointe alla fine.', thumb:null },
+      { url:'https://www.instagram.com/p/DdGDm6qMldQ/', datum:'2026-09-10T05:12:48Z', likes:1996, views:322824, comments:278, resonanz:6.2, kommentarrate:0.9, ton:'DIGIDI DIGIDI', media_type:'Video', caption:'Lavori 50 anni ed hai 1 mese di ferie all\'anno …', thumb:null },
+      { url:'https://www.instagram.com/p/Dc5QdKps2PN/', datum:'2026-09-05T05:55:05Z', likes:634, views:128620, comments:41, resonanz:4.9, kommentarrate:0.3, ton:'RAGAZZINO', media_type:'Video', caption:'🌺 Buongiorno. Tornare al lavoro dopo due settimane di ferie.', thumb:null },
+      { url:'https://www.instagram.com/p/DcSkhvpsBtM/', datum:'2026-08-21T05:19:54Z', likes:4011, views:369814, comments:102, resonanz:10.8, kommentarrate:0.3, ton:'COLPA DEL MARE', media_type:'Video', caption:'🌸 Tornare al lavoro dopo due settimane di ferie dovrebbe essere considerato un reato.', thumb:null },
+      { url:'https://www.instagram.com/p/DcAbc/', datum:'2026-08-08T08:03:00Z', likes:1820, views:108300, comments:60, resonanz:16.8, kommentarrate:0.6, ton:'GHETTO LOVE', media_type:'Video', caption:'Il giorno di ferie non approvato.', thumb:null }
+    ]
+  },
+  /* analyse_ki */
+  ki: { modell:'claude-opus-5', created_at:'2026-09-13T23:17:40Z',
+    kernaussage:'Deine Reichweite wächst, deine Resonanz schwankt um das 48,1-Fache',
+    einordnung:'Dein Kanal hat 12.928 Follower und kommt im Schnitt auf 112.978 Aufrufe pro Beitrag. Das ist ein Verhältnis, bei dem der allergrößte Teil deiner Zuschauer dir nicht folgt. Instagram spielt dich weit über deinen eigenen Kreis hinaus aus, und das passiert bei 6,4 Veröffentlichungen pro Woche sehr regelmäßig.\n\nDie Likes schwanken zwischen 106 und 21.818. Deine stärksten Beiträge erreichen 97,3 Likes je 1.000 Aufrufe, die schwächsten 5,5. Dein Kanal ist also nicht gleichmäßig stark, sondern extrem ungleich.',
+    was_gut_lief:'Der Beitrag vom 09.09. um 07:35 hat 21.818 Likes bei 568.262 Aufrufen und dabei eine Resonanz von 38,4 gehalten. Das ist der seltene Fall, dass große Ausspielung und gute Reaktion zusammenfallen.',
+    weglassen:'Der wortgleiche Text über die Rückkehr aus dem Urlaub sollte verschwinden. Fünf Mal veröffentlicht, zusammen 18,5 Likes je 1.000 Aufrufe, während der Kanalschnitt bei 27,6 liegt.',
+    sound_befund:'Derselbe Ton liefert bei dir sehr verschiedene Ergebnisse. DIGIDI DIGIDI hast du vier Mal verwendet, mit 40,1 und 37,6 und 27,0 und 6,2, ein Unterschied vom Faktor 6,5. Der Ton entscheidet also nicht, der Text tut es.',
+    tipps_zukunft:[
+      'Schreibe häufiger Texte, die eine Rechnung aufmachen, weil der 09.09. um 07:35 mit 21.818 Likes und der 05.09. um 07:44 mit 10.615 Likes beide genau das tun.',
+      'Lass den Urlaubsrückkehr-Text ganz weg, denn die fünf wortgleichen Beiträge kamen zusammen nur auf 18,5 Likes je 1.000 Aufrufe gegenüber 27,6 im Schnitt.',
+      'Setze den letzten Satz einer Bildunterschrift als Pointe und streiche alles danach, so wie beim 11.09. um 07:50 mit 29,2 Likes je 1.000 Aufrufe.',
+      'Beurteile jeden Beitrag nach Likes je 1.000 Aufrufe statt nach Aufrufen, denn der 10.09. um 07:12 hatte 322.824 Aufrufe und nur 6,2.'
+    ] },
+
+  /* deals — sieben Arten, je eine. brand_name statt Join auf brands. */
+  deals: [
+    { id:'d1', art:'bezahlt',   brand_name:'Oysho',         title:'Reel Herbstkollektion',   deal_value:1200, content_type:'instagram_reel', platform:'instagram', nutzungsrechte:'6 Monate auf den Kanälen der Marke', deadline:'2026-09-19', status:'confirmed',   im_mediakit:true,  internal_notes:'Briefing kam am 10.09., zwei Korrekturschleifen vereinbart.' },
+    { id:'d2', art:'link',      brand_name:'Zalando',       title:'Lookbook-Link in der Bio', link:'https://zln.do/anto', provision_prozent:8, laufzeit_bis:'2026-12-31', content_type:'story_package', status:'in_progress', im_mediakit:false },
+    { id:'d3', art:'affiliate', brand_name:'Amazon',        title:'Storefront Herbst',        link:'https://amazon.de/shop/antonietta', provision_prozent:3, netzwerk:'Amazon Partnerprogramm', status:'in_progress', im_mediakit:false },
+    { id:'d4', art:'code',      brand_name:'Sephora',       title:'Rabattcode ANTO15',        code:'ANTO15', provision_prozent:10, laufzeit_bis:'2026-10-31', status:'completed', im_mediakit:true, veroeffentlicht_am:'2026-08-20' },
+    { id:'d5', art:'barter',    brand_name:'Bershka',       title:'Outfit gegen Reel',        warenwert:250, content_type:'instagram_reel', platform:'instagram', status:'completed', im_mediakit:false, veroeffentlicht_am:'2026-07-12' },
+    { id:'d6', art:'ugc',       brand_name:'Bialetti',      title:'3 UGC-Clips Moka',         deal_value:400, anzahl_assets:3, nutzungsrechte:'12 Monate, alle Kanäle der Marke', status:'negotiation', im_mediakit:false },
+    { id:'d7', art:'gratis',    brand_name:'Caffè Milano',  title:'Story vom Frühstück',      content_type:'story_package', platform:'instagram', status:'inquiry', im_mediakit:false }
+  ],
+  /* apify_daten.mentions, gezaehlt — die Marken, die im Kanal ohnehin vorkommen */
+  mentions: [ { handle:'@oysho', n:4 }, { handle:'@bershka', n:3 }, { handle:'@sephora_italia', n:2 } ]
+};
+
+/* Wertelisten fuer Kooperationen — die Check-Constraints der Tabelle deals. */
+const ARTEN = { bezahlt:'Bezahlt', link:'Link', affiliate:'Affiliate', code:'Rabattcode', barter:'Barter', ugc:'UGC', gratis:'Gratis' };
+const STATUS = { inquiry:['Anfrage','blue'], negotiation:['In Verhandlung','amber'], confirmed:['Bestätigt','purple'], in_progress:['Läuft','purple'], completed:['Abgeschlossen','green'], rejected:['Abgesagt','red'] };
+const FORMATE = { instagram_reel:'Reel', story_package:'Story-Paket', tiktok_post:'TikTok-Video', ugc_video:'UGC-Video', post:'Beitrag' };
+const PLATTFORMEN = { instagram:'Instagram', tiktok:'TikTok', threads:'Threads' };
+/* Welche Felder eine Art hat — Abschnitt 3.7 des Auftrags, Spalte fuer Spalte. */
+const FELDER = {
+  bezahlt:  ['deal_value','content_type','platform','nutzungsrechte','deadline'],
+  link:     ['link','provision_prozent','laufzeit_bis','content_type'],
+  affiliate:['link','provision_prozent','netzwerk'],
+  code:     ['code','provision_prozent','laufzeit_bis'],
+  barter:   ['warenwert','content_type','platform'],
+  ugc:      ['deal_value','anzahl_assets','nutzungsrechte'],
+  gratis:   ['content_type','platform']
+};
+const FELD_LABEL = { deal_value:'Vergütung', content_type:'Format', platform:'Plattform', nutzungsrechte:'Nutzungsrechte', deadline:'Abgabe', link:'Link', provision_prozent:'Provision', laufzeit_bis:'Laufzeit bis', netzwerk:'Netzwerk', code:'Rabattcode', warenwert:'Warenwert', anzahl_assets:'Anzahl Assets' };
+
+/* ---------- Navigation und Router ------------------------------------ */
+const TABS = [
+  { id:'heute',    label:'Heute',    icon:'⌂', routes:['heute'] },
+  { id:'insights', label:'Insights', icon:'⌁', routes:['analyse','verlauf','profilcheck'] },
+  { id:'studio',   label:'Studio',   icon:'▤', routes:['biolink','mediakit'] },
+  { id:'business', label:'Business', icon:'◈', routes:['koop','preise','fahrplan'] },
+  { id:'news',     label:'News',     icon:'✦', routes:['news'] }
+];
+const ROUTEN_LABEL = { heute:'Heute', analyse:'Analyse', verlauf:'Verlauf', profilcheck:'Profilcheck', biolink:'BioLink', mediakit:'Media Kit', koop:'Kooperationen', preise:'Preise', fahrplan:'Fahrplan', news:'Creator News', profil:'Profil' };
+const VIEWS = { heute:renderHeute, analyse:renderAnalyse, koop:renderKoop };
+
+function router(){
+  const hash = location.hash || '#/heute';
+  const route = hash.replace(/^#\//,'').split('?')[0] || 'heute';
+  const tab = TABS.find(t => t.routes.includes(route));
+  /* Kopfleiste (Desktop) */
+  $('nav-desktop').innerHTML = TABS.map(t => `<button class="${t===tab?'active':''}" onclick="App.route('#/${t.routes[0]}')">${t.label}</button>`).join('');
+  /* Bottom-Nav (Telefon) */
+  $('nav-bottom').innerHTML = TABS.map(t => `<a href="#/${t.routes[0]}" class="${t===tab?'sel':''}"><b>${t.icon}</b>${t.label}${t.id==='news'?'<i class="dot"></i>':''}</a>`).join('');
+  /* Pillenreihe — nur bei Tabs mit mehreren Zielen, gezeichnet vom Router, nicht von der Ansicht */
+  const sub = $('subnav');
+  sub.innerHTML = (tab && tab.routes.length > 1)
+    ? `<div class="seg scroll">${tab.routes.map(r => `<button class="${r===route?'active':''}" onclick="App.route('#/${r}')">${ROUTEN_LABEL[r]}</button>`).join('')}</div>`
+    : '';
+  App.modalClose();
+  const area = $('content');
+  area.innerHTML = '';
+  window.scrollTo(0,0);
+  (VIEWS[route] || renderSpaeter)(area, route);
+}
+window.addEventListener('hashchange', router);
+
+/* ---------- Ansicht: HEUTE ------------------------------------------- */
+let hv = null; /* Zustand der Ansicht */
+function renderHeute(area){
+  hv = { aufgaben: BEISPIEL.aufgaben.map(a => ({...a})), belege:false, modellAusgefallen:false };
+  area.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">Woche vom ${dTag(BEISPIEL.wochenbericht.woche)}</div>
+        <h1>Hallo ${h(BEISPIEL.user.display_name)}</h1>
+      </div>
+      <div class="actions">
+        <button class="btn sm" onclick="App.modellUmschalten()">Modell-Ausfall zeigen</button>
+        <button class="btn icon teilen" title="Woche teilen" onclick="App.teilen('woche')"></button>
+      </div>
+    </div>
+    <div class="section" id="heute-bericht"></div>
+    <div class="section" id="heute-aufgaben"></div>
+    <div class="section grid2">
+      <div id="heute-score"></div>
+      <div id="heute-kanal"></div>
+    </div>
+    <div class="section" id="heute-news"></div>`;
+  heuteBericht(); heuteAufgaben(); heuteScore(); heuteKanal(); heuteNews();
+}
+
+function heuteBericht(){
+  const w = BEISPIEL.wochenbericht;
+  const belegListe = `<div class="stack tight mt3">${BEISPIEL.signale.map(s => `
+      <div class="row top" style="gap:12px"><span class="dot sm" style="margin-top:8px;color:${s.staerke>=3?'var(--fehlt)':s.staerke===2?'var(--purple)':'var(--muted)'}"></span><p class="ink">${h(s.beleg)}</p></div>`).join('')}</div>`;
+  $('heute-bericht').innerHTML = hv.modellAusgefallen ? `
+    <div class="card hero">
+      <div class="row between wrap"><div class="label">Deine Woche</div><span class="badge amber">● Belege statt Text</span></div>
+      <div class="notice mt3"><strong>Der Wochentext konnte nicht erzeugt werden.</strong> Das hier sind die Messungen der Woche — trockener, aber richtig.</div>
+      ${belegListe}
+      <div class="row between wrap mt4"><span class="small muted">Stand ${dVoll(w.woche)} · ${BEISPIEL.signale.length} Belege</span><button class="btn sm ghost" onclick="App.modellUmschalten()">Text zeigen</button></div>
+    </div>` : `
+    <div class="card hero">
+      <div class="row between wrap"><div class="label">Deine Woche</div><span class="badge purple">Montagsbericht</span></div>
+      <p class="lead mt3">${h(w.text)}</p>
+      <div class="row between wrap mt4">
+        <span class="small muted">Geschrieben aus ${BEISPIEL.signale.length} Belegen · Stand ${dVoll(w.woche)}</span>
+        <button class="btn sm ghost" onclick="App.belegeUmschalten()">${hv.belege?'Belege ausblenden':'Belege zeigen'}</button>
+      </div>
+      <div ${hv.belege?'':'hidden'}><div class="hr"></div>${belegListe}</div>
+    </div>`;
+}
+
+function heuteAufgaben(){
+  const woche = BEISPIEL.wochenbericht.woche;
+  const diese = hv.aufgaben.filter(a => a.woche === woche);
+  const alte  = hv.aufgaben.filter(a => a.status === 'abgelaufen');
+  const offen = diese.filter(a => a.status === 'offen').length;
+  const erledigt = diese.filter(a => a.status === 'erledigt').length;
+  let html = `<div class="section-title"><div><h2>Diese Woche</h2><p>${diese.length} Aufgaben · ${erledigt} erledigt</p></div></div><div class="stack">`;
+  if (offen === 0 && diese.length) {
+    html += `<div class="alert success"><div class="bubble">✓</div><div class="grow"><strong>Das reicht für diese Woche.</strong><p>Bis Montag kommt nichts nach — ein Coach, der auch mal sagt, dass es genug ist.</p></div></div>`;
+  }
+  html += diese.map(aufgabeKarte).join('');
+  if (alte.length) {
+    html += `<div class="section-title mt3"><div><h2>Aus der Vorwoche offen</h2><p>Nicht abgehakt, nicht verworfen — was ist daraus geworden?</p></div></div>`;
+    html += alte.map(aufgabeKarte).join('');
+  }
+  html += `</div>`;
+  $('heute-aufgaben').innerHTML = html;
+}
+
+/* Die Aufgabenkarte: Titel, Begruendung IMMER sichtbar, Beleg als Zahl
+   mit Bezug, dann Ziel und Knoepfe. */
+function aufgabeKarte(a){
+  const belege = belegChips(a);
+  const ziel = ROUTEN_LABEL[a.ziel_route.replace('#/','')] || 'Ansicht';
+  const foot = a.status === 'offen' || a.status === 'abgelaufen' ? `
+    <div class="aufgabe-foot">
+      <a class="btn sm" href="${h(a.ziel_route)}">Zu ${h(ziel)} →</a>
+      <button class="btn sm ghost" onclick="App.aufgabe(${a.id},'verworfen')">Verwerfen</button>
+      <button class="btn sm success" onclick="App.aufgabe(${a.id},'erledigt')">✓ Erledigt</button>
+    </div>` : `<div class="aufgabe-foot"><span class="small muted">${a.status==='erledigt'?'Erledigt am '+dTag(a.erledigt_am||HEUTE):'Verworfen — kommt erst nach dem '+dTag(a.cooldown_bis||'2026-10-07')+' wieder'}</span><button class="btn sm ghost" onclick="App.aufgabe(${a.id},'offen')">Rückgängig</button></div>`;
+  return `
+    <div class="card aufgabe ${a.status}" id="aufgabe-${a.id}">
+      <div class="aufgabe-kopf">
+        <div class="aufgabe-nr">${a.status==='erledigt'?'✓':a.prioritaet}</div>
+        <div class="grow">
+          <div class="row between wrap"><div class="aufgabe-titel">${h(a.titel)}</div>${a.status==='abgelaufen'?'<span class="badge amber">Vorwoche</span>':''}</div>
+          <div class="aufgabe-grund mt1">${h(a.begruendung)}</div>
+        </div>
+      </div>
+      ${belege ? `<div class="beleg-reihe">${belege}</div>` : ''}
+      ${foot}
+    </div>`;
+}
+/* Aus growth_aufgaben.beleg (jsonb) werden Zahl-mit-Bezug-Chips. Jede
+   Regel liefert andere Schluessel; hier steht die Zuordnung an einer Stelle. */
+function belegChips(a){
+  const b = a.beleg || {};
+  const c = [];
+  if (b.ppw != null)  c.push(['', fmt(b.ppw,1)+'×', 'pro Woche sonst']);
+  if (b.tage != null) c.push([b.tage>=7?'fehlt':'vorsicht', b.tage+' Tage', 'seit dem letzten Beitrag']);
+  if (b.prozent != null) c.push(['gut', b.prozent+' %', 'kooperationsbereit']);
+  if (b.resonanz != null) c.push(['gut', fmt(b.resonanz,1), 'Reaktionen je 1.000 · '+dTag(b.datum)]);
+  if (b.schnitt != null) c.push(['', fmt(b.schnitt,1), 'dein Schnitt']);
+  if (b.punkte != null && b.max != null) c.push([b.punkte===0?'fehlt':'vorsicht', b.punkte+' / '+b.max, 'Punkte im Profilcheck']);
+  return c.map(([k,w,bz]) => `<div class="beleg ${k}"><span class="beleg-wert">${h(w)}</span><span class="beleg-bezug">${h(bz)}</span></div>`).join('');
+}
+
+function heuteScore(){
+  const s = BEISPIEL.score;
+  $('heute-score').innerHTML = `
+    <div class="card">
+      <div class="row between"><div><h3>Creator Score</h3><p>Vier Säulen, ${s.saeulen.filter(x=>x.zustand!=='nicht_bewertbar').length} davon messbar</p></div><button class="btn icon sm teilen" title="Score teilen" onclick="App.teilen('score')"></button></div>
+      <div class="row mt3" style="gap:18px">
+        <div class="ring grad" style="--p:${s.gesamt}"><div><div class="ring-wert">${s.gesamt}</div><div class="ring-sub">von 100</div></div></div>
+        <div class="grow"><div class="big" style="margin:0;font-size:28px">${s.punkte} <span class="muted" style="font-size:16px;font-weight:700">/ ${s.max} Punkte</span></div><p class="small mt1">Eine nicht messbare Säule fällt aus Zähler und Nenner. Stand ${dVoll(s.stichtag)}.</p></div>
+      </div>
+      <div class="mt3">${s.saeulen.map(x => `
+        <div class="saeule ${x.zustand==='nicht_bewertbar'?'neutral':''}">
+          <div class="saeule-titel">${h(x.titel)}</div>
+          <div class="saeule-punkte">${x.zustand==='nicht_bewertbar'?'<span class="badge">nicht bewertbar</span>':`${x.punkte} <small>/ ${x.max}</small>`}</div>
+          <div class="progress thin ${x.zustand==='nicht_bewertbar'?'neutral':''}"><i style="width:${x.max?Math.round(x.punkte/x.max*100):0}%"></i></div>
+          <div class="saeule-quelle">${h(x.quelle)}</div>
+        </div>`).join('')}</div>
+    </div>`;
+}
+
+function heuteKanal(){
+  const v = BEISPIEL.verlauf;
+  const letzte = v[v.length-1], erste = v[0], vor = v[v.length-2];
+  const diff = letzte.followers - vor.followers;
+  $('heute-kanal').innerHTML = `
+    <div class="card">
+      <div class="row between"><div><h3>Dein Kanal</h3><p>Instagram · ${h(BEISPIEL.user.instagram_handle)}</p></div><button class="btn icon sm teilen" title="Kurve teilen" onclick="App.teilen('kurve')"></button></div>
+      <div class="label mt3">Follower</div>
+      <div class="big gradient-text zahl">${fmt(letzte.followers)}</div>
+      <div class="kpi"><div class="delta ${diff>=0?'up':'down'}">${diff>=0?'↑':'↓'} ${fmt(Math.abs(diff))} <span class="muted" style="font-weight:700">von ${fmt(vor.followers)} seit dem ${dTag(vor.tag)}</span></div></div>
+      <div class="chart sm mt3">${kurve(v.map(p=>p.followers), v.map(p=>p.quelle))}</div>
+      <div class="chart-legend mt2"><span><i></i>Messpuls (sonntags)</span><span><i class="analyse"></i>Analyse</span></div>
+      <div class="kpis two mt3">
+        <div class="kpi tight card flat soft"><div class="label">Ø Aufrufe</div><div class="value">${fmt(letzte.avg_views)}</div><div class="delta muted">je Beitrag, ${BEISPIEL.stats.zeitraum.n} Beiträge</div></div>
+        <div class="kpi tight card flat soft"><div class="label">Resonanz</div><div class="value">${fmt(BEISPIEL.stats.resonanz_schnitt,1)}</div><div class="delta muted">Reaktionen je 1.000 Aufrufe</div></div>
+      </div>
+      <p class="small mt3">Seit dem ${dTag(erste.tag)} von ${fmt(erste.followers)} auf ${fmt(letzte.followers)}. <a href="#/verlauf" style="color:var(--purple);font-weight:750">Verlauf →</a></p>
+    </div>`;
+}
+
+/* Kurve: Linie mit Signatur, Flaeche, Punkte; Analysepunkte gefuellt. */
+function kurve(werte, quellen){
+  const W = 600, H = 120, pad = 8;
+  const min = Math.min(...werte), max = Math.max(...werte);
+  const y = v => max === min ? H/2 : pad + (H - 2*pad) * (1 - (v - min) / (max - min));
+  const x = i => werte.length === 1 ? W/2 : i * W / (werte.length - 1);
+  const pts = werte.map((v,i) => [x(i), y(v)]);
+  const d = pts.map((p,i) => (i?'L':'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <line class="gridline" x1="0" y1="${pad}" x2="${W}" y2="${pad}"/><line class="gridline" x1="0" y1="${H/2}" x2="${W}" y2="${H/2}"/><line class="gridline" x1="0" y1="${H-pad}" x2="${W}" y2="${H-pad}"/>
+    <path class="area" d="${d} L${W} ${H} L0 ${H}Z"/><path class="line" d="${d}"/>
+    ${pts.map((p,i)=>`<circle class="point ${quellen[i]==='analyse'?'analyse':''}" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="5"/>`).join('')}
+  </svg>`;
+}
+
+function heuteNews(){
+  const n = BEISPIEL.news;
+  const drc = n.relevance_score >= 8 ? ['Wichtig','red'] : n.relevance_score >= 6 ? ['Relevant','amber'] : ['Info','blue'];
+  $('heute-news').innerHTML = `
+    <div class="section-title"><div><h2>Creator News</h2><p>Neue Ausgabe vom ${dTag('2026-09-14')}</p></div><a class="btn sm" href="#/news">Alle →</a></div>
+    <div class="card news" onclick="App.route('#/news')">
+      <div class="news-bild"><img src="${h(n.image_url)}" alt="" loading="lazy"></div>
+      <div class="news-body">
+        <div class="row wrap"><span class="badge ${drc[1]}">● ${drc[0]}</span><span class="badge">${h(n.platform_label)}</span><span class="badge">Recht</span></div>
+        <h3>${h(n.headline)}</h3>
+        <p class="small">${h(n.summary)}</p>
+        <div class="row between mt3"><span class="xs muted">${h(n.source)}</span><button class="btn sm" onclick="event.stopPropagation();App.toast('Bedeutung: Stufe 4')">Was bedeutet das für mich?</button></div>
+      </div>
+    </div>`;
+}
+
+/* ---------- Ansicht: ANALYSE ----------------------------------------- */
+let anv = null;
+function renderAnalyse(area){
+  anv = { plattform:'instagram', allePosts:false };
+  const s = BEISPIEL.stats, k = BEISPIEL.ki, z = s.zeitraum;
+  area.innerHTML = `
+    <div class="page-head">
+      <div>
+        <div class="eyebrow">Instagram · ${h(BEISPIEL.user.instagram_handle)}</div>
+        <h1>Analyse</h1>
+        <p class="mt1">Stand ${dVoll(s.created_at)} · ${z.n} Beiträge vom ${dTag(z.von)} bis ${dTag(z.bis)}</p>
+      </div>
+      <div class="actions">
+        <div class="seg"><button class="active" onclick="App.plattform(this,'instagram')">Instagram</button><button onclick="App.plattform(this,'tiktok')">TikTok</button></div>
+        <button class="btn primary sm" onclick="App.toast('Neue Analyse: kommt in Stufe 4 (bezahlter Pfad)')">Neue Analyse</button>
+      </div>
+    </div>
+
+    <div class="section kpis">
+      ${kpi('Follower', fmt(s.followers), s.followers_change==null ? ['muted','erste Analyse — kein Vergleich'] : delta(s.followers_change,'seit Vorlauf'))}
+      ${kpi('Ø Aufrufe', fmt(s.avg_views), ['muted','je Beitrag'])}
+      ${kpi('Ø Likes', fmt(s.avg_likes), s.avg_likes_change==null ? ['muted','erste Analyse'] : delta(s.avg_likes_change,'seit Vorlauf'))}
+      ${kpi('Resonanz', fmt(s.resonanz_schnitt,1), ['muted','Reaktionen je 1.000 Aufrufe'])}
+    </div>
+
+    <div class="section card hero">
+      <div class="row between wrap"><span class="badge purple">KI-Auswertung · ${dTag(k.created_at)}</span><button class="btn icon sm teilen" title="Teilen" onclick="App.teilen('beitrag')"></button></div>
+      <h2 class="mt3">${h(k.kernaussage)}</h2>
+      ${k.einordnung.split('\n\n').map(p=>`<p class="ink mt2">${h(p)}</p>`).join('')}
+      <div class="notice mt3 small">Jede Zahl in diesem Text stammt aus den ${z.n} gemessenen Beiträgen. Das Modell formuliert, es rechnet nicht.</div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><div><h2>Stärkste Beiträge</h2><p>Nach Reaktionen je 1.000 Aufrufe, nicht nach Reichweite</p></div><span class="fallzahl">n = ${z.n}</span></div>
+      <div class="card">
+        <div class="post-grid scroll">${[...s.post_resonanz].sort((a,b)=>b.resonanz-a.resonanz).slice(0,6).map(postKachel).join('')}</div>
+        <div class="hr"></div>
+        <div class="row between wrap"><span class="small muted">Alle ${z.n} Beiträge mit Bild, Datum und Resonanz</span><button class="btn sm" onclick="App.allePosts()">Alle anzeigen</button></div>
+        <div id="an-alle" hidden class="mt3">${s.post_resonanz.map(postZeile).join('')}<p class="small mt2">${s.post_resonanz.length} von ${z.n} Beiträgen — die vollständige Liste kommt in Stufe 3 aus <code>post_resonanz</code>.</p></div>
+      </div>
+    </div>
+
+    <div class="section grid2">
+      <div class="card">
+        <h3>Resonanz-Spanne</h3><p>Reaktionen je 1.000 Aufrufe, schwächster bis stärkster Beitrag</p>
+        ${spanne(s.resonanz_flop, s.resonanz_schnitt, s.resonanz_top)}
+        <div class="hr"></div>
+        <div class="beleg-reihe">
+          <div class="beleg"><span class="beleg-wert">${fmt(s.kommentarrate_schnitt,1)}</span><span class="beleg-bezug">Kommentare je 1.000 Aufrufe</span></div>
+          <div class="beleg"><span class="beleg-wert">${fmt(s.engagement_rate,2)} %</span><span class="beleg-bezug">Engagement je Follower</span></div>
+          <div class="beleg"><span class="beleg-wert">${fmt(s.posts_per_week,1)}×</span><span class="beleg-bezug">Beiträge pro Woche</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="row between"><h3>Viel Reichweite, wenig Reaktion</h3><span class="badge amber">Ausreißer</span></div>
+        <p>Der Beitrag vom ${dTag(s.ausreisser.datum)} hatte deine größte Reichweite und zugleich eine der schwächsten Resonanzen.</p>
+        <div class="beleg-reihe mt3">
+          <div class="beleg"><span class="beleg-wert">${fmt(s.ausreisser.views)}</span><span class="beleg-bezug">Aufrufe — dein Maximum</span></div>
+          <div class="beleg fehlt"><span class="beleg-wert">${fmt(s.ausreisser.resonanz,1)}</span><span class="beleg-bezug">Reaktionen je 1.000 · Schnitt ${fmt(s.resonanz_schnitt,1)}</span></div>
+        </div>
+        <p class="small mt3">Das ist kein starker Beitrag, sondern eine offene Frage. <a href="${h(s.ausreisser.url)}" target="_blank" rel="noopener" style="color:var(--purple);font-weight:750">Beitrag ansehen ↗</a></p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><div><h2>Verteilungen</h2><p>Jede Aussage trägt ihre Fallzahl — unter 3 je Gruppe sagen wir nichts</p></div></div>
+      <div class="grid2">
+        ${verteilungFormat(s)}
+        ${verteilungDauer(s)}
+        ${verteilungSound(s)}
+        ${besteZeit(s)}
+      </div>
+    </div>
+
+    <div class="section grid2">
+      <div class="card">
+        <h3>Hashtags &amp; Erwähnungen</h3>
+        ${s.top_hashtags.length || s.top_mentions.length ? '' : `<div class="empty tight"><div class="empty-icon">#</div><p>In den ${z.n} Beiträgen stehen weder Hashtags noch @-Erwähnungen.</p></div>`}
+      </div>
+      <div class="card">
+        <h3>Eigener Ton</h3><p>Beiträge mit Original-Audio statt Musik</p>
+        <div class="row mt3" style="gap:16px">
+          <div class="ring sm" style="--p:${Math.round(s.eigener_ton.mit/s.eigener_ton.gesamt*100)}"><div><div class="ring-wert">${s.eigener_ton.mit}</div></div></div>
+          <p class="ink">${s.eigener_ton.mit} von ${s.eigener_ton.gesamt} Beiträgen. Zu wenig für eine Aussage, ob eigener Ton bei dir trägt.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><div><h2>Was das Modell daraus liest</h2><p>${h(k.modell)} · ${dVoll(k.created_at)}</p></div></div>
+      <div class="stack">
+        <div class="card"><div class="row"><span class="badge green">● Was gut lief</span></div><p class="ink mt2">${h(k.was_gut_lief)}</p></div>
+        <div class="card"><div class="row"><span class="badge red">● Weglassen</span></div><p class="ink mt2">${h(k.weglassen)}</p></div>
+        <div class="card"><div class="row"><span class="badge">Sound-Befund</span></div><p class="ink mt2">${h(k.sound_befund)}</p></div>
+        <div class="card"><h3>Für die nächsten Beiträge</h3><ol class="stack tight mt2" style="margin:12px 0 0;padding-left:20px;color:var(--ink)">${k.tipps_zukunft.map(t=>`<li>${h(t)}</li>`).join('')}</ol></div>
+      </div>
+    </div>`;
+}
+
+function kpi(label, wert, [klasse, text]){
+  return `<div class="card kpi"><div class="label">${h(label)}</div><div class="value">${wert}</div><div class="delta ${klasse}">${h(text)}</div></div>`;
+}
+function delta(n, bezug){ return n >= 0 ? ['up', '↑ '+fmt(n)+' '+bezug] : ['down', '↓ '+fmt(-n)+' '+bezug]; }
+
+/* Beitragskachel. thumb null → Verlauf mit Caption (der Fallback, der
+   auch greift, wenn die Instagram-CDN-URL abgelaufen ist). */
+function postKachel(p){
+  const k = p.resonanz >= BEISPIEL.stats.resonanz_schnitt ? 'gut' : p.resonanz < BEISPIEL.stats.resonanz_flop*2 ? 'fehlt' : '';
+  return `
+    <a class="post" href="${h(p.url)}" target="_blank" rel="noopener">
+      <div class="post-bild ${p.thumb?'':'kein-bild'}">
+        ${p.thumb?`<img src="${h(p.thumb)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('kein-bild')">`:''}
+        <div class="fallback">${h(p.caption.slice(0,90))}</div>
+        <span class="tag">${dTag(p.datum)}</span>
+      </div>
+      <div class="post-body">
+        <div class="post-zahl ${k}">${fmt(p.resonanz,1)}</div>
+        <div class="post-meta">${fmt(p.likes)} Likes · ${fmt(p.views)} Aufrufe</div>
+      </div>
+    </a>`;
+}
+function postZeile(p){
+  return `<a class="post-row" href="${h(p.url)}" target="_blank" rel="noopener">
+    <div class="thumb">${p.thumb?`<img src="${h(p.thumb)}" alt="">`:''}</div>
+    <div class="grow"><strong>${dVoll(p.datum)}</strong><div class="small muted ellipsis">${h(p.ton)} · ${h(p.caption)}</div></div>
+    <div class="zahlen"><b class="post-zahl ${p.resonanz>=BEISPIEL.stats.resonanz_schnitt?'gut':''}" style="font-size:16px">${fmt(p.resonanz,1)}</b><span>${fmt(p.views)} Aufrufe</span></div>
+  </a>`;
+}
+function spanne(flop, schnitt, top){
+  const pos = ((schnitt - flop) / (top - flop) * 100).toFixed(1);
+  return `<div class="spanne"><div class="marker" style="left:${pos}%"></div></div>
+    <div class="spanne-legende"><span><span class="spanne-wert fehlt">${fmt(flop,1)}</span>schwächster</span><span class="mitte"><span class="spanne-wert">${fmt(schnitt,1)}</span>dein Schnitt</span><span class="rechts"><span class="spanne-wert gut">${fmt(top,1)}</span>stärkster</span></div>`;
+}
+/* Balkenliste mit Fallzahl. Werte unter min bekommen keinen Bestwert. */
+function balken(zeilen, min = 3){
+  const max = Math.max(...zeilen.map(z => z.wert));
+  const bewertbar = zeilen.filter(z => z.n >= min);
+  const best = bewertbar.length > 1 ? bewertbar.reduce((a,b) => a.wert > b.wert ? a : b) : null;
+  return `<div class="barlist mt3">${zeilen.map(z => `
+    <div class="barrow ${z===best?'best':''}">
+      <span class="name">${h(z.name)} <span class="fallzahl ${z.n<min?'klein':''}">n=${z.n}</span></span>
+      <div class="progress ${z.n<min?'neutral':''}"><i style="width:${Math.round(z.wert/max*100)}%"></i></div>
+      <strong>${fmt(z.wert)}</strong>
+    </div>`).join('')}</div>`;
+}
+function verteilungFormat(s){
+  const f = s.format_stats;
+  const inhalt = f.length < 2
+    ? `<div class="empty tight"><div class="empty-icon">▣</div><p>Nur ein Format in ${f[0].n} Beiträgen: <strong>${h(f[0].typ)}</strong>. Es gibt nichts zu vergleichen.</p></div>`
+    : balken(f.map(x => ({ name:x.typ, n:x.n, wert:x.avg_likes })));
+  return `<div class="card"><div class="row between"><h3>Format</h3><span class="fallzahl">Ø Likes</span></div><p>Welche Art Beitrag bei dir trägt</p>${inhalt}</div>`;
+}
+function verteilungDauer(s){
+  const d = s.duration_stats;
+  const klein = d.filter(x => x.n < 3);
+  return `<div class="card"><div class="row between"><h3>Länge</h3><span class="fallzahl">Ø Aufrufe</span></div><p>Nach Videolänge</p>
+    ${balken(d.map(x => ({ name:x.bucket, n:x.n, wert:x.avg_views })))}
+    ${klein.length ? `<p class="small mt3">${klein.map(x=>'„'+h(x.bucket)+'"').join(', ')}: ${klein.map(x=>x.n).join(', ')} Beiträge sind zu wenig für einen Vergleich — der Balken steht da, die Aussage nicht.</p>` : ''}</div>`;
+}
+function verteilungSound(s){
+  const rows = s.sound_stats.slice(0,5);
+  return `<div class="card"><div class="row between"><h3>Sounds</h3><span class="fallzahl">Resonanz je Nutzung</span></div><p>Derselbe Ton, verschiedene Ergebnisse</p>
+    <div class="stack tight mt3">${rows.map(x => `
+      <div class="row between" style="padding:8px 0;border-bottom:1px solid var(--line)">
+        <div class="grow"><strong class="ellipsis" style="display:block">${h(x.sound)}</strong><span class="small muted zahl">${x.werte.map(w=>fmt(w,1)).join(' · ')}</span></div>
+        <div style="text-align:right"><span class="fallzahl ${x.n<3?'klein':''}">n=${x.n}</span><div class="small zahl" style="font-weight:800;color:${x.faktor>=3?'var(--vorsicht)':'var(--ink)'}">Faktor ${fmt(x.faktor,1)}</div></div>
+      </div>`).join('')}</div>
+    <p class="small mt3">Ein Faktor über 3 heißt: der Ton entscheidet nicht, der Text tut es.</p></div>`;
+}
+/* Beste Zeit: 36 Beitraege auf 7 × 24 Felder reichen nie fuer eine
+   Empfehlung. Also steht hier die Tendenz mit ihrer Stichprobe — und der
+   Satz, dass es keine Empfehlung ist. */
+function besteZeit(s){
+  const genug = s.zeitraum.n > 168;
+  return `<div class="card">
+    <div class="row between"><h3>Beste Zeit</h3><span class="fallzahl klein">${s.best_time_sample} von ${s.zeitraum.n}</span></div>
+    <p>Wochentag und Stunde der stärksten Beiträge</p>
+    <div class="row mt3" style="gap:14px">
+      <div class="beleg"><span class="beleg-wert">${h(s.best_posting_day)}</span><span class="beleg-bezug">${s.best_posting_hour} Uhr</span></div>
+      <p class="small ink">${genug ? 'Auf dieser Basis ist das eine Empfehlung.' : `Eine Tendenz aus ${s.best_time_sample} Beiträgen. Für eine Empfehlung bräuchte es mehr als 168 Beiträge — 7 Tage × 24 Stunden. Lieber schweigen als raten.`}</p>
+    </div>
+    <div class="stunden mt3">${Array.from({length:24},(_,i)=>{ const v = [2,1,0,0,0,3,9,14,7,4,3,2,2,3,2,1,1,2,3,4,3,2,1,1][i]; return `<i class="${v===0?'leer':''}${i===s.best_posting_hour?' best':''}" style="height:${v?Math.max(8,v/14*100):3}%" title="${i} Uhr"></i>`; }).join('')}</div>
+    <div class="stunden-achse"><span>0 Uhr</span><span>6</span><span>12</span><span>18 · 23</span></div>
+  </div>`;
+}
+
+/* ---------- Ansicht: KOOPERATIONEN ----------------------------------- */
+let kv = null;
+function renderKoop(area){
+  kv = { deals: BEISPIEL.deals.map(d => ({...d})), filter:'alle' };
+  area.innerHTML = `
+    <div class="page-head">
+      <div><div class="eyebrow">Business</div><h1>Kooperationen</h1><p class="mt1" id="koop-sub"></p></div>
+      <div class="actions"><button class="btn primary" onclick="App.koopNeu()">+ Neue Kooperation</button></div>
+    </div>
+    <div class="section" id="koop-oben"></div>
+    <div class="section" id="koop-liste"></div>
+    <div class="section" id="koop-marken"></div>`;
+  koopListe(); koopMarken();
+}
+function dealWert(d){
+  switch (d.art) {
+    case 'bezahlt': case 'ugc': return euro(d.deal_value);
+    case 'barter': return 'Ware ' + euro(d.warenwert);
+    case 'link': case 'affiliate': case 'code': return fmt(d.provision_prozent) + ' % Provision';
+    default: return 'ohne Vergütung';
+  }
+}
+function koopListe(){
+  const alle = kv.deals;
+  const laufend = alle.filter(d => ['confirmed','in_progress','negotiation','inquiry'].includes(d.status));
+  const fertig = alle.filter(d => d.status === 'completed');
+  const faellig = alle.filter(d => d.deadline && tageBis(d.deadline) <= 3 && tageBis(d.deadline) >= 0 && d.status !== 'completed');
+  const imKit = alle.filter(d => d.im_mediakit);
+  $('koop-sub').textContent = `${alle.length} Einträge · ${imKit.length} im Media Kit sichtbar`;
+  $('koop-oben').innerHTML = `
+    <div class="kpis three">
+      <div class="card kpi tight"><div class="label">Laufend</div><div class="value">${laufend.length}</div><div class="delta muted">Anfrage bis bestätigt</div></div>
+      <div class="card kpi tight"><div class="label">Erledigt</div><div class="value">${fertig.length}</div><div class="delta muted">dieses Jahr</div></div>
+      <div class="card kpi tight"><div class="label">Abgabe fällig</div><div class="value ${faellig.length?'vorsicht':''}">${faellig.length}</div><div class="delta muted">in den nächsten 3 Tagen</div></div>
+    </div>
+    ${faellig.map(d => `<button class="alert mt3" onclick="App.koopOeffnen('${d.id}')"><div class="bubble">!</div><div class="grow"><strong>Abgabe für „${h(d.title)}" in ${tageBis(d.deadline)} Tagen</strong><p>${h(d.brand_name)} · ${dVoll(d.deadline)} — steht am Montag auch als Aufgabe im Bericht.</p></div><span class="chev">›</span></button>`).join('')}
+    <div class="seg scroll mt3">
+      ${[['alle','Alle'],['laufend','Laufend'],['fertig','Abgeschlossen'],['kit','Im Media Kit']].map(([k,l]) => `<button class="${kv.filter===k?'active':''}" onclick="App.koopFilter('${k}')">${l}</button>`).join('')}
+    </div>`;
+  const zeilen = { alle, laufend, fertig, kit:imKit }[kv.filter];
+  $('koop-liste').innerHTML = zeilen.length ? `<div class="card">${zeilen.map(dealZeile).join('')}</div>` : `
+    <div class="card empty"><div class="empty-icon">◌</div><h3>Nichts in dieser Ansicht</h3><p>${kv.filter==='kit' ? 'Kein Eintrag ist als Referenz im Media Kit sichtbar.' : 'Noch keine Kooperation in dieser Gruppe.'}</p><button class="btn primary" onclick="App.koopNeu()">Kooperation eintragen</button></div>`;
+}
+function dealZeile(d){
+  const st = STATUS[d.status];
+  const dl = d.deadline && d.status !== 'completed' ? tageBis(d.deadline) : null;
+  return `<div class="deal" onclick="App.koopOeffnen('${d.id}')">
+    <div class="avatar">${h(d.brand_name.slice(0,1))}</div>
+    <div class="deal-main"><strong>${h(d.brand_name)} · ${h(d.title)}</strong>
+      <span><span class="badge">${ARTEN[d.art]}</span>${d.im_mediakit?'<span class="badge green">● Media Kit</span>':''}${dl!=null?`<span class="${dl<=3?'vorsicht':'muted'}" style="font-weight:750">Abgabe ${dl===0?'heute':'in '+dl+' Tagen'}</span>`:''}</span>
+    </div>
+    <div class="deal-right"><span class="deal-wert ${d.art==='gratis'?'muted':''}">${dealWert(d)}</span><span class="badge ${st[1]}">${st[0]}</span></div>
+  </div>`;
+}
+function koopMarken(){
+  $('koop-marken').innerHTML = `
+    <div class="section-title"><div><h2>Marken, die du ohnehin zeigst</h2><p>@-Erwähnungen in deinen letzten ${BEISPIEL.stats.zeitraum.n} Beiträgen</p></div></div>
+    <div class="card">
+      ${BEISPIEL.mentions.map(m => `<div class="user"><div class="avatar">${h(m.handle.slice(1,2).toUpperCase())}</div><div class="user-main"><strong>${h(m.handle)}</strong><span>${m.n}× erwähnt</span></div><button class="btn sm" onclick="App.koopNeu('${h(m.handle.slice(1))}')">Als Kooperation anlegen</button></div>`).join('')}
+      <p class="small mt3">Die Aufgabe „Schreib zwei Marken an, die du ohnehin zeigst" führt hierher. Eine Marke, die du schon zeigst, ist der leichteste Erstkontakt.</p>
+    </div>`;
+}
+/* Das Blatt: alle Felder der Art, Media-Kit-Schalter, Bearbeiten/Loeschen. */
+function koopBlatt(d){
+  const st = STATUS[d.status];
+  const zeilen = FELDER[d.art].map(f => `<dt>${FELD_LABEL[f]}</dt><dd>${feldWert(d,f)}</dd>`).join('');
+  App.modal(`
+    <div class="modal-head"><div><div class="eyebrow">${ARTEN[d.art]}</div><h2>${h(d.brand_name)}</h2></div><button class="btn icon" onclick="App.modalClose()">×</button></div>
+    <div class="row wrap"><span class="badge ${st[1]}">${st[0]}</span><strong class="deal-wert">${dealWert(d)}</strong></div>
+    <p class="ink mt2"><strong>${h(d.title)}</strong></p>
+    <div class="hr"></div>
+    <dl class="dl">${zeilen}${d.veroeffentlicht_am?`<dt>Veröffentlicht</dt><dd>${dVoll(d.veroeffentlicht_am)}</dd>`:''}</dl>
+    ${d.internal_notes?`<div class="notice mt3">${h(d.internal_notes)}</div>`:''}
+    <div class="hr"></div>
+    <div class="switch-row"><div><strong>Im Media Kit als Referenz zeigen</strong><span>Name und Logo werden öffentlich. Der vereinbarte Wert nie.</span></div><button class="toggle ${d.im_mediakit?'on':''}" onclick="App.koopMediakit('${d.id}',this)"><i></i></button></div>
+    <div class="modal-foot"><button class="btn danger left" onclick="App.koopLoeschen('${d.id}')">Löschen</button><button class="btn" onclick="App.koopBearbeiten('${d.id}')">Bearbeiten</button><button class="btn dark" onclick="App.modalClose()">Schließen</button></div>`);
+}
+function feldWert(d, f){
+  const v = d[f];
+  if (v == null || v === '') return '<span class="muted">—</span>';
+  switch (f) {
+    case 'deal_value': case 'warenwert': return euro(v);
+    case 'provision_prozent': return fmt(v) + ' %';
+    case 'deadline': case 'laufzeit_bis': return dVoll(v) + (f==='deadline' && d.status!=='completed' ? ` <span class="badge ${tageBis(v)<=3?'amber':''}">${tageBis(v)===0?'heute':'in '+tageBis(v)+' Tagen'}</span>` : '');
+    case 'content_type': return FORMATE[v] || h(v);
+    case 'platform': return PLATTFORMEN[v] || h(v);
+    case 'link': return `<a href="${h(v)}" target="_blank" rel="noopener" style="color:var(--purple)">${h(v.replace(/^https?:\/\//,''))} ↗</a>`;
+    case 'code': return `<code>${h(v)}</code>`;
+    default: return h(v);
+  }
+}
+/* Das Formular. Die Art schaltet die Felder — dieselbe Zuordnung wie im
+   Blatt, damit Eingabe und Anzeige nie auseinanderlaufen. */
+function koopFormular(d){
+  const neu = !d.id;
+  App.modal(`
+    <form onsubmit="App.koopSpeichern(event)" id="koop-form">
+      <input type="hidden" name="id" value="${h(d.id||'')}">
+      <div class="modal-head"><h2>${neu?'Neue Kooperation':'Kooperation bearbeiten'}</h2><button type="button" class="btn icon" onclick="App.modalClose()">×</button></div>
+      <div class="form-grid">
+        <div class="field"><label>Marke</label><input name="brand_name" list="marken" required placeholder="z. B. Oysho" value="${h(d.brand_name||'')}"><datalist id="marken">${[...new Set(kv.deals.map(x=>x.brand_name))].map(m=>`<option value="${h(m)}">`).join('')}</datalist></div>
+        <div class="field"><label>Art</label><select name="art" onchange="App.koopArt(this.value)">${Object.entries(ARTEN).map(([k,l])=>`<option value="${k}" ${d.art===k?'selected':''}>${l}</option>`).join('')}</select></div>
+        <div class="field span"><label>Titel</label><input name="title" required placeholder="Was genau ist vereinbart?" value="${h(d.title||'')}"></div>
+        <div class="span" id="koop-artfelder"></div>
+        <div class="field"><label>Status</label><select name="status">${Object.entries(STATUS).map(([k,[l]])=>`<option value="${k}" ${(d.status||'inquiry')===k?'selected':''}>${l}</option>`).join('')}</select></div>
+        <div class="field"><label>Veröffentlicht am</label><input type="date" name="veroeffentlicht_am" value="${h(d.veroeffentlicht_am||'')}"></div>
+        <div class="field span"><label>Notiz <span class="muted" style="font-weight:600">(nur für dich)</span></label><textarea name="internal_notes" placeholder="Briefing, Ansprechpartner, Absprachen">${h(d.internal_notes||'')}</textarea></div>
+      </div>
+      <div class="hr"></div>
+      <div class="switch-row"><div><strong>Im Media Kit als Referenz zeigen</strong><span>Name und Logo werden öffentlich. Der vereinbarte Wert nie.</span></div><button type="button" class="toggle ${d.im_mediakit?'on':''}" data-name="im_mediakit" onclick="this.classList.toggle('on')"><i></i></button></div>
+      <div class="modal-foot"><button type="button" class="btn ghost" onclick="App.modalClose()">Abbrechen</button><button type="submit" class="btn primary">${neu?'Anlegen':'Speichern'}</button></div>
+    </form>`);
+  App.koopArt(d.art || 'bezahlt', d);
+}
+function artFelder(art, d = {}){
+  const feld = (f) => {
+    const v = d[f] ?? '';
+    switch (f) {
+      case 'deal_value': case 'warenwert': return `<div class="field"><label>${FELD_LABEL[f]}</label><div class="input-wrap"><input name="${f}" type="number" inputmode="decimal" min="0" step="1" placeholder="0" value="${h(v)}"><span class="unit">€</span></div></div>`;
+      case 'provision_prozent': return `<div class="field"><label>${FELD_LABEL[f]}</label><div class="input-wrap"><input name="${f}" type="number" inputmode="decimal" min="0" max="100" step="0.5" placeholder="0" value="${h(v)}"><span class="unit">%</span></div></div>`;
+      case 'anzahl_assets': return `<div class="field"><label>${FELD_LABEL[f]}</label><input name="${f}" type="number" inputmode="numeric" min="1" step="1" placeholder="3" value="${h(v)}"></div>`;
+      case 'content_type': return `<div class="field"><label>${FELD_LABEL[f]}</label><select name="${f}">${Object.entries(FORMATE).map(([k,l])=>`<option value="${k}" ${v===k?'selected':''}>${l}</option>`).join('')}</select></div>`;
+      case 'platform': return `<div class="field"><label>${FELD_LABEL[f]}</label><select name="${f}">${Object.entries(PLATTFORMEN).map(([k,l])=>`<option value="${k}" ${v===k?'selected':''}>${l}</option>`).join('')}</select></div>`;
+      case 'deadline': case 'laufzeit_bis': return `<div class="field"><label>${FELD_LABEL[f]}</label><input name="${f}" type="date" value="${h(v)}">${f==='deadline'?'<span class="hint">Drei Tage vorher wird daraus eine Aufgabe im Montagsbericht.</span>':''}</div>`;
+      case 'link': return `<div class="field span"><label>${FELD_LABEL[f]}</label><input name="${f}" type="url" inputmode="url" placeholder="https://…" value="${h(v)}"></div>`;
+      case 'nutzungsrechte': return `<div class="field span"><label>${FELD_LABEL[f]}</label><input name="${f}" placeholder="z. B. 6 Monate auf den Kanälen der Marke" value="${h(v)}"></div>`;
+      default: return `<div class="field"><label>${FELD_LABEL[f]}</label><input name="${f}" value="${h(v)}"></div>`;
+    }
+  };
+  return `<div class="form-grid">${FELDER[art].map(feld).join('')}</div>${art==='ugc'?'<div class="notice mt2 small">UGC läuft nicht auf deinem Kanal — es erscheint nicht in deiner Auswertung, nur hier.</div>':''}`;
+}
+
+/* ---------- Platzhalter fuer Stufe 4 --------------------------------- */
+function renderSpaeter(area, route){
+  area.innerHTML = `
+    <div class="page-head"><div><div class="eyebrow">Stufe 4</div><h1>${h(ROUTEN_LABEL[route]||route)}</h1></div></div>
+    <div class="card empty"><div class="empty-icon">◌</div><h3>Diese Ansicht kommt nach der Abnahme</h3><p>Erst werden Heute, Analyse und Kooperationen abgenommen. Dann entsteht der Rest aus denselben Bausteinen.</p><a class="btn primary" href="#/heute">Zurück zu Heute</a></div>`;
+}
+
+/* ---------- Der App-Namensraum: alle Klick-Handler ------------------- */
+const App = {
+  route(hash){ if (location.hash === hash) router(); else location.hash = hash; },
+  toast(msg, fehler){ const t = $('toast'); t.textContent = msg; t.className = 'toast show' + (fehler?' error':''); clearTimeout(App._tt); App._tt = setTimeout(() => t.className = 'toast', 2400); },
+  modal(html){ $('modal-inner').innerHTML = html; $('modal').classList.add('open'); document.body.style.overflow = 'hidden'; },
+  modalClose(){ $('modal').classList.remove('open'); document.body.style.overflow = ''; },
+  teilen(was){ App.toast('Teilen-Karte („' + was + '") kommt in Stufe 4 — Canvas 1080 × 1350, JPEG'); },
+
+  /* Heute */
+  belegeUmschalten(){ hv.belege = !hv.belege; heuteBericht(); },
+  modellUmschalten(){ hv.modellAusgefallen = !hv.modellAusgefallen; heuteBericht(); },
+  aufgabe(id, status){
+    /* Stufe 3: aufgabe_setzen(id, status) — hier nur der Zustand */
+    const a = hv.aufgaben.find(x => x.id === id); if (!a) return;
+    a.status = status; if (status === 'erledigt') a.erledigt_am = HEUTE.toISOString();
+    heuteAufgaben();
+    App.toast(status === 'erledigt' ? 'Abgehakt' : status === 'verworfen' ? 'Verworfen — kommt drei Wochen nicht wieder' : 'Wieder offen');
+  },
+
+  /* Analyse */
+  plattform(btn, p){
+    btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active')); btn.classList.add('active');
+    anv.plattform = p;
+    if (p === 'tiktok') App.toast('TikTok: für dieses Konto noch keine Analyse — Beispiel zeigt Instagram');
+  },
+  allePosts(){ const el = $('an-alle'); el.hidden = !el.hidden; anv.allePosts = !el.hidden; },
+
+  /* Kooperationen */
+  koopFilter(f){ kv.filter = f; koopListe(); },
+  koopOeffnen(id){ const d = kv.deals.find(x => x.id === id); if (d) koopBlatt(d); },
+  koopNeu(marke){ koopFormular({ art:'bezahlt', status:'inquiry', brand_name: marke || '' }); },
+  koopBearbeiten(id){ const d = kv.deals.find(x => x.id === id); if (d) koopFormular(d); },
+  koopArt(art, d){ const el = $('koop-artfelder'); if (el) el.innerHTML = artFelder(art, d || {}); },
+  koopSpeichern(ev){
+    ev.preventDefault();
+    const f = new FormData(ev.target); const d = {};
+    for (const [k,v] of f.entries()) d[k] = v === '' ? null : v;
+    for (const k of ['deal_value','warenwert','provision_prozent','anzahl_assets']) if (d[k] != null) d[k] = Number(d[k]);
+    d.im_mediakit = ev.target.querySelector('[data-name=im_mediakit]').classList.contains('on');
+    /* nur die Felder der gewaehlten Art bleiben — die anderen werden geleert */
+    for (const k of Object.keys(FELD_LABEL)) if (!FELDER[d.art].includes(k)) d[k] = null;
+    if (d.id) { const i = kv.deals.findIndex(x => x.id === d.id); kv.deals[i] = { ...kv.deals[i], ...d }; }
+    else { d.id = 'd' + Date.now(); kv.deals.unshift(d); }
+    App.modalClose(); koopListe();
+    App.toast(d.im_mediakit ? 'Gespeichert · Referenz erscheint im Media Kit' : 'Gespeichert');
+  },
+  koopMediakit(id, btn){
+    const d = kv.deals.find(x => x.id === id); if (!d) return;
+    d.im_mediakit = !d.im_mediakit; btn.classList.toggle('on', d.im_mediakit); koopListe();
+    App.toast(d.im_mediakit ? h(d.brand_name) + ' steht jetzt im Media Kit' : h(d.brand_name) + ' aus dem Media Kit genommen');
+  },
+  koopLoeschen(id){
+    const d = kv.deals.find(x => x.id === id); if (!d) return;
+    App.modal(`<div class="modal-head"><h2>„${h(d.title)}" löschen?</h2></div><p>Der Eintrag verschwindet aus der Liste${d.im_mediakit?' und aus dem Media Kit':''}. Das lässt sich nicht rückgängig machen.</p>
+      <div class="modal-foot"><button class="btn" onclick="App.koopOeffnen('${d.id}')">Abbrechen</button><button class="btn danger" onclick="App.koopLoeschenJetzt('${d.id}')">Löschen</button></div>`);
+  },
+  koopLoeschenJetzt(id){ kv.deals = kv.deals.filter(x => x.id !== id); App.modalClose(); koopListe(); App.toast('Gelöscht'); }
+};
+$('modal').addEventListener('click', e => { if (e.target.id === 'modal') App.modalClose(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') App.modalClose(); });
+router();
+</script>
+</body>
+</html>

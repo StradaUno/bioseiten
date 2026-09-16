@@ -19,6 +19,8 @@ Disallow: /analyse/
 Disallow: /brandready/
 # Designentwuerfe zum Durchklicken, kein Produktstand.
 Disallow: /pitch/
+# Testversion der neuen App (Neubau).
+Disallow: /9999/
 # Server-Template, kein Inhalt.
 Disallow: /bio-template.html
 
