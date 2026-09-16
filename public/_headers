@@ -44,6 +44,11 @@
   X-Robots-Tag: noindex, nofollow
 /reset-password/*
   X-Robots-Tag: noindex, nofollow
+# Testversion der App (16.09.2026). Liegt unter einem unauffaelligen Pfad,
+# damit niemand sie fuer die App haelt - und bekommt denselben Schutz.
+/89/*
+  X-Robots-Tag: noindex, nofollow
+  Referrer-Policy: no-referrer
 
 # ── Warum hier KEINE Cache-Regel fuer die zwei geteilten Module steht ──
 # Versucht und verworfen: Cloudflare Pages ignoriert `Cache-Control` aus

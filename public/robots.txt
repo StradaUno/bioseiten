@@ -17,6 +17,8 @@ Disallow: /extras/
 # Geteilte Ausschnitte mit Token: gehoeren nur dem, der den Link bekommen hat.
 Disallow: /analyse/
 Disallow: /brandready/
+# Testversion der App, kein Produktstand.
+Disallow: /89/
 # Designentwuerfe zum Durchklicken, kein Produktstand.
 Disallow: /pitch/
 # Server-Template, kein Inhalt.
