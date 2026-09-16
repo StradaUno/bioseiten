@@ -31,7 +31,11 @@ ausdrücklich erlaubt — ein Push auf `main` geht sofort live.
 
 **4. Am Ende prüfst du jede Funktion selbst und baust nach, was nicht geht.**
 Nicht „die Abfrage ist korrekt", sondern: angeklickt, gespeichert, neu
-geladen, Ergebnis gesehen. Details in Abschnitt 6.
+geladen, Ergebnis gesehen. Die Abnahmeliste steht in Abschnitt 7.
+
+**Und die Reihenfolge aus Abschnitt 8 ist verbindlich.** Erst das
+Designsystem, dann drei Ansichten zur Abnahme, erst danach der Rest. Wer
+zwölf Ansichten baut, bevor die Grundlage abgenommen ist, baut sie zweimal.
 
 ---
 
@@ -407,17 +411,68 @@ verhalten sich unverändert. Beide Apps reden mit derselben Datenbank.
 
 ---
 
-## 8. Was du zuerst tust
+## 8. Die Reihenfolge — sie ist verbindlich
 
-1. Den UI-Anhang ansehen und daraus ein Designsystem ableiten — Token,
-   Komponenten, Raster, Zustände. **Schreibe es auf, bevor du die erste
-   Ansicht baust.**
-2. Über die Supabase-Werkzeuge den echten Datenbestand ansehen. Ruf die RPCs
-   einmal auf und sieh dir an, was zurückkommt.
-3. Einen Branch anlegen und einen eigenen Ordner unter `public/` wählen.
-4. Den Aufbau kurz vorlegen und abnehmen lassen, bevor du zehn Ansichten
-   baust.
+Der letzte Versuch scheiterte **nicht** an einer fehlenden Vorschau. Es gab
+eine, sie war abgenommen, und gebaut wurde trotzdem etwas anderes: Die
+Vorschau lag als eigene Datei daneben, und beim Bauen wurde auf die
+vorhandenen Bausteine der alten App zurückgegriffen.
 
-Wenn etwas fehlt, um ehrlich zu sein — frag lieber nach, als eine Zahl zu
-erfinden. Eine Ansicht, die sagt „dafür haben wir noch zu wenig gemessen",
-ist mehr wert als eine, die etwas behauptet.
+Deshalb ist die Vorschau hier **keine eigene Datei, sondern die erste Stufe
+der App selbst.** Zwischen dem, was abgenommen wird, und dem, was stehen
+bleibt, wird nichts übersetzt.
+
+### Stufe 1 — Das Designsystem, als fertiges Stylesheet
+
+Sieh dir den UI-Anhang an und schreibe daraus das **endgültige** Stylesheet
+der neuen App: Farb-, Größen- und Abstands-Token, Komponenten, Zustände
+(normal, aktiv, deaktiviert, leer, Fehler, Ladezustand). Kein
+Wegwerf-Mockup, keine zweite Fassung „zum Zeigen" — das ist die Datei, die
+am Ende ausgeliefert wird.
+
+Halte in Kommentaren fest, **warum** eine Entscheidung so fiel, nicht nur,
+dass sie so fiel. Was der Anhang nicht zeigt, baust du passend dazu neu und
+begründest es.
+
+Parallel dazu: über die Supabase-Werkzeuge den echten Datenbestand ansehen.
+Ruf die RPCs einmal auf und sieh dir an, was tatsächlich zurückkommt — nicht,
+was hier beschrieben steht.
+
+Branch anlegen, eigenen Ordner unter `public/` wählen.
+
+### Stufe 2 — Drei Ansichten, mit Beispieldaten. **Hier wird abgenommen.**
+
+Baue aus diesem Stylesheet genau drei Ansichten:
+
+| | warum diese |
+|---|---|
+| **Heute** | Die eine große Karte trägt den Bildschirm. Wenn die nicht trägt, trägt nichts. |
+| **Analyse** | Die dichteste Ansicht: viele Zahlen, Verteilungen, Fallzahlen, Beitragsbilder. Reicht das Designsystem hier nicht, merkt man es sonst erst bei Ansicht neun. |
+| **Kooperationen** | Liste, Blatt, Formular mit wechselnden Feldern. Deckt alles Interaktive ab. |
+
+Dann **hör auf und lege vor.** Keine weiteren Ansichten, bevor diese drei
+abgenommen sind.
+
+**Baue keine Vorschau aller zwölf Ansichten.** Das ist derselbe Fehler in
+langsam: viel Arbeit, bevor klar ist, ob die Grundlage stimmt.
+
+### Stufe 3 — Dieselben drei Ansichten an die echten Daten
+
+Nicht neu bauen: verkabeln. Das Markup bleibt, die Beispieldaten weichen den
+echten. **Vorher** die Läufe von Hand anstoßen (siehe Falle 1), damit die
+Ansichten mit Inhalt beurteilt werden und nicht leer.
+
+### Stufe 4 — Der Rest
+
+Alle übrigen Ansichten aus denselben Komponenten zusammensetzen. Entsteht
+dabei eine neue Komponente, kommt sie ins Stylesheet — nicht als
+Sonderfall in eine einzelne Ansicht.
+
+Danach die Abnahme aus Abschnitt 7.
+
+---
+
+**Zum Schluss, und es gilt überall:** Wenn etwas fehlt, um ehrlich zu sein,
+frag lieber nach, als eine Zahl zu erfinden. Eine Ansicht, die sagt „dafür
+haben wir noch zu wenig gemessen", ist mehr wert als eine, die etwas
+behauptet.
