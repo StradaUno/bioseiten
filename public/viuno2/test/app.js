@@ -814,7 +814,7 @@ async function renderAnalyse(area, ctx) {
       const a = Z.abo
       kopf = karte(`${karteKopf('Abo aktiv', a.kuendigung_zum ? 'Gekündigt zum ' + dat(a.kuendigung_zum) + '. Bis dahin läuft alles weiter.' : 'Jeden Sonntag wird dein Kanal neu analysiert, das Media Kit zieht die Zahlen nach.')}<div class="v-kpi-zeile"><span>Nächste Analyse</span><b>${naechsterSonntag()}</b></div><div class="v-kpi-zeile"><span>Bezahlt bis</span><b>${dat(a.expires_at)}</b></div>${fehlerHtml}`)
     } else {
-      kopf = `<div class="v-preis v-preis--premium"><span class="v-pro-tag v-preis-tag">ABO</span><div class="v-preis-name">viuno Abo</div><div class="v-preis-wert v-num">4,99 €<small> im Monat</small></div><ul><li>${ICO.haken}Jede Woche eine Analyse, sonntags automatisch</li><li>${ICO.haken}Aktuelle Zahlen im Media Kit, dazu Ø Aufrufe der letzten 30 Tage</li><li>${ICO.haken}Brand-Ready-Check</li><li>${ICO.haken}Monatlich kündbar</li></ul><button class="v-btn v-btn--premium v-btn--breit" data-abo-start>${ICO.stern}Abo starten</button><div class="v-preis-hinweis">Kleinunternehmer nach § 19 UStG, keine Umsatzsteuer</div>${fehlerHtml}</div>`
+      kopf = aboKasten(fehlerHtml)
     }
   }
   let inhalt = ''
@@ -840,6 +840,11 @@ async function renderAnalyse(area, ctx) {
     laden(e.currentTarget, true)
     try { const r = await fn('analyse-freigeben', { analysis_run_id: stats.analysis_run_id }); await kopieren('https://viuno.de/analyse/' + r.token, 'Link kopiert · gilt 90 Tage') } catch (er) { fehler(er) } finally { laden(e.currentTarget, false) }
   })
+}
+/* Der Abo-Kasten: steht in der Analyse ohne Freischaltung und bei Brand Ready
+   ohne Abo. Brand Ready ist nie inklusive. */
+function aboKasten(extra = '') {
+  return `<div class="v-preis v-preis--premium"><span class="v-pro-tag v-preis-tag">ABO</span><div class="v-preis-name">viuno Abo</div><div class="v-preis-wert v-num">4,99 €<small> im Monat</small></div><ul><li>${ICO.haken}Jede Woche eine Analyse, sonntags automatisch</li><li>${ICO.haken}Aktuelle Zahlen im Media Kit, dazu Ø Aufrufe der letzten 30 Tage</li><li>${ICO.haken}Brand-Ready-Check mit teilbarem Stand</li><li>${ICO.haken}Monatlich kündbar</li></ul><button class="v-btn v-btn--premium v-btn--breit" data-abo-start>${ICO.stern}Abo starten</button><div class="v-preis-hinweis">Kleinunternehmer nach § 19 UStG, keine Umsatzsteuer</div>${extra}</div>`
 }
 function naechsterSonntag() {
   const d = new Date(); const t = (7 - d.getDay()) % 7 || 7; d.setDate(d.getDate() + t)
@@ -885,6 +890,11 @@ function aboSheet(neu) {
 }
 const BR_ZIEL = { bio: '#/kanaele', kontakt: '#/profil', takt: '#/analyse/analyse', biolink: '#/seiten/biolink', mediakit: '#/seiten/mediakit', preise: '#/leistungen', impressum: '#/profil', referenzen: '#/marken', kategorie: '#/profil', messung: '#/analyse/analyse' }
 async function renderBrandReady(area, ctx) {
+  if (!aboAktiv()) {
+    area.innerHTML = `<p class="text-muted" style="margin:0;font-size:var(--t-sm);line-height:var(--lh-body)">Brand Ready prüft zehn Punkte, auf die Marken vor einer Zusammenarbeit schauen, und zeigt, was noch fehlt. Das ist Teil des Abos.</p>${aboKasten()}`
+    ctx.on($('[data-abo-start]', area), 'click', e => aboStarten(e.currentTarget))
+    return
+  }
   const [pcQ, scQ] = await Promise.all([sb.rpc('viuno_profilcheck'), sb.rpc('viuno_score')])
   if (ctx.stale()) return
   const pc = pcQ.data, sc = scQ.data

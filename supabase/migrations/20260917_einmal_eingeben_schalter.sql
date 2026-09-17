@@ -138,3 +138,7 @@ alter table public.analysis_purchases alter column stripe_checkout_session_id dr
 -- (Sonntag 03:00 UTC) ruft viuno_cron_post('abo-wochenanalyse').
 -- deals und competitor_accounts sind geloescht (brand_ratings verlor dabei nur
 -- den Fremdschluessel), viuno_news_profil kommt ohne deals aus.
+
+-- 18.09.2026: stripe_prices_platform_check laesst 'abo' zu (Abo-Preis je Modus).
+-- brand-ready-freigeben v12 rechnet mit viuno_profilcheck() -- dieselbe Zahl wie
+-- die App; Brand Ready und die Freigabe sind Teil des Abos (abo_aktiv()).
