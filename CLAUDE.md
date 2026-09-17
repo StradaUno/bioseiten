@@ -546,3 +546,44 @@ nicht mehr angeboten; der Weg in `create-checkout-session` bleibt fuer Altbestan
 - **Kuendigung** im Profil („Abo"): `abo-verwalten` setzt
   `cancel_at_period_end`, das Abo endet zum bezahlten Monatsende, bis dahin
   ruecknehmbar.
+
+## Die Analyse-Seite (Umbau 18.09.2026)
+
+`renderAnalyse` in `public/viuno2/test/app.js` zeigt je Kanal acht Boxen in
+dieser Reihenfolge, alles auf einer Seite: **Kernaussage** (ein Satz aus
+`analyse_ki.kernaussage`, kopierbar), **Resonanz-Kachel** (Likes je 1.000
+Aufrufe mit Pfeil zum vorigen Lauf), **drei Aufgaben** (`growth_aufgaben`
+der Woche, Begruendung plus Punkte aus `beleg`, Haken ueber `aufgabe_setzen`;
+eine Wirkungsmessung gibt es noch nicht), **Verlauf** (drei Sparklines ueber
+zwoelf Wochen: Resonanz aus `analyse_stats`, Follower und Posts je Woche aus
+`viuno_verlauf`; vor der zweiten Analyse verschwommen), **Beitragskarten**
+(Pillen Top, Flop, Kommentar; je Beitrag Vorschaubild, Ampel gegen den
+eigenen Schnitt, ein Satz aus `beitragSatz()` -- aus Code, kein Modell --
+und Link zum Beitrag), **Brand-Ready-Zeile** (Punkte, Pfeil gegen
+`brand_readiness` der Vorwoche), **Tiefenanalyse** zugeklappt (die uebrigen
+zwoelf Textfelder der KI-Auswertung) und **Alle Zahlen** zugeklappt (Kennzahlen
+mit Pfeil hoch, runter, gleich gegen den vorigen Lauf; Balken bunt ueber
+`balkenListe(..., {bunt:true})`). Der Takt ist wochenweise; einen Monatslauf
+gibt es nicht.
+
+- **Pfeile** rechnen `pfeilKurz(neu, alt)`: unter zwei Prozent Abweichung ist
+  "gleich". Fehlt ein Vorlauf, steht "erste Messung".
+- **Die Ranglisten** nehmen bei mindestens drei Beitraegen mit Aufrufzahl die
+  Resonanz (Top, Flop) und die Kommentarrate je 1.000 (Kommentar); sonst die
+  Likes. Dieselbe Auswahl steht in `analyse-bilder/index.ts` (`rangliste()`),
+  damit genau die Bilder gesichert werden, die die App zeigt. **Wer die eine
+  Stelle aendert, aendert die andere mit.**
+- **Beitragsbilder** liegen im oeffentlichen Bucket `beitragsbilder` unter
+  `<uid>/<platform>-<post_id>.<ext>`, Zeile in `analyse_beitragsbilder`. Der
+  Trigger `bilder_bei_analyse` (nach Insert in `analyse_stats`) ruft die
+  Function ueber `viuno_cron_post`; die App holt sie fuer aeltere Laeufe einmal
+  nach. Die Function loescht bei jedem Aufruf alles, was aelter als 56 Tage ist.
+  Instagram-Links sind nach rund vier Tagen tot, deshalb faellt die App fuer
+  Beitraege ohne gesichertes Bild nur dann auf `thumbnail_url` zurueck, wenn
+  der Beitrag hoechstens drei Tage alt ist.
+- `montag()` bildet den Wochenmontag aus der Ortszeit, nicht aus
+  `toISOString()`: das ist UTC und lieferte zwischen Mitternacht und zwei Uhr
+  den Vortag -- am Montag frueh also die Vorwoche, und die Aufgaben blieben leer.
+- Beim Testen fiel auf, dass `subscriptions_plan_check` nur `free` und `pro`
+  zuliess, waehrend der Stripe-Webhook `abo` schreibt. Das ist erweitert; ohne
+  die Aenderung waere das erste bezahlte Abo nie in die Tabelle gekommen.

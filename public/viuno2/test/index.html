@@ -721,6 +721,19 @@ a{color:inherit}
 .v-achse{display:flex;justify-content:space-between;font-size:var(--t-2xs);color:var(--subtle);margin-top:6px}
 .preis-rechnung{display:flex;justify-content:space-between;font-size:var(--t-xs);color:var(--muted);padding:6px 0;border-top:1px solid var(--border)}
 .zentriert{text-align:center}
+.pfeil-hoch{color:var(--green);font-weight:var(--fw-b)}.pfeil-runter{color:var(--red);font-weight:var(--fw-b)}.pfeil-gleich{color:var(--subtle);font-weight:var(--fw-b)}
+.v-kpi--spark .v-spark path{stroke:var(--spark,var(--v1))}.v-kpi--spark .v-spark .flaeche{fill:var(--spark,var(--v1));stroke:none}.v-kpi--spark .v-spark circle{fill:var(--spark,var(--v1))}
+.drei-spalten .v-kpi{padding:12px 10px}.drei-spalten .v-kpi-wert{font-size:var(--t-num-sm)}
+.verschwommen{filter:blur(5px);opacity:.55;pointer-events:none;user-select:none}
+.verschwommen-hinweis{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:4px;padding:16px}
+.verschwommen-hinweis strong{font-size:var(--t-md)}.verschwommen-hinweis span{font-size:var(--t-xs);color:var(--muted)}
+.beitraege-liste{display:flex;flex-direction:column;gap:10px}
+.beitrag-karte{display:flex;gap:12px;align-items:center;padding:10px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface2);text-decoration:none;color:inherit}
+.beitrag-karte .beitrag-bild{width:64px;height:80px;border-radius:var(--r-xs);overflow:hidden;background:var(--surface);display:grid;place-items:center;color:var(--subtle);flex-shrink:0}
+.beitrag-karte .beitrag-bild img{width:100%;height:100%;object-fit:cover;display:block}
+.beitrag-karte .text{flex:1;min-width:0}.beitrag-karte .text p{margin:0;font-size:var(--t-sm);line-height:var(--lh-body);color:var(--text)}
+.beitrag-karte>.v-ico{width:16px;height:16px;color:var(--subtle);flex-shrink:0}
+.v-kpi--verlauf .v-kpi-delta .pfeil-hoch,.v-kpi--verlauf .v-kpi-delta .pfeil-runter,.v-kpi--verlauf .v-kpi-delta .pfeil-gleich{color:inherit}
 #ladeschirm{position:fixed;inset:0;z-index:40;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px);display:grid;place-items:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s}
 #ladeschirm.offen{opacity:1;pointer-events:auto}
 #ladeschirm .v-lade-block{max-width:320px}
@@ -743,6 +756,6 @@ a{color:inherit}
 <div id="sheet" class="v-sheet" role="dialog" aria-modal="true"></div>
 <div id="modal"></div>
 <div id="toast" class="v-toast" role="status"></div>
-<script type="module" src="./app.js?v=7"></script>
+<script type="module" src="./app.js?v=8"></script>
 </body>
 </html>

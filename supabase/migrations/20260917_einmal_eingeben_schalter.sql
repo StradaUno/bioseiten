@@ -142,3 +142,45 @@ alter table public.analysis_purchases alter column stripe_checkout_session_id dr
 -- 18.09.2026: stripe_prices_platform_check laesst 'abo' zu (Abo-Preis je Modus).
 -- brand-ready-freigeben v12 rechnet mit viuno_profilcheck() -- dieselbe Zahl wie
 -- die App; Brand Ready und die Freigabe sind Teil des Abos (abo_aktiv()).
+
+-- ---------------------------------------------------------------------------
+-- 18.09.2026 · Analyse-Umbau (acht Boxen) und Beitragsbilder
+-- ---------------------------------------------------------------------------
+-- Die Analyse-Seite zeigt jeden Beitrag des Laufs als Karte mit Vorschaubild.
+-- Instagram-Vorschaulinks laufen nach rund vier Tagen ab, deshalb werden die
+-- Bilder der Ranglisten-Beitraege (Top, Flop, Kommentar, je bis zu sechs)
+-- kopiert -- sonst keine -- und nach acht Wochen wieder geloescht.
+create table if not exists public.analyse_beitragsbilder (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.users(id) on delete cascade,
+  platform text not null,
+  post_id text not null,
+  analysis_run_id uuid references public.analysis_runs(id) on delete set null,
+  pfad text not null,
+  gesichert_am timestamptz not null default now(),
+  unique (user_id, platform, post_id)
+);
+alter table public.analyse_beitragsbilder enable row level security;
+create policy analyse_beitragsbilder_eigene on public.analyse_beitragsbilder for select to authenticated using (auth.uid() = user_id);
+grant select on public.analyse_beitragsbilder to authenticated;
+create index if not exists analyse_beitragsbilder_run_idx on public.analyse_beitragsbilder (analysis_run_id);
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('beitragsbilder', 'beitragsbilder', true, 2097152, array['image/jpeg','image/png','image/webp'])
+on conflict (id) do nothing;
+create policy beitragsbilder_oeffentlich_lesen on storage.objects for select to anon, authenticated using (bucket_id = 'beitragsbilder');
+-- Sobald die Zahlen eines Laufs stehen, holt die Function analyse-bilder die
+-- Bilder (die Links sind dann frisch). Aufruf ueber viuno_cron_post + x-schluessel.
+create or replace function public.trg_analyse_bilder()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  perform public.viuno_cron_post('analyse-bilder', jsonb_build_object('analysis_run_id', new.analysis_run_id, 'platform', new.platform));
+  return new;
+end $$;
+create trigger bilder_bei_analyse after insert on public.analyse_stats
+  for each row execute function public.trg_analyse_bilder();
+
+-- Fehler gefunden beim Testen: subscriptions_plan_check liess nur 'free' und
+-- 'pro' zu, der Stripe-Webhook schreibt aber plan = 'abo'. Das erste bezahlte
+-- Abo waere an dieser Pruefung gescheitert.
+alter table public.subscriptions drop constraint subscriptions_plan_check;
+alter table public.subscriptions add constraint subscriptions_plan_check check (plan = any (array['free','pro','abo']));

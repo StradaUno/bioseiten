@@ -357,10 +357,11 @@ const badge = (text, art) => `<span class="v-badge v-badge--ohne${art ? ' v-badg
 function listeZeile({ sym, symKlasse = '', text, small, wert, wertKlasse = '', pfeil = true, attrs = '', klasse = '', rechts = '' }) {
   return `<button type="button" class="v-liste-zeile ${klasse}" ${attrs}>${sym ? `<span class="sym ${symKlasse}">${sym}</span>` : ''}<span class="text">${es(text)}${small ? `<small>${small}</small>` : ''}</span>${wert != null ? `<span class="wert ${wertKlasse}">${wert}</span>` : ''}${rechts}${pfeil ? `<svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>` : ''}</button>`
 }
-function balkenListe(zeilen, { leerText = 'Noch nichts gezählt.' } = {}) {
+function balkenListe(zeilen, { leerText = 'Noch nichts gezählt.', bunt = false } = {}) {
   if (!zeilen.length) return `<p class="text-klein">${es(leerText)}</p>`
   const max = Math.max(...zeilen.map(z => z.wert), 1)
-  return `<div class="v-balkenliste">${zeilen.map((z, i) => `<div class="v-balkenzeile${i === 0 && z.wert > 0 ? ' best' : ''}"><span>${es(z.label)}</span><div class="v-balken"><i style="width:${Math.round(z.wert / max * 100)}%"></i></div><b class="v-num">${fm(z.wert)}</b></div>`).join('')}</div>`
+  const farben = ['var(--v1)', 'var(--v2)', 'var(--v3)', 'var(--green)', 'var(--blue)', 'var(--orange)']
+  return `<div class="v-balkenliste">${zeilen.map((z, i) => `<div class="v-balkenzeile${i === 0 && z.wert > 0 && !bunt ? ' best' : ''}"><span>${es(z.label)}</span><div class="v-balken"><i style="width:${Math.round(z.wert / max * 100)}%${bunt ? ';background:' + farben[i % farben.length] : ''}"></i></div><b class="v-num">${fm(z.wert)}</b></div>`).join('')}</div>`
 }
 const ring = (p, text, klasse = '') => `<div class="v-ring ${klasse}" style="--p:${Math.max(0, Math.min(1, p))}"><svg viewBox="0 0 88 88"><circle class="spur" cx="44" cy="44" r="36"/><circle class="wert" cx="44" cy="44" r="36"/></svg><b class="v-num">${text}</b></div>`
 function linienChart(werte, { hoehe = 120 } = {}) {
@@ -523,7 +524,12 @@ async function renderOnboarding(area, ctx) {
 /* ═══════════════════════════════════════════════════════════════════════
    Start: muss ich diese Woche etwas tun?
    ═══════════════════════════════════════════════════════════════════════ */
-function montag(d = new Date()) { const t = new Date(d); const w = (t.getDay() + 6) % 7; t.setDate(t.getDate() - w); return t.toISOString().slice(0, 10) }
+/* Montag der laufenden Woche als JJJJ-MM-TT in Ortszeit. Nicht ueber toISOString:
+   das ist UTC, und zwischen Mitternacht und zwei Uhr stand dort der Vortag, im
+   Sonntagsfall also der Montag der Vorwoche -- und die Aufgaben blieben leer. */
+function montag(d = new Date()) { const t = new Date(d); const w = (t.getDay() + 6) % 7; t.setDate(t.getDate() - w); return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0') }
+/* Beleg einer Aufgabe: Begruendung als Satz, dazu die Punkte, die im Brand-Ready-Wert offen sind. */
+const aufgabeBeleg = a => es(a.begruendung || '') + (a.beleg && a.beleg.max ? ` <span class="text-muted">· ${Number(a.beleg.punkte || 0)} von ${a.beleg.max} Punkten</span>` : '')
 async function renderStart(area, ctx) {
   const woche = montag()
   const [aufgQ, berQ, newsQ, blQ] = await Promise.all([
@@ -543,7 +549,7 @@ async function renderStart(area, ctx) {
   // Wochenbericht laesst sich erst nach den Signalen schreiben; ohne Aufgaben wird die Berechnung angestossen.
   let aufgabenHtml
   if (aufgaben.length) {
-    aufgabenHtml = `<ul class="v-check v-check--karten">${aufgaben.map(a => `<li class="${a.status === 'erledigt' ? 'fertig' : 'offen'}" data-aufgabe="${a.id}"><i>${a.status === 'erledigt' ? ICO.haken : ''}</i><span style="flex:1"><span style="display:block;font-weight:var(--fw-sb)">${es(a.titel)}</span><small class="text-klein" style="display:block;margin-top:3px;line-height:var(--lh-body)">${es(a.begruendung || '')}</small></span>${a.status === 'offen' ? `<button class="v-btn v-btn--dunkel v-btn--klein" data-erledigt="${a.id}">Erledigt</button>` : ''}</li>`).join('')}</ul>`
+    aufgabenHtml = `<ul class="v-check v-check--karten">${aufgaben.map(a => `<li class="${a.status === 'erledigt' ? 'fertig' : 'offen'}" data-aufgabe="${a.id}"><i>${a.status === 'erledigt' ? ICO.haken : ''}</i><span style="flex:1"><span style="display:block;font-weight:var(--fw-sb)">${es(a.titel)}</span><small class="text-klein" style="display:block;margin-top:3px;line-height:var(--lh-body)">${aufgabeBeleg(a)}</small></span>${a.status === 'offen' ? `<button class="v-btn v-btn--dunkel v-btn--klein" data-erledigt="${a.id}">Erledigt</button>` : ''}</li>`).join('')}</ul>`
   } else {
     aufgabenHtml = `<div class="v-leer v-leer--gestrichelt"><div class="sym akzent">${ICO.ziel}</div><h3>Noch keine Aufgaben diese Woche</h3><p>Sobald dein Kanal gemessen ist, stehen hier bis zu drei Aufgaben mit Beleg.</p><button class="v-btn v-btn--rand v-btn--klein" data-growth>Jetzt berechnen</button></div>`
   }
@@ -788,91 +794,156 @@ async function renderAnalyse(area, ctx) {
   }
   Z.plattform = Z.plattform || (Z.p.instagram_handle ? 'instagram' : Z.p.tiktok_handle ? 'tiktok' : 'instagram')
   const pf = Z.plattform
-  const [statsQ, kiQ, runQ, kaufQ, verlaufQ] = await Promise.all([
-    sb.from('analyse_stats').select('*').eq('user_id', uid()).eq('platform', pf).order('created_at', { ascending: false }).limit(2),
+  const woche = montag()
+  const [statsQ, kiQ, runQ, kaufQ, verlaufQ, aufgQ, pcQ, brQ] = await Promise.all([
+    sb.from('analyse_stats').select('*').eq('user_id', uid()).eq('platform', pf).order('created_at', { ascending: false }).limit(14),
     sb.from('analyse_ki').select('*').eq('user_id', uid()).eq('platform', pf).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     sb.from('analysis_runs').select('id,status,platform,started_at,completed_at,error').eq('user_id', uid()).order('started_at', { ascending: false }).limit(1).maybeSingle(),
     sb.from('analysis_purchases').select('id,platform,purchased_at,grund').eq('user_id', uid()).is('consumed_at', null),
-    sb.rpc('viuno_verlauf', { p_tage: 180, p_plattform: pf }),
+    sb.rpc('viuno_verlauf', { p_tage: 90, p_plattform: pf }),
+    sb.from('growth_aufgaben').select('*').eq('user_id', uid()).eq('woche', woche).order('prioritaet'),
+    aboAktiv() ? sb.rpc('viuno_profilcheck') : Promise.resolve({ data: null }),
+    sb.from('brand_readiness').select('stichtag,punkte,max_punkte').eq('user_id', uid()).order('stichtag', { ascending: false }).limit(2),
   ])
   if (ctx.stale()) return
-  const stats = (statsQ.data || [])[0], vorher = (statsQ.data || [])[1], ki = kiQ.data, run = runQ.data
+  const statsAlle = statsQ.data || [], stats = statsAlle[0], vorher = statsAlle[1], ki = kiQ.data, run = runQ.data
   const kaeufe = (kaufQ.data || []).filter(k => k.platform === pf)
-  const verlauf = (verlaufQ.data || []).filter(v => v.followers != null)
+  const verlauf = (verlaufQ.data || [])
+  const aufgaben = aufgQ.data || [], pc = pcQ.data, brVerlauf = brQ.data || []
   const laeuft = run && ['scraping', 'analyzing', 'pending'].includes(run.status) && run.platform === pf && (Date.now() - new Date(run.started_at).getTime()) < 20 * 60000
   const handle = Z.p[pf + '_handle']
 
+  // Beitraege und Bilder des letzten Laufs
+  let posts = [], bilder = new Map()
+  if (stats && stats.analysis_run_id) {
+    const [pQ, bQ] = await Promise.all([
+      sb.from('apify_daten').select('post_id,post_url,caption,likes,comments,views,media_type,duration_seconds,posted_at,thumbnail_url').eq('analysis_run_id', stats.analysis_run_id).eq('platform', pf),
+      sb.from('analyse_beitragsbilder').select('post_id,pfad').eq('user_id', uid()).eq('platform', pf),
+    ])
+    if (ctx.stale()) return
+    posts = pQ.data || []; (bQ.data || []).forEach(b => bilder.set(b.post_id, b.pfad))
+    /* Bilder fehlen noch (aelterer Lauf)? Einmal nachholen, dann neu zeichnen. */
+    if (posts.length && !bilder.size && !Z['bilderGeholt_' + stats.analysis_run_id]) {
+      Z['bilderGeholt_' + stats.analysis_run_id] = true
+      fn('analyse-bilder', { analysis_run_id: stats.analysis_run_id, platform: pf }).then(r => { if (r && r.gesichert > 0 && !ctx.stale()) renderAnalyse(area, ctx) }).catch(() => {})
+    }
+  }
+
   const seg = `<div class="v-seg v-seg--dunkel v-seg--voll">${['instagram', 'tiktok'].map(k => `<button class="${k === pf ? 'aktiv' : ''}" data-pf="${k}">${PLATTFORM_LABEL[k]}</button>`).join('')}</div>`
   let kopf = ''
+  const fehlerHtml = run && run.status === 'failed' && run.platform === pf ? `<div class="v-hinweis v-hinweis--fehler" style="margin-top:12px">${ICO.warn}<div class="text"><p style="margin:0">${es(run.error || 'Der letzte Lauf ist gescheitert.')}</p></div></div>` : ''
   if (laeuft) {
     kopf = karte(`<ul class="v-zeitlinie"><li class="fertig"><strong>Analyse gestartet</strong><small>${datKurz(run.started_at)} · ${new Date(run.started_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</small></li><li class="laeuft"><strong>${run.status === 'scraping' ? 'Beiträge werden gelesen' : 'Auswertung läuft'}</strong><small>dauert etwa zwei Minuten</small></li><li class="offen"><strong>Ergebnis hier und per Mail</strong><small>ausstehend</small></li></ul>`)
     ctx.interval(async () => { const { data } = await sb.from('analysis_runs').select('status').eq('id', run.id).maybeSingle(); if (data && data.status !== run.status && !ctx.stale()) renderAnalyse(area, ctx) }, 8000)
   } else if (!handle) {
     kopf = leer('Kein ' + PLATTFORM_LABEL[pf] + '-Kanal hinterlegt', 'Trag deinen @Namen unter Kanäle ein, dann kann viuno messen.', 'Kanäle öffnen', 'kanaele')
-  } else {
-    const frei = kaeufe.length > 0
-    const fehlerHtml = run && run.status === 'failed' && run.platform === pf ? `<div class="v-hinweis v-hinweis--fehler" style="margin-top:12px">${ICO.warn}<div class="text"><p style="margin:0">${es(run.error || 'Der letzte Lauf ist gescheitert.')}</p></div></div>` : ''
-    if (frei) {
-      kopf = karte(`${karteKopf(stats ? 'Neue Analyse' : 'Erste Analyse', kaeufe[0].grund === 'willkommen' ? 'Deine erste Analyse ist inklusive.' : kaeufe[0].grund === 'abo' ? 'Deine Wochenanalyse steht bereit.' : 'Freischaltung vorhanden, noch nicht verbraucht.')}<button class="v-btn v-btn--premium v-btn--breit" data-analyse-start>${ICO.stern}Analyse starten</button>${fehlerHtml}`)
-    } else if (aboAktiv()) {
-      const a = Z.abo
-      kopf = karte(`${karteKopf('Abo aktiv', a.kuendigung_zum ? 'Gekündigt zum ' + dat(a.kuendigung_zum) + '. Bis dahin läuft alles weiter.' : 'Jeden Sonntag wird dein Kanal neu analysiert, das Media Kit zieht die Zahlen nach.')}<div class="v-kpi-zeile"><span>Nächste Analyse</span><b>${naechsterSonntag()}</b></div><div class="v-kpi-zeile"><span>Bezahlt bis</span><b>${dat(a.expires_at)}</b></div>${fehlerHtml}`)
-    } else {
-      kopf = aboKasten(fehlerHtml)
-    }
+  } else if (kaeufe.length > 0) {
+    kopf = karte(`${karteKopf(stats ? 'Neue Analyse' : 'Erste Analyse', kaeufe[0].grund === 'willkommen' ? 'Deine erste Analyse ist inklusive.' : kaeufe[0].grund === 'abo' ? 'Deine Wochenanalyse steht bereit.' : 'Freischaltung vorhanden, noch nicht verbraucht.')}<button class="v-btn v-btn--premium v-btn--breit" data-analyse-start>${ICO.stern}Analyse starten</button>${fehlerHtml}`)
+  } else if (!aboAktiv()) {
+    kopf = aboKasten(fehlerHtml)
+  } else if (fehlerHtml) {
+    kopf = karte(`${karteKopf('Letzter Lauf', 'Sonntag versucht viuno es wieder.')}${fehlerHtml}`)
   }
+
   let inhalt = ''
   if (stats) {
-    /* Zuerst die Auswertung als Text -- das ist die Staerke. Reine Kennzahlen
-       stehen am Ende in einem Ausklapper. */
-    const absaetze = t => String(t || '').split(/\n\s*\n/).map(x => x.trim()).filter(Boolean).map(x => `<p class="news-text" style="margin:0 0 10px;font-size:var(--t-md)">${es(x)}</p>`).join('').replace(/margin:0 0 10px;([^"]*)"><\/p>$/, '$1')
+    const absaetze = t => String(t || '').split(/\n\s*\n/).map(x => x.trim()).filter(Boolean).map(x => `<p class="news-text" style="margin:0 0 10px;font-size:var(--t-md)">${es(x)}</p>`).join('')
     const textKarte = (titel, text, sub) => text && String(text).trim() ? karte(`${karteKopf(titel, sub || '')}${absaetze(text)}`) : ''
-    if (ki) {
-      inhalt += karte(`${ki.kernaussage ? `<h3 style="margin:0 0 10px;font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.02em;line-height:var(--lh-tight)">${es(ki.kernaussage)}</h3>` : ''}${absaetze(ki.einordnung)}<div class="v-karte-fuss"><span>Auswertung vom ${dat(ki.created_at)} · ${PLATTFORM_LABEL[pf]}</span><button class="v-btn v-btn--rand v-btn--klein" data-teilen>${ICO.teilen} Teilen</button></div>`)
-      inhalt += textKarte('Was gut lief', ki.was_gut_lief)
-      inhalt += textKarte('Wo Wirkung verloren geht', ki.verbesserungspotenzial)
-      inhalt += textKarte('Reichweite und Resonanz', ki.reichweite_resonanz, 'Resonanz = Likes je 1.000 Aufrufe')
-      const tp = Array.isArray(ki.top_posts) ? ki.top_posts.filter(t => t && (t.datum || t.warum_top)) : []
-      if (tp.length) inhalt += karte(`${karteKopf('Deine stärksten Beiträge', 'nach Likes, aus dieser Analyse')}<div class="v-liste" style="box-shadow:none">${tp.map((t, i) => `<div class="v-zeile" style="padding:10px 12px"><div class="v-avatar v-avatar--rund" style="width:30px;height:30px;font-size:var(--t-xs)">${i + 1}</div><div class="text"><strong>${es(t.datum || '')}</strong><span style="white-space:normal">${es(t.warum_top || '')}</span></div>${t.likes != null ? `<div class="zahl v-num">${fm(t.likes)}<small>Likes</small></div>` : ''}</div>`).join('')}</div>`)
-      inhalt += textKarte('Was die stärksten Beiträge verbindet', ki.top_posts_gemeinsamkeiten)
-      inhalt += textKarte('So sind deine Texte gebaut', ki.caption_struktur, 'starke gegen schwache Beiträge')
-      inhalt += textKarte('Töne', ki.sound_befund)
-      inhalt += textKarte('Was weniger werden sollte', ki.weglassen)
-      if (Array.isArray(ki.tipps_zukunft) && ki.tipps_zukunft.length) inhalt += karte(`${karteKopf('Was du tun kannst', ki.tipps_zukunft.length + ' Schritte, jeder mit Grund aus deinen Zahlen')}<ul class="v-check">${ki.tipps_zukunft.map(t => `<li class="offen"><i></i><span style="font-size:var(--t-md);line-height:var(--lh-body)">${es(typeof t === 'string' ? t : t.text || JSON.stringify(t))}</span></li>`).join('')}</ul>`)
-      inhalt += textKarte('Noch ein Befund', ki.weitere_insights)
-      inhalt += textKarte('Seit der letzten Analyse', ki.vergleich_vorherige)
+
+    // 1 · Kernaussage
+    if (ki && ki.kernaussage) inhalt += karte(`<h3 style="margin:0;font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.02em;line-height:var(--lh-tight)">${es(ki.kernaussage)}</h3><div class="v-karte-fuss"><span>${datKurz(ki.created_at)} · ${PLATTFORM_LABEL[pf]}</span><button class="v-btn v-btn--rand v-btn--klein" data-satz="${es(ki.kernaussage)}">${ICO.kopie} Satz kopieren</button></div>`)
+
+    // 2 · Resonanz-Kachel
+    const rNeu = stats.resonanz_schnitt, rAlt = vorher ? vorher.resonanz_schnitt : null
+    inhalt += `<div class="v-kpi v-kpi--verlauf"><div class="v-kpi-label">Resonanz · Likes je 1.000 Aufrufe</div><div class="v-kpi-wert v-num">${rNeu != null ? dez(rNeu, 1) : '–'}</div><div class="v-kpi-delta">${pfeilText(rNeu, rAlt, 'zur letzten Analyse', 1)}</div></div>`
+
+    // 3 · Drei Aufgaben
+    inhalt += `<div class="abschnitt"><div class="abschnitt-titel">Deine Aufgaben diese Woche</div>${aufgaben.length ? `<ul class="v-check v-check--karten">${aufgaben.map(a => `<li class="${a.status === 'erledigt' ? 'fertig' : 'offen'}"><i>${a.status === 'erledigt' ? ICO.haken : ''}</i><span style="flex:1"><span style="display:block;font-weight:var(--fw-sb)">${es(a.titel)}</span><small class="text-klein" style="display:block;margin-top:3px;line-height:var(--lh-body)">${aufgabeBeleg(a)}</small></span>${a.status === 'offen' ? `<button class="v-btn v-btn--dunkel v-btn--klein" data-erledigt="${a.id}">Erledigt</button>` : ''}</li>`).join('')}</ul>` : `<div class="v-leer v-leer--gestrichelt"><div class="sym akzent">${ICO.ziel}</div><h3>Noch keine Aufgaben diese Woche</h3><p>Sie kommen montags aus deinen Zahlen, bis zu drei mit Beleg.</p><button class="v-btn v-btn--rand v-btn--klein" data-growth>Jetzt berechnen</button></div>`}</div>`
+
+    // 4 · Verlauf: drei Linien ueber 12 Wochen
+    const seit = Date.now() - 84 * 86400000
+    const resPunkte = [...statsAlle].reverse().filter(x => x.resonanz_schnitt != null && new Date(x.created_at).getTime() >= seit).map(x => Number(x.resonanz_schnitt))
+    const follPunkte = verlauf.filter(v => v.followers != null).map(v => Number(v.followers))
+    const ppwPunkte = verlauf.filter(v => v.posts_pro_woche != null).map(v => Number(v.posts_pro_woche))
+    const genug = resPunkte.length >= 2 || follPunkte.length >= 2
+    const linie = (label, werte, k, farbe) => `<div class="v-kpi v-kpi--spark" style="--spark:${farbe}"><div class="v-kpi-label">${label}</div><div class="v-kpi-wert v-num">${werte.length ? dez(werte[werte.length - 1], k) : '–'}<small>${werte.length >= 2 ? pfeilKurz(werte[werte.length - 1], werte[werte.length - 2]) : ''}</small></div>${spark(werte)}</div>`
+    inhalt += `<div class="abschnitt"><div class="abschnitt-titel">Verlauf · 12 Wochen</div><div style="position:relative"><div class="drei-spalten${genug ? '' : ' verschwommen'}">${linie('Resonanz', resPunkte, 1, 'var(--v1)')}${linie('Follower', follPunkte, 0, 'var(--v2)')}${linie('Posts / Woche', ppwPunkte, 1, 'var(--v3)')}</div>${genug ? '' : `<div class="verschwommen-hinweis"><strong>Ab der zweiten Analyse</strong><span>Dann siehst du, ob es aufwärts geht und ob es an dir lag.</span></div>`}</div></div>`
+
+    // 5 · Beitragskarten
+    if (posts.length) {
+      const mit = posts.filter(p => p.views > 0)
+      const r = p => p.views > 0 ? (p.likes || 0) / p.views * 1000 : null, k = p => p.views > 0 ? (p.comments || 0) / p.views * 1000 : null
+      const listen = mit.length >= 3
+        ? { top: [...mit].sort((a, b) => r(b) - r(a)).slice(0, 6), flop: [...mit].sort((a, b) => r(a) - r(b)).slice(0, 6), kommentar: [...mit].sort((a, b) => k(b) - k(a)).slice(0, 6) }
+        : { top: [...posts].sort((a, b) => (b.likes || 0) - (a.likes || 0)).slice(0, 6), flop: [...posts].sort((a, b) => (a.likes || 0) - (b.likes || 0)).slice(0, 6), kommentar: [...posts].sort((a, b) => (b.comments || 0) - (a.comments || 0)).slice(0, 6) }
+      Z.beitragsListe = Z.beitragsListe || 'top'
+      const karteHtml = p => {
+        const a = ampel(p, stats), bild = bilder.get(p.post_id) ? BILD_BASIS + 'beitragsbilder/' + bilder.get(p.post_id) : (p.thumbnail_url && tageSeit(p.posted_at) <= 3 ? p.thumbnail_url : null)
+        return `<a class="beitrag-karte" href="${es(p.post_url || '#')}" target="_blank" rel="noopener"><div class="beitrag-bild">${bild ? `<img src="${es(bild)}" alt="" loading="lazy" onerror="this.remove()">` : ICO.bild}</div><div class="text"><div class="news-kopf" style="margin-bottom:4px">${badge(a.label, a.art)}<span class="text-klein">${datKurz(p.posted_at)} · ${new Date(p.posted_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</span></div><p>${es(beitragSatz(p, stats))}</p></div>${ICO.extern}</a>`
+      }
+      inhalt += karte(`<div class="v-pillen" style="margin-bottom:12px">${[['top', 'Top'], ['flop', 'Flop'], ['kommentar', 'Kommentar']].map(([k2, l]) => `<button class="v-pille${Z.beitragsListe === k2 ? ' aktiv' : ''}" data-liste="${k2}">${l}</button>`).join('')}</div><div class="beitraege-liste">${listen[Z.beitragsListe].map(karteHtml).join('')}</div><p class="text-klein" style="margin:10px 0 0">Ampel gegen deinen Schnitt von ${dez(stats.resonanz_schnitt, 1)} Likes je 1.000 Aufrufe. Beiträge ohne Aufrufzahl nach Likes.</p>`)
     }
-    /* Kennzahlen: am Ende, zugeklappt. */
-    const fDelta = vorher && vorher.followers ? stats.followers - vorher.followers : null
-    let zahlen = `<div class="v-kpi-reihe">${kpi('Follower', fm(stats.followers), fDelta != null ? (fDelta >= 0 ? '+' : '') + fm(fDelta) + ' seit letzter Analyse' : 'gemessen ' + datKurz(stats.created_at), fDelta > 0 ? 'hoch' : fDelta < 0 ? 'runter' : '')}${kpi('Engagement', dez(stats.engagement_rate, 1) + ' %', 'je Follower')}${kpi(pf === 'tiktok' ? 'Ø Aufrufe' : 'Ø Likes', fm(pf === 'tiktok' ? stats.avg_views : stats.avg_likes), stats.avg_comments != null ? fm(stats.avg_comments) + ' Ø Kommentare' : '')}${kpi('Beiträge / Woche', dez(stats.posts_per_week, 1), stats.best_posting_day ? 'am besten ' + es(stats.best_posting_day) + (stats.best_posting_hour != null ? ', ' + stats.best_posting_hour + ' Uhr' : '') : '')}</div>`
-    const zeilen = []
-    if (stats.resonanz_schnitt != null) zeilen.push(['Resonanz im Schnitt', dez(stats.resonanz_schnitt, 1) + ' je 1.000'])
-    if (stats.resonanz_top != null) zeilen.push(['Stärkste Beiträge', dez(stats.resonanz_top, 1) + ' je 1.000'])
-    if (stats.resonanz_flop != null) zeilen.push(['Schwächste Beiträge', dez(stats.resonanz_flop, 1) + ' je 1.000'])
-    if (stats.kommentarrate_schnitt != null) zeilen.push(['Kommentarrate', dez(stats.kommentarrate_schnitt, 1) + ' je 1.000'])
-    if (stats.avg_views != null && pf !== 'tiktok') zeilen.push(['Ø Aufrufe', fm(stats.avg_views)])
-    if (stats.avg_shares != null) zeilen.push(['Ø geteilt', fm(stats.avg_shares)])
-    if (stats.avg_video_duration != null) zeilen.push(['Ø Videolänge', dez(stats.avg_video_duration, 0) + ' s'])
-    if (stats.min_likes != null && stats.max_likes != null) zeilen.push(['Likes-Spanne', fm(stats.min_likes) + ' bis ' + fm(stats.max_likes)])
-    if (stats.posts_count != null) zeilen.push(['Beiträge gesamt', fm(stats.posts_count)])
-    if (stats.following != null) zeilen.push(['Folgt', fm(stats.following)])
-    if (zeilen.length) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:6px"><strong>Resonanz und Größen</strong><span>${fm(stats.best_time_sample || 0)} Beiträge</span></div>${zeilen.map(([l, w]) => `<div class="v-kpi-zeile"><span>${es(l)}</span><b class="v-num">${w}</b></div>`).join('')}`)
+
+    // 6 · Brand-Ready-Zeile
+    const brNeu = pc ? pc.punkte : (brVerlauf[0] ? brVerlauf[0].punkte : null)
+    const brMax = pc ? pc.max : (brVerlauf[0] ? brVerlauf[0].max_punkte : null)
+    const brAlt = brVerlauf.length > 1 ? brVerlauf[1].punkte : (pc && brVerlauf[0] && brVerlauf[0].punkte !== pc.punkte ? brVerlauf[0].punkte : null)
+    inhalt += `<div class="v-liste">${listeZeile({ sym: ICO.ziel, symKlasse: aboAktiv() ? 'akzent' : '', text: 'Brand Ready', small: aboAktiv() ? 'Media Kit, Preise, Impressum – was Marken sehen' : 'Teil des Abos', wert: brNeu != null ? `<b class="v-num">${brNeu}/${brMax}</b> ${pfeilKurz(brNeu, brAlt)}` : 'ansehen', attrs: 'data-geh="#/analyse/brandready"' })}</div>`
+
+    // 7 · Tiefenanalyse (zugeklappt)
+    if (ki) {
+      let tief = ''
+      tief += textKarte('Einordnung', ki.einordnung)
+      tief += textKarte('Was gut lief', ki.was_gut_lief)
+      tief += textKarte('Wo Wirkung verloren geht', ki.verbesserungspotenzial)
+      tief += textKarte('Reichweite und Resonanz', ki.reichweite_resonanz, 'Resonanz = Likes je 1.000 Aufrufe')
+      tief += textKarte('Was die stärksten Beiträge verbindet', ki.top_posts_gemeinsamkeiten)
+      tief += textKarte('So sind deine Texte gebaut', ki.caption_struktur, 'starke gegen schwache Beiträge')
+      tief += textKarte('Töne', ki.sound_befund)
+      tief += textKarte('Was weniger werden sollte', ki.weglassen)
+      if (Array.isArray(ki.tipps_zukunft) && ki.tipps_zukunft.length) tief += karte(`${karteKopf('Sechs Tipps', 'jeder mit Grund aus deinen Zahlen')}<ul class="v-check">${ki.tipps_zukunft.map(t => `<li class="offen"><i></i><span style="font-size:var(--t-md);line-height:var(--lh-body)">${es(typeof t === 'string' ? t : t.text || JSON.stringify(t))}</span></li>`).join('')}</ul>`)
+      tief += textKarte('Noch ein Befund', ki.weitere_insights)
+      tief += textKarte('Seit der letzten Analyse', ki.vergleich_vorherige)
+      tief += `<button class="v-btn v-btn--rand v-btn--breit" data-teilen>${ICO.teilen} Auswertung teilen</button>`
+      inhalt += ausklappBox('Tiefenanalyse', `${posts.length || 36} Beiträge, alle Abschnitte · ${dat(ki.created_at)}`, tief)
+    }
+
+    // 8 · Alle Zahlen (zugeklappt), mit Pfeilen zum Vorlauf
+    const v = vorher || {}
+    let zahlen = `<div class="v-kpi-reihe">${kpi('Follower', fm(stats.followers), pfeilText(stats.followers, v.followers, '', 0))}${kpi('Engagement', dez(stats.engagement_rate, 1) + ' %', pfeilText(stats.engagement_rate, v.engagement_rate, 'je Follower', 1))}${kpi(pf === 'tiktok' ? 'Ø Aufrufe' : 'Ø Likes', fm(pf === 'tiktok' ? stats.avg_views : stats.avg_likes), pfeilText(pf === 'tiktok' ? stats.avg_views : stats.avg_likes, pf === 'tiktok' ? v.avg_views : v.avg_likes, '', 0))}${kpi('Beiträge / Woche', dez(stats.posts_per_week, 1), pfeilText(stats.posts_per_week, v.posts_per_week, '', 1))}</div>`
+    const zeilen = [
+      ['Ø Kommentare', stats.avg_comments, v.avg_comments, 0], ['Ø Aufrufe', pf === 'tiktok' ? null : stats.avg_views, v.avg_views, 0], ['Ø geteilt', stats.avg_shares, v.avg_shares, 0],
+      ['Kommentarrate je 1.000', stats.kommentarrate_schnitt, v.kommentarrate_schnitt, 1], ['Stärkste Resonanz', stats.resonanz_top, v.resonanz_top, 1], ['Schwächste Resonanz', stats.resonanz_flop, v.resonanz_flop, 1],
+      ['Ø Videolänge (s)', stats.avg_video_duration, v.avg_video_duration, 0], ['Beiträge gesamt', stats.posts_count, v.posts_count, 0], ['Folgt', stats.following, v.following, 0],
+    ].filter(z => z[1] != null)
+    if (zeilen.length) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:6px"><strong>Größen und Resonanz</strong><span>gegen letzte Analyse</span></div>${zeilen.map(([l, n, a, k2]) => `<div class="v-kpi-zeile"><span>${es(l)}</span><b class="v-num">${k2 ? dez(n, k2) : fm(n)} ${pfeilKurz(n, a)}</b></div>`).join('')}`)
+    if (stats.best_posting_day) zahlen += karte(`<div class="v-kpi-zeile"><span>Beste Zeit</span><b>${es(stats.best_posting_day)}${stats.best_posting_hour != null ? ', ' + stats.best_posting_hour + ' Uhr' : ''}</b></div><p class="text-klein" style="margin:6px 0 0">Über ${fm(stats.best_time_sample || 0)} Beiträge${(stats.best_time_sample || 0) < 20 ? ' – eine Tendenz, keine Regel' : ''}.</p>`)
     const fs = Array.isArray(stats.format_stats) ? stats.format_stats.filter(f => f.n >= 1) : []
-    if (fs.length > 1) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Formate</strong><span>Ø Likes</span></div>${balkenListe(fs.map(f => ({ label: f.typ + ' (' + f.n + ')', wert: Math.round(f.avg_likes || 0) })).sort((a, b) => b.wert - a.wert))}`)
+    if (fs.length > 1) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Formate</strong><span>Ø Likes</span></div>${balkenListe(fs.map(f => ({ label: f.typ + ' (' + f.n + ')', wert: Math.round(f.avg_likes || 0) })).sort((a, b) => b.wert - a.wert), { bunt: true })}`)
     const ds = Array.isArray(stats.duration_stats) ? stats.duration_stats.filter(d => d.n >= 1 && d.avg_views != null) : []
-    if (ds.length > 1) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Videolänge</strong><span>Ø Aufrufe</span></div>${balkenListe(ds.map(d => ({ label: d.bucket + ' (' + d.n + ')', wert: Math.round(d.avg_views || 0) })).sort((a, b) => b.wert - a.wert))}`)
+    if (ds.length > 1) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Videolänge</strong><span>Ø Aufrufe</span></div>${balkenListe(ds.map(d => ({ label: d.bucket + ' (' + d.n + ')', wert: Math.round(d.avg_views || 0) })).sort((a, b) => b.wert - a.wert), { bunt: true })}`)
     const sounds = Array.isArray(stats.sound_stats) ? stats.sound_stats : []
     if (sounds.length) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:6px"><strong>Töne, die mehrfach vorkommen</strong><span>Resonanz</span></div>${sounds.map(x => `<div class="v-kpi-zeile"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${es(x.sound)} · ${x.n}×</span><b class="v-num">${(x.werte || []).map(w => dez(w, 1)).join(' / ')}</b></div>`).join('')}`)
-    zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Follower-Verlauf</strong><span>${verlauf.length ? verlauf.length + ' Messungen' : '180 Tage'}</span></div>${linienChart(verlauf.map(v => v.followers))}${verlauf.length >= 2 ? `<div class="v-achse"><span>${datKurz(verlauf[0].tag)}</span><span>${datKurz(verlauf[verlauf.length - 1].tag)}</span></div>` : ''}`)
     if (stats.ausreisser && stats.ausreisser.views) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:8px"><strong>Größte Reichweite</strong><span>${datKurz(stats.ausreisser.datum)}</span></div><p class="text-muted" style="margin:0;font-size:var(--t-sm);line-height:var(--lh-body)">${fm(stats.ausreisser.views)} Aufrufe, aber nur ${dez(stats.ausreisser.resonanz, 1)} Reaktionen je 1.000 – dein Schnitt liegt bei ${dez(stats.resonanz_schnitt, 1)}. Viel Reichweite, wenig Reaktion.</p>${stats.ausreisser.url ? `<a class="v-btn v-btn--leise v-btn--klein" style="margin-top:10px" href="${es(stats.ausreisser.url)}" target="_blank" rel="noopener">Beitrag ansehen ${ICO.extern}</a>` : ''}`)
-    inhalt += ausklappBox('Kennzahlen', 'Follower, Resonanz, Formate, Verlauf', zahlen)
+    inhalt += ausklappBox('Alle Zahlen', 'Follower, Engagement, Formate, Töne, beste Zeit', zahlen)
     if (!ki) inhalt += karte(`${karteKopf('Auswertung fehlt', 'Die Zahlen sind da, der Text nicht.')}<p class="text-muted" style="margin:0;font-size:var(--t-sm)">Die Auswertung dieses Laufs ist nicht angekommen. Schreib an <a href="mailto:office@viuno.de">office@viuno.de</a>, wir sehen nach.</p>`)
   } else if (!laeuft && handle) {
-    inhalt = leer('Noch keine Analyse für ' + PLATTFORM_LABEL[pf], 'Nach der ersten Analyse stehen hier Auswertung, Tipps und Kennzahlen.')
+    inhalt = leer('Noch keine Analyse für ' + PLATTFORM_LABEL[pf], 'Nach der ersten Analyse stehen hier Kernaussage, Resonanz, Aufgaben, Verlauf und deine Beiträge.')
   }
   area.innerHTML = seg + kopf + inhalt
   $$('[data-pf]', area).forEach(b => ctx.on(b, 'click', () => { Z.plattform = b.dataset.pf; renderAnalyse(area, ctx) }))
   $$('[data-ausklappen]', area).forEach(k => ctx.on(k, 'click', () => { const box = k.closest('.v-bearbeiten'); const o = box.classList.toggle('offen'); k.setAttribute('aria-expanded', o ? 'true' : 'false') }))
+  $$('[data-liste]', area).forEach(b => ctx.on(b, 'click', () => { Z.beitragsListe = b.dataset.liste; renderAnalyse(area, ctx) }))
+  $$('[data-geh]', area).forEach(el => ctx.on(el, 'click', () => geh(el.dataset.geh)))
+  $$('[data-erledigt]', area).forEach(b => ctx.on(b, 'click', async e => {
+    e.stopPropagation()
+    try { await rpc('aufgabe_setzen', { p_id: Number(b.dataset.erledigt), p_status: 'erledigt' }); toast('Erledigt', 'gut'); if (!ctx.stale()) renderAnalyse(area, ctx) } catch (er) { fehler(er) }
+  }))
+  ctx.on($('[data-growth]', area), 'click', async e => {
+    laden(e.currentTarget, true)
+    try { const r = await rpc('growth_jetzt'); toast(r?.gestartet ? 'Wird berechnet, dauert eine Minute' : 'Für diese Woche schon berechnet'); await schlaf(4000); if (!ctx.stale()) renderAnalyse(area, ctx) } catch (er) { fehler(er) }
+  })
+  ctx.on($('[data-satz]', area), 'click', e => kopieren(e.currentTarget.dataset.satz, 'Satz kopiert'))
   ctx.on($('[data-kanaele]', area), 'click', () => { Z.zurueckZu = location.hash; geh('#/kanaele') })
   ctx.on($('[data-analyse-start]', area), 'click', e => analyseStarten(pf, true, e.currentTarget, () => renderAnalyse(area, ctx)))
   ctx.on($('[data-abo-start]', area), 'click', e => aboStarten(e.currentTarget))
@@ -881,6 +952,58 @@ async function renderAnalyse(area, ctx) {
     try { const r = await fn('analyse-freigeben', { analysis_run_id: stats.analysis_run_id }); await kopieren('https://viuno.de/analyse/' + r.token, 'Link kopiert · gilt 90 Tage') } catch (er) { fehler(er) } finally { laden(e.currentTarget, false) }
   })
 }
+/* Pfeile: hoch, runter, gleich -- gegen den Vorlauf. */
+function pfeilKurz(neu, alt) {
+  if (neu == null || alt == null) return ''
+  const d = Number(neu) - Number(alt); const p = Number(alt) !== 0 ? d / Math.abs(Number(alt)) : 0
+  if (Math.abs(p) < 0.02) return `<span class="pfeil-gleich">→</span>`
+  return d > 0 ? `<span class="pfeil-hoch">↑</span>` : `<span class="pfeil-runter">↓</span>`
+}
+function pfeilText(neu, alt, was, k = 0) {
+  if (neu == null) return was || ''
+  if (alt == null) return was ? was + ' · erste Messung' : 'erste Messung'
+  const d = Number(neu) - Number(alt); const p = Number(alt) !== 0 ? d / Math.abs(Number(alt)) * 100 : 0
+  const txt = Math.abs(p) < 2 ? 'unverändert' : (d > 0 ? '+' : '−') + dez(Math.abs(p), 0) + ' %'
+  return `${pfeilKurz(neu, alt)} ${txt}${was ? ' ' + was : ''}`
+}
+/* Ampel je Beitrag gegen den eigenen Schnitt: ueber, um, unter. */
+function ampel(p, st) {
+  let f = null
+  if (p.views > 0 && st.resonanz_schnitt) f = ((p.likes || 0) / p.views * 1000) / st.resonanz_schnitt
+  else if (st.avg_likes) f = (p.likes || 0) / st.avg_likes
+  if (f == null) return { label: 'ohne Zahl', art: '' }
+  if (f >= 1.15) return { label: 'über Schnitt', art: 'gruen' }
+  if (f <= 0.85) return { label: 'unter Schnitt', art: 'rot' }
+  return { label: 'um Schnitt', art: 'orange' }
+}
+/* Der eine Satz je Beitrag, aus Code: Zahl, Verhaeltnis zum Schnitt, ein Merkmal. */
+function beitragSatz(p, st) {
+  const teile = []
+  if (p.views > 0 && st.resonanz_schnitt) {
+    const r = (p.likes || 0) / p.views * 1000, f = r / st.resonanz_schnitt
+    teile.push(`${dez(r, 1)} Likes je 1.000 Aufrufe bei ${fm(p.views)} Aufrufen, ${f >= 1.15 ? 'das ' + dez(f, 1) + '-Fache deines Schnitts' : f <= 0.85 ? dez(f * 100, 0) + ' % deines Schnitts' : 'auf deinem Schnitt'}`)
+  } else if (st.avg_likes) {
+    const f = (p.likes || 0) / st.avg_likes
+    teile.push(`${fm(p.likes)} Likes ohne Aufrufzahl, ${f >= 1.15 ? 'das ' + dez(f, 1) + '-Fache deiner üblichen Likes' : f <= 0.85 ? dez(f * 100, 0) + ' % deiner üblichen Likes' : 'wie üblich'}`)
+  }
+  const m = []
+  if (/\?/.test(p.caption || '')) m.push('Frage im Text')
+  if (p.duration_seconds > 0) m.push(dez(p.duration_seconds, 0) + ' Sekunden')
+  else if (p.media_type && p.media_type !== 'Video') m.push(p.media_type === 'Sidecar' ? 'Karussell' : p.media_type === 'Image' ? 'Bild' : p.media_type)
+  if (p.views > 0 && st.kommentarrate_schnitt && (p.comments || 0) / p.views * 1000 >= st.kommentarrate_schnitt * 1.5) m.push(fm(p.comments) + ' Kommentare, deutlich über deinem Schnitt')
+  if (m.length) teile.push(m.join(', '))
+  return teile.join('. ') + (teile.length ? '.' : '')
+}
+/* Kleine Linie wie in der Bibliothek (v-spark), Farbe ueber --spark. */
+function spark(werte) {
+  const w = (werte || []).filter(v => v != null)
+  if (w.length < 2) return `<svg class="v-spark" viewBox="0 0 200 40" preserveAspectRatio="none"><path d="M0 30L200 30"/></svg>`
+  const min = Math.min(...w), max = Math.max(...w), sp = max - min || 1
+  const X = i => Math.round(i / (w.length - 1) * 200), Y = v => Math.round(4 + (1 - (v - min) / sp) * 30)
+  const pts = w.map((v, i) => `${X(i)} ${Y(v)}`)
+  return `<svg class="v-spark" viewBox="0 0 200 40" preserveAspectRatio="none"><path class="flaeche" d="M${pts.join('L')}L200 40L0 40Z"/><path d="M${pts.join('L')}"/><circle cx="${X(w.length - 1)}" cy="${Y(w[w.length - 1])}" r="3"/></svg>`
+}
+
 /* Der Abo-Kasten: steht in der Analyse ohne Freischaltung und bei Brand Ready
    ohne Abo. Brand Ready ist nie inklusive. */
 function aboKasten(extra = '') {
