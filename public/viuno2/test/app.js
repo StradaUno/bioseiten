@@ -70,6 +70,7 @@ const ICO = {
   palette: SVG('<path d="M12 3a9 9 0 0 0 0 18c1.2 0 2-.8 2-2 0-.6-.3-1-.6-1.4-.3-.4-.4-.8-.4-1.1 0-.9.7-1.5 1.5-1.5H16a5 5 0 0 0 5-5c0-4-4-7-9-7z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/>'),
   doc: SVG('<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>'),
   bild: SVG('<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.5"/><path d="M21 16l-6-6-9 9"/>'),
+  griff: SVG('<circle cx="9" cy="6" r="1.3"/><circle cx="15" cy="6" r="1.3"/><circle cx="9" cy="12" r="1.3"/><circle cx="15" cy="12" r="1.3"/><circle cx="9" cy="18" r="1.3"/><circle cx="15" cy="18" r="1.3"/>', ' fill="currentColor" stroke="none"'),
 }
 const KANAELE = [
   { key: 'instagram', label: 'Instagram', spalte: 'instagram_handle', url: h => 'https://instagram.com/' + h },
@@ -77,7 +78,7 @@ const KANAELE = [
   { key: 'threads', label: 'Threads', spalte: 'threads_handle', url: h => 'https://threads.net/@' + h },
   { key: 'youtube', label: 'YouTube', spalte: 'youtube_handle', url: h => 'https://youtube.com/@' + h },
 ]
-const NISCHEN = [['lifestyle', 'Lifestyle'], ['fashion', 'Fashion'], ['beauty', 'Beauty'], ['food', 'Food'], ['fitness', 'Fitness'], ['travel', 'Travel'], ['gaming', 'Gaming'], ['music', 'Music'], ['comedy', 'Comedy'], ['education', 'Bildung & Wissen'], ['business', 'Business'], ['tech', 'Tech'], ['art', 'Art'], ['family', 'Family'], ['mental_health', 'Mental Health'], ['general', 'Allgemein']]
+const NISCHEN = [['lifestyle', 'Lifestyle'], ['fashion', 'Fashion'], ['beauty', 'Beauty'], ['food', 'Food'], ['fitness', 'Fitness'], ['travel', 'Travel'], ['gaming', 'Gaming'], ['music', 'Music'], ['comedy', 'Comedy'], ['education', 'Bildung & Wissen'], ['business', 'Business'], ['tech', 'Tech'], ['art', 'Art'], ['family', 'Family'], ['mental_health', 'Mental Health'], ['general', 'Allgemein'], ['sonstiges', 'Sonstiges']]
 const nischeLabel = k => (NISCHEN.find(n => n[0] === k) || [k, k])[1]
 const LEISTUNGEN = [['ugc_video', 'UGC Video'], ['instagram_reel', 'Instagram Reel'], ['tiktok_post', 'TikTok Video'], ['story_package', 'Story-Paket']]
 const leistungLabel = k => (LEISTUNGEN.find(l => l[0] === k) || [k, k])[1]
@@ -204,7 +205,7 @@ async function ladeKonto() {
 }
 async function ladeAlles() {
   const id = uid()
-  const [bl, mk, links, marken, offers, preise, eigene, beitraege] = await Promise.all([
+  const [bl, mk, links, marken, offers, preise, eigene, beitraege, angaben] = await Promise.all([
     sb.from('biolink_viuno').select('*').eq('user_id', id).maybeSingle(),
     sb.from('mediakit_viuno').select('*').eq('user_id', id).maybeSingle(),
     sb.from('biolink_custom_links').select('*').eq('user_id', id).order('position'),
@@ -213,7 +214,9 @@ async function ladeAlles() {
     sb.from('mediakit_preise').select('*').eq('user_id', id),
     sb.from('mediakit_eigene_leistungen').select('*').eq('user_id', id).order('position'),
     sb.from('mediakit_beitraege').select('*').eq('user_id', id).order('position'),
+    sb.from('brand_ready_angaben').select('kriterium,wert').eq('user_id', id),
   ])
+  Z.angaben = {}; (angaben.data || []).forEach(a => { Z.angaben[a.kriterium] = !!a.wert })
   Z.bl = bl.data; Z.mk = mk.data; Z.links = links.data || []; Z.marken = marken.data || []
   Z.offers = offers.data || []; Z.preise = preise.data || []; Z.eigene = eigene.data || []; Z.beitraege = beitraege.data || []
   Z.geladen = true
@@ -275,7 +278,7 @@ async function render() {
 
   if (!Z.session && !r.frei) { geh('#/login'); return }
   if (Z.session && r.frei) { geh('#/start'); return }
-  if (Z.session && !Z.geladen) { await ladeStart(); if (nr !== renderNr) return }
+  if (Z.session && !Z.geladen) { const ok = await ladeStart(); if (!ok || nr !== renderNr) return }
   if (Z.session && Z.p && !Z.p.onboarding_completed && name !== 'onboarding') { geh('#/onboarding'); return }
 
   if (r.pillen && teile[1] && r.pillen.some(p => p[0] === teile[1])) Z.ansicht[name] = teile[1]
@@ -324,8 +327,14 @@ function leer(titel, text, knopf, aktion) {
   return `<div class="v-leer v-leer--karte"><div class="sym">${ICO.info}</div><h3>${es(titel)}</h3><p>${text}</p>${knopf ? `<button class="v-btn v-btn--dunkel" data-${aktion}>${es(knopf)}</button>` : ''}</div>`
 }
 async function ladeStart() {
-  try { await ladeKonto(); if (Z.p) await ladeAlles(); merkeAktiv() }
+  try {
+    await ladeKonto()
+    /* Sitzung ohne Konto (z. B. geloescht): abmelden statt Fehlerseite. */
+    if (!Z.p) { await sb.auth.signOut(); Z.session = null; Z.geladen = false; geh('#/login'); return false }
+    await ladeAlles(); merkeAktiv()
+  }
   catch (e) { console.error(e); Z.geladen = true }
+  return true
 }
 
 /* ── Bausteine als Funktionen ────────────────────────────────────────── */
@@ -391,7 +400,6 @@ async function renderRegister(area, ctx) {
     feld('Username', `<div class="v-input-huelle"><span class="praefix">@</span>${input('name', '', 'autocapitalize="none" autocomplete="username" placeholder="deinname" maxlength="30"')}</div>`, '<span data-name-hint>3–30 Zeichen, Buchstaben, Zahlen, Unterstrich.</span>') +
     feld('E-Mail', input('email', '', 'type="email" autocomplete="email" inputmode="email" placeholder="du@beispiel.de"')) +
     feld('Passwort', input('pw', '', 'type="password" autocomplete="new-password" placeholder="mindestens 8 Zeichen"')) +
-    feld('Nische', `<select class="v-input v-select" id="nische">${NISCHEN.map(([k, l]) => `<option value="${k}"${k === 'general' ? ' selected' : ''}>${es(l)}</option>`).join('')}</select>`) +
     `<label class="v-checkbox"><input type="checkbox" id="agb"><span>Ich akzeptiere die <a href="https://viuno.de/legal#agb" target="_blank" rel="noopener">AGB</a> und habe die <a href="https://viuno.de/legal#datenschutz" target="_blank" rel="noopener">Datenschutzerklärung</a> gelesen.</span></label>
      <button class="v-btn v-btn--dunkel v-btn--breit" type="submit">Konto anlegen</button>`,
     `Schon ein Konto? <a href="#/login">Anmelden</a>`)
@@ -421,7 +429,7 @@ async function renderRegister(area, ctx) {
     try {
       const r = await rpc('is_username_available', { p_username: name })
       if (!r?.available) throw new Error('Dieser Username ist nicht verfügbar')
-      const { data, error } = await sb.auth.signUp({ email, password: pw, options: { data: { display_name: name, niche_category: $('#nische', area).value }, emailRedirectTo: location.origin + location.pathname.replace(/[^/]*$/, '') } })
+      const { data, error } = await sb.auth.signUp({ email, password: pw, options: { data: { display_name: name }, emailRedirectTo: location.origin + location.pathname.replace(/[^/]*$/, '') } })
       if (error) throw error
       if (data.session) { Z.session = data.session; Z.geladen = false; geh('#/onboarding') }
       else area.innerHTML = `<div class="auth"><div class="logo">v</div><div><h1>Fast geschafft</h1><p class="lead">Wir haben dir eine Mail an <b>${es(email)}</b> geschickt. Klick auf den Link darin, dann kannst du dich anmelden.</p></div><a class="v-btn v-btn--rand v-btn--breit" href="#/login">Zur Anmeldung</a></div>`
@@ -492,7 +500,7 @@ async function renderOnboarding(area, ctx) {
         await userSpeichern(patch)
         try { await rpc('erstanalyse_freischalten') } catch (_) {}
         toast('Willkommen bei viuno', 'gut')
-        geh('#/seiten/biolink')
+        geh('#/start')
       } catch (e) { fehler(e); laden(btn, false) }
     })
   }
@@ -505,15 +513,14 @@ async function renderOnboarding(area, ctx) {
 function montag(d = new Date()) { const t = new Date(d); const w = (t.getDay() + 6) % 7; t.setDate(t.getDate() - w); return t.toISOString().slice(0, 10) }
 async function renderStart(area, ctx) {
   const woche = montag()
-  const [aufgQ, berQ, scoreQ, newsQ, blQ] = await Promise.all([
+  const [aufgQ, berQ, newsQ, blQ] = await Promise.all([
     sb.from('growth_aufgaben').select('*').eq('user_id', uid()).eq('woche', woche).order('prioritaet'),
     sb.from('growth_wochenbericht').select('text,woche').eq('user_id', uid()).order('woche', { ascending: false }).limit(1).maybeSingle(),
-    sb.rpc('viuno_score').then(r => r.data).catch(() => null),
-    sb.from('digest_cards_today').select('slug,headline,summary,platform_label,image_url,date,relevance_score').limit(1).maybeSingle(),
+    sb.from('digest_cards_today').select('slug,headline,platform,platform_label,date,published_date,relevance_score').limit(3),
     sb.from('biolink_aufrufe').select('viewed_at').eq('user_id', uid()).gte('viewed_at', new Date(Date.now() - 7 * 86400000).toISOString()),
   ])
   if (ctx.stale()) return
-  const aufgaben = aufgQ.data || [], bericht = berQ.data, score = scoreQ, news = newsQ.data
+  const aufgaben = aufgQ.data || [], bericht = berQ.data, news = newsQ.data || []
   const heute = new Date().toDateString()
   const aufrufeHeute = (blQ.data || []).filter(a => new Date(a.viewed_at).toDateString() === heute).length
   const aufrufe7 = (blQ.data || []).length
@@ -528,15 +535,14 @@ async function renderStart(area, ctx) {
     aufgabenHtml = `<div class="v-leer v-leer--gestrichelt"><div class="sym akzent">${ICO.ziel}</div><h3>Noch keine Aufgaben diese Woche</h3><p>Sobald dein Kanal gemessen ist, stehen hier bis zu drei Aufgaben mit Beleg.</p><button class="v-btn v-btn--rand v-btn--klein" data-growth>Jetzt berechnen</button></div>`
   }
   area.innerHTML = `
-    <div><div style="font-size:var(--t-2xl);font-weight:var(--fw-b);letter-spacing:-.03em">${gruss}, ${es(p.display_name)}</div><div class="text-klein" style="margin-top:4px">Woche vom ${datKurz(woche)}</div></div>
+    <div><div style="font-size:var(--t-2xl);font-weight:var(--fw-b);letter-spacing:-.03em">${gruss}, ${es(p.display_name)}</div><div class="text-klein" style="margin-top:4px">${new Date().toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
     ${bericht ? karte(`<p style="margin:0;font-size:var(--t-md);line-height:var(--lh-body)">${es(bericht.text)}</p><div class="v-karte-fuss"><span>Dein Wochenbericht · ${datKurz(bericht.woche)}</span></div>`) : ''}
     <div class="abschnitt"><div class="abschnitt-titel">Diese Woche</div>${aufgabenHtml}</div>
     <div class="v-kpi-reihe">
-      ${karte(`<div class="v-ring-reihe">${ring((score?.gesamt || 0) / 100, (score?.gesamt ?? '–') + (score ? '' : ''))}<div><strong>Score</strong><span>${score ? es(score.saeulen.filter(s => s.zustand !== 'nicht_bewertbar').length + ' von 4 Säulen bewertet') : 'noch keine Messung'}</span></div></div>`, 'v-karte--flach').replace('class="v-karte v-karte--flach"', 'class="v-karte" style="grid-column:1/-1;cursor:pointer" data-geh="#/analyse/brandready"')}
       ${kpi('BioLink heute', fm(aufrufeHeute), Z.p.bio_active ? '<span class="gut">live</span>' : '<span class="fehlt">aus</span>')}
       ${kpi('BioLink 7 Tage', fm(aufrufe7), Z.p.mediakit_active ? 'Media Kit live' : 'Media Kit aus')}
     </div>
-    ${news ? `<div class="abschnitt"><div class="abschnitt-titel">Creator News</div><div class="v-karte news-karte" data-geh="#/news" style="cursor:pointer">${news.image_url ? `<img class="news-bild" src="${es(news.image_url)}" alt="" loading="lazy">` : ''}<div class="news-kopf">${badge(news.platform_label || 'Allgemein', 'blau')}<span class="text-klein">${datKurz(news.date)}</span></div><h3>${es(news.headline)}</h3><p>${es(news.summary)}</p></div></div>` : ''}
+    ${news.length ? `<div class="abschnitt"><div class="abschnitt-titel">Creator News</div><div class="v-liste">${news.map(k => `<button type="button" class="v-liste-zeile" data-geh="#/news" style="align-items:flex-start"><span class="text"><span class="news-kopf" style="margin-bottom:4px">${plattformPille(k)}${dringPille(k)}</span><span style="display:block;font-weight:var(--fw-sb);line-height:var(--lh-tight)">${es(k.headline)}</span></span>${ICO.pfeil}</button>`).join('')}</div></div>` : ''}
   `
   $$('[data-geh]', area).forEach(el => ctx.on(el, 'click', () => geh(el.dataset.geh)))
   $$('[data-erledigt]', area).forEach(b => ctx.on(b, 'click', async e => {
@@ -586,10 +592,12 @@ async function renderBiolinkSeite(area, ctx) {
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Aufrufe</strong><span>30 Tage</span></div>${balkenListe(tageSortiert.filter(t => t.wert > 0).length ? tageSortiert : [], { leerText: 'In den letzten 30 Tagen hat niemand deinen BioLink geöffnet.' })}`)}
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Von hier kommen sie</strong><span>30 Tage</span></div>${balkenListe(herkunft)}`)}
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Hier klicken sie</strong><span>${rate && rate.seit ? 'seit ' + datKurz(rate.seit) : '30 Tage'}</span></div>${balkenListe(klicks, { leerText: 'Noch kein Klick gezählt.' })}${rate && rate.aufrufe > 0 ? `<div class="v-karte-fuss"><span>Klickrate</span><b class="v-num">${dez(rate.klicks / rate.aufrufe * 100, 0)} %</b></div>` : ''}`)}
+    ${Z.p.bio_active ? '' : externZeile('biolink', 'Ich habe schon eine BioLink-Seite bei einem anderen Anbieter')}
     ${bearbeitenBox([['Design', 'design'], ['Links', '#/links'], ['Sprache', 'sprache']])}
     ${Z.p.bio_active ? `<a class="v-btn v-btn--leise v-btn--breit" href="https://${es(url)}" target="_blank" rel="noopener">Seite ansehen ${ICO.extern}</a>` : ''}
   `
   bearbeitenBinden(area, ctx, { design: designSheet, sprache: spracheSheet })
+  externBinden(area, ctx)
   ctx.on($('[data-kopieren]', area), 'click', e => kopieren(e.currentTarget.dataset.kopieren, 'Adresse kopiert'))
   ctx.on($('[data-bio-schalter]', area), 'click', e => seiteSchalten('biolink', e.currentTarget, () => renderBiolinkSeite(area, ctx)))
 }
@@ -612,12 +620,27 @@ async function renderMediakitSeite(area, ctx) {
     ${statusZeile({ an: !!Z.p.mediakit_active, titel: 'Media Kit', url, schalterAttr: 'data-kit-schalter' })}
     <div class="v-kpi-reihe v-kpi-reihe--drei">${kpi('7 Tage', fm(tage7))}${kpi('30 Tage', fm(tage30))}${kpi('Gesamt', fm(gesamtQ.count || 0))}</div>
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Aufrufe</strong><span>12 Monate</span></div>${balkenListe(aufrufe.length ? [...monate].sort((a, b) => b.wert - a.wert) : [], { leerText: 'Noch keine Aufrufe gezählt.' })}`)}
+    ${Z.p.mediakit_active ? '' : externZeile('kit_vorhanden', 'Ich habe schon ein Media Kit bei einem anderen Anbieter')}
     ${bearbeitenBox([['Zielgruppe', '#/zielgruppe'], ['Leistungen & Preise', '#/leistungen'], ['Zusammenarbeit', '#/marken'], ['Referenzen', '#/referenzen']])}
     ${Z.p.mediakit_active ? `<a class="v-btn v-btn--leise v-btn--breit" href="https://${es(url)}" target="_blank" rel="noopener">Seite ansehen ${ICO.extern}</a>` : ''}
   `
   bearbeitenBinden(area, ctx, {})
+  externBinden(area, ctx)
   ctx.on($('[data-kopieren]', area), 'click', e => kopieren(e.currentTarget.dataset.kopieren, 'Adresse kopiert'))
   ctx.on($('[data-kit-schalter]', area), 'click', e => seiteSchalten('mediakit', e.currentTarget, () => renderMediakitSeite(area, ctx)))
+}
+/* "Habe ich bei einem anderen Anbieter": Eigenangabe in brand_ready_angaben
+   (kriterium biolink / kit_vorhanden), zaehlt im Profilcheck als erfuellt. */
+function externZeile(kriterium, text) {
+  const an = !!(Z.angaben && Z.angaben[kriterium])
+  return `<div class="v-schalter-zeile" style="padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)"><div><span style="font-size:var(--t-sm)">${es(text)}</span><small>Zählt bei Brand Ready als erfüllt.</small></div>${toggle(an, `data-extern="${kriterium}"`, 'v-toggle--akzent')}</div>`
+}
+function externBinden(area, ctx) {
+  $$('[data-extern]', area).forEach(t => ctx.on(t, 'click', async () => {
+    const an = !t.classList.contains('an'); t.classList.toggle('an', an)
+    const { error } = await sb.from('brand_ready_angaben').upsert({ user_id: uid(), kriterium: t.dataset.extern, wert: an, updated_at: new Date().toISOString() }, { onConflict: 'user_id,kriterium' })
+    if (error) { fehler(error); t.classList.toggle('an', !an) } else { Z.angaben = Z.angaben || {}; Z.angaben[t.dataset.extern] = an; toast(an ? 'Gemerkt' : 'Zurückgesetzt') }
+  }))
 }
 /* Ein- und Ausschalten erzeugt bzw. loescht die oeffentliche Datei im Repo.
    Ausschalten fragt, weil der Link danach ins Leere fuehrt. */
@@ -627,16 +650,59 @@ async function seiteSchalten(art, btn, danach) {
   if (an) {
     const ok = await bestaetigen({ titel: name + ' ausschalten?', text: 'Die Seite ist danach nicht mehr erreichbar. Deine Angaben bleiben gespeichert, du kannst sie jederzeit wieder einschalten.', ja: 'Ausschalten', gefahr: true })
     if (!ok) return
-  } else if (!Z.p.display_name) return toast('Erst einen Username festlegen', 'fehler')
+  } else {
+    if (!Z.p.display_name) return toast('Erst einen Username festlegen', 'fehler')
+    /* Impressum ist Pflicht fuer beide Seiten (§ 5 DDG). Ohne geht die Seite nicht an. */
+    if (!(Z.p.impressum_text || '').trim()) {
+      const el = modal(`<h2>Impressum fehlt</h2><p>Für ${es(name)} ist ein Impressum Pflicht. Trag es einmal ein, es steht dann im Fuß beider Seiten.</p><div class="v-btn-reihe"><button class="v-btn v-btn--rand" data-modal-zu>Später</button><button class="v-btn v-btn--dunkel" data-imp>Impressum eintragen</button></div>`)
+      $('[data-imp]', el).addEventListener('click', () => { sheetZu(); impressumSheet(() => danach && danach()) })
+      return
+    }
+  }
   btn.disabled = true; btn.classList.toggle('an', !an)
+  const schirm = an ? null : ladeSchirm({ titel: name + ' wird erzeugt', text: 'Die Seite wird gebaut und veröffentlicht. Das dauert etwa eine Minute.' })
   try {
     await fn(bio ? 'generate-biolink' : 'generate-mediakit', {}, { query: an ? '?action=delete' : '' })
     Z.p[bio ? 'bio_active' : 'mediakit_active'] = !an
-    toast(an ? name + ' ist aus' : name + ' ist live', 'gut')
-  } catch (e) { fehler(e, name + ' konnte nicht umgeschaltet werden'); btn.classList.toggle('an', an) }
+    if (schirm) {
+      const url = bio ? 'https://viuno.de/' + slug() + '/' : 'https://viuno.de/kit/' + slug() + '/'
+      const ok = await warteAufSeite(url, null, schirm)
+      schirm.schliessen()
+      toast(ok ? name + ' ist live' : name + ' ist live, die Seite braucht noch einen Moment', 'gut')
+    } else toast(name + ' ist aus', 'gut')
+  } catch (e) { schirm && schirm.schliessen(); fehler(e, name + ' konnte nicht umgeschaltet werden'); btn.classList.toggle('an', an) }
   btn.disabled = false
   danach && danach()
 }
+/* Ladeschirm: Vollbild, Spinner, Balken, der ueber eine Minute fuellt. */
+function ladeSchirm({ titel, text }) {
+  let el = $('#ladeschirm')
+  if (!el) { el = document.createElement('div'); el.id = 'ladeschirm'; document.body.appendChild(el) }
+  el.innerHTML = `<div class="v-lade-block"><div class="v-spin v-spin--verlauf"></div><strong style="font-size:var(--t-xl);color:var(--text)">${es(titel)}</strong><span>${es(text)}</span><div class="v-balken v-balken--verlauf" style="width:100%;max-width:260px;margin-top:8px"><i style="width:2%"></i></div><small class="text-klein" data-stand>0 %</small></div>`
+  el.classList.add('offen')
+  const start = Date.now()
+  const timer = setInterval(() => { const p = Math.min(96, Math.round((Date.now() - start) / 600)); const i = $('.v-balken i', el); if (i) i.style.width = p + '%'; const st = $('[data-stand]', el); if (st) st.textContent = p + ' %' }, 500)
+  return {
+    el,
+    schliessen() { clearInterval(timer); const i = $('.v-balken i', el); if (i) i.style.width = '100%'; setTimeout(() => el.classList.remove('offen'), 250) },
+  }
+}
+/* Wartet, bis die oeffentliche Seite da ist. Auf viuno.de selbst wird sie
+   abgefragt (gleiche Herkunft), sonst gilt die Minute als Richtwert. */
+async function warteAufSeite(url, pruefe, schirm, maxSek = 120) {
+  const gleicheHerkunft = url.startsWith(location.origin)
+  const start = Date.now()
+  while (Date.now() - start < maxSek * 1000) {
+    await schlaf(5000)
+    if (!gleicheHerkunft) { if (Date.now() - start >= 60000) return true; continue }
+    try {
+      const r = await fetch(url, { cache: 'no-store' })
+      if (r.ok) { const t = await r.text(); if (!pruefe || pruefe(t)) return true }
+    } catch (_) {}
+  }
+  return false
+}
+const THEME_FARBE = { color: '#1A1025', dark: '#0D1B2A', clean: '#FAFAFA' }
 function designSheet() {
   const aktuell = Z.bl?.theme || 'color'
   const el = sheet(`<div class="wahl-reihe">${[['clean', 'Weiß', 'weiss'], ['dark', 'Schwarz', 'schwarz'], ['color', 'Color', 'color']].map(([k, l, c]) => `<button type="button" class="wahl${k === aktuell ? ' aktiv' : ''}" data-wert="${k}"><span class="wahl-kreis wahl-kreis--${c}"></span>${l}</button>`).join('')}</div><p style="margin:12px 0 0">Färbt deinen BioLink und die App.</p><div class="v-btn-reihe" style="margin-top:16px"><button class="v-btn v-btn--rand" data-sheet-zu>Abbrechen</button><button class="v-btn v-btn--dunkel" data-speichern>Speichern</button></div>`,
@@ -644,7 +710,15 @@ function designSheet() {
   $$('.wahl', el).forEach(w => w.addEventListener('click', () => { $$('.wahl', el).forEach(x => x.classList.toggle('aktiv', x === w)); document.documentElement.dataset.thema = w.dataset.wert }))
   $('[data-speichern]', el).addEventListener('click', async e => {
     const wert = $('.wahl.aktiv', el).dataset.wert; laden(e.currentTarget, true)
-    try { await blSpeichern({ theme: wert }); signaturSetzen(); sheetZuCb = null; sheetZu(); toast('Design gespeichert'); bioNeuErzeugen({ leise: true }) } catch (er) { fehler(er); laden(e.currentTarget, false) }
+    try {
+      await blSpeichern({ theme: wert }); signaturSetzen(); sheetZuCb = null; sheetZu()
+      if (Z.p.bio_active) {
+        const schirm = ladeSchirm({ titel: 'BioLink wird neu gefärbt', text: 'Die Seite wird mit dem neuen Design veröffentlicht. Das dauert etwa eine Minute.' })
+        const r = await bioNeuErzeugen({ leise: true })
+        const ok = r && !r.fehler ? await warteAufSeite('https://viuno.de/' + slug() + '/', t => t.includes('content="' + THEME_FARBE[wert] + '"'), schirm) : false
+        schirm.schliessen(); toast(ok ? 'Design ist live' : 'Design gespeichert', 'gut')
+      } else toast('Design gespeichert')
+    } catch (er) { fehler(er); laden(e.currentTarget, false) }
   })
 }
 function spracheSheet() {
@@ -737,7 +811,7 @@ async function analyseStarten(pf, frei, btn, danach) {
     } catch (er) { fehler(er); laden(e.currentTarget, false) }
   })
 }
-const BR_ROUTE = { '#/profile': '#/profil', '#/biolink': '#/links', '#/analytics': '#/analyse/analyse', '#/mediakit': '#/seiten/mediakit', '#/preise': '#/leistungen', '#/koop': '#/marken', '#/verlauf': '#/analyse/analyse' }
+const BR_ZIEL = { bio: '#/kanaele', kontakt: '#/profil', takt: '#/analyse/analyse', biolink: '#/seiten/biolink', mediakit: '#/seiten/mediakit', preise: '#/leistungen', impressum: '#/profil', referenzen: '#/marken', kategorie: '#/profil', messung: '#/analyse/analyse' }
 async function renderBrandReady(area, ctx) {
   const [pcQ, scQ] = await Promise.all([sb.rpc('viuno_profilcheck'), sb.rpc('viuno_score')])
   if (ctx.stale()) return
@@ -747,7 +821,7 @@ async function renderBrandReady(area, ctx) {
   area.innerHTML = `
     ${karte(`<div class="v-ring-reihe">${ring(pc.prozent / 100, pc.prozent + ' %', pc.prozent >= 70 ? 'v-ring--gruen' : '')}<div><strong>Brand Ready</strong><span>${pc.punkte} von ${pc.max} Punkten · ${pc.offen.length ? pc.offen.length + ' Punkte offen' : 'alles erfüllt'}</span></div></div>`)}
     ${sc ? karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Score ${sc.gesamt}</strong><span>vier Säulen</span></div>${balkenListe(sc.saeulen.map(s => ({ label: s.titel, wert: s.punkte })))}<div class="text-klein" style="margin-top:10px;line-height:var(--lh-body)">${sc.saeulen.map(s => `<div><b>${es(s.titel)}:</b> ${es(s.quelle)}</div>`).join('')}</div>`) : ''}
-    <div class="v-liste">${pc.teile.map(t => { const [k, i] = zustand[t.zustand] || ['', '']; const ziel = BR_ROUTE[t.route] || null; return listeZeile({ sym: i, symKlasse: k === 'gut' ? 'gut' : k === 'warn' ? 'warn' : (t.zustand === 'offen' ? 'rot' : ''), text: t.titel, small: es(t.sub), wert: `<b class="v-num ${t.zustand === 'erfuellt' ? 'gut' : ''}">${t.punkte}/${t.max}</b>`, pfeil: !!ziel && t.zustand !== 'erfuellt', attrs: ziel && t.zustand !== 'erfuellt' ? `data-geh="${ziel}"` : 'disabled style="cursor:default;opacity:1"' }) }).join('')}</div>
+    <div class="v-liste">${pc.teile.map(t => { const [k, i] = zustand[t.zustand] || ['', '']; const ziel = BR_ZIEL[t.id] || null; return listeZeile({ sym: i, symKlasse: k === 'gut' ? 'gut' : k === 'warn' ? 'warn' : (t.zustand === 'offen' ? 'rot' : ''), text: t.titel, small: es(t.sub), wert: `<b class="v-num ${t.zustand === 'erfuellt' ? 'gut' : ''}">${t.punkte}/${t.max}</b>`, pfeil: !!ziel && t.zustand !== 'erfuellt', attrs: ziel && t.zustand !== 'erfuellt' ? `data-geh="${ziel}"` : 'disabled style="cursor:default;opacity:1"' }) }).join('')}</div>
     <p class="text-klein zentriert">Stand ${dat(pc.stichtag)} · Grün ist erfüllt, Orange teilweise, Rot fehlt.</p>
   `
   $$('.sym.rot', area).forEach(s => { s.style.background = 'var(--red-bg)'; s.style.color = 'var(--red)' })
@@ -757,14 +831,18 @@ async function renderBrandReady(area, ctx) {
 /* ═══════════════════════════════════════════════════════════════════════
    Creator News
    ═══════════════════════════════════════════════════════════════════════ */
+/* Plattform-Pillen in eigenen Farben; Rot, Orange und Blau bleiben der Dringlichkeit vorbehalten. */
+const PLATTFORM_FARBE = { instagram: 'akzent', tiktok: 'dunkel', youtube: 'verlauf', meta: 'gruen' }
+const plattformPille = k => badge(k.platform_label || 'Allgemein', PLATTFORM_FARBE[k.platform] || '')
+const dringPille = k => { const d = k.relevance_score >= 8 ? ['rot', 'Wichtig'] : k.relevance_score >= 6 ? ['orange', 'Relevant'] : ['blau', 'Info']; return badge(d[1], d[0]) }
+const ersteSaetze = (t, n = 2) => String(t || '').split(/(?<=[.!?])\s+/).slice(0, n).join(' ')
 function newsKarte(k, klein) {
-  const dring = k.relevance_score >= 8 ? ['rot', 'Wichtig'] : k.relevance_score >= 6 ? ['orange', 'Relevant'] : ['blau', 'Info']
-  return `<div class="v-karte news-karte" data-news="${es(k.slug)}" style="cursor:pointer">${!klein && k.image_url ? `<img class="news-bild" src="${es(k.image_url)}" alt="" loading="lazy">` : ''}<div class="news-kopf">${badge(k.platform_label || 'Allgemein', 'blau')}${badge(dring[1], dring[0])}<span class="text-klein" style="margin-left:auto">${datKurz(k.published_date || k.date)}</span></div><h3>${es(k.headline)}</h3>${klein ? '' : `<p>${es(k.summary)}</p>${k.impact ? `<div class="news-impact">${es(k.impact)}</div>` : ''}`}</div>`
+  return `<div class="v-karte news-karte" data-news="${es(k.slug)}" style="cursor:pointer">${!klein && k.image_url ? `<img class="news-bild" src="${es(k.image_url)}" alt="" loading="lazy">` : ''}<div class="news-kopf">${plattformPille(k)}${dringPille(k)}<span class="text-klein" style="margin-left:auto">${datKurz(k.published_date || k.date)}</span></div><h3>${es(k.headline)}</h3>${klein ? '' : `<p>${es(ersteSaetze(k.summary))}</p>`}</div>`
 }
 async function renderNews(area, ctx) {
   const [heuteQ, altQ] = await Promise.all([
     sb.from('digest_cards_today').select('*'),
-    sb.from('digest_cards_past').select('slug,headline,platform_label,date,published_date,relevance_score,summary,impact,full_content,source,source_url,image_url').limit(40),
+    sb.from('digest_cards_past').select('slug,headline,platform,platform_label,date,published_date,relevance_score,summary,impact,full_content,source,source_url,image_url').limit(40),
   ])
   if (ctx.stale()) return
   const heute = heuteQ.data || [], alt = altQ.data || []
@@ -778,7 +856,7 @@ async function renderNews(area, ctx) {
   $$('[data-news]', area).forEach(el => ctx.on(el, 'click', () => {
     const k = alle.find(x => x.slug === el.dataset.news); if (!k) return
     sb.from('page_views').insert({ user_id: uid(), page: 'news', source: 'app', card_slug: k.slug }).then(() => {})
-    sheet(`${k.image_url ? `<img class="news-bild" src="${es(k.image_url)}" alt="">` : ''}<div class="news-kopf">${badge(k.platform_label || 'Allgemein', 'blau')}<span class="text-klein">${datKurz(k.published_date || k.date)}${k.source ? ' · ' + es(k.source) : ''}</span></div><h2 style="margin:0 0 10px;font-size:var(--t-xl)">${es(k.headline)}</h2><p class="news-text" style="color:var(--text)">${es(k.full_content || k.summary)}</p>${k.impact ? `<div class="news-impact">${es(k.impact)}</div>` : ''}<div class="v-btn-reihe" style="margin-top:16px">${k.source_url ? `<a class="v-btn v-btn--rand" href="${es(k.source_url)}" target="_blank" rel="noopener">Quelle ${ICO.extern}</a>` : ''}<button class="v-btn v-btn--dunkel" data-news-teilen>${ICO.teilen} Teilen</button></div>`)
+    sheet(`${k.image_url ? `<img class="news-bild" src="${es(k.image_url)}" alt="">` : ''}<div class="news-kopf">${plattformPille(k)}${dringPille(k)}<span class="text-klein">${datKurz(k.published_date || k.date)}${k.source ? ' · ' + es(k.source) : ''}</span></div><h2 style="margin:0 0 10px;font-size:var(--t-xl)">${es(k.headline)}</h2><p class="news-text" style="color:var(--text)">${es(k.full_content || k.summary)}</p>${k.impact ? `<div class="news-impact">${es(k.impact)}</div>` : ''}<div class="v-btn-reihe" style="margin-top:16px">${k.source_url ? `<a class="v-btn v-btn--rand" href="${es(k.source_url)}" target="_blank" rel="noopener">Quelle ${ICO.extern}</a>` : ''}<button class="v-btn v-btn--dunkel" data-news-teilen>${ICO.teilen} Teilen</button></div>`)
     $('[data-news-teilen]').addEventListener('click', () => kopieren('https://viuno.de/news/' + k.slug, 'Link kopiert'))
   }))
 }
@@ -857,9 +935,18 @@ function einfachesSheet({ titel, text, felder, speichern }) {
   return el
 }
 function bioSheet(neu) {
-  einfachesSheet({ titel: 'Bio', text: 'Ein bis zwei Sätze, die unter deinem Namen stehen. Auf BioLink und Media Kit.',
-    felder: feld('', `<textarea class="v-input" id="f-bio" rows="3" maxlength="160" placeholder="Was machst du, für wen?">${es(Z.p.bio || '')}</textarea>`, '<span class="v-hint-zeile"><span>Max. 160 Zeichen</span></span>'),
-    speichern: async el => { const bio = $('#f-bio', el).value.trim() || null; if (bio === (Z.p.bio || null)) return; await userSpeichern({ bio }); bioNeuErzeugen({ leise: true }); neu() } })
+  const el = einfachesSheet({ titel: 'Bio', text: 'Ein bis zwei Sätze, die unter deinem Namen stehen.',
+    felder: feld('', `<textarea class="v-input" id="f-bio" rows="3" maxlength="160" placeholder="Was machst du, für wen?">${es(Z.p.bio || '')}</textarea>`, '<span class="v-hint-zeile"><span>Max. 160 Zeichen</span></span>') +
+      `<div class="v-schalter-zeile"><div><span>Auf dem BioLink zeigen</span></div>${toggle(kanalAn('bio', 'biolink'), 'data-bio-schalter="biolink"')}</div><div class="v-schalter-zeile"><div><span>Im Media Kit zeigen</span></div>${toggle(kanalAn('bio', 'mediakit'), 'data-bio-schalter="mediakit"')}</div>`,
+    speichern: async el2 => {
+      const bio = $('#f-bio', el2).value.trim() || null
+      const anzeige = JSON.parse(JSON.stringify(Z.p.kanal_anzeige || {}))
+      anzeige.bio = { biolink: $('[data-bio-schalter="biolink"]', el2).classList.contains('an'), mediakit: $('[data-bio-schalter="mediakit"]', el2).classList.contains('an') }
+      const unveraendert = bio === (Z.p.bio || null) && JSON.stringify(anzeige.bio) === JSON.stringify((Z.p.kanal_anzeige || {}).bio || { biolink: true, mediakit: true })
+      if (unveraendert) return
+      await userSpeichern({ bio, kanal_anzeige: anzeige }); bioNeuErzeugen({ leise: true }); neu()
+    } })
+  $$('[data-bio-schalter]', el).forEach(t => t.addEventListener('click', () => t.classList.toggle('an')))
 }
 function nischeSheet(neu) {
   einfachesSheet({ titel: 'Nische', felder: feld('', `<select class="v-input v-select" id="f-nische">${NISCHEN.map(([k, l]) => `<option value="${k}"${k === Z.p.niche_category ? ' selected' : ''}>${es(l)}</option>`).join('')}</select>`),
@@ -1004,7 +1091,7 @@ async function renderLinks(area, ctx) {
       ${feld('Link hinzufügen', `<select class="v-input v-select" id="l-art"><option value="">Auswählen …</option>${KANAELE.map(k => `<option value="${k.key}">${k.label}</option>`).join('')}<option value="eigen">Eigener Link</option></select>`)}
       <div class="v-karte" id="l-form" hidden></div>
       ${kanaele.length ? `<div class="abschnitt"><div class="abschnitt-titel">Kanäle</div><div class="v-liste">${kanaele.map(k => `<div class="sort-zeile"><span class="sym" style="width:32px;height:32px;border-radius:var(--r-xs);display:grid;place-items:center;background:var(--surface2);color:var(--muted);flex-shrink:0">${ICO[k.key]}</span><div class="text"><strong>${k.label}</strong><small>@${es(handleRein(Z.p[k.spalte]))}</small><div class="schalter"><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(kanalAn(k.key, 'biolink'), `data-kanal="${k.key}:biolink"`)}BioLink</label><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(kanalAn(k.key, 'mediakit'), `data-kanal="${k.key}:mediakit"`)}Media Kit</label></div></div><div class="sort-knoepfe"><button class="v-ibtn" data-kanal-edit="${k.key}" aria-label="Bearbeiten">${ICO.stift}</button></div></div>`).join('')}</div></div>` : ''}
-      <div class="abschnitt"><div class="abschnitt-titel">Eigene Links · Reihenfolge wie auf der Seite</div>${Z.links.length ? `<div class="v-liste">${Z.links.map((l, i) => `<div class="sort-zeile" data-id="${l.id}"><div class="text"><strong>${es(l.title)}${l.is_paid ? ' ' + badge('Werbung', 'orange') : ''}</strong><small>${es(l.url)}</small><div class="schalter"><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(l.im_biolink !== false, `data-link-schalter="${l.id}:im_biolink"`)}BioLink</label><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(!!l.im_mediakit, `data-link-schalter="${l.id}:im_mediakit"`)}Media Kit</label></div></div><div class="sort-knoepfe"><button class="v-ibtn" data-bewege="${i}:-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICO.auf}</button><button class="v-ibtn" data-bewege="${i}:1" ${i === Z.links.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICO.ab}</button><button class="v-ibtn" data-link-edit="${l.id}" aria-label="Bearbeiten">${ICO.stift}</button><button class="v-ibtn rot" data-loesche="${l.id}" aria-label="Entfernen">${ICO.x}</button></div></div>`).join('')}</div>` : `<p class="text-klein">Noch keine eigenen Links. Bis zu 10 sind möglich.</p>`}</div>
+      <div class="abschnitt"><div class="abschnitt-titel">Eigene Links · Reihenfolge wie auf der Seite</div>${Z.links.length ? `<div class="v-liste">${Z.links.map((l, i) => `<div class="sort-zeile" data-id="${l.id}"><div class="text"><strong>${es(l.title)}${l.is_paid ? ' ' + badge('Werbung', 'orange') : ''}</strong><small>${es(l.url)}</small><div class="schalter"><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(l.im_biolink !== false, `data-link-schalter="${l.id}:im_biolink"`)}BioLink</label><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(!!l.im_mediakit, `data-link-schalter="${l.id}:im_mediakit"`)}Media Kit</label></div></div><div class="sort-knoepfe"><button class="v-ibtn" data-bewege="${i}:-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICO.auf}</button><button class="v-ibtn" data-bewege="${i}:1" ${i === Z.links.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICO.ab}</button><button class="v-ibtn" data-link-edit="${l.id}" aria-label="Bearbeiten">${ICO.stift}</button><button class="v-ibtn rot" data-loesche="${l.id}" aria-label="Entfernen">${ICO.x}</button></div><span class="griff" data-griff="${i}" aria-label="Ziehen zum Sortieren">${ICO.griff}</span></div>`).join('')}</div><p class="text-klein">Reihenfolge: Pfeile antippen oder am Griff ziehen.</p>` : `<p class="text-klein">Noch keine eigenen Links. Bis zu 10 sind möglich.</p>`}</div>
     `
     const art = $('#l-art', area), form = $('#l-form', area)
     ctx.on(art, 'change', () => linkForm(art.value, null))
@@ -1047,11 +1134,29 @@ async function renderLinks(area, ctx) {
       const { error } = await sb.from('biolink_custom_links').update({ [spalte]: an }).eq('id', id)
       if (error) { fehler(error); t.classList.toggle('an', !an) } else { const l = Z.links.find(x => x.id === id); if (l) l[spalte] = an }
     }))
+    const reihenfolgeSpeichern = () => Promise.all(Z.links.map((l, p) => sb.from('biolink_custom_links').update({ position: p }).eq('id', l.id)))
     $$('[data-bewege]', area).forEach(b => ctx.on(b, 'click', async () => {
       const [i, d] = b.dataset.bewege.split(':').map(Number); const j = i + d; if (j < 0 || j >= Z.links.length) return
       const t = Z.links[i]; Z.links[i] = Z.links[j]; Z.links[j] = t
-      zeichne()
-      await Promise.all(Z.links.map((l, p) => sb.from('biolink_custom_links').update({ position: p }).eq('id', l.id)))
+      zeichne(); await reihenfolgeSpeichern()
+    }))
+    /* Ziehen am Griff: die Zeile folgt dem Finger, beim Loslassen wird
+       die Reihenfolge gespeichert. Pfeile bleiben fuer Tastatur und Vorleser. */
+    $$('[data-griff]', area).forEach(g => ctx.on(g, 'pointerdown', e => {
+      e.preventDefault()
+      const zeile = g.closest('.sort-zeile'), liste = zeile.parentElement, zeilen = () => $$('.sort-zeile', liste)
+      let von = Number(g.dataset.griff), zu = von
+      zeile.classList.add('zieht'); g.setPointerCapture(e.pointerId)
+      const bewegen = ev => {
+        const y = ev.clientY
+        zeilen().forEach((z, idx) => { if (z === zeile) return; const r = z.getBoundingClientRect(); if (y > r.top && y < r.bottom) { if (idx < zu) liste.insertBefore(zeile, z); else liste.insertBefore(zeile, z.nextSibling); zu = zeilen().indexOf(zeile) } })
+      }
+      const ende = async () => {
+        g.removeEventListener('pointermove', bewegen); g.removeEventListener('pointerup', ende); g.removeEventListener('pointercancel', ende)
+        zeile.classList.remove('zieht')
+        if (zu !== von) { const [l] = Z.links.splice(von, 1); Z.links.splice(zu, 0, l); zeichne(); await reihenfolgeSpeichern(); toast('Reihenfolge gespeichert') }
+      }
+      g.addEventListener('pointermove', bewegen); g.addEventListener('pointerup', ende); g.addEventListener('pointercancel', ende)
     }))
     $$('[data-loesche]', area).forEach(b => ctx.on(b, 'click', async () => {
       const l = Z.links.find(x => x.id === b.dataset.loesche)
@@ -1069,6 +1174,7 @@ async function renderLinks(area, ctx) {
 async function renderMarken(area, ctx) {
   const zeichne = () => {
     area.innerHTML = `
+      <p class="text-muted" style="margin:0;font-size:var(--t-sm);line-height:var(--lh-body)">Marken, mit denen du schon gearbeitet hast. Sie stehen im Media Kit unter „Bisherige Kooperationen“ und zählen bei Brand Ready als Referenz. Zwei reichen für die volle Punktzahl.</p>
       ${karte(feld('Markenname', input('m-name', '', 'placeholder="z. B. Hunkemöller" maxlength="60"')) + '<div style="height:10px"></div>' + feld('Link', input('m-url', '', 'type="url" inputmode="url" autocapitalize="none" placeholder="https://…"')) + `<button class="v-btn v-btn--dunkel v-btn--breit" style="margin-top:12px" data-m-hinzu>Hinzufügen</button>`)}
       <div class="abschnitt"><div class="abschnitt-titel">Marken · Reihenfolge wie im Media Kit</div>${Z.marken.length ? `<div class="v-liste">${Z.marken.map((m, i) => `<div class="sort-zeile"><div class="text"><strong>${es(m.name)}</strong><small>${es(m.url || 'ohne Link')}</small><div class="schalter"><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(m.im_mediakit !== false, `data-m-schalter="${m.id}"`)}im Media Kit zeigen</label></div></div><div class="sort-knoepfe"><button class="v-ibtn" data-bewege="${i}:-1" ${i === 0 ? 'disabled' : ''}>${ICO.auf}</button><button class="v-ibtn" data-bewege="${i}:1" ${i === Z.marken.length - 1 ? 'disabled' : ''}>${ICO.ab}</button><button class="v-ibtn rot" data-loesche="${m.id}">${ICO.x}</button></div></div>`).join('')}</div>` : '<p class="text-klein">Noch keine Marken. Zwei Referenzen bringen Punkte im Brand-Ready-Check.</p>'}</div>
     `

@@ -490,3 +490,12 @@ Media-Kit-Zahlen zeigen kann.
 Registrieren mit `example.com`-Adressen scheitert am Mailversand (Resend lehnt
 die Domain ab); zum Testen `delivered@resend.dev` nehmen und die Adresse per
 SQL bestaetigen. Das Testkonto vom 17.09. ist wieder geloescht.
+
+Nachtrag 17.09.2026 (Abend): Impressum ist Pflicht zum Einschalten beider
+Seiten (Modal mit Sprung ins Impressum-Sheet). Einschalten und Design-Wechsel
+zeigen einen Ladeschirm; auf viuno.de fragt `warteAufSeite()` die erzeugte Seite
+ab (beim Design bis der `theme-color` stimmt), auf localhost gilt die Minute als
+Richtwert. Die Bio hat je Seite einen Schalter (`kanal_anzeige.bio`), dafuer ist
+`generate-biolink` als v27 deployt. "Habe ich bei einem anderen Anbieter"
+schreibt `brand_ready_angaben` (`biolink`, `kit_vorhanden`) und zaehlt im
+Profilcheck als erfuellt. Nische "Sonstiges" ist im Check-Constraint erlaubt.

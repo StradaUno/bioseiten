@@ -720,6 +720,12 @@ a{color:inherit}
 .v-achse{display:flex;justify-content:space-between;font-size:var(--t-2xs);color:var(--subtle);margin-top:6px}
 .preis-rechnung{display:flex;justify-content:space-between;font-size:var(--t-xs);color:var(--muted);padding:6px 0;border-top:1px solid var(--border)}
 .zentriert{text-align:center}
+#ladeschirm{position:fixed;inset:0;z-index:40;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px);display:grid;place-items:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .25s}
+#ladeschirm.offen{opacity:1;pointer-events:auto}
+#ladeschirm .v-lade-block{max-width:320px}
+.sort-zeile .griff{width:28px;height:36px;display:grid;place-items:center;color:var(--subtle);cursor:grab;touch-action:none;flex-shrink:0;margin-left:-4px}
+.sort-zeile .griff .v-ico{width:18px;height:18px}
+.sort-zeile.zieht{background:var(--surface2);box-shadow:var(--sh-card);position:relative;z-index:2}
 #inhalt .v-liste-zeile .wert{max-width:44%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
 #inhalt .v-liste-zeile .text{word-break:break-word}
 
@@ -736,6 +742,6 @@ a{color:inherit}
 <div id="sheet" class="v-sheet" role="dialog" aria-modal="true"></div>
 <div id="modal"></div>
 <div id="toast" class="v-toast" role="status"></div>
-<script type="module" src="./app.js?v=1"></script>
+<script type="module" src="./app.js?v=2"></script>
 </body>
 </html>

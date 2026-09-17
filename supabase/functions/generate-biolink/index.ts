@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token)
     if (authError || !user) throw new Error('Auth fehlgeschlagen')
 
-    const { data: u, error: dbError } = await supabase.from('users').select('id, display_name, bio_active, bio, profile_image_url').eq('id', user.id).single()
+    const { data: u, error: dbError } = await supabase.from('users').select('id, display_name, bio_active, bio, profile_image_url, kanal_anzeige').eq('id', user.id).single()
     if (dbError || !u) throw new Error('User nicht gefunden')
     if (!u.display_name) throw new Error('display_name fehlt')
 
@@ -80,7 +80,11 @@ Deno.serve(async (req) => {
     const theme = bls?.theme || 'color'
     if (!bls) await supabase.from('biolink_viuno').insert({ user_id: user.id })
 
-    const html = getTemplate(theme, { display_name: u.display_name, bio: u.bio, profile_image_url: u.profile_image_url, slug })
+    /* Bio nur, wenn sie in der App fuer den BioLink eingeschaltet ist
+       (users.kanal_anzeige -> {"bio":{"biolink":false}}; fehlender Eintrag = an).
+       Dieselbe Regel wie in der View biopage_v2. */
+    const bioAn = !(u.kanal_anzeige && u.kanal_anzeige.bio && u.kanal_anzeige.bio.biolink === false)
+    const html = getTemplate(theme, { display_name: u.display_name, bio: bioAn ? u.bio : null, profile_image_url: u.profile_image_url, slug })
     const pushed = await commitToGitHub(slug, html)
     await purgeCache(slug)
     await supabase.from('users').update({ bio_active: true }).eq('id', user.id)

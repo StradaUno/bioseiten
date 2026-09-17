@@ -112,3 +112,13 @@ grant update (kanal_anzeige) on public.users to authenticated;
 -- Stripe-Session an, die Spalte war aber NOT NULL -- die Funktion ist seit
 -- ihrer Einfuehrung an dieser Stelle gescheitert (UNIQUE bleibt, NULL ist dort erlaubt).
 alter table public.analysis_purchases alter column stripe_checkout_session_id drop not null;
+
+-- 18.09.2026: Bio je Seite schaltbar ueber users.kanal_anzeige -> "bio"
+-- (biopage_v2 und mediakit_public blenden sie per kanal_an() aus; generate-biolink
+-- backt sie nur ein, wenn sie fuer den BioLink an ist). viuno_profilcheck zaehlt
+-- brand_ready_angaben 'biolink' / 'kit_vorhanden' (Seite bei anderem Anbieter)
+-- als erfuellt. Die vollstaendigen Definitionen stehen in der Datenbank;
+-- dieses Skript ist die Notiz, nicht die Quelle.
+
+-- Nische "Sonstiges": users_niche_category_check um 'sonstiges' erweitert
+-- (angewendet 17.09.2026; nische_label() liefert dafuer "Sonstiges" ueber initcap).
