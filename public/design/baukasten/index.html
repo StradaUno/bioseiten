@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="de" data-thema="color">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>viuno Baukasten</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<!-- Tokens, Basis und Bausteine kommen zur Laufzeit aus /design/index.html —
+     eine Quelle, kein Abschreiben. Die drei Bloecke werden mit denselben ids
+     eingehaengt, damit die Kopier-Funktion sie wiederfindet. -->
+<style id="v-seite">
+.v-seite{max-width:390px;margin:0 auto;min-height:100dvh;background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+.v-seite-kopf{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:12px;height:56px;padding:0 20px;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.v-seite-kopf h1{margin:0;font-size:17px;font-weight:700;letter-spacing:-.03em}
+.v-seite-inhalt{flex:1;padding:16px 20px 28px;display:flex;flex-direction:column;gap:14px}
+.v-seite-fuss{position:sticky;bottom:0;z-index:5;border-radius:0;border-left:0;border-right:0;border-bottom:0}
+.v-seite .v-tab{text-decoration:none}
+</style>
+<style id="bk">
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg,#f6f5fa);color:var(--text,#17151f);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased;height:100%}
+button,input,select,textarea{font-family:inherit}
+.bk-top{display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:40;flex-wrap:wrap}
+.bk-marke{display:flex;align-items:center;gap:8px;font-weight:700;font-size:15px;letter-spacing:-.02em;margin-right:8px}
+.bk-marke i{width:28px;height:28px;border-radius:8px;background:var(--verlauf);color:var(--auf-verlauf);display:grid;place-items:center;font-style:normal;font-size:13px}
+.bk-marke a{color:var(--subtle);font-weight:500;font-size:12px;text-decoration:none;margin-left:4px}
+.bk-top select,.bk-top input[type=text]{height:34px;padding:0 10px;border:1px solid var(--border-strong);border-radius:9px;background:var(--surface);color:var(--text);font-size:13px}
+.bk-top .rechts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bk-knopf{height:34px;padding:0 12px;border:1px solid var(--border-strong);border-radius:9px;background:var(--surface);color:var(--text);font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.bk-knopf.dunkel{background:var(--text);color:var(--bg);border-color:var(--text)}
+.bk-knopf.verlauf{background:var(--verlauf);color:var(--auf-verlauf);border-color:transparent}
+.bk-knopf.an{background:var(--text);color:var(--bg);border-color:var(--text)}
+.bk-knopf.klein{height:28px;padding:0 9px;font-size:12px;border-radius:7px}
+.bk-knopf.leise{border-color:transparent;background:transparent;color:var(--muted)}
+.bk-knopf:disabled{opacity:.4;cursor:not-allowed}
+.bk-raum{display:grid;grid-template-columns:270px 1fr 300px;min-height:calc(100vh - 55px)}
+.bk-palette,.bk-feld{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;height:calc(100vh - 55px);position:sticky;top:55px}
+.bk-feld{border-right:0;border-left:1px solid var(--border)}
+.bk-palette-kopf{padding:12px 14px 8px;position:sticky;top:0;background:var(--surface);z-index:2}
+.bk-palette-kopf input{width:100%;height:34px;padding:0 10px;border:1px solid var(--border-strong);border-radius:9px;background:var(--surface);color:var(--text);font-size:13px}
+.bk-gruppe{padding:4px 8px 10px}
+.bk-gruppe h4{margin:10px 6px 6px;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);font-weight:600}
+.bk-item{display:flex;align-items:center;gap:9px;width:100%;text-align:left;padding:8px 9px;border:1px solid transparent;border-radius:9px;background:none;color:var(--text);cursor:pointer;font-size:13px}
+.bk-item:hover{background:var(--surface2);border-color:var(--border)}
+.bk-item b{font-weight:600;display:block}
+.bk-item small{display:block;color:var(--subtle);font-size:11px;margin-top:1px}
+.bk-item .plus{width:22px;height:22px;border-radius:6px;background:var(--akzent-bg);color:var(--akzent-text);display:grid;place-items:center;font-weight:700;flex-shrink:0}
+.bk-mitte{padding:24px 20px 60px;display:flex;flex-direction:column;align-items:center;gap:12px;background:var(--surface2)}
+.bk-hinweis{font-size:12px;color:var(--subtle);text-align:center;max-width:380px;line-height:1.5}
+.bk-phone{width:390px;min-height:760px;border-radius:38px;border:8px solid #1c1a24;box-shadow:0 30px 80px rgba(0,0,0,.25);overflow:hidden;background:var(--bg);position:relative}
+html[data-farbmodus="dunkel"] .bk-phone{border-color:#3a3745}
+.bk-phone .v-seite{min-height:744px}
+/* Bausteine im Rahmen */
+.bk-block{position:relative;border-radius:12px;outline:1.5px dashed transparent;outline-offset:6px;transition:outline-color .12s}
+.bk-block:hover{outline-color:var(--border-strong)}
+.bk-block.gewaehlt{outline:2px solid var(--v1);outline-offset:6px}
+.bk-block.ziel-oben{box-shadow:0 -3px 0 0 var(--v1)}
+.bk-block.ziel-unten{box-shadow:0 3px 0 0 var(--v1)}
+.bk-werkzeug{position:absolute;top:-16px;right:4px;z-index:6;display:none;gap:2px;background:var(--text);color:var(--bg);border-radius:8px;padding:3px;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.bk-block.gewaehlt .bk-werkzeug,.bk-block:hover .bk-werkzeug{display:flex}
+.bk-werkzeug button{width:26px;height:24px;border:0;background:transparent;color:inherit;border-radius:6px;cursor:pointer;font-size:13px;display:grid;place-items:center}
+.bk-werkzeug button:hover{background:rgba(255,255,255,.18)}
+html[data-farbmodus="dunkel"] .bk-werkzeug button:hover{background:rgba(0,0,0,.2)}
+.bk-werkzeug .griff{cursor:grab;font-size:15px}
+.bk-zeile-plus{margin-top:6px;width:100%;height:30px;border:1.5px dashed var(--akzent-border);border-radius:9px;background:var(--akzent-bg);color:var(--akzent-text);font-size:12px;font-weight:600;cursor:pointer;display:none}
+.bk-block.gewaehlt .bk-zeile-plus{display:block}
+[contenteditable]{outline:none;border-radius:3px;cursor:text;min-width:1ch}
+[contenteditable]:hover{box-shadow:0 0 0 2px var(--akzent-bg)}
+[contenteditable]:focus{box-shadow:0 0 0 2px var(--v1)}
+.bk-leer{border:1.5px dashed var(--border-strong);border-radius:18px;padding:34px 20px;text-align:center;color:var(--subtle);font-size:13px;line-height:1.55}
+.bk-leer b{display:block;color:var(--text);font-size:15px;margin-bottom:6px}
+/* Bearbeitungsfeld rechts */
+.bk-feld-in{padding:14px 16px 40px}
+.bk-feld h3{margin:0 0 2px;font-size:15px;font-weight:700;letter-spacing:-.02em}
+.bk-feld .sub{font-size:12px;color:var(--subtle);margin-bottom:14px;line-height:1.5}
+.bk-f{margin-bottom:12px}
+.bk-f label{display:block;font-size:11px;font-weight:600;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em}
+.bk-f input[type=text],.bk-f input[type=number],.bk-f select,.bk-f textarea{width:100%;height:36px;padding:0 10px;border:1px solid var(--border-strong);border-radius:9px;background:var(--surface);color:var(--text);font-size:13px}
+.bk-f textarea{height:auto;min-height:64px;padding:8px 10px;resize:vertical;line-height:1.45}
+.bk-f input:focus,.bk-f select:focus,.bk-f textarea:focus{outline:none;border-color:var(--v1);box-shadow:0 0 0 3px var(--akzent-bg)}
+.bk-wahl{display:flex;flex-wrap:wrap;gap:5px}
+.bk-wahl button{height:28px;padding:0 10px;border:1px solid var(--border-strong);border-radius:99px;background:var(--surface);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer}
+.bk-wahl button.an{background:var(--text);color:var(--bg);border-color:var(--text)}
+.bk-schalter{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--border);font-size:13px}
+.bk-schalter:first-of-type{border-top:0}
+.bk-bereich{margin-top:18px;padding-top:14px;border-top:1px solid var(--border)}
+.bk-bereich h4{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:600;display:flex;align-items:center;justify-content:space-between}
+.bk-zeile{border:1px solid var(--border);border-radius:10px;padding:8px 8px 4px;margin-bottom:8px;background:var(--surface2)}
+.bk-zeile-kopf{display:flex;align-items:center;gap:4px;margin-bottom:6px}
+.bk-zeile-kopf b{flex:1;font-size:11px;color:var(--subtle);font-weight:600}
+.bk-zeile-kopf button{width:24px;height:22px;border:1px solid var(--border-strong);border-radius:6px;background:var(--surface);color:var(--muted);cursor:pointer;font-size:12px}
+.bk-zeile .bk-f{margin-bottom:6px}
+.bk-zeile .bk-f input,.bk-zeile .bk-f select{height:30px;font-size:12px}
+.bk-zeile .bk-f label{font-size:10px;margin-bottom:3px}
+.bk-tipp{background:var(--akzent-bg);border:1px solid var(--akzent-border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--akzent-text);line-height:1.5;margin-bottom:14px}
+.bk-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(16px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:11px;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:.2s;z-index:90}
+.bk-toast.zeig{opacity:1;transform:translateX(-50%)}
+.bk-code{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:24px;z-index:80}
+.bk-code.offen{display:flex}
+.bk-code-in{background:var(--surface);border-radius:18px;width:min(900px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.bk-code-in header{display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid var(--border);font-weight:700}
+.bk-code-in header .rechts{margin-left:auto;display:flex;gap:8px}
+.bk-code-in pre{margin:0;padding:16px;overflow:auto;font:11px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;background:#17151f;color:#d9d6e6;flex:1}
+@media(max-width:1100px){.bk-raum{grid-template-columns:230px 1fr 270px}.bk-phone{width:375px}}
+@media(max-width:860px){.bk-raum{grid-template-columns:1fr}.bk-palette,.bk-feld{position:static;height:auto;max-height:40vh;border:0;border-bottom:1px solid var(--border)}}
+</style>
+</head>
+<body>
+
+<header class="bk-top">
+  <div class="bk-marke"><i>v</i>Baukasten <a href="/design/">← zur Bibliothek</a></div>
+  <select id="bk-vorlage" title="Vorlage laden"></select>
+  <select id="bk-gespeichert" title="Gespeicherte Seiten"><option value="">Meine Seiten …</option></select>
+  <button class="bk-knopf" id="bk-speichern">Speichern</button>
+  <div class="rechts">
+    <select id="bk-thema"><option value="color">Signatur: Color</option><option value="dark">Signatur: Dark</option><option value="clean">Signatur: Clean</option></select>
+    <button class="bk-knopf" id="bk-dunkel" type="button">Dunkel</button>
+    <button class="bk-knopf" id="bk-export">Als JSON</button>
+    <label class="bk-knopf" for="bk-import" style="cursor:pointer">JSON laden</label><input type="file" id="bk-import" accept="application/json" hidden>
+    <button class="bk-knopf" id="bk-code-btn">Code ansehen</button>
+    <button class="bk-knopf verlauf" id="bk-copy">Seite kopieren</button>
+    <button class="bk-knopf dunkel" id="bk-download">Als HTML-Datei</button>
+  </div>
+</header>
+
+<div class="bk-raum">
+  <aside class="bk-palette">
+    <div class="bk-palette-kopf"><input id="bk-suche" type="search" placeholder="Baustein suchen …"></div>
+    <div id="bk-palette-liste"></div>
+  </aside>
+
+  <main class="bk-mitte">
+    <div class="bk-hinweis">Klick auf einen Baustein links fügt ihn unter dem gewählten Baustein ein. Text im Telefon anklicken und tippen. Pfeile am Baustein verschieben, ⧉ verdoppelt, × löscht.</div>
+    <div class="bk-phone" id="bk-phone"></div>
+  </main>
+
+  <aside class="bk-feld"><div class="bk-feld-in" id="bk-feld"></div></aside>
+</div>
+
+<div class="bk-code" id="bk-code"><div class="bk-code-in"><header>Code der Seite <div class="rechts"><button class="bk-knopf klein" id="bk-code-copy">Kopieren</button><button class="bk-knopf klein" id="bk-code-zu">Schließen</button></div></header><pre id="bk-code-pre"></pre></div></div>
+<div class="bk-toast" id="bk-toast">Kopiert</div>
+
+<script>
+(function(){
+'use strict';
+/* ═══════════════════════════════════════════════════════════════════
+   BAUSTEINE
+   Jeder Baustein: n Name, g Gruppe, b Beschreibung, p Eigenschaften mit
+   Startwerten, f Felder fuers Bearbeitungsfeld, z Startzeilen (bei Listen),
+   zf Felder einer Zeile, zn Startwerte einer neuen Zeile, r Renderer.
+   Texte werden im Telefon direkt getippt: T(feld) bzw. TZ(i,feld) legen
+   einen editierbaren Span an, der in das Modell zurueckschreibt.
+   ═══════════════════════════════════════════════════════════════════ */
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
+let bau=true   // true: im Baukasten (editierbar, div statt button); false: Export
+const ce=' contenteditable="true" spellcheck="false"'
+const T=(b,k)=>bau?`<span${ce} data-f="${k}">${esc(b.p[k])}</span>`:esc(b.p[k])
+const TZ=(i,z,k)=>bau?`<span${ce} data-z="${i}" data-f="${k}">${esc(z[k])}</span>`:esc(z[k])
+const BTN=(cls,inner,attr='')=>bau?`<div class="${cls}" ${attr}>${inner}</div>`:`<button class="${cls}" ${attr}>${inner}</button>`
+const ZEILE=(cls,inner,attr='')=>bau?`<div class="${cls}" ${attr}>${inner}</div>`:`<button class="${cls}" ${attr}>${inner}</button>`
+const ICO={
+  check:'<path d="M5 12l5 5 9-11"/>', pfeil:'<path d="M9 6l6 6-6 6"/>', plus:'<path d="M12 5v14M5 12h14"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>',
+  home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>', chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  seiten:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>', news:'<path d="M4 5h16v14H4zM8 9h8M8 13h5"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>', stern:'<path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/>',
+  link:'<path d="M9 17H7A5 5 0 0 1 7 7h2"/><path d="M15 7h2a5 5 0 1 1 0 10h-2"/><line x1="8" x2="16" y1="12" y2="12"/>',
+  mail:'<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+  zahn:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+  glocke:'<path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/>', schloss:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  blitz:'<path d="M13 2 3 14h9l-1 8 10-12h-9z"/>', warn:'<path d="M12 3l10 18H2zM12 10v4M12 17h.01"/>', info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+  ok:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>', fehler:'<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>', teilen:'<path d="M7 17L17 7M8 7h9v9"/>',
+  stift:'<path d="M4 20h4l10-10-4-4L4 16z"/>', suche:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>', zurueck:'<path d="M15 6l-6 6 6 6"/>'
+}
+const ico=(n,s=20,w=2)=>`<svg class="v-ico" style="width:${s}px;height:${s}px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round">${ICO[n]||ICO.stern}</svg>`
+const PF=ico('pfeil',16).replace('class="v-ico"','class="v-ico pfeil"')
+const ICONWAHL=['stern','home','chart','seiten','news','user','link','mail','zahn','glocke','schloss','blitz','stift','teilen','suche'].map(k=>[k,k])
+const num=v=>{const n=parseFloat(String(v).replace(',','.'));return isNaN(n)?0:n}
+const fmtP=v=>String(v).replace('.',',')
+
+const K={ /* ── Text ── */
+  kopf:{n:'Seitentitel',g:'Text',b:'Titel und Untertitel',p:{titel:'Brand Ready',sub:'Wie eine Marke deinen Kanal heute sieht.'},
+    f:[],r:b=>`<div><div style="font-size:22px;font-weight:700;letter-spacing:-.04em">${T(b,'titel')}</div><div style="font-size:13px;color:var(--muted);margin-top:3px">${T(b,'sub')}</div></div>`},
+  abschnitt:{n:'Abschnittslabel',g:'Text',b:'Kleine Überschrift über einer Liste',p:{text:'Zu erledigen'},f:[],
+    r:b=>`<div style="font-size:10px;font-weight:600;color:var(--subtle);text-transform:uppercase;letter-spacing:.08em;margin-bottom:-6px">${T(b,'text')}</div>`},
+  absatz:{n:'Textabsatz',g:'Text',b:'Fließtext',p:{text:'Punkte aus deinen Analyse-Daten. Angaben, die du selbst gemacht hast, sind gekennzeichnet und nicht geprüft.'},f:[],
+    r:b=>`<p style="margin:0;font-size:13px;color:var(--muted);line-height:1.55">${T(b,'text')}</p>`},
+  /* ── Buttons ── */
+  button:{n:'Button',g:'Buttons',b:'Ein Knopf, sieben Stile',p:{text:'Speichern',stil:'dunkel',breit:true},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['dunkel','Dunkel'],['rand','Rand'],['leise','Leise'],['premium','Premium'],['premium-rand','Premium Rand'],['premium-glanz','Glanz'],['gefahr','Gefahr'],['gut','Erledigt']]},{k:'breit',l:'Volle Breite',t:'bool'}],
+    r:b=>BTN(`v-btn v-btn--${b.p.stil}${b.p.breit?' v-btn--breit':''}`,T(b,'text'))},
+  buttonreihe:{n:'Zwei Buttons',g:'Buttons',b:'Abbrechen und Bestätigen',p:{links:'Abbrechen',rechts:'Speichern',stil:'dunkel'},
+    f:[{k:'stil',l:'Rechter Stil',t:'wahl',o:[['dunkel','Dunkel'],['premium','Premium'],['gefahr','Gefahr']]}],
+    r:b=>`<div class="v-btn-reihe">${BTN('v-btn v-btn--rand',T(b,'links'))}${BTN('v-btn v-btn--'+b.p.stil,T(b,'rechts'))}</div>`},
+  prokarte:{n:'Pro-Karte',g:'Buttons',b:'Breiter Knopf mit Symbol und Untertitel',p:{titel:'Auf Pro wechseln',sub:'Alle Auswertungen, ohne Limit',icon:'stern'},
+    f:[{k:'icon',l:'Symbol',t:'wahl',o:ICONWAHL}],
+    r:b=>BTN('v-btn v-btn--pro-breit',`<span class="v-btn-ico">${ico(b.p.icon)}</span><span><span class="v-btn-titel">${T(b,'titel')}</span><span class="v-btn-sub">${T(b,'sub')}</span></span>${PF.replace('pfeil','pfeil v-btn-pfeil')}`)},
+  ibuttons:{n:'Icon-Buttons',g:'Buttons',b:'Reihe kleiner Symbolknöpfe',p:{stil:'rand'},z:[{icon:'teilen'},{icon:'stift'},{icon:'x'}],zf:[{k:'icon',l:'Symbol',t:'wahl',o:ICONWAHL.concat([['x','x'],['plus','plus']])}],zn:{icon:'plus'},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['rand','Rand'],['rund','Rund'],['verlauf','Verlauf'],['dunkel','Dunkel']]}],
+    r:b=>`<div class="v-ibtn-reihe">${b.z.map(z=>BTN('v-ibtn'+(b.p.stil==='rand'?'':' v-ibtn--'+b.p.stil),ico(z.icon,18))).join('')}</div>`},
+  segment:{n:'Segment',g:'Buttons',b:'Umschalter, eine Auswahl',p:{stil:'hell',voll:true,aktiv:0},z:[{text:'7 Tage'},{text:'30 Tage'},{text:'90 Tage'}],zf:[{k:'text',l:'Text',t:'text'}],zn:{text:'Neu'},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['hell','Hell'],['dunkel','Dunkel']]},{k:'voll',l:'Volle Breite',t:'bool'},{k:'aktiv',l:'Aktive Nr.',t:'zahl'}],
+    r:b=>`<div class="v-seg${b.p.stil==='dunkel'?' v-seg--dunkel':''}${b.p.voll?' v-seg--voll':''}">${b.z.map((z,i)=>BTN(i===+b.p.aktiv?'aktiv':'',TZ(i,z,'text'))).join('')}</div>`},
+  /* ── Kennzahlen ── */
+  kpi:{n:'Kennzahl',g:'Kennzahlen',b:'Eine große Zahl mit Label',p:{label:'BioLink-Aufrufe',wert:'1.284',delta:'18,4 % zur Vorwoche',richtung:'hoch',stil:'hell'},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['hell','Hell'],['dunkel','Dunkel'],['verlauf','Verlauf']]},{k:'richtung',l:'Veränderung',t:'wahl',o:[['hoch','Hoch'],['runter','Runter'],['neutral','Neutral']]}],
+    r:b=>`<div class="v-kpi${b.p.stil!=='hell'?' v-kpi--'+b.p.stil:''}"><div class="v-kpi-label">${T(b,'label')}</div><div class="v-kpi-wert v-num">${T(b,'wert')}</div><div class="v-kpi-delta${b.p.richtung!=='neutral'?' '+b.p.richtung:''}">${T(b,'delta')}</div></div>`},
+  kpireihe:{n:'Kennzahlen nebeneinander',g:'Kennzahlen',b:'Zwei oder drei Kacheln',p:{},z:[{label:'Aufrufe',wert:'712'},{label:'Klicks',wert:'311'},{label:'Rate',wert:'44 %'}],zf:[{k:'label',l:'Label',t:'text'},{k:'wert',l:'Wert',t:'text'}],zn:{label:'Neu',wert:'0'},f:[],
+    r:b=>`<div class="v-kpi-reihe${b.z.length>2?' v-kpi-reihe--drei':''}">${b.z.map((z,i)=>`<div class="v-kpi"><div class="v-kpi-label">${TZ(i,z,'label')}</div><div class="v-kpi-wert v-num">${TZ(i,z,'wert')}</div></div>`).join('')}</div>`},
+  kpizeilen:{n:'Kennzahl-Zeilen',g:'Kennzahlen',b:'Label links, Zahl rechts',p:{},z:[{label:'Follower',wert:'18.400',farbe:''},{label:'Engagement',wert:'6,2 %',farbe:'best'},{label:'Kontakt-E-Mail',wert:'fehlt',farbe:'fehlt'}],
+    zf:[{k:'label',l:'Label',t:'text'},{k:'wert',l:'Wert',t:'text'},{k:'farbe',l:'Farbe',t:'wahl',o:[['','Normal'],['best','Grün'],['fehlt','Rot']]}],zn:{label:'Neu',wert:'0',farbe:''},f:[],
+    r:b=>`<div class="v-karte" style="padding:2px 16px">${b.z.map((z,i)=>`<div class="v-kpi-zeile"><span>${TZ(i,z,'label')}</span><b class="v-num${z.farbe?' '+z.farbe:''}">${TZ(i,z,'wert')}</b></div>`).join('')}</div>`},
+  vergleich:{n:'Vergleich',g:'Kennzahlen',b:'Du gegen die Nische',p:{l1:'Du',w1:'4,1 %',l2:'Nische',w2:'6,2 %',best:'rechts'},
+    f:[{k:'best',l:'Grün ist',t:'wahl',o:[['links','Links'],['rechts','Rechts'],['keins','Keins']]}],
+    r:b=>`<div class="v-karte"><div class="v-vergleich"><div class="${b.p.best==='links'?'best':''}"><div class="v-kpi-label">${T(b,'l1')}</div><div class="v-kpi-wert v-num">${T(b,'w1')}</div></div><div class="vs">vs</div><div class="${b.p.best==='rechts'?'best':''}"><div class="v-kpi-label">${T(b,'l2')}</div><div class="v-kpi-wert v-num">${T(b,'w2')}</div></div></div></div>`},
+  /* ── Fortschritt ── */
+  ring:{n:'Ring',g:'Fortschritt',b:'Prozent als Kreis',p:{wert:78,titel:'Profil vollständig',sub:'Noch 2 Angaben offen',farbe:'signatur'},
+    f:[{k:'wert',l:'Prozent',t:'zahl',min:0,max:100},{k:'farbe',l:'Farbe',t:'wahl',o:[['signatur','Signatur'],['gruen','Grün']]}],
+    r:b=>`<div class="v-ring-reihe"><div class="v-ring${b.p.farbe==='gruen'?' v-ring--gruen':''}" style="--p:${num(b.p.wert)/100}"><svg viewBox="0 0 88 88"><circle class="spur" cx="44" cy="44" r="36"/><circle class="wert" cx="44" cy="44" r="36"/></svg><b class="v-num">${num(b.p.wert)} %</b></div><div><strong>${T(b,'titel')}</strong><span>${T(b,'sub')}</span></div></div>`},
+  balken:{n:'Balken',g:'Fortschritt',b:'Label, Prozent, Balken',p:{label:'Upload',wert:62,stil:'verlauf'},
+    f:[{k:'wert',l:'Prozent',t:'zahl',min:0,max:100},{k:'stil',l:'Farbe',t:'wahl',o:[['verlauf','Verlauf'],['dunkel','Dunkel'],['gruen','Grün'],['streifen','Gestreift']]}],
+    r:b=>`<div><div class="v-balken-kopf"><span>${T(b,'label')}</span><b class="v-num">${num(b.p.wert)} %</b></div><div class="v-balken${b.p.stil!=='dunkel'?' v-balken--'+b.p.stil:''}"><i style="width:${num(b.p.wert)}%"></i></div></div>`},
+  ziel:{n:'Ziel',g:'Fortschritt',b:'Zielbalken mit Fußzeile',p:{titel:'1.000 Aufrufe im Monat',wert:'712',prozent:71,links:'noch 288',rechts:'12 Tage übrig'},
+    f:[{k:'prozent',l:'Prozent',t:'zahl',min:0,max:100}],
+    r:b=>`<div class="v-ziel"><div class="v-ziel-kopf"><strong>${T(b,'titel')}</strong><span class="v-num">${T(b,'wert')}</span></div><div class="v-balken v-balken--verlauf"><i style="width:${num(b.p.prozent)}%"></i></div><div class="v-ziel-fuss"><span>${T(b,'links')}</span><span>${T(b,'rechts')}</span></div></div>`},
+  stepper:{n:'Schritte',g:'Fortschritt',b:'Nummerierte Schritte',p:{aktiv:1},z:[{text:'Profil'},{text:'BioLink'},{text:'Kit'}],zf:[{k:'text',l:'Text',t:'text'}],zn:{text:'Schritt'},
+    f:[{k:'aktiv',l:'Aktiver Schritt (0 = erster)',t:'zahl'}],
+    r:b=>`<div class="v-stepper">${b.z.map((z,i)=>{const a=+b.p.aktiv;const st=i<a?'fertig':i===a?'aktiv':'';return (i?`<div class="v-step-linie${i<=a?' fertig':''}"></div>`:'')+`<div class="v-step ${st}"><span class="v-step-n">${i<a?ico('check',14,3):i+1}</span><span>${TZ(i,z,'text')}</span></div>`}).join('')}</div>`},
+  checkliste:{n:'Checkliste',g:'Fortschritt',b:'Punkte mit Zustand',p:{titel:'Startklar',kopf:true},z:[{text:'Konto angelegt',zustand:'fertig'},{text:'Instagram verknüpft',zustand:'fertig'},{text:'BioLink aktivieren',zustand:'offen'},{text:'Media Kit veröffentlichen',zustand:'gesperrt'}],
+    zf:[{k:'text',l:'Text',t:'text'},{k:'zustand',l:'Zustand',t:'wahl',o:[['fertig','Fertig'],['offen','Offen'],['gesperrt','Gesperrt']]}],zn:{text:'Neuer Punkt',zustand:'offen'},
+    f:[{k:'kopf',l:'Kopfzeile mit Zähler',t:'bool'}],
+    r:b=>{const f=b.z.filter(z=>z.zustand==='fertig').length;return `<div class="v-karte">${b.p.kopf?`<div class="v-check-kopf"><strong>${T(b,'titel')}</strong><span class="v-num">${f} / ${b.z.length}</span></div>`:''}<ul class="v-check">${b.z.map((z,i)=>`<li class="${z.zustand}"><i>${z.zustand==='fertig'?ico('check',13,3):z.zustand==='gesperrt'?ico('schloss',12):''}</i><span>${TZ(i,z,'text')}</span></li>`).join('')}</ul></div>`}},
+  /* ── Diagramme ── */
+  saeulen:{n:'Säulen',g:'Diagramme',b:'Werte je Tag, bester grün',p:{titel:'Aufrufe',meta:'letzte 7 Tage',zahlen:true},z:[{label:'Mo',wert:12},{label:'Di',wert:28},{label:'Mi',wert:9},{label:'Do',wert:61},{label:'Fr',wert:44},{label:'Sa',wert:7},{label:'So',wert:9}],
+    zf:[{k:'label',l:'Label',t:'text'},{k:'wert',l:'Wert',t:'zahl'}],zn:{label:'Neu',wert:10},f:[{k:'zahlen',l:'Zahl über Säule',t:'bool'}],
+    r:b=>{const m=Math.max(...b.z.map(z=>num(z.wert)),1);return `<div class="v-karte"><div class="bl-kopf" style="display:flex;justify-content:space-between;margin-bottom:12px"><strong style="font-size:13px">${T(b,'titel')}</strong><span style="font-size:11px;color:var(--muted)">${T(b,'meta')}</span></div><div class="v-saeulen" style="height:110px">${b.z.map((z,i)=>`<div class="v-saeule${num(z.wert)===m?' best':''}">${b.p.zahlen?`<b class="v-num">${num(z.wert)}</b>`:''}<i style="height:${Math.max(3,num(z.wert)/m*100)}%"></i><small>${TZ(i,z,'label')}</small></div>`).join('')}</div></div>`}},
+  balkenliste:{n:'Balkenliste',g:'Diagramme',b:'Name, Balken, Zahl',p:{titel:'Von hier kommen sie',meta:'30 Tage'},z:[{name:'Instagram',wert:220},{name:'viuno',wert:70},{name:'Threads',wert:41},{name:'Direkt',wert:20}],
+    zf:[{k:'name',l:'Name',t:'text'},{k:'wert',l:'Wert',t:'zahl'}],zn:{name:'Neu',wert:10},f:[],
+    r:b=>{const m=Math.max(...b.z.map(z=>num(z.wert)),1);return `<div class="v-karte"><div style="display:flex;justify-content:space-between;margin-bottom:12px"><strong style="font-size:13px">${T(b,'titel')}</strong><span style="font-size:11px;color:var(--muted)">${T(b,'meta')}</span></div><div class="v-balkenliste">${b.z.map((z,i)=>`<div class="v-balkenzeile${num(z.wert)===m?' best':''}"><span>${TZ(i,z,'name')}</span><div class="v-balken"><i style="width:${Math.round(num(z.wert)/m*100)}%"></i></div><b class="v-num">${num(z.wert)}</b></div>`).join('')}</div></div>`}},
+  heat:{n:'Stunden-Heatmap',g:'Diagramme',b:'24 Stunden, stärkste grün umrandet',p:{titel:'Aufrufe nach Uhrzeit',werte:'2,1,0,0,0,1,4,9,14,13,11,17,21,15,13,14,19,24,34,31,29,24,14,7'},
+    f:[{k:'werte',l:'24 Werte, mit Komma',t:'text'}],
+    r:b=>{const w=String(b.p.werte).split(',').map(num);const m=Math.max(...w,1);return `<div class="v-karte"><strong style="font-size:13px;display:block;margin-bottom:12px">${T(b,'titel')}</strong><div class="v-heat">${w.map(v=>`<i style="--h:${(v/m).toFixed(2)}"${v===m?' class="best"':''}></i>`).join('')}</div><div class="v-heat-achse"><span>0 Uhr</span><span>12 Uhr</span><span>23 Uhr</span></div></div>`}},
+  donut:{n:'Donut',g:'Diagramme',b:'Anteile im Kreis',p:{titel:'62 %',sub:'Instagram'},z:[{name:'Instagram',wert:62},{name:'viuno',wert:21},{name:'Threads',wert:8},{name:'Andere',wert:9}],
+    zf:[{k:'name',l:'Name',t:'text'},{k:'wert',l:'Prozent',t:'zahl'}],zn:{name:'Neu',wert:5},f:[],
+    r:b=>{const f=['var(--v1)','var(--v2)','var(--v3)','var(--surface2)','var(--border-strong)'];let a=0;const seg=b.z.map((z,i)=>{const s=a;a+=num(z.wert);return `${f[i%f.length]} ${s}% ${a}%`}).join(',');return `<div class="v-karte"><div class="v-donut-reihe"><div class="v-donut" style="background:conic-gradient(${seg},var(--surface2) ${a}%)"><b class="v-num">${T(b,'titel')}<small>${T(b,'sub')}</small></b></div><div class="v-donut-liste">${b.z.map((z,i)=>`<div><i style="background:${f[i%f.length]}"></i>${TZ(i,z,'name')}<b class="v-num">${num(z.wert)} %</b></div>`).join('')}</div></div></div>`}},
+  linie:{n:'Linie',g:'Diagramme',b:'Verlauf über Zeit',p:{titel:'Aufrufe je Monat',werte:'20,35,80,60,50,42,90',achse:'Apr,Mai,Jun,Jul,Aug,Sep',flaeche:true},
+    f:[{k:'werte',l:'Werte, mit Komma',t:'text'},{k:'achse',l:'Achsenbeschriftung, mit Komma',t:'text'},{k:'flaeche',l:'Fläche darunter',t:'bool'}],
+    r:b=>{const w=String(b.p.werte).split(',').map(num);const m=Math.max(...w,1);const pts=w.map((v,i)=>[(i/(w.length-1||1))*300,110-v/m*100]);const d='M'+pts.map(p=>p[0].toFixed(1)+' '+p[1].toFixed(1)).join('L');const id='g'+Math.random().toString(36).slice(2,7);return `<div class="v-karte"><strong style="font-size:13px;display:block;margin-bottom:10px">${T(b,'titel')}</strong><svg class="v-chart" viewBox="0 0 300 120" preserveAspectRatio="none"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--v1)"/><stop offset="1" style="stop-color:var(--v1);stop-opacity:0"/></linearGradient></defs><line class="raster" x1="0" y1="10" x2="300" y2="10"/><line class="raster" x1="0" y1="60" x2="300" y2="60"/><line class="raster" x1="0" y1="110" x2="300" y2="110"/>${b.p.flaeche?`<path class="flaeche" style="fill:url(#${id})" d="${d}L300 120L0 120Z"/>`:''}<path class="linie" d="${d}"/><circle class="punkt punkt--best" cx="${pts[w.indexOf(m)][0]}" cy="${pts[w.indexOf(m)][1]}" r="5"/></svg><div class="v-achse">${String(b.p.achse).split(',').map(a=>`<span>${esc(a.trim())}</span>`).join('')}</div></div>`}},
+  /* ── Listen & Menüs ── */
+  liste:{n:'Liste mit Zeilen',g:'Listen & Menüs',b:'Einstellungen, Menüpunkte, Links',p:{symbole:true},z:[{titel:'Name und Bio',sub:'',badge:'',icon:'user',farbe:''},{titel:'Social Kanäle',sub:'Instagram · Threads',badge:'OK',icon:'link',farbe:'gruen'},{titel:'Kontakt-E-Mail',sub:'Ohne Adresse kein Kontakt-Knopf',badge:'Fehlt',icon:'mail',farbe:'rot'}],
+    zf:[{k:'titel',l:'Titel',t:'text'},{k:'sub',l:'Untertitel',t:'text'},{k:'badge',l:'Badge (leer = keins)',t:'text'},{k:'farbe',l:'Badge-Farbe',t:'wahl',o:[['','Grau'],['gruen','Grün'],['rot','Rot'],['orange','Orange'],['akzent','Akzent']]},{k:'icon',l:'Symbol',t:'wahl',o:ICONWAHL}],
+    zn:{titel:'Neue Zeile',sub:'',badge:'',icon:'stern',farbe:''},f:[{k:'symbole',l:'Symbole zeigen',t:'bool'}],
+    r:b=>`<div class="v-liste">${b.z.map((z,i)=>ZEILE('v-liste-zeile',`${b.p.symbole?`<span class="sym${z.farbe==='gruen'?' gut':z.farbe==='rot'?' warn':''}">${ico(z.icon,17)}</span>`:''}<span class="text">${TZ(i,z,'titel')}${z.sub||bau?`<small>${TZ(i,z,'sub')}</small>`:''}</span>${z.badge?`<span class="v-badge v-badge--ohne${z.farbe?' v-badge--'+z.farbe:''}">${TZ(i,z,'badge')}</span>`:''}${PF}`)).join('')}</div>`},
+  schalter:{n:'Schalter-Liste',g:'Listen & Menüs',b:'Zeilen mit An/Aus',p:{},z:[{titel:'BioLink öffentlich',sub:'Deine Seite ist erreichbar.',an:true},{titel:'Creator News per Mail',sub:'',an:false}],
+    zf:[{k:'titel',l:'Titel',t:'text'},{k:'sub',l:'Untertitel',t:'text'},{k:'an',l:'An',t:'bool'}],zn:{titel:'Neue Option',sub:'',an:false},f:[],
+    r:b=>`<div class="v-liste">${b.z.map((z,i)=>`<div class="v-liste-zeile" style="cursor:default"><span class="text">${TZ(i,z,'titel')}${z.sub||bau?`<small>${TZ(i,z,'sub')}</small>`:''}</span>${BTN('v-toggle'+(z.an?' an':''),'<i></i>','aria-label="Schalter"')}</div>`).join('')}</div>`},
+  menu:{n:'Aufklappmenü',g:'Listen & Menüs',b:'Kleines Menü mit Symbolen',p:{titel:''},z:[{text:'Bearbeiten',icon:'stift',gefahr:false},{text:'Link kopieren',icon:'link',gefahr:false},{text:'Löschen',icon:'x',gefahr:true}],
+    zf:[{k:'text',l:'Text',t:'text'},{k:'icon',l:'Symbol',t:'wahl',o:ICONWAHL.concat([['x','x']])},{k:'gefahr',l:'Rot (Gefahr)',t:'bool'}],zn:{text:'Neuer Punkt',icon:'stern',gefahr:false},f:[],
+    r:b=>`<div class="v-menu" style="width:100%">${b.p.titel||bau?`<div class="v-menu-titel">${T(b,'titel')}</div>`:''}${b.z.map((z,i)=>{const g=z.gefahr;const vor=g&&i>0&&!b.z[i-1].gefahr?'<hr>':'';return vor+BTN(g?'gefahr':'',`${ico(z.icon,18)}${TZ(i,z,'text')}`)}).join('')}</div>`},
+  pillen:{n:'Pillenreihe',g:'Listen & Menüs',b:'Unternavigation',p:{aktiv:0,stil:'dunkel'},z:[{text:'BioLink',zahl:''},{text:'Media Kit',zahl:''}],zf:[{k:'text',l:'Text',t:'text'},{k:'zahl',l:'Zähler (leer = keiner)',t:'text'}],zn:{text:'Neu',zahl:''},
+    f:[{k:'aktiv',l:'Aktive Nr. (0 = erste)',t:'zahl'},{k:'stil',l:'Stil',t:'wahl',o:[['dunkel','Dunkel'],['akzent','Akzent']]}],
+    r:b=>`<div class="v-pillen${b.p.stil==='akzent'?' v-pillen--akzent':''}">${b.z.map((z,i)=>BTN('v-pille'+(i===+b.p.aktiv?' aktiv':''),`${TZ(i,z,'text')}${z.zahl?`<b class="v-num">${TZ(i,z,'zahl')}</b>`:''}`)).join('')}</div>`},
+  reiter:{n:'Reiter',g:'Listen & Menüs',b:'Tabs mit Unterstrich',p:{aktiv:0},z:[{text:'Analyse'},{text:'Brand Ready'},{text:'Verlauf'}],zf:[{k:'text',l:'Text',t:'text'}],zn:{text:'Neu'},
+    f:[{k:'aktiv',l:'Aktive Nr. (0 = erste)',t:'zahl'}],
+    r:b=>`<div class="v-reiter">${b.z.map((z,i)=>BTN(i===+b.p.aktiv?'aktiv':'',TZ(i,z,'text'))).join('')}</div>`},
+  personen:{n:'Personen-Zeilen',g:'Listen & Menüs',b:'Avatar, Name, Zahl',p:{},z:[{initial:'A',name:'Antonietta',sub:'seit 22. Apr.',zahl:'2.054',einheit:'Aufrufe'},{initial:'B',name:'Bernidal',sub:'seit 15. Sep.',zahl:'2',einheit:'Aufrufe'}],
+    zf:[{k:'initial',l:'Initiale',t:'text'},{k:'name',l:'Name',t:'text'},{k:'sub',l:'Untertitel',t:'text'},{k:'zahl',l:'Zahl',t:'text'},{k:'einheit',l:'Einheit',t:'text'}],zn:{initial:'N',name:'Neu',sub:'',zahl:'0',einheit:''},f:[],
+    r:b=>`<div class="v-karte" style="padding:2px 16px">${b.z.map((z,i)=>`<div class="v-zeile"><div class="v-avatar v-avatar--rund">${TZ(i,z,'initial')}</div><div class="text"><strong>${TZ(i,z,'name')}</strong><span>${TZ(i,z,'sub')}</span></div><div class="zahl v-num">${TZ(i,z,'zahl')}<small>${TZ(i,z,'einheit')}</small></div></div>`).join('')}</div>`},
+  tabelle:{n:'Tabelle',g:'Listen & Menüs',b:'Drei Spalten, Zahlen rechts',p:{s1:'Quelle',s2:'Aufrufe',s3:'Anteil'},z:[{a:'Instagram',b:'220',c:'62 %',best:true},{a:'viuno',b:'70',c:'21 %',best:false},{a:'Threads',b:'41',c:'8 %',best:false}],
+    zf:[{k:'a',l:'Spalte 1',t:'text'},{k:'b',l:'Spalte 2',t:'text'},{k:'c',l:'Spalte 3',t:'text'},{k:'best',l:'Grün',t:'bool'}],zn:{a:'Neu',b:'0',c:'0 %',best:false},f:[],
+    r:b=>`<div class="v-karte"><table class="v-tabelle"><thead><tr><th>${T(b,'s1')}</th><th class="r">${T(b,'s2')}</th><th class="r">${T(b,'s3')}</th></tr></thead><tbody>${b.z.map((z,i)=>`<tr><td>${TZ(i,z,'a')}</td><td class="r v-num">${TZ(i,z,'b')}</td><td class="r v-num${z.best?' gut':''}">${TZ(i,z,'c')}</td></tr>`).join('')}</tbody></table></div>`},
+  /* ── Eingaben ── */
+  feld:{n:'Eingabefeld',g:'Eingaben',b:'Label, Feld, Hinweis',p:{label:'Anzeigename',wert:'',platzhalter:'Dein Name',hinweis:'Steht groß auf deinem BioLink.',zustand:''},
+    f:[{k:'wert',l:'Eingetragener Wert',t:'text'},{k:'platzhalter',l:'Platzhalter',t:'text'},{k:'zustand',l:'Zustand',t:'wahl',o:[['','Normal'],['fehler','Fehler'],['gut','Gut']]}],
+    r:b=>`<div class="v-feld"><label>${T(b,'label')}</label><input class="v-input${b.p.zustand?' '+b.p.zustand:''}" value="${esc(b.p.wert)}" placeholder="${esc(b.p.platzhalter)}"${bau?' readonly':''}>${b.p.hinweis||bau?`<span class="v-hint${b.p.zustand?' '+b.p.zustand:''}">${T(b,'hinweis')}</span>`:''}</div>`},
+  textbereich:{n:'Textbereich',g:'Eingaben',b:'Mehrzeilig mit Zähler',p:{label:'Bio',wert:'Italienischer Lifestyle aus Mailand.',max:160},f:[{k:'wert',l:'Text',t:'lang'},{k:'max',l:'Maximal Zeichen',t:'zahl'}],
+    r:b=>`<div class="v-feld"><label>${T(b,'label')}</label><textarea class="v-input" rows="3"${bau?' readonly':''}>${esc(b.p.wert)}</textarea><div class="v-hint-zeile"><span class="v-hint">Max. ${num(b.p.max)} Zeichen</span><span class="v-hint v-num">${String(b.p.wert).length} / ${num(b.p.max)}</span></div></div>`},
+  praefix:{n:'Feld mit @',g:'Eingaben',b:'Handle-Eingabe',p:{label:'Instagram',wert:'antonietta',hinweis:'Handle ist frei.'},f:[{k:'wert',l:'Wert',t:'text'}],
+    r:b=>`<div class="v-feld"><label>${T(b,'label')}</label><div class="v-input-huelle"><span class="praefix">@</span><input class="v-input gut" value="${esc(b.p.wert)}"${bau?' readonly':''}></div><span class="v-hint gut">${T(b,'hinweis')}</span></div>`},
+  suche:{n:'Suche',g:'Eingaben',b:'Suchfeld mit Lupe',p:{platzhalter:'Nach Creator suchen'},f:[{k:'platzhalter',l:'Platzhalter',t:'text'}],
+    r:b=>`<div class="v-input-huelle">${ico('suche',18)}<input class="v-input" placeholder="${esc(b.p.platzhalter)}"${bau?' readonly':''}></div>`},
+  auswahl:{n:'Auswahlkarten',g:'Eingaben',b:'Eine von mehreren Optionen',p:{aktiv:0},z:[{titel:'Instagram',sub:'36 Beiträge, 9,99 €'},{titel:'TikTok',sub:'bald'}],zf:[{k:'titel',l:'Titel',t:'text'},{k:'sub',l:'Untertitel',t:'text'}],zn:{titel:'Option',sub:''},
+    f:[{k:'aktiv',l:'Gewählte Nr. (0 = erste)',t:'zahl'}],
+    r:b=>`<div class="v-auswahl">${b.z.map((z,i)=>`<div class="v-auswahl-karte${i===+b.p.aktiv?' aktiv':''}"><input type="radio"${i===+b.p.aktiv?' checked':''}${bau?' disabled':''}><span class="text">${TZ(i,z,'titel')}<small>${TZ(i,z,'sub')}</small></span></div>`).join('')}</div>`},
+  chips:{n:'Chips',g:'Eingaben',b:'Filter oder Schlagworte',p:{},z:[{text:'Alle',aktiv:true},{text:'Zahlt',aktiv:false},{text:'Admin',aktiv:false}],zf:[{k:'text',l:'Text',t:'text'},{k:'aktiv',l:'Gewählt',t:'bool'}],zn:{text:'Neu',aktiv:false},f:[],
+    r:b=>`<div class="v-chips">${b.z.map((z,i)=>BTN('v-chip'+(z.aktiv?' aktiv':''),TZ(i,z,'text'))).join('')}</div>`},
+  haken:{n:'Häkchen',g:'Eingaben',b:'Checkbox mit Text',p:{text:'Ich habe die AGB gelesen',an:true},f:[{k:'an',l:'Angehakt',t:'bool'}],
+    r:b=>`<div class="v-karte v-karte--flach" style="padding:12px 14px"><label class="v-checkbox"><input type="checkbox"${b.p.an?' checked':''}${bau?' disabled':''}><span style="font-size:13px;color:var(--muted)">${T(b,'text')}</span></label></div>`},
+  /* ── Status ── */
+  badges:{n:'Badges',g:'Status',b:'Kleine Etiketten',p:{punkt:true},z:[{text:'Live',farbe:'gruen'},{text:'Fehlt',farbe:'rot'},{text:'Offen',farbe:'orange'},{text:'Info',farbe:'blau'}],
+    zf:[{k:'text',l:'Text',t:'text'},{k:'farbe',l:'Farbe',t:'wahl',o:[['','Grau'],['gruen','Grün'],['rot','Rot'],['orange','Orange'],['blau','Blau'],['akzent','Akzent'],['verlauf','Verlauf'],['dunkel','Dunkel']]}],zn:{text:'Neu',farbe:''},
+    f:[{k:'punkt',l:'Mit Punkt',t:'bool'}],
+    r:b=>`<div class="v-badge-reihe">${b.z.map((z,i)=>`<span class="v-badge${b.p.punkt?'':' v-badge--ohne'}${z.farbe?' v-badge--'+z.farbe:''}">${TZ(i,z,'text')}</span>`).join('')}</div>`},
+  status:{n:'Statuszeile',g:'Status',b:'Live, aus, Warnung, Fehler',p:{stil:'aktiv',titel:'BioLink ist live',sub:'viuno.de/antonietta',knopf:'Öffnen'},
+    f:[{k:'stil',l:'Zustand',t:'wahl',o:[['aktiv','Aktiv'],['aus','Aus'],['warn','Warnung'],['fehler','Fehler']]},{k:'knopf',l:'Knopf (leer = keiner)',t:'text'}],
+    r:b=>`<div class="v-status v-status--${b.p.stil}"><i></i><div class="text"><strong>${T(b,'titel')}</strong><span>${T(b,'sub')}</span></div>${b.p.knopf?BTN('v-btn v-btn--rand v-btn--klein',T(b,'knopf')):''}</div>`},
+  hinweis:{n:'Hinweis',g:'Status',b:'Kasten mit Symbol und Text',p:{stil:'warn',titel:'Handle wurde schon analysiert',text:'Wenn du ihn änderst, gehören die alten Zahlen zum neuen Namen.',knopf:''},
+    f:[{k:'stil',l:'Art',t:'wahl',o:[['warn','Warnung'],['gut','Erfolg'],['fehler','Fehler'],['info','Info'],['akzent','Tipp']]},{k:'knopf',l:'Knopf (leer = keiner)',t:'text'}],
+    r:b=>{const i={warn:'warn',gut:'ok',fehler:'fehler',info:'info',akzent:'stern'}[b.p.stil];return `<div class="v-hinweis v-hinweis--${b.p.stil}">${ico(i,20)}<div class="text"><strong>${T(b,'titel')}</strong><p>${T(b,'text')}</p>${b.p.knopf?BTN('v-btn v-btn--dunkel v-btn--klein',T(b,'knopf')):''}</div></div>`}},
+  toast:{n:'Toast',g:'Status',b:'Kurze Meldung',p:{text:'Gespeichert',stil:'dunkel',knopf:''},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['dunkel','Dunkel'],['gut','Grün'],['fehler','Rot'],['hell','Hell']]},{k:'knopf',l:'Aktion (leer = keine)',t:'text'}],
+    r:b=>`<div style="display:flex;justify-content:center"><div class="v-toast${b.p.stil!=='dunkel'?' v-toast--'+b.p.stil:''}">${b.p.stil==='dunkel'||b.p.stil==='hell'?ico('check',18,2.5):''}${T(b,'text')}${b.p.knopf?`<button>${T(b,'knopf')}</button>`:''}</div></div>`},
+  banner:{n:'Banner',g:'Status',b:'Angebot oder Hinweis mit Knopf',p:{stil:'verlauf',titel:'Instagram-Analyse',sub:'36 Beiträge, KI-Auswertung per Mail',knopf:'9,99 €'},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['verlauf','Verlauf'],['dunkel','Dunkel'],['hell','Hell']]}],
+    r:b=>`<div class="v-banner${b.p.stil!=='hell'?' v-banner--'+b.p.stil:''}"><div class="text"><strong>${T(b,'titel')}</strong><span>${T(b,'sub')}</span></div>${BTN('v-btn v-btn--klein'+(b.p.stil==='hell'?' v-btn--dunkel':''),T(b,'knopf'))}</div>`},
+  /* ── Karten & Dialoge ── */
+  karte:{n:'Karte',g:'Karten & Dialoge',b:'Titel, Untertitel, Text',p:{titel:'Wo die Leute herkommen',sub:'BioLink-Aufrufe, 30 Tage',text:'Instagram bringt fast zwei von drei Besuchern.',stil:'hell'},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['hell','Hell'],['flach','Flach'],['dunkel','Dunkel'],['verlauf','Verlauf'],['akzent','Akzentrand']]}],
+    r:b=>`<div class="v-karte${b.p.stil!=='hell'?' v-karte--'+b.p.stil:''}"><div class="v-karte-kopf"><div><h3>${T(b,'titel')}</h3><p>${T(b,'sub')}</p></div></div><p>${T(b,'text')}</p></div>`},
+  leer:{n:'Leerzustand',g:'Karten & Dialoge',b:'Nichts da, mit nächstem Schritt',p:{titel:'Noch keine Aufrufe',text:'Sobald jemand deinen BioLink öffnet, steht es hier.',knopf:'Link kopieren',icon:'chart'},
+    f:[{k:'icon',l:'Symbol',t:'wahl',o:ICONWAHL},{k:'knopf',l:'Knopf (leer = keiner)',t:'text'}],
+    r:b=>`<div class="v-leer v-leer--karte"><div class="sym">${ico(b.p.icon,22)}</div><h3>${T(b,'titel')}</h3><p>${T(b,'text')}</p>${b.p.knopf?BTN('v-btn v-btn--dunkel',T(b,'knopf')):''}</div>`},
+  modal:{n:'Dialog',g:'Karten & Dialoge',b:'Frage mit zwei Knöpfen',p:{titel:'Analyse starten?',text:'36 Beiträge werden gelesen und per Mail ausgewertet.',links:'Abbrechen',rechts:'Jetzt starten',stil:'premium'},
+    f:[{k:'stil',l:'Rechter Knopf',t:'wahl',o:[['premium','Premium'],['dunkel','Dunkel'],['gefahr','Gefahr']]}],
+    r:b=>`<div class="v-modal"><h2>${T(b,'titel')}</h2><p>${T(b,'text')}</p><div class="v-btn-reihe">${BTN('v-btn v-btn--rand',T(b,'links'))}${BTN('v-btn v-btn--'+b.p.stil,T(b,'rechts'))}</div></div>`},
+  sheet:{n:'Sheet',g:'Karten & Dialoge',b:'Von unten, mit Feld und Knopf',p:{titel:'Kontakt-E-Mail',text:'Steht hinter dem Kontakt-Knopf auf BioLink und Media Kit.',platzhalter:'du@beispiel.de',knopf:'Speichern'},
+    f:[{k:'platzhalter',l:'Platzhalter',t:'text'}],
+    r:b=>`<div class="v-sheet"><div class="v-sheet-griff"></div><div class="v-sheet-kopf"><h2>${T(b,'titel')}</h2>${BTN('v-ibtn v-ibtn--rund v-ibtn--klein',ico('x',16),'aria-label="Schließen"')}</div><p>${T(b,'text')}</p><div class="v-feld"><input class="v-input" placeholder="${esc(b.p.platzhalter)}"${bau?' readonly':''}></div>${BTN('v-btn v-btn--dunkel v-btn--breit',T(b,'knopf'))}</div>`},
+  preis:{n:'Preistafel',g:'Karten & Dialoge',b:'Plan mit Leistungen',p:{name:'Instagram-Analyse',wert:'9,99 €',einheit:'einmalig',knopf:'Kaufen',stil:'hell',tag:''},z:[{text:'36 Beiträge ausgewertet',drin:true},{text:'KI-Empfehlungen per Mail',drin:true},{text:'Teilbarer Link',drin:true}],
+    zf:[{k:'text',l:'Leistung',t:'text'},{k:'drin',l:'Enthalten',t:'bool'}],zn:{text:'Neue Leistung',drin:true},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['hell','Hell'],['premium','Premium'],['dunkel','Dunkel']]},{k:'tag',l:'Etikett oben (leer = keins)',t:'text'}],
+    r:b=>`<div class="v-preis${b.p.stil!=='hell'?' v-preis--'+b.p.stil:''}">${b.p.tag?`<span class="v-badge v-badge--ohne v-badge--verlauf v-preis-tag">${T(b,'tag')}</span>`:''}<div class="v-preis-name">${T(b,'name')}</div><div class="v-preis-wert v-num">${T(b,'wert')}<small> ${T(b,'einheit')}</small></div><ul>${b.z.map((z,i)=>`<li${z.drin?'':' class="nicht"'}>${ico(z.drin?'check':'x',16,2.5)}${TZ(i,z,'text')}</li>`).join('')}</ul>${BTN('v-btn v-btn--breit '+(b.p.stil==='premium'?'v-btn--premium':b.p.stil==='dunkel'?'v-btn--rand':'v-btn--dunkel'),T(b,'knopf'))}</div>`},
+  zeitlinie:{n:'Zeitlinie',g:'Karten & Dialoge',b:'Ereignisse mit Zustand',p:{},z:[{titel:'Kauf abgeschlossen',sub:'15. Sept. · 10:49',zustand:'fertig'},{titel:'Beiträge werden gelesen',sub:'läuft seit 2 Min.',zustand:'laeuft'},{titel:'Auswertung per Mail',sub:'ausstehend',zustand:'offen'}],
+    zf:[{k:'titel',l:'Titel',t:'text'},{k:'sub',l:'Untertitel',t:'text'},{k:'zustand',l:'Zustand',t:'wahl',o:[['fertig','Fertig'],['laeuft','Läuft'],['offen','Offen'],['fehler','Fehler'],['','Neutral']]}],zn:{titel:'Neues Ereignis',sub:'',zustand:''},f:[],
+    r:b=>`<div class="v-karte"><ul class="v-zeitlinie">${b.z.map((z,i)=>`<li class="${z.zustand}"><strong>${TZ(i,z,'titel')}</strong><small>${TZ(i,z,'sub')}</small></li>`).join('')}</ul></div>`},
+  avatare:{n:'Avatare',g:'Karten & Dialoge',b:'Initialen, Ring, Stapel',p:{stil:'stapel',text:'7 Konten'},z:[{initial:'A'},{initial:'B'},{initial:'H'}],zf:[{k:'initial',l:'Initiale',t:'text'}],zn:{initial:'N'},
+    f:[{k:'stil',l:'Stil',t:'wahl',o:[['stapel','Stapel'],['reihe','Reihe'],['gross','Groß']]}],
+    r:b=>b.p.stil==='stapel'?`<div class="v-avatar-stapel">${b.z.map((z,i)=>`<div class="v-avatar v-avatar--rund${i===1?' v-avatar--verlauf':''}">${TZ(i,z,'initial')}</div>`).join('')}<span>${T(b,'text')}</span></div>`:`<div style="display:flex;gap:14px;align-items:center">${b.z.map((z,i)=>`<div class="v-avatar v-avatar--rund${b.p.stil==='gross'?' v-avatar--gross':''}${i===1?' v-avatar--verlauf':i===0?' v-avatar--ring':''}">${TZ(i,z,'initial')}</div>`).join('')}</div>`},
+  laden:{n:'Ladezustand',g:'Karten & Dialoge',b:'Spinner, Punkte oder Skelett',p:{stil:'verlauf',text:'Analyse läuft, etwa 2 Minuten'},
+    f:[{k:'stil',l:'Art',t:'wahl',o:[['verlauf','Spinner Verlauf'],['duenn','Spinner dünn'],['punkte','Punkte'],['skelett','Skelett']]}],
+    r:b=>b.p.stil==='skelett'?`<div class="v-skel-stapel"><div class="v-skel v-skel--titel"></div><div class="v-skel"></div><div class="v-skel v-skel--kurz"></div></div>`:b.p.stil==='punkte'?`<div class="v-lade-zeile"><div class="v-punkte"><i></i><i></i><i></i></div>${T(b,'text')}</div>`:`<div class="v-lade-block"><div class="v-spin${b.p.stil==='verlauf'?' v-spin--verlauf':''}"></div>${T(b,'text')}</div>`}
+}
+const GRUPPEN=['Text','Buttons','Kennzahlen','Fortschritt','Diagramme','Listen & Menüs','Eingaben','Status','Karten & Dialoge']
+window.__BK={K,GRUPPEN,esc,ico,BTN,T,setBau:v=>{bau=v},getBau:()=>bau}
+})();
+</script>
+
+<script>
+(function(){
+'use strict';
+const {K,GRUPPEN,esc,ico,setBau,getBau}=window.__BK
+const $=id=>document.getElementById(id)
+const html=document.documentElement
+const klon=o=>JSON.parse(JSON.stringify(o))
+
+/* ═══ ZUSTAND ═══ */
+const S={ seite:null, gewaehlt:-1 }
+const TABS_STD=[['home','Start'],['seiten','Seiten'],['chart','Analyse'],['news','News'],['user','Profil']]
+function leereSeite(){ return {titel:'Seite',kopf:true,fuss:true,aktivTab:0,tabs:TABS_STD.map(([icon,text])=>({icon,text})),bloecke:[]} }
+function neuerBlock(typ){ const d=K[typ]; return {typ,p:klon(d.p),z:d.z?klon(d.z):null} }
+
+/* ═══ VORLAGEN ═══ */
+const VORLAGEN={
+  leer:{n:'Leere Seite',mach:()=>leereSeite()},
+  start:{n:'Startseite',mach:()=>{const s=leereSeite();s.titel='Start';s.bloecke=[neuerBlock('kopf'),neuerBlock('kpi'),neuerBlock('kpireihe'),neuerBlock('abschnitt'),neuerBlock('liste'),neuerBlock('abschnitt'),neuerBlock('saeulen')];s.bloecke[0].p={titel:'antonietta',sub:'Donnerstag, dein stärkster Tag.'};s.bloecke[5].p.text='Aufrufe';return s}},
+  einstellungen:{n:'Einstellungsliste',mach:()=>{const s=leereSeite();s.titel='Profil';s.aktivTab=4;const a=neuerBlock('abschnitt');a.p.text='Öffentliche Angaben';const b=neuerBlock('abschnitt');b.p.text='Nur für dich';const g=neuerBlock('liste');g.z=[{titel:'Konto',sub:'demo@viuno.de',badge:'',icon:'user',farbe:''},{titel:'Benachrichtigungen',sub:'Creator News jeden Montag',badge:'An',icon:'glocke',farbe:'gruen'},{titel:'Rechtliches & Daten',sub:'AGB, Datenschutz, Impressum',badge:'',icon:'seiten',farbe:''}];s.bloecke=[a,neuerBlock('liste'),b,g,neuerBlock('schalter'),neuerBlock('button')];s.bloecke[5].p={text:'Abmelden',stil:'leise',breit:true};return s}},
+  analyse:{n:'Analyse-Ergebnis',mach:()=>{const s=leereSeite();s.titel='Analyse';s.aktivTab=2;s.bloecke=[neuerBlock('pillen'),neuerBlock('kopf'),neuerBlock('kpireihe'),neuerBlock('hinweis'),neuerBlock('balkenliste'),neuerBlock('linie'),neuerBlock('button')];s.bloecke[0].z=[{text:'Analyse',zahl:''},{text:'Brand Ready',zahl:''}];s.bloecke[1].p={titel:'Deine kürzeren Reels holen mehr Resonanz',sub:'Instagram · @antonietta · 10.09.2026'};s.bloecke[3].p={stil:'akzent',titel:'Was auffällt',text:'Deine Aufrufe steigen, aber nur 1 von 9 klickt weiter.',knopf:''};s.bloecke[6].p={text:'Link erzeugen',stil:'dunkel',breit:true};return s}},
+  sheet:{n:'Sheet (von unten)',mach:()=>{const s=leereSeite();s.titel='BioLink';s.aktivTab=1;s.bloecke=[neuerBlock('status'),neuerBlock('sheet')];return s}},
+  dialog:{n:'Dialog',mach:()=>{const s=leereSeite();s.titel='Analyse';s.aktivTab=2;s.bloecke=[neuerBlock('modal')];return s}},
+  login:{n:'Login',mach:()=>{const s=leereSeite();s.titel='Login';s.kopf=false;s.fuss=false;const k=neuerBlock('kopf');k.p={titel:'Willkommen zurück.',sub:'Melde dich mit deinem viuno-Account an.'};const e=neuerBlock('feld');e.p={label:'E-Mail',wert:'',platzhalter:'du@beispiel.de',hinweis:'',zustand:''};const p=neuerBlock('feld');p.p={label:'Passwort',wert:'',platzhalter:'••••••••',hinweis:'',zustand:''};const b=neuerBlock('button');b.p={text:'Einloggen',stil:'dunkel',breit:true};const a=neuerBlock('absatz');a.p.text='Noch kein Account? Jetzt registrieren';s.bloecke=[k,e,p,b,a];return s}},
+  onboarding:{n:'Onboarding-Schritt',mach:()=>{const s=leereSeite();s.titel='Setup';s.kopf=false;s.fuss=false;const st=neuerBlock('stepper');const k=neuerBlock('kopf');k.p={titel:'Deine Kanäle.',sub:'Verbinde deine Social-Media-Kanäle. Du kannst das auch später erledigen.'};const b=neuerBlock('buttonreihe');b.p={links:'Zurück',rechts:'Weiter →',stil:'dunkel'};s.bloecke=[st,k,neuerBlock('praefix'),neuerBlock('praefix'),b];s.bloecke[3].p={label:'TikTok',wert:'',hinweis:'Optional.'};return s}}
+}
+
+/* ═══ TELEFON ZEICHNEN ═══ */
+function tabIco(n){ return ico(n,20) }
+function seiteHtml(imBau){
+  setBau(imBau)
+  const s=S.seite
+  const ce=imBau?' contenteditable="true" spellcheck="false"':''
+  const kopf=s.kopf?`<header class="v-seite-kopf"><h1${ce} data-seite="titel">${esc(s.titel)}</h1><div class="v-avatar" style="width:32px;height:32px;font-size:13px">A</div></header>`:''
+  const fuss=s.fuss?`<nav class="v-tabbar v-seite-fuss">${s.tabs.map((t,i)=>`<${imBau?'div':'a href="#"'} class="v-tab${i===+s.aktivTab?' aktiv':''}"><span class="v-tab-ico">${tabIco(t.icon)}</span><span${ce} data-tab="${i}">${esc(t.text)}</span></${imBau?'div':'a'}>`).join('')}</nav>`:''
+  let inhalt
+  if(imBau){
+    inhalt=s.bloecke.length?s.bloecke.map((b,i)=>{
+      const d=K[b.typ]
+      return `<div class="bk-block${i===S.gewaehlt?' gewaehlt':''}" data-i="${i}">
+        <div class="bk-werkzeug"><button class="griff" draggable="true" title="Ziehen">⠿</button><button data-tun="hoch" title="Nach oben">↑</button><button data-tun="runter" title="Nach unten">↓</button><button data-tun="doppel" title="Verdoppeln">⧉</button><button data-tun="weg" title="Löschen">×</button></div>
+        ${d.r(b)}
+        ${b.z?`<button class="bk-zeile-plus" data-tun="zeile">+ Zeile hinzufügen</button>`:''}
+      </div>`}).join('')
+      :`<div class="bk-leer"><b>Noch leer</b>Wähle links einen Baustein, er landet hier.<br>Oder lade oben eine Vorlage.</div>`
+  } else inhalt=s.bloecke.map(b=>K[b.typ].r(b)).join('\n')
+  const out=`<div class="v-seite">${kopf}<main class="v-seite-inhalt"${imBau?' id="bk-inhalt"':''}>${inhalt}</main>${fuss}</div>`
+  setBau(true)
+  return out
+}
+function zeichne(){ $('bk-phone').innerHTML=seiteHtml(true); feldZeichnen(); speichereAuto() }
+function zeichneBlock(i){ /* nur einen Baustein neu, damit die Auswahl steht */
+  const el=$('bk-phone').querySelector(`.bk-block[data-i="${i}"]`); if(!el){zeichne();return}
+  const tmp=document.createElement('div'); tmp.innerHTML=seiteHtml(true); const neu=tmp.querySelector(`.bk-block[data-i="${i}"]`)
+  el.replaceWith(neu); speichereAuto()
+}
+
+/* ═══ PALETTE ═══ */
+function paletteZeichnen(filter=''){
+  const q=filter.trim().toLowerCase()
+  $('bk-palette-liste').innerHTML=GRUPPEN.map(g=>{
+    const items=Object.entries(K).filter(([k,d])=>d.g===g&&(!q||(d.n+' '+d.b+' '+g).toLowerCase().includes(q)))
+    if(!items.length)return ''
+    return `<div class="bk-gruppe"><h4>${g}</h4>${items.map(([k,d])=>`<button class="bk-item" data-typ="${k}"><span class="plus">+</span><span><b>${d.n}</b><small>${d.b}</small></span></button>`).join('')}</div>`
+  }).join('')
+}
+$('bk-palette-liste').addEventListener('click',e=>{
+  const it=e.target.closest('.bk-item'); if(!it)return
+  const b=neuerBlock(it.dataset.typ)
+  const pos=S.gewaehlt>=0?S.gewaehlt+1:S.seite.bloecke.length
+  S.seite.bloecke.splice(pos,0,b); S.gewaehlt=pos; zeichne()
+  $('bk-phone').querySelector('.bk-block.gewaehlt')?.scrollIntoView({behavior:'smooth',block:'center'})
+})
+$('bk-suche').addEventListener('input',e=>paletteZeichnen(e.target.value))
+
+/* ═══ BEARBEITUNGSFELD RECHTS ═══ */
+function feldHtml(f,wert,pref){
+  const id=pref+f.k
+  if(f.t==='bool')return `<div class="bk-schalter"><span>${f.l}</span><button class="v-toggle v-toggle--akzent${wert?' an':''}" data-bool="${id}"><i></i></button></div>`
+  if(f.t==='wahl')return `<div class="bk-f"><label>${f.l}</label><div class="bk-wahl">${f.o.map(([v,l])=>`<button data-wahl="${id}" data-v="${esc(v)}" class="${String(v)===String(wert)?'an':''}">${l}</button>`).join('')}</div></div>`
+  if(f.t==='zahl')return `<div class="bk-f"><label>${f.l}</label><input type="number" data-in="${id}" value="${esc(wert)}"${f.min!=null?` min="${f.min}"`:''}${f.max!=null?` max="${f.max}"`:''}></div>`
+  if(f.t==='lang')return `<div class="bk-f"><label>${f.l}</label><textarea data-in="${id}">${esc(wert)}</textarea></div>`
+  return `<div class="bk-f"><label>${f.l}</label><input type="text" data-in="${id}" value="${esc(wert)}"></div>`
+}
+function feldZeichnen(){
+  const s=S.seite, el=$('bk-feld')
+  if(S.gewaehlt<0||!s.bloecke[S.gewaehlt]){
+    el.innerHTML=`<h3>Seite</h3><div class="sub">Nichts gewählt. Klick im Telefon auf einen Baustein, um ihn zu bearbeiten.</div>
+      <div class="bk-tipp">Reihenfolge: Pfeile ↑ ↓ am Baustein, oder am Griff ⠿ ziehen. Ein neuer Baustein landet immer unter dem gewählten.</div>
+      <div class="bk-f"><label>Titel oben</label><input type="text" data-seite="titel" value="${esc(s.titel)}"></div>
+      <div class="bk-schalter"><span>Kopfzeile</span><button class="v-toggle v-toggle--akzent${s.kopf?' an':''}" data-seitebool="kopf"><i></i></button></div>
+      <div class="bk-schalter"><span>Tab-Leiste unten</span><button class="v-toggle v-toggle--akzent${s.fuss?' an':''}" data-seitebool="fuss"><i></i></button></div>
+      <div class="bk-bereich"><h4>Tabs unten</h4>${s.tabs.map((t,i)=>`<div class="bk-zeile"><div class="bk-zeile-kopf"><b>Tab ${i+1}${i===+s.aktivTab?' · aktiv':''}</b><button data-tabtun="aktiv" data-i="${i}" title="Als aktiv">●</button><button data-tabtun="weg" data-i="${i}" title="Entfernen">×</button></div><div class="bk-f"><input type="text" data-tabtext="${i}" value="${esc(t.text)}"></div><div class="bk-f"><select data-tabicon="${i}">${['home','seiten','chart','news','user','stern','link','mail','zahn','glocke'].map(k=>`<option${k===t.icon?' selected':''}>${k}</option>`).join('')}</select></div></div>`).join('')}${s.tabs.length<5?`<button class="bk-knopf klein" data-tabtun="neu">+ Tab</button>`:''}</div>`
+    return
+  }
+  const b=s.bloecke[S.gewaehlt], d=K[b.typ]
+  let h=`<h3>${d.n}</h3><div class="sub">${d.b}. Texte tippst du direkt im Telefon.</div>`
+  h+=d.f.map(f=>feldHtml(f,b.p[f.k],'p.')).join('')
+  if(b.z){
+    h+=`<div class="bk-bereich"><h4>Zeilen <button class="bk-knopf klein" data-tun="zeile">+ Zeile</button></h4>`
+    h+=b.z.map((z,i)=>`<div class="bk-zeile"><div class="bk-zeile-kopf"><b>Zeile ${i+1}</b><button data-ztun="hoch" data-i="${i}" title="Nach oben">↑</button><button data-ztun="runter" data-i="${i}" title="Nach unten">↓</button><button data-ztun="doppel" data-i="${i}" title="Verdoppeln">⧉</button><button data-ztun="weg" data-i="${i}" title="Löschen">×</button></div>${d.zf.map(f=>feldHtml(f,z[f.k],'z'+i+'.')).join('')}</div>`).join('')
+    h+=`</div>`
+  }
+  h+=`<div class="bk-bereich"><button class="bk-knopf klein" data-tun="doppel">⧉ Verdoppeln</button> <button class="bk-knopf klein" data-tun="weg">× Löschen</button></div>`
+  el.innerHTML=h
+}
+function setz(pfad,wert){ /* 'p.stil' oder 'z2.text' */
+  const b=S.seite.bloecke[S.gewaehlt]
+  const m=pfad.match(/^z(\d+)\.(.+)$/)
+  if(m) b.z[+m[1]][m[2]]=wert; else b.p[pfad.slice(2)]=wert
+}
+$('bk-feld').addEventListener('input',e=>{
+  const t=e.target
+  if(t.dataset.in){ setz(t.dataset.in, t.type==='number'?t.value:t.value); zeichneBlock(S.gewaehlt); return }
+  if(t.dataset.seite){ S.seite.titel=t.value; const h=$('bk-phone').querySelector('[data-seite="titel"]'); if(h)h.textContent=t.value; speichereAuto(); return }
+  if(t.dataset.tabtext!=null){ S.seite.tabs[+t.dataset.tabtext].text=t.value; const sp=$('bk-phone').querySelector(`[data-tab="${t.dataset.tabtext}"]`); if(sp)sp.textContent=t.value; speichereAuto() }
+})
+$('bk-feld').addEventListener('change',e=>{
+  const t=e.target
+  if(t.dataset.tabicon!=null){ S.seite.tabs[+t.dataset.tabicon].icon=t.value; zeichne() }
+})
+$('bk-feld').addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t)return
+  if(t.dataset.bool){ const b=S.seite.bloecke[S.gewaehlt]; const m=t.dataset.bool.match(/^z(\d+)\.(.+)$/); const alt=m?b.z[+m[1]][m[2]]:b.p[t.dataset.bool.slice(2)]; setz(t.dataset.bool,!alt); zeichne(); return }
+  if(t.dataset.wahl){ setz(t.dataset.wahl,t.dataset.v); zeichne(); return }
+  if(t.dataset.seitebool){ S.seite[t.dataset.seitebool]=!S.seite[t.dataset.seitebool]; zeichne(); return }
+  if(t.dataset.tabtun){ const i=+t.dataset.i; const tun=t.dataset.tabtun
+    if(tun==='aktiv')S.seite.aktivTab=i; else if(tun==='weg'){S.seite.tabs.splice(i,1); if(S.seite.aktivTab>=S.seite.tabs.length)S.seite.aktivTab=0} else if(tun==='neu')S.seite.tabs.push({icon:'stern',text:'Neu'})
+    zeichne(); return }
+  if(t.dataset.ztun){ zeileTun(t.dataset.ztun,+t.dataset.i); return }
+  if(t.dataset.tun){ blockTun(t.dataset.tun,S.gewaehlt); return }
+})
+
+/* ═══ AKTIONEN AN BAUSTEIN UND ZEILE ═══ */
+function blockTun(tun,i){
+  const L=S.seite.bloecke
+  if(tun==='hoch'&&i>0){[L[i-1],L[i]]=[L[i],L[i-1]];S.gewaehlt=i-1}
+  else if(tun==='runter'&&i<L.length-1){[L[i+1],L[i]]=[L[i],L[i+1]];S.gewaehlt=i+1}
+  else if(tun==='doppel'){L.splice(i+1,0,klon(L[i]));S.gewaehlt=i+1}
+  else if(tun==='weg'){L.splice(i,1);S.gewaehlt=Math.min(i,L.length-1)}
+  else if(tun==='zeile'){const b=L[i];b.z.push(klon(K[b.typ].zn));S.gewaehlt=i}
+  zeichne()
+}
+function zeileTun(tun,i){
+  const b=S.seite.bloecke[S.gewaehlt]; const Z=b.z
+  if(tun==='hoch'&&i>0)[Z[i-1],Z[i]]=[Z[i],Z[i-1]]
+  else if(tun==='runter'&&i<Z.length-1)[Z[i+1],Z[i]]=[Z[i],Z[i+1]]
+  else if(tun==='doppel')Z.splice(i+1,0,klon(Z[i]))
+  else if(tun==='weg'&&Z.length>1)Z.splice(i,1)
+  zeichne()
+}
+
+/* ═══ IM TELEFON: waehlen, tippen, ziehen ═══ */
+const phone=$('bk-phone')
+phone.addEventListener('click',e=>{
+  const w=e.target.closest('.bk-werkzeug button, .bk-zeile-plus')
+  const bl=e.target.closest('.bk-block')
+  if(w&&bl){ if(w.dataset.tun)blockTun(w.dataset.tun,+bl.dataset.i); return }
+  if(bl){ const i=+bl.dataset.i; if(i!==S.gewaehlt){S.gewaehlt=i; phone.querySelectorAll('.bk-block').forEach(x=>x.classList.toggle('gewaehlt',+x.dataset.i===i)); feldZeichnen()} return }
+  if(!e.target.closest('[contenteditable]')){ S.gewaehlt=-1; phone.querySelectorAll('.bk-block').forEach(x=>x.classList.remove('gewaehlt')); feldZeichnen() }
+})
+phone.addEventListener('input',e=>{
+  const t=e.target.closest('[contenteditable]'); if(!t)return
+  const wert=t.innerText.replace(/\n+$/,'')
+  if(t.dataset.seite){S.seite.titel=wert; const inp=$('bk-feld').querySelector('[data-seite]'); if(inp)inp.value=wert}
+  else if(t.dataset.tab!=null){S.seite.tabs[+t.dataset.tab].text=wert}
+  else{ const bl=t.closest('.bk-block'); if(!bl)return; const b=S.seite.bloecke[+bl.dataset.i]
+    if(t.dataset.z!=null) b.z[+t.dataset.z][t.dataset.f]=wert; else b.p[t.dataset.f]=wert
+    const inp=$('bk-feld').querySelector(`[data-in="${t.dataset.z!=null?'z'+t.dataset.z+'.':'p.'}${t.dataset.f}"]`); if(inp)inp.value=wert }
+  speichereAuto()
+})
+phone.addEventListener('keydown',e=>{ if(e.key==='Enter'&&e.target.closest('[contenteditable]')&&!e.shiftKey){e.preventDefault();e.target.blur()} })
+document.addEventListener('keydown',e=>{
+  if((e.key==='Delete'||e.key==='Backspace')&&S.gewaehlt>=0&&!e.target.closest('[contenteditable],input,textarea,select')){e.preventDefault();blockTun('weg',S.gewaehlt)}
+})
+/* Ziehen am Griff */
+let zieh=-1
+phone.addEventListener('dragstart',e=>{ const g=e.target.closest('.griff'); if(!g){e.preventDefault();return} zieh=+g.closest('.bk-block').dataset.i; e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',String(zieh)) })
+phone.addEventListener('dragover',e=>{ const bl=e.target.closest('.bk-block'); if(zieh<0||!bl)return; e.preventDefault(); const r=bl.getBoundingClientRect(); const oben=e.clientY<r.top+r.height/2; phone.querySelectorAll('.bk-block').forEach(x=>x.classList.remove('ziel-oben','ziel-unten')); bl.classList.add(oben?'ziel-oben':'ziel-unten') })
+phone.addEventListener('dragleave',e=>{ const bl=e.target.closest('.bk-block'); if(bl&&!bl.contains(e.relatedTarget))bl.classList.remove('ziel-oben','ziel-unten') })
+phone.addEventListener('drop',e=>{ const bl=e.target.closest('.bk-block'); if(zieh<0||!bl)return; e.preventDefault(); const r=bl.getBoundingClientRect(); const oben=e.clientY<r.top+r.height/2; let ziel=+bl.dataset.i+(oben?0:1); const L=S.seite.bloecke; const [b]=L.splice(zieh,1); if(ziel>zieh)ziel--; L.splice(ziel,0,b); S.gewaehlt=ziel; zieh=-1; zeichne() })
+phone.addEventListener('dragend',()=>{ zieh=-1; phone.querySelectorAll('.bk-block').forEach(x=>x.classList.remove('ziel-oben','ziel-unten')) })
+
+/* ═══ KOPIEREN: Tokens + CSS + HTML der ganzen Seite ═══ */
+function sheetVon(id){ const n=$(id); return n&&n.sheet }
+function deklarationen(selector){ const out={}; const sh=sheetVon('v-tokens'); if(!sh)return out; Array.prototype.forEach.call(sh.cssRules,r=>{ if(r.selectorText!==selector)return; for(let i=0;i<r.style.length;i++){const n=r.style[i]; if(n.startsWith('--'))out[n]=r.style.getPropertyValue(n).trim()} }); return out }
+function passt(selector,set){ return selector.split(',').some(teil=>{ const kl=teil.match(/\.([\w-]+)/g); return !!kl&&kl.every(k=>set[k.slice(1)]) }) }
+function regelnFuer(set,sheetId){ const out=[],kf={}; function lauf(rules,media){ Array.prototype.forEach.call(rules,r=>{ if(r.type===1){ if(passt(r.selectorText,set))out.push(media?'@media '+media+'{'+r.cssText+'}':r.cssText) } else if(r.type===4)lauf(r.cssRules,r.conditionText||r.media.mediaText); else if(r.type===7)kf[r.name]=r.cssText }) } const sh=sheetVon(sheetId); if(sh)lauf(sh.cssRules,''); const text=out.join('\n'),namen={}; (text.match(/animation(?:-name)?\s*:\s*[^;}]+/g)||[]).forEach(m=>{ m.replace(/^animation(?:-name)?\s*:\s*/,'').split(',').forEach(t=>t.trim().split(/\s+/).forEach(w=>{if(kf[w])namen[w]=1})) }); Object.keys(namen).forEach(n=>out.push(kf[n])); return out }
+function tokensFuer(css){ const TOK=deklarationen(':root'); const OV=['html[data-thema="dark"]','html[data-thema="clean"]','html[data-farbmodus="dunkel"]','html[data-farbmodus="dunkel"][data-thema="dark"]','html[data-farbmodus="dunkel"][data-thema="clean"]'].map(s=>({sel:s,decl:deklarationen(s)})); const g={},q=[]; const sammle=s=>{(s.match(/var\(\s*--([\w-]+)/g)||[]).forEach(m=>{const n='--'+m.replace(/var\(\s*--/,''); if(!g[n]){g[n]=1;q.push(n)}})}; sammle(css); while(q.length){const n=q.shift(); if(TOK[n])sammle(TOK[n]); OV.forEach(o=>{if(o.decl[n])sammle(o.decl[n])})} const bl=[]; const ns=Object.keys(TOK).filter(n=>g[n]); if(ns.length)bl.push(':root{'+ns.map(n=>n+':'+TOK[n]).join(';')+'}'); OV.forEach(o=>{const x=Object.keys(o.decl).filter(n=>g[n]); if(x.length)bl.push(o.sel+'{'+x.map(n=>n+':'+o.decl[n]).join(';')+'}')}); return bl }
+function seiteCode(){
+  const markup=seiteHtml(false)
+  const tmp=document.createElement('div'); tmp.innerHTML=markup
+  const set={}; tmp.querySelectorAll('*').forEach(n=>Array.prototype.forEach.call(n.classList,c=>set[c]=1))
+  const base=($('v-base')?.textContent||'').trim()
+  const regeln=[...regelnFuer(set,'v-seite'),...regelnFuer(set,'v-comp')]
+  const css=regeln.join('\n')
+  const tokens=tokensFuer(css+'\n'+base)
+  const thema=html.getAttribute('data-thema')||'color', dunkel=html.hasAttribute('data-farbmodus')
+  return `<!DOCTYPE html>
+<html lang="de" data-thema="${thema}"${dunkel?' data-farbmodus="dunkel"':''}>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>${esc(S.seite.titel)} · viuno</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+<!-- Aus dem viuno Baukasten. Tokens und Bausteine wie in /design/. -->
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg)}
+${tokens.join('\n')}
+${base}
+${css}
+</style>
+</head>
+<body>
+${markup}
+</body>
+</html>`
+}
+function meld(t){ const e=$('bk-toast'); e.textContent=t; e.classList.add('zeig'); clearTimeout(meld.t); meld.t=setTimeout(()=>e.classList.remove('zeig'),1600) }
+function kopiere(text){ if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text); return new Promise((res,rej)=>{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');res()}catch(e){rej(e)}document.body.removeChild(ta)}) }
+$('bk-copy').addEventListener('click',()=>kopiere(seiteCode()).then(()=>meld('Ganze Seite kopiert: HTML + CSS'),()=>meld('Kopieren nicht möglich')))
+$('bk-code-btn').addEventListener('click',()=>{ $('bk-code-pre').textContent=seiteCode(); $('bk-code').classList.add('offen') })
+$('bk-code-zu').addEventListener('click',()=>$('bk-code').classList.remove('offen'))
+$('bk-code').addEventListener('click',e=>{ if(e.target===$('bk-code'))$('bk-code').classList.remove('offen') })
+$('bk-code-copy').addEventListener('click',()=>kopiere($('bk-code-pre').textContent).then(()=>meld('Kopiert')))
+function lade(name,text,typ){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:typ})); a.download=name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000) }
+const dateiname=()=>(S.seite.titel||'seite').toLowerCase().replace(/[^a-z0-9äöü]+/g,'-').replace(/^-|-$/g,'')||'seite'
+$('bk-download').addEventListener('click',()=>{ lade(dateiname()+'.html',seiteCode(),'text/html'); meld('Datei gespeichert') })
+$('bk-export').addEventListener('click',()=>{ lade(dateiname()+'.viuno.json',JSON.stringify(S.seite,null,2),'application/json'); meld('JSON gespeichert') })
+$('bk-import').addEventListener('change',e=>{ const f=e.target.files[0]; if(!f)return; f.text().then(t=>{ try{ const s=JSON.parse(t); if(!s.bloecke)throw 0; S.seite=s; S.gewaehlt=-1; zeichne(); meld('Geladen') }catch(_){ meld('Das ist keine Baukasten-Datei') } }); e.target.value='' })
+
+/* ═══ SPEICHERN im Browser ═══ */
+function speichereAuto(){ try{localStorage.setItem('bk-aktuell',JSON.stringify(S.seite))}catch(_){} }
+function gespeicherte(){ try{return JSON.parse(localStorage.getItem('bk-seiten')||'{}')}catch(_){return{}} }
+function gespeicherteZeichnen(){ const g=gespeicherte(); const sel=$('bk-gespeichert'); sel.innerHTML='<option value="">Meine Seiten …</option>'+Object.keys(g).sort().map(n=>`<option>${esc(n)}</option>`).join('')+(Object.keys(g).length?'<option value="__weg">– gewählte löschen –</option>':'') }
+$('bk-speichern').addEventListener('click',()=>{ const n=prompt('Name für diese Seite:',S.seite.titel); if(!n)return; const g=gespeicherte(); g[n]=S.seite; try{localStorage.setItem('bk-seiten',JSON.stringify(g))}catch(_){} gespeicherteZeichnen(); $('bk-gespeichert').value=n; meld('Gespeichert: '+n) })
+$('bk-gespeichert').addEventListener('change',e=>{ const v=e.target.value; const g=gespeicherte(); if(v==='__weg'){ const n=prompt('Welche Seite löschen? Name eingeben:'); if(n&&g[n]){delete g[n];localStorage.setItem('bk-seiten',JSON.stringify(g));gespeicherteZeichnen();meld('Gelöscht')} e.target.value=''; return } if(g[v]){ S.seite=klon(g[v]); S.gewaehlt=-1; zeichne(); meld('Geladen: '+v) } })
+$('bk-vorlage').innerHTML='<option value="">Vorlage laden …</option>'+Object.entries(VORLAGEN).map(([k,v])=>`<option value="${k}">${v.n}</option>`).join('')
+$('bk-vorlage').addEventListener('change',e=>{ const k=e.target.value; if(!k)return; if(S.seite.bloecke.length&&!confirm('Die aktuelle Seite wird ersetzt. Weiter?')){e.target.value='';return} S.seite=VORLAGEN[k].mach(); S.gewaehlt=-1; zeichne(); e.target.value='' })
+
+/* ═══ Signatur und Dunkelmodus ═══ */
+try{ const t=localStorage.getItem('lib-thema'); if(t){html.dataset.thema=t;$('bk-thema').value=t} if(localStorage.getItem('lib-dunkel')==='1'){html.dataset.farbmodus='dunkel';$('bk-dunkel').classList.add('an')} }catch(e){}
+$('bk-thema').addEventListener('change',function(){ html.dataset.thema=this.value; try{localStorage.setItem('lib-thema',this.value)}catch(e){} })
+$('bk-dunkel').addEventListener('click',function(){ const an=html.dataset.farbmodus!=='dunkel'; if(an)html.dataset.farbmodus='dunkel'; else delete html.dataset.farbmodus; this.classList.toggle('an',an); try{localStorage.setItem('lib-dunkel',an?'1':'0')}catch(e){} })
+
+/* ═══ START: Bausteine-CSS aus /design/ holen, dann zeichnen ═══ */
+fetch('../index.html').then(r=>r.text()).then(t=>{
+  ['v-tokens','v-base','v-comp'].forEach(id=>{ const m=t.match(new RegExp('<style id="'+id+'">([\\s\\S]*?)</style>')); const st=document.createElement('style'); st.id=id; st.textContent=m?m[1]:''; document.head.insertBefore(st,$('v-seite')) })
+}).catch(()=>meld('Bausteine konnten nicht geladen werden')).then(()=>{
+  let s=null; try{s=JSON.parse(localStorage.getItem('bk-aktuell')||'null')}catch(_){}
+  S.seite=(s&&s.bloecke)?s:VORLAGEN.start.mach()
+  paletteZeichnen(); gespeicherteZeichnen(); zeichne()
+})
+})();
+</script>
+</body>
+</html>

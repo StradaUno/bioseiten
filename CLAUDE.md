@@ -430,3 +430,14 @@ Was sich dadurch dauerhaft aendert und was jede spaetere Sitzung wissen muss:
   (Link hinzufuegen) ist aus demselben Grund neu.
 - Zum lokalen Pruefen ohne Konto: `/test2/?mock=1` laedt `mock.js` mit
   Beispieldaten — nur auf localhost, die Datei liegt nicht im Repo.
+- **`public/design/baukasten/`** ist der Seiten-Baukasten: links die Palette
+  (dieselben Bausteine, ~45 Typen), in der Mitte ein Telefonrahmen, rechts das
+  Bearbeitungsfeld. Texte werden direkt im Telefon getippt, Listen bekommen
+  ueber „+ Zeile" weitere Zeilen, Reihenfolge per Pfeil oder Griff. „Seite
+  kopieren" liefert eine komplette HTML-Datei mit Tokens, Basis, den noetigen
+  Regeln und dem Markup; im Export werden `<button>` und `<a>` gesetzt, im
+  Baukasten `<div>`, damit die Texte editierbar bleiben. Die drei Style-Bloecke
+  holt die Seite zur Laufzeit per `fetch('../index.html')` aus der Bibliothek:
+  eine Quelle, kein Abschreiben. Entwuerfe liegen im localStorage, Export und
+  Import als JSON. Die Bibliothek selbst (`public/design/index.html`) bleibt
+  unveraendert.
