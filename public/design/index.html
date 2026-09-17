@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="de" data-thema="color">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>viuno UI-Bibliothek</title>
+<link rel="stylesheet" href="/fonts/fonts.css">
+
+<!-- ═══ TOKENS: derselbe Block wie in /app/index.html ═══════════════════
+     Wer hier etwas aendert, aendert es dort mit. Der Dunkel-Block ist der
+     Vorschlag fuer html[data-farbmodus="dunkel"] aus CLAUDE.md. -->
+<style id="v-tokens">
+:root{
+  --bg:#f6f5fa;--surface:#ffffff;--surface2:#f2f0f8;
+  --border:rgba(27,24,38,.09);--border-strong:rgba(27,24,38,.16);
+  --text:#17151f;--muted:#4e4a5e;--subtle:#817c92;
+  --green:#15784b;--green-bg:#eaf4ef;--green-border:rgba(21,120,75,.2);
+  --red:#c23a31;--red-bg:#fbeeed;--red-border:rgba(194,58,49,.22);
+  --orange:#a8630b;--orange-bg:#fdf3e6;--orange-border:rgba(168,99,11,.25);
+  --blue:#4338ca;--blue-bg:#eef0fd;--blue-border:rgba(67,56,202,.2);
+  --v1:#6b3fe8;--v2:#b02a7d;--v3:#c87a08;
+  --akzent-text:#5b32c9;--akzent-bg:rgba(107,63,232,.10);--akzent-border:rgba(107,63,232,.24);
+  --verlauf:linear-gradient(120deg,var(--v1),var(--v2) 55%,var(--v3));
+  --auf-verlauf:#ffffff;
+  --s-1:4px;--s-2:8px;--s-3:12px;--s-4:16px;--s-5:20px;--s-6:24px;--s-8:32px;--page-x:20px;
+  --t-2xs:10px;--t-xs:11px;--t-sm:13px;--t-md:14px;--t-lg:15px;--t-xl:17px;--t-2xl:22px;
+  --t-input:16px;--t-num-sm:21px;--t-num:32px;
+  --ziffern:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --lh-tight:1.35;--lh-body:1.55;--fw-md:500;--fw-sb:600;--fw-b:700;
+  --r-xs:9px;--r-sm:11px;--r-md:18px;--r-lg:22px;--r-full:99px;
+  --sh-card:0 2px 10px rgba(27,24,38,.05);--sh-over:0 -6px 28px rgba(27,24,38,.12);
+  --field-h:44px;--nav-h:56px;--tab-h:74px;
+}
+html[data-thema="dark"]{--v1:#3f3a6e;--v2:#6b5ca5;--v3:#9a86c9;--akzent-text:#443e78;--akzent-bg:rgba(63,58,110,.10);--akzent-border:rgba(63,58,110,.24)}
+html[data-thema="clean"]{--v1:#2b2a33;--v2:#57545f;--v3:#8a8694;--akzent-text:#2b2a33;--akzent-bg:rgba(43,42,51,.07);--akzent-border:rgba(43,42,51,.18)}
+html[data-farbmodus="dunkel"]{
+  --bg:#121118;--surface:#1b1923;--surface2:#25222f;
+  --border:rgba(255,255,255,.08);--border-strong:rgba(255,255,255,.16);
+  --text:#f1eff6;--muted:#b3aec2;--subtle:#7d7890;
+  --green:#4cc286;--green-bg:rgba(76,194,134,.13);--green-border:rgba(76,194,134,.3);
+  --red:#f0776d;--red-bg:rgba(240,119,109,.13);--red-border:rgba(240,119,109,.3);
+  --orange:#e6a24a;--orange-bg:rgba(230,162,74,.13);--orange-border:rgba(230,162,74,.3);
+  --blue:#9a95f5;--blue-bg:rgba(154,149,245,.13);--blue-border:rgba(154,149,245,.3);
+  --v1:#8f6cff;--v2:#d65cab;--v3:#f0a63e;
+  --akzent-text:#b8a3ff;--akzent-bg:rgba(143,108,255,.16);--akzent-border:rgba(143,108,255,.34);
+  --sh-card:0 2px 10px rgba(0,0,0,.35);--sh-over:0 -6px 28px rgba(0,0,0,.5);
+}
+html[data-farbmodus="dunkel"][data-thema="dark"]{--v1:#7d75c4;--v2:#a293e0;--v3:#c4b4f0;--akzent-text:#bdb0f0;--akzent-bg:rgba(125,117,196,.18);--akzent-border:rgba(125,117,196,.36)}
+html[data-farbmodus="dunkel"][data-thema="clean"]{--v1:#d8d5e2;--v2:#a9a5b8;--v3:#7e7a8c;--akzent-text:#e6e3ef;--akzent-bg:rgba(216,213,226,.12);--akzent-border:rgba(216,213,226,.28);--auf-verlauf:#17151f}
+</style>
+
+<!-- ═══ BASIS: kommt in jede Kopie mit ═══ -->
+<style id="v-base">
+[class^="v-"],[class*=" v-"]{box-sizing:border-box}
+.v-num{font-family:var(--ziffern);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.v-ico{width:20px;height:20px;flex-shrink:0}
+.v-verlauf-text{background:var(--verlauf);-webkit-background-clip:text;background-clip:text;color:transparent}
+</style>
+
+<!-- ═══ KOMPONENTEN ═══ -->
+<style id="v-comp">
+/* ── Buttons ── */
+.v-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:var(--field-h);padding:0 18px;border-radius:var(--r-sm);border:1px solid transparent;font-family:inherit;font-size:var(--t-md);font-weight:var(--fw-sb);line-height:1;color:var(--text);background:var(--surface2);cursor:pointer;white-space:nowrap;text-decoration:none;transition:transform .12s,opacity .15s,background .15s}
+.v-btn:active{transform:scale(.98)}
+.v-btn:disabled{opacity:.5;cursor:not-allowed}
+.v-btn--dunkel{background:var(--text);color:var(--bg)}
+.v-btn--rand{background:var(--surface);border-color:var(--border-strong)}
+.v-btn--leise{background:transparent;color:var(--muted)}
+.v-btn--breit{width:100%}
+.v-btn--klein{height:34px;padding:0 12px;font-size:var(--t-sm);border-radius:var(--r-xs)}
+.v-btn--pille{border-radius:var(--r-full)}
+.v-btn--premium{background:var(--verlauf);color:var(--auf-verlauf);border:0}
+.v-btn--premium-rand{border:1.5px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--verlauf) border-box;color:var(--akzent-text)}
+.v-btn--premium-glanz{background:var(--verlauf);color:var(--auf-verlauf);border:0;position:relative;overflow:hidden}
+.v-btn--premium-glanz::after{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-100%);animation:v-glanz 2.6s ease-in-out infinite}
+@keyframes v-glanz{to{transform:translateX(100%)}}
+.v-btn--pro{background:var(--text);color:var(--bg);padding-right:8px}
+.v-pro-tag{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:var(--r-full);background:var(--verlauf);color:var(--auf-verlauf);font-size:var(--t-2xs);font-weight:var(--fw-b);letter-spacing:.08em}
+.v-btn--pro-pille{border-radius:var(--r-full);background:var(--akzent-bg);color:var(--akzent-text);border-color:var(--akzent-border)}
+.v-btn--pro-breit{width:100%;height:auto;padding:12px 14px;justify-content:flex-start;gap:12px;background:var(--surface);border-color:var(--border);text-align:left;box-shadow:var(--sh-card)}
+.v-btn-ico{width:36px;height:36px;border-radius:var(--r-xs);background:var(--verlauf);color:var(--auf-verlauf);display:grid;place-items:center;flex-shrink:0}
+.v-btn-titel{display:block;font-size:var(--t-md);font-weight:var(--fw-sb)}
+.v-btn-sub{display:block;font-size:var(--t-xs);font-weight:400;color:var(--muted);margin-top:2px}
+.v-btn-pfeil{margin-left:auto;color:var(--subtle)}
+.v-btn--gefahr{background:var(--red-bg);color:var(--red);border-color:var(--red-border)}
+.v-btn--gut{background:var(--green-bg);color:var(--green);border-color:var(--green-border)}
+.v-btn--laden{pointer-events:none;opacity:.85}
+.v-btn-spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:v-spin .7s linear infinite}
+.v-btn--rand .v-btn-spin{border-color:var(--border-strong);border-top-color:var(--text)}
+@keyframes v-spin{to{transform:rotate(360deg)}}
+.v-ibtn{width:40px;height:40px;display:inline-grid;place-items:center;border-radius:var(--r-sm);border:1px solid var(--border-strong);background:var(--surface);color:var(--text);cursor:pointer;font-family:inherit;padding:0}
+.v-ibtn--rund{border-radius:50%;background:var(--surface2);border-color:transparent}
+.v-ibtn--verlauf{border:0;background:var(--verlauf);color:var(--auf-verlauf)}
+.v-ibtn--dunkel{border:0;background:var(--text);color:var(--bg)}
+.v-ibtn--klein{width:32px;height:32px;border-radius:var(--r-xs)}
+.v-ibtn .v-ico{width:18px;height:18px}
+.v-ibtn-reihe{display:flex;gap:8px;align-items:center}
+.v-seg{display:inline-flex;padding:3px;border-radius:var(--r-full);background:var(--surface2);border:1px solid var(--border)}
+.v-seg button{font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted);background:transparent;border:0;padding:7px 14px;border-radius:var(--r-full);cursor:pointer}
+.v-seg button.aktiv{background:var(--surface);color:var(--text);box-shadow:var(--sh-card)}
+.v-seg--dunkel button.aktiv{background:var(--text);color:var(--bg);box-shadow:none}
+.v-seg--eckig,.v-seg--eckig button{border-radius:var(--r-xs)}
+.v-seg--voll{display:flex;width:100%}.v-seg--voll button{flex:1}
+.v-btn-reihe{display:flex;gap:10px}.v-btn-reihe .v-btn{flex:1}
+.v-btn-stapel{display:flex;flex-direction:column;gap:10px}
+
+/* ── Ladezustaende ── */
+.v-spin{width:24px;height:24px;border:2.5px solid var(--border-strong);border-top-color:var(--text);border-radius:50%;animation:v-spin .7s linear infinite;flex-shrink:0}
+.v-spin--gross{width:40px;height:40px;border-width:3px}
+.v-spin--verlauf{width:40px;height:40px;border:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0 25%,var(--v1) 55%,var(--v2) 80%,var(--v3));-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 3px));animation:v-spin .9s linear infinite}
+.v-punkte{display:inline-flex;gap:6px;align-items:center;height:24px}
+.v-punkte i{width:8px;height:8px;border-radius:50%;background:var(--v1);animation:v-hopf 1.1s ease-in-out infinite}
+.v-punkte i:nth-child(2){animation-delay:.15s;background:var(--v2)}
+.v-punkte i:nth-child(3){animation-delay:.3s;background:var(--v3)}
+@keyframes v-hopf{0%,80%,100%{transform:translateY(0);opacity:.5}40%{transform:translateY(-6px);opacity:1}}
+.v-lade-zeile{display:flex;align-items:center;gap:12px;font-size:var(--t-sm);color:var(--muted)}
+.v-lade-zeile strong{color:var(--text);font-weight:var(--fw-sb);display:block}
+.v-lade-block{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0;text-align:center;font-size:var(--t-sm);color:var(--muted)}
+.v-balken{height:8px;border-radius:var(--r-full);background:var(--surface2);overflow:hidden;position:relative}
+.v-balken i{display:block;height:100%;border-radius:var(--r-full);background:var(--text);transition:width .4s}
+.v-balken--verlauf i{background:var(--verlauf)}
+.v-balken--gruen i{background:var(--green)}
+.v-balken--unbestimmt i{width:35%;position:absolute;left:0;animation:v-gleiten 1.4s ease-in-out infinite}
+@keyframes v-gleiten{0%{left:-35%}100%{left:100%}}
+.v-balken--streifen i{background-color:var(--v1);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.28) 0 8px,transparent 8px 16px);background-size:22.6px 100%;animation:v-streifen .8s linear infinite}
+@keyframes v-streifen{to{background-position:22.6px 0}}
+.v-balken--duenn{height:4px}.v-balken--dick{height:12px}
+.v-balken-kopf{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;font-size:var(--t-sm);color:var(--muted)}
+.v-balken-kopf b{color:var(--text);font-weight:var(--fw-sb)}
+.v-ring{position:relative;width:88px;height:88px;display:grid;place-items:center;flex-shrink:0}
+.v-ring svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+.v-ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.v-ring .spur{stroke:var(--surface2)}
+.v-ring .wert{stroke:var(--v1);stroke-dasharray:226;stroke-dashoffset:calc(226 - 226 * var(--p,.62));transition:stroke-dashoffset .6s}
+.v-ring--gruen .wert{stroke:var(--green)}
+.v-ring--klein{width:56px;height:56px}.v-ring--klein circle{stroke-width:10}.v-ring--klein b{font-size:var(--t-sm)}
+.v-ring b{font-size:var(--t-num-sm);font-weight:var(--fw-b);letter-spacing:-.03em;position:relative}
+.v-ring-reihe{display:flex;align-items:center;gap:16px}
+.v-ring-reihe strong{display:block;font-size:var(--t-md);font-weight:var(--fw-sb)}
+.v-ring-reihe span{font-size:var(--t-xs);color:var(--subtle)}
+.v-halbring{position:relative;width:140px;text-align:center}
+.v-halbring svg{width:140px;height:76px;display:block;overflow:visible}
+.v-halbring path{fill:none;stroke-width:12;stroke-linecap:round}
+.v-halbring .spur{stroke:var(--surface2)}
+.v-halbring .wert{stroke:var(--v2);stroke-dasharray:188;stroke-dashoffset:calc(188 - 188 * var(--p,.44))}
+.v-halbring b{position:absolute;left:0;right:0;bottom:0;font-size:var(--t-num-sm);font-weight:var(--fw-b);letter-spacing:-.03em}
+.v-halbring small{display:block;margin-top:4px;font-size:var(--t-xs);color:var(--subtle)}
+.v-prozent{display:flex;align-items:center;gap:14px}
+.v-prozent b{font-size:var(--t-num);font-weight:var(--fw-b);letter-spacing:-.04em;min-width:3.2ch;line-height:1}
+.v-prozent .v-balken{flex:1}
+.v-prozent small{display:block;font-size:var(--t-xs);color:var(--subtle);margin-top:6px}
+.v-prozent-block{flex:1}
+.v-skel{height:14px;border-radius:6px;background:linear-gradient(90deg,var(--surface2) 25%,var(--border-strong) 50%,var(--surface2) 75%);background-size:200% 100%;animation:v-schimmer 1.4s infinite}
+@keyframes v-schimmer{to{background-position:-200% 0}}
+.v-skel--titel{height:22px;width:55%}.v-skel--kurz{width:70%}.v-skel--mini{width:40%;height:10px}
+.v-skel--rund{width:44px;height:44px;border-radius:50%;flex-shrink:0}
+.v-skel--kachel{height:72px;border-radius:var(--r-sm)}
+.v-skel-stapel{display:flex;flex-direction:column;gap:10px}
+.v-skel-zeile{display:flex;align-items:center;gap:12px}.v-skel-zeile>.v-skel-stapel{flex:1;gap:8px}
+.v-skel-kacheln{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── Fortschritt ── */
+.v-ziel{padding:14px 16px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);box-shadow:var(--sh-card)}
+.v-ziel-kopf{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.v-ziel-kopf strong{font-size:var(--t-md);font-weight:var(--fw-sb)}
+.v-ziel-kopf span{font-size:var(--t-sm);color:var(--muted)}
+.v-ziel-kopf span.gut{color:var(--green);font-weight:var(--fw-sb)}
+.v-ziel-fuss{display:flex;justify-content:space-between;margin-top:8px;font-size:var(--t-xs);color:var(--subtle)}
+.v-kacheln{display:flex;gap:4px}
+.v-kacheln i{flex:1;height:10px;border-radius:3px;background:var(--surface2)}
+.v-kacheln i.voll{background:var(--v1)}
+.v-kacheln i.halb{background:linear-gradient(90deg,var(--v1) 50%,var(--surface2) 50%)}
+.v-meilen{position:relative}
+.v-meilen-punkte{position:absolute;inset:0;display:flex;justify-content:space-between;align-items:center}
+.v-meilen-punkte i{width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--border-strong);box-sizing:border-box}
+.v-meilen-punkte i.erreicht{background:var(--green);border-color:var(--green)}
+.v-meilen-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:var(--t-2xs);color:var(--subtle)}
+.v-stepper{display:flex;align-items:center}
+.v-step{display:flex;align-items:center;gap:8px;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--subtle);white-space:nowrap}
+.v-step-n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);font-size:var(--t-xs);font-weight:var(--fw-b);flex-shrink:0}
+.v-step-n .v-ico{width:14px;height:14px}
+.v-step.fertig{color:var(--text)}.v-step.fertig .v-step-n{background:var(--green);color:#fff}
+.v-step.aktiv{color:var(--text)}.v-step.aktiv .v-step-n{background:var(--text);color:var(--bg)}
+.v-step-linie{flex:1;height:2px;background:var(--border);margin:0 10px;min-width:14px}
+.v-step-linie.fertig{background:var(--green)}
+.v-stepper--kompakt .v-step span{display:none}
+.v-stepper--kompakt .v-step.aktiv span{display:inline}
+.v-pager{display:flex;gap:6px;align-items:center}
+.v-pager i{width:6px;height:6px;border-radius:50%;background:var(--border-strong);transition:width .2s}
+.v-pager i.aktiv{width:20px;border-radius:3px;background:var(--text)}
+.v-pager-text{margin-left:auto;font-size:var(--t-xs);color:var(--subtle)}
+.v-stepper--vertikal{flex-direction:column;align-items:stretch}
+.v-stepper--vertikal .v-step{align-items:flex-start;gap:12px;white-space:normal}
+.v-stepper--vertikal .v-step-text{padding-top:5px}
+.v-stepper--vertikal .v-step-text small{display:block;font-weight:400;color:var(--subtle);font-size:var(--t-xs);margin-top:2px}
+.v-stepper--vertikal .v-step-linie{width:2px;height:18px;margin:4px 0 4px 13px;flex:none;min-width:0}
+.v-check{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.v-check li{display:flex;align-items:center;gap:12px;font-size:var(--t-md)}
+.v-check i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;border:1.5px solid var(--border-strong);flex-shrink:0;color:#fff;box-sizing:border-box}
+.v-check i .v-ico{width:13px;height:13px}
+.v-check li.fertig i{background:var(--green);border-color:var(--green)}
+.v-check li.fertig span{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--border-strong)}
+.v-check li.offen i{border-color:var(--v1);border-style:dashed}
+.v-check li.gesperrt span{color:var(--subtle)}.v-check li.gesperrt i{color:var(--subtle);border-color:var(--border)}
+.v-check-kopf{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.v-check-kopf strong{font-size:var(--t-lg);font-weight:var(--fw-sb)}
+.v-check-kopf span{font-size:var(--t-sm);color:var(--muted)}
+.v-check--karten li{padding:12px 14px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface)}
+.v-check--karten li .v-btn{margin-left:auto}
+
+/* ── Diagramme ── */
+.v-chart{width:100%;height:140px;display:block;overflow:visible}
+.v-chart .raster{stroke:var(--border);stroke-width:1}
+.v-chart .linie{fill:none;stroke:var(--v1);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.v-chart .linie--verlauf{stroke:url(#vLinG)}
+.v-chart .linie--zwei{stroke:var(--v3);stroke-dasharray:4 5;stroke-width:2}
+.v-chart .flaeche{fill:url(#vFlG);opacity:.28}
+.v-chart .punkt{fill:var(--surface);stroke:var(--v1);stroke-width:2.5}
+.v-chart .punkt--best{fill:var(--green);stroke:var(--green)}
+.v-chart .marke{fill:var(--text);font-size:11px;font-weight:600;font-family:var(--ziffern)}
+.v-achse{display:flex;justify-content:space-between;font-size:var(--t-2xs);color:var(--subtle);margin-top:6px;text-transform:uppercase;letter-spacing:.06em}
+.v-spark{width:100%;height:40px;display:block;overflow:visible}
+.v-spark path{fill:none;stroke:var(--v1);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.v-spark .flaeche{fill:var(--v1);opacity:.12;stroke:none}
+.v-spark circle{fill:var(--v1)}
+.v-saeulen{display:flex;align-items:flex-end;gap:8px;height:120px}
+.v-saeule{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.v-saeule i{width:100%;border-radius:6px 6px 3px 3px;background:var(--v1);opacity:.5;min-height:3px}
+.v-saeule.best i{opacity:1;background:var(--green)}
+.v-saeule.heute i{opacity:1}
+.v-saeule small{font-size:var(--t-2xs);color:var(--subtle);text-transform:uppercase}
+.v-saeule.best small{color:var(--green);font-weight:var(--fw-b)}
+.v-paar{display:flex;gap:3px;width:100%;align-items:flex-end;flex:1}
+.v-paar i{flex:1;opacity:1}
+.v-paar i.zwei{background:var(--v3)}
+.v-legende{display:flex;gap:14px;font-size:var(--t-xs);color:var(--muted);margin-top:10px;flex-wrap:wrap}
+.v-legende i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:1px}
+.v-legende b{color:var(--text);font-weight:var(--fw-sb)}
+.v-balkenliste{display:flex;flex-direction:column;gap:12px}
+.v-balkenzeile{display:grid;grid-template-columns:84px 1fr 44px;align-items:center;gap:10px;font-size:var(--t-sm)}
+.v-balkenzeile span{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v-balkenzeile b{text-align:right;font-weight:var(--fw-sb)}
+.v-balkenzeile.best .v-balken i{background:var(--green)}
+.v-balkenzeile.best b{color:var(--green)}
+.v-donut{position:relative;width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--v1) 0 62%,var(--v2) 62% 83%,var(--v3) 83% 91%,var(--surface2) 91%);display:grid;place-items:center;flex-shrink:0}
+.v-donut::after{content:"";position:absolute;inset:19px;border-radius:50%;background:var(--surface)}
+.v-donut b{position:relative;z-index:1;font-size:var(--t-num-sm);font-weight:var(--fw-b);letter-spacing:-.03em;text-align:center;line-height:1.1}
+.v-donut b small{display:block;font-size:var(--t-2xs);font-weight:var(--fw-sb);color:var(--subtle);letter-spacing:.06em;text-transform:uppercase}
+.v-donut--klein{width:72px;height:72px}.v-donut--klein::after{inset:11px}.v-donut--klein b{font-size:var(--t-sm)}
+.v-donut-reihe{display:flex;align-items:center;gap:20px}
+.v-donut-liste{flex:1;display:flex;flex-direction:column;gap:8px;font-size:var(--t-sm)}
+.v-donut-liste div{display:flex;align-items:center;gap:8px}
+.v-donut-liste i{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+.v-donut-liste b{margin-left:auto;font-weight:var(--fw-sb)}
+.v-anteile{display:flex;height:12px;border-radius:var(--r-full);overflow:hidden;gap:2px}
+.v-anteile i{display:block;height:100%}
+.v-heat{display:grid;grid-template-columns:repeat(12,1fr);gap:4px}
+.v-heat i{aspect-ratio:1;border-radius:3px;background:var(--v1);opacity:calc(.08 + .92 * var(--h,0))}
+.v-heat i.best{outline:2px solid var(--green);outline-offset:-2px}
+.v-heat-achse{display:flex;justify-content:space-between;font-size:var(--t-2xs);color:var(--subtle);margin-top:6px}
+.v-woche{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.v-woche small{font-size:var(--t-2xs);color:var(--subtle);text-transform:uppercase}
+.v-woche i{display:grid;place-items:center;aspect-ratio:1;border-radius:var(--r-xs);background:var(--surface2);margin-top:6px;font-size:var(--t-xs);font-weight:var(--fw-sb);color:var(--muted);font-style:normal}
+.v-woche i.mittel{background:var(--akzent-bg);color:var(--akzent-text)}
+.v-woche i.stark{background:var(--v1);color:var(--auf-verlauf)}
+.v-woche i.best{background:var(--green);color:#fff}
+.v-verteilung{display:flex;flex-direction:column;gap:8px}
+.v-verteilung div{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;font-size:var(--t-xs);color:var(--muted)}
+.v-verteilung span{display:flex;gap:3px}
+.v-verteilung i{width:8px;height:8px;border-radius:50%;background:var(--v1);opacity:.25}
+.v-verteilung i.an{opacity:1}
+
+/* ── Kennzahlen ── */
+.v-kpi{padding:16px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);box-shadow:var(--sh-card)}
+.v-kpi-label{font-size:var(--t-2xs);font-weight:var(--fw-sb);text-transform:uppercase;letter-spacing:.08em;color:var(--subtle)}
+.v-kpi-wert{font-size:var(--t-num);font-weight:var(--fw-b);letter-spacing:-.04em;margin-top:6px;line-height:1.1}
+.v-kpi-wert small{font-size:var(--t-sm);font-weight:var(--fw-md);color:var(--subtle);letter-spacing:0;margin-left:4px}
+.v-kpi-delta{font-size:var(--t-xs);margin-top:6px;color:var(--muted);display:flex;align-items:center;gap:4px}
+.v-kpi-delta.hoch{color:var(--green)}.v-kpi-delta.runter{color:var(--red)}
+.v-kpi-delta.hoch::before{content:"↑"}.v-kpi-delta.runter::before{content:"↓"}
+.v-kpi--dunkel{background:var(--text);color:var(--bg);border-color:transparent}
+.v-kpi--dunkel .v-kpi-label,.v-kpi--dunkel .v-kpi-delta{color:inherit;opacity:.65}
+.v-kpi--dunkel .v-kpi-delta.hoch{color:var(--green);opacity:1}
+.v-kpi--verlauf{background:var(--verlauf);color:var(--auf-verlauf);border:0}
+.v-kpi--verlauf .v-kpi-label,.v-kpi--verlauf .v-kpi-delta{color:inherit;opacity:.8}
+.v-kpi--spark .v-spark{margin-top:10px}
+.v-kpi-reihe{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.v-kpi-reihe--drei{grid-template-columns:1fr 1fr 1fr}
+.v-kpi-reihe--drei .v-kpi{padding:12px}
+.v-kpi-reihe--drei .v-kpi-wert{font-size:var(--t-num-sm)}
+.v-kpi-zeile{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.v-kpi-zeile:last-child{border-bottom:0}
+.v-kpi-zeile span{font-size:var(--t-md);color:var(--muted)}
+.v-kpi-zeile b{font-size:var(--t-num-sm);font-weight:var(--fw-b);letter-spacing:-.03em}
+.v-kpi-zeile b.best{color:var(--green)}
+.v-kpi-zeile b.fehlt{color:var(--red)}
+.v-vergleich{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;text-align:center}
+.v-vergleich .v-kpi-wert{font-size:var(--t-num-sm);margin-top:4px}
+.v-vergleich .vs{font-size:var(--t-2xs);color:var(--subtle);text-transform:uppercase;letter-spacing:.08em}
+.v-vergleich .best .v-kpi-wert{color:var(--green)}
+
+/* ── Menues ── */
+.v-tabbar{display:flex;padding:8px 4px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
+.v-tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0;color:var(--subtle);font-size:var(--t-2xs);font-weight:var(--fw-sb);text-decoration:none;position:relative;border:0;background:none;font-family:inherit;cursor:pointer;min-width:0}
+.v-tab-ico{width:44px;height:26px;display:grid;place-items:center;border-radius:var(--r-full)}
+.v-tab.aktiv{color:var(--text)}
+.v-tab.aktiv .v-ico{stroke:var(--v1)}
+.v-tab-punkt{position:absolute;top:2px;left:calc(50% + 8px);width:7px;height:7px;border-radius:50%;background:var(--v2)}
+.v-tabbar--pille .v-tab.aktiv .v-tab-ico{background:var(--akzent-bg)}
+.v-tabbar--dunkel{background:var(--text);border-color:transparent}
+.v-tabbar--dunkel .v-tab{color:rgba(255,255,255,.5)}
+.v-tabbar--dunkel .v-tab.aktiv{color:var(--bg)}
+.v-tabbar--dunkel .v-tab.aktiv .v-ico{stroke:var(--v3)}
+.v-tab--mitte .v-tab-ico{width:48px;height:48px;border-radius:50%;background:var(--verlauf);color:var(--auf-verlauf);margin-top:-22px;box-shadow:0 6px 16px var(--akzent-border)}
+.v-tab--mitte .v-ico,.v-tab--mitte.aktiv .v-ico{stroke:var(--auf-verlauf);width:22px;height:22px}
+.v-tab-avatar{width:22px;height:22px;border-radius:7px;background:var(--surface2);display:grid;place-items:center;font-size:10px;font-weight:700;color:var(--muted);box-shadow:inset 0 0 0 1px var(--border)}
+.v-tab.aktiv .v-tab-avatar{box-shadow:0 0 0 1.5px var(--v2)}
+.v-pillen{display:flex;gap:6px;flex-wrap:wrap}
+.v-pille{padding:8px 14px;border-radius:var(--r-full);border:1px solid var(--border);background:var(--surface);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.v-pille.aktiv{background:var(--text);color:var(--bg);border-color:var(--text)}
+.v-pille b{font-size:var(--t-2xs);padding:1px 6px;border-radius:var(--r-full);background:var(--surface2);color:var(--muted);font-weight:var(--fw-b)}
+.v-pille.aktiv b{background:rgba(255,255,255,.22);color:inherit}
+.v-pillen--akzent .v-pille.aktiv{background:var(--akzent-bg);color:var(--akzent-text);border-color:var(--akzent-border)}
+.v-reiter{display:flex;border-bottom:1px solid var(--border)}
+.v-reiter button{flex:1;padding:10px 4px;border:0;background:none;font-family:inherit;font-size:var(--t-md);font-weight:var(--fw-sb);color:var(--subtle);cursor:pointer;position:relative}
+.v-reiter button.aktiv{color:var(--text)}
+.v-reiter button.aktiv::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--v1);border-radius:2px}
+.v-menu{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:0 12px 32px rgba(27,24,38,.14);padding:6px;width:220px;max-width:100%}
+.v-menu button{display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:0;background:none;border-radius:var(--r-xs);font-family:inherit;font-size:var(--t-md);color:var(--text);cursor:pointer;text-align:left}
+.v-menu button:hover{background:var(--surface2)}
+.v-menu button .v-ico{width:18px;height:18px;color:var(--muted)}
+.v-menu button.gefahr,.v-menu button.gefahr .v-ico{color:var(--red)}
+.v-menu button .kuerzel{margin-left:auto;font-size:var(--t-xs);color:var(--subtle)}
+.v-menu button .haken{margin-left:auto;width:16px;height:16px;color:var(--v1);opacity:0}
+.v-menu button.gewaehlt .haken{opacity:1}
+.v-menu hr{border:0;border-top:1px solid var(--border);margin:6px 0}
+.v-menu-titel{padding:6px 12px 8px;font-size:var(--t-2xs);text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:var(--fw-sb)}
+.v-liste{border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);overflow:hidden;box-shadow:var(--sh-card)}
+.v-liste-zeile{display:flex;align-items:center;gap:12px;padding:13px 16px;border:0;border-bottom:1px solid var(--border);font-size:var(--t-md);color:var(--text);text-decoration:none;background:none;width:100%;font-family:inherit;cursor:pointer;text-align:left}
+.v-liste-zeile:last-child{border-bottom:0}
+.v-liste-zeile>.v-ico{color:var(--muted)}
+.v-liste-zeile .text{flex:1;min-width:0}
+.v-liste-zeile .text small{display:block;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.v-liste-zeile .wert{font-size:var(--t-sm);color:var(--muted)}
+.v-liste-zeile .pfeil{color:var(--subtle);width:16px;height:16px}
+.v-liste-zeile .sym{width:32px;height:32px;border-radius:var(--r-xs);display:grid;place-items:center;background:var(--surface2);color:var(--muted);flex-shrink:0}
+.v-liste-zeile .sym .v-ico{width:17px;height:17px}
+.v-liste-zeile .sym.akzent{background:var(--akzent-bg);color:var(--akzent-text)}
+.v-liste-zeile .sym.gut{background:var(--green-bg);color:var(--green)}
+.v-liste-zeile .sym.warn{background:var(--orange-bg);color:var(--orange)}
+.v-liste-zeile.gefahr{color:var(--red)}
+.v-liste-titel{padding:14px 16px 6px;font-size:var(--t-2xs);text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:var(--fw-sb)}
+.v-topbar{display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)}
+.v-topbar h1{margin:0;font-size:var(--t-2xl);font-weight:var(--fw-b);letter-spacing:-.03em;flex:1;line-height:1.1}
+.v-topbar h1.mitte{text-align:center;font-size:var(--t-xl)}
+.v-topbar h1 small{display:block;font-size:var(--t-xs);font-weight:400;color:var(--subtle);letter-spacing:0;margin-top:2px}
+.v-topbar--dunkel{background:var(--text);color:var(--bg);border-color:transparent}
+.v-topbar--dunkel .v-ibtn{background:rgba(255,255,255,.12);border:0;color:inherit}
+.v-avatar{width:36px;height:36px;border-radius:var(--r-xs);background:var(--surface2);display:grid;place-items:center;font-size:var(--t-sm);font-weight:var(--fw-b);color:var(--muted);overflow:hidden;flex-shrink:0}
+.v-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.v-avatar--rund{border-radius:50%}
+.v-avatar--ring{box-shadow:0 0 0 2px var(--surface),0 0 0 4px var(--v1)}
+.v-avatar--gross{width:64px;height:64px;font-size:var(--t-xl);border-radius:var(--r-sm)}
+.v-avatar--verlauf{background:var(--verlauf);color:var(--auf-verlauf)}
+.v-avatar--status::after{content:"";position:absolute;right:-1px;bottom:-1px;width:11px;height:11px;border-radius:50%;background:var(--green);border:2px solid var(--surface)}
+.v-avatar--status{position:relative;overflow:visible}
+.v-avatar-stapel{display:flex;align-items:center}
+.v-avatar-stapel .v-avatar{margin-left:-10px;box-shadow:0 0 0 2px var(--surface)}
+.v-avatar-stapel .v-avatar:first-child{margin-left:0}
+.v-avatar-stapel span{margin-left:10px;font-size:var(--t-xs);color:var(--subtle)}
+
+/* ── Eingaben ── */
+.v-feld{display:flex;flex-direction:column;gap:6px}
+.v-feld label{font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted)}
+.v-input{width:100%;height:var(--field-h);padding:0 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-family:inherit;font-size:var(--t-input);outline:none;transition:border-color .15s,box-shadow .15s}
+.v-input::placeholder{color:var(--subtle)}
+.v-input:focus{border-color:var(--v1);box-shadow:0 0 0 3px var(--akzent-bg)}
+.v-input.fehler{border-color:var(--red)}
+.v-input.gut{border-color:var(--green)}
+textarea.v-input{height:auto;min-height:96px;padding:12px 14px;resize:vertical;line-height:var(--lh-body)}
+.v-hint{font-size:var(--t-xs);color:var(--subtle)}
+.v-hint.fehler{color:var(--red)}.v-hint.gut{color:var(--green)}
+.v-hint-zeile{display:flex;justify-content:space-between;gap:10px}
+.v-input-huelle{position:relative;display:flex;align-items:center}
+.v-input-huelle .v-input{padding-left:38px}
+.v-input-huelle>.v-ico,.v-input-huelle>.praefix{position:absolute;left:12px;color:var(--subtle);pointer-events:none}
+.v-input-huelle>.praefix{font-size:var(--t-input);font-weight:var(--fw-sb)}
+.v-input-huelle>.v-ibtn{position:absolute;right:6px;border:0;background:transparent;color:var(--subtle)}
+.v-input-huelle>.suffix{position:absolute;right:12px;font-size:var(--t-xs);color:var(--subtle)}
+.v-input--mit-suffix{padding-right:60px}
+.v-select{appearance:none;-webkit-appearance:none;padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23817c92' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:18px}
+.v-toggle{width:46px;height:28px;border-radius:var(--r-full);background:var(--border-strong);border:0;padding:3px;cursor:pointer;transition:background .2s;flex-shrink:0;display:block}
+.v-toggle i{display:block;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.v-toggle.an{background:var(--green)}
+.v-toggle.an i{transform:translateX(18px)}
+.v-toggle--akzent.an{background:var(--v1)}
+.v-toggle--dunkel.an{background:var(--text)}
+.v-schalter-zeile{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.v-schalter-zeile:last-child{border-bottom:0}
+.v-schalter-zeile span{font-size:var(--t-md)}
+.v-schalter-zeile small{display:block;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.v-checkbox{display:flex;align-items:center;gap:10px;font-size:var(--t-md);cursor:pointer}
+.v-checkbox input{appearance:none;-webkit-appearance:none;width:20px;height:20px;border:1.5px solid var(--border-strong);border-radius:6px;margin:0;display:grid;place-items:center;cursor:pointer;background:var(--surface);flex-shrink:0}
+.v-checkbox input:checked{background:var(--text);border-color:var(--text)}
+.v-checkbox input:checked::after{content:"";width:5px;height:9px;border:solid var(--bg);border-width:0 2px 2px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.v-checkbox input[type=radio]{border-radius:50%}
+.v-checkbox input[type=radio]:checked{background:var(--surface);border:6px solid var(--v1)}
+.v-checkbox input[type=radio]:checked::after{display:none}
+.v-checkbox small{color:var(--subtle);font-size:var(--t-xs);display:block}
+.v-auswahl{display:flex;flex-direction:column;gap:8px}
+.v-auswahl-karte{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--r-sm);cursor:pointer;background:var(--surface)}
+.v-auswahl-karte.aktiv{border-color:var(--v1);box-shadow:0 0 0 3px var(--akzent-bg)}
+.v-auswahl-karte input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border-strong);margin:0;flex-shrink:0}
+.v-auswahl-karte input:checked{border:5px solid var(--v1)}
+.v-auswahl-karte .text{flex:1;font-size:var(--t-md);font-weight:var(--fw-sb)}
+.v-auswahl-karte .text small{display:block;font-weight:400;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.v-chips{display:flex;gap:8px;flex-wrap:wrap}
+.v-chip{padding:7px 12px;border-radius:var(--r-full);border:1px solid var(--border-strong);background:var(--surface);font-family:inherit;font-size:var(--t-sm);font-weight:var(--fw-md);color:var(--muted);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.v-chip.aktiv{background:var(--akzent-bg);border-color:var(--akzent-border);color:var(--akzent-text)}
+.v-chip .v-ico{width:14px;height:14px}
+.v-upload{border:1.5px dashed var(--border-strong);border-radius:var(--r-md);padding:20px;text-align:center;color:var(--muted);font-size:var(--t-sm);display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;background:var(--surface)}
+.v-upload .v-ico{width:24px;height:24px;color:var(--subtle)}
+.v-upload b{color:var(--text);font-weight:var(--fw-sb)}
+.v-upload small{font-size:var(--t-xs);color:var(--subtle)}
+.v-code-eingabe{display:flex;gap:8px}
+.v-code-eingabe input{width:100%;height:52px;text-align:center;font-size:var(--t-xl);font-weight:var(--fw-b);border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font-family:var(--ziffern);outline:none;padding:0}
+.v-code-eingabe input:focus{border-color:var(--v1);box-shadow:0 0 0 3px var(--akzent-bg)}
+.v-zaehler-feld{display:flex;align-items:center;gap:0;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);height:var(--field-h);width:max-content}
+.v-zaehler-feld button{width:42px;height:100%;border:0;background:none;font-size:18px;color:var(--muted);cursor:pointer;font-family:inherit}
+.v-zaehler-feld b{min-width:40px;text-align:center;font-weight:var(--fw-sb)}
+
+/* ── Badges & Status ── */
+.v-badge{display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border-radius:var(--r-full);font-size:var(--t-2xs);font-weight:var(--fw-b);letter-spacing:.06em;text-transform:uppercase;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.v-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0}
+.v-badge--ohne::before{display:none}
+.v-badge--gruen{background:var(--green-bg);color:var(--green)}
+.v-badge--rot{background:var(--red-bg);color:var(--red)}
+.v-badge--orange{background:var(--orange-bg);color:var(--orange)}
+.v-badge--blau{background:var(--blue-bg);color:var(--blue)}
+.v-badge--akzent{background:var(--akzent-bg);color:var(--akzent-text)}
+.v-badge--verlauf{background:var(--verlauf);color:var(--auf-verlauf)}
+.v-badge--dunkel{background:var(--text);color:var(--bg)}
+.v-badge--rand{background:transparent;box-shadow:inset 0 0 0 1px currentColor}
+.v-badge--live::before{animation:v-puls 1.4s ease-in-out infinite}
+@keyframes v-puls{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.v-badge .v-ico{width:12px;height:12px}
+.v-badge-reihe{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.v-zaehler{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:var(--r-full);background:var(--red);color:#fff;font-size:var(--t-2xs);font-weight:var(--fw-b)}
+.v-zaehler--dunkel{background:var(--text);color:var(--bg)}
+.v-zaehler--leise{background:var(--surface2);color:var(--muted)}
+.v-zaehler--akzent{background:var(--v1);color:var(--auf-verlauf)}
+.v-punkt{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--v2)}
+.v-status{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r-md);border:1px solid}
+.v-status>i{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.v-status .text{flex:1;min-width:0}
+.v-status strong{font-size:var(--t-sm);font-weight:var(--fw-sb);display:block}
+.v-status span{font-size:var(--t-xs);color:var(--muted);display:block;margin-top:1px}
+.v-status--aktiv{background:var(--green-bg);border-color:var(--green-border)}.v-status--aktiv>i{background:var(--green)}
+.v-status--aus{background:var(--surface2);border-color:var(--border-strong)}.v-status--aus>i{background:var(--subtle)}
+.v-status--warn{background:var(--orange-bg);border-color:var(--orange-border)}.v-status--warn>i{background:var(--orange)}
+.v-status--fehler{background:var(--red-bg);border-color:var(--red-border)}.v-status--fehler>i{background:var(--red)}
+
+/* ── Hinweise ── */
+.v-hinweis{display:flex;gap:12px;padding:14px 16px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--surface2)}
+.v-hinweis>.v-ico{margin-top:1px}
+.v-hinweis .text{flex:1;min-width:0}
+.v-hinweis strong{display:block;font-size:var(--t-md);font-weight:var(--fw-sb)}
+.v-hinweis p{margin:3px 0 0;font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
+.v-hinweis .v-btn{margin-top:10px}
+.v-hinweis .pfeil{color:var(--subtle);align-self:center;width:16px;height:16px}
+.v-hinweis--warn{background:var(--orange-bg);border-color:var(--orange-border)}.v-hinweis--warn>.v-ico{color:var(--orange)}
+.v-hinweis--gut{background:var(--green-bg);border-color:var(--green-border)}.v-hinweis--gut>.v-ico{color:var(--green)}
+.v-hinweis--fehler{background:var(--red-bg);border-color:var(--red-border)}.v-hinweis--fehler>.v-ico{color:var(--red)}
+.v-hinweis--info{background:var(--blue-bg);border-color:var(--blue-border)}.v-hinweis--info>.v-ico{color:var(--blue)}
+.v-hinweis--akzent{background:var(--akzent-bg);border-color:var(--akzent-border)}.v-hinweis--akzent>.v-ico{color:var(--akzent-text)}
+.v-toast{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:var(--r-sm);background:var(--text);color:var(--bg);font-size:var(--t-sm);font-weight:var(--fw-md);box-shadow:0 10px 30px rgba(27,24,38,.2);max-width:100%}
+.v-toast .v-ico{width:18px;height:18px}
+.v-toast--gut{background:var(--green);color:#fff}
+.v-toast--fehler{background:var(--red);color:#fff}
+.v-toast--hell{background:var(--surface);color:var(--text);border:1px solid var(--border)}
+.v-toast--hell .v-ico{color:var(--green)}
+.v-toast button{margin-left:auto;border:0;background:none;color:inherit;font-family:inherit;font-weight:var(--fw-b);font-size:var(--t-sm);cursor:pointer;text-decoration:underline;text-underline-offset:3px;opacity:.9;padding:0 0 0 8px}
+.v-toast .v-toast-x{text-decoration:none;opacity:.6;font-size:16px;line-height:1}
+.v-banner{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--border);font-size:var(--t-sm);box-shadow:var(--sh-card)}
+.v-banner .text{flex:1;min-width:0}
+.v-banner .text strong{display:block;font-weight:var(--fw-sb)}
+.v-banner .text span{color:var(--muted)}
+.v-banner .schliessen{border:0;background:none;color:inherit;opacity:.6;cursor:pointer;padding:4px;display:grid;font-family:inherit}
+.v-banner .schliessen .v-ico{width:16px;height:16px}
+.v-banner--verlauf{background:var(--verlauf);color:var(--auf-verlauf);border:0}
+.v-banner--verlauf .text span{color:inherit;opacity:.8}
+.v-banner--verlauf .v-btn{background:var(--auf-verlauf);color:var(--v1);border:0}
+.v-banner--dunkel{background:var(--text);color:var(--bg);border:0}
+.v-banner--dunkel .text span{opacity:.7;color:inherit}
+.v-banner--dunkel .v-btn{background:rgba(255,255,255,.15);color:inherit;border:0}
+.v-banner .sym{width:36px;height:36px;border-radius:var(--r-xs);display:grid;place-items:center;background:var(--akzent-bg);color:var(--akzent-text);flex-shrink:0}
+.v-banner--verlauf .sym,.v-banner--dunkel .sym{background:rgba(255,255,255,.18);color:inherit}
+
+/* ── Listen & Tabellen ── */
+.v-zeile{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.v-zeile:last-child{border-bottom:0}
+.v-zeile .text{flex:1;min-width:0}
+.v-zeile .text strong{display:block;font-size:var(--t-md);font-weight:var(--fw-sb);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.v-zeile .text span{display:block;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.v-zeile .zahl{font-size:var(--t-md);font-weight:var(--fw-sb);text-align:right;white-space:nowrap}
+.v-zeile .zahl small{display:block;font-size:var(--t-xs);color:var(--subtle);font-weight:400}
+.v-zeile .zahl.hoch{color:var(--green)}
+.v-zeile .rang{width:22px;font-size:var(--t-sm);font-weight:var(--fw-b);color:var(--subtle);text-align:center;flex-shrink:0}
+.v-zeile .rang.top{color:var(--green)}
+.v-zeile .vorschau{width:44px;height:44px;border-radius:var(--r-xs);background:var(--verlauf);opacity:.85;flex-shrink:0}
+.v-zeile .pfeil{color:var(--subtle);width:16px;height:16px}
+.v-zeile--karte{padding:12px 14px;border:1px solid var(--border);border-radius:var(--r-sm);background:var(--surface);margin-bottom:8px}
+.v-zeile--karte:last-child{margin-bottom:0}
+.v-tabelle{width:100%;border-collapse:collapse;font-size:var(--t-sm)}
+.v-tabelle th{text-align:left;padding:8px 6px;font-size:var(--t-2xs);text-transform:uppercase;letter-spacing:.08em;color:var(--subtle);font-weight:var(--fw-sb);border-bottom:1px solid var(--border)}
+.v-tabelle td{padding:11px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+.v-tabelle tr:last-child td{border-bottom:0}
+.v-tabelle .r{text-align:right}
+.v-tabelle td.r{font-weight:var(--fw-sb)}
+.v-tabelle td.r.gut{color:var(--green)}.v-tabelle td.r.schlecht{color:var(--red)}
+.v-tabelle--zebra tbody tr:nth-child(odd) td{background:var(--surface2)}
+.v-tabelle--zebra td:first-child{border-radius:var(--r-xs) 0 0 var(--r-xs)}.v-tabelle--zebra td:last-child{border-radius:0 var(--r-xs) var(--r-xs) 0}
+.v-tabelle--zebra td{border-bottom:0}
+.v-tabelle--kompakt td{padding:7px 6px}
+.v-tabelle td small{display:block;color:var(--subtle);font-size:var(--t-xs)}
+.v-tabelle .v-balken{min-width:60px}
+
+/* ── Karten, Leerzustaende, Dialoge, Zeitlinie, Preise ── */
+.v-karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);padding:16px}
+.v-karte-kopf{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}
+.v-karte-kopf h3{margin:0;font-size:var(--t-lg);font-weight:var(--fw-sb)}
+.v-karte-kopf p{margin:2px 0 0;font-size:var(--t-xs);color:var(--subtle)}
+.v-karte p{font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body);margin:0}
+.v-karte-fuss{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:var(--t-xs);color:var(--subtle)}
+.v-karte--verlauf{background:var(--verlauf);color:var(--auf-verlauf);border:0}
+.v-karte--verlauf .v-karte-kopf p,.v-karte--verlauf p{color:inherit;opacity:.85}
+.v-karte--verlauf .v-btn{background:var(--auf-verlauf);color:var(--v1);border:0}
+.v-karte--flach{box-shadow:none;background:var(--surface2);border-color:transparent}
+.v-karte--dunkel{background:var(--text);color:var(--bg);border:0}
+.v-karte--dunkel p,.v-karte--dunkel .v-karte-kopf p{color:inherit;opacity:.7}
+.v-karte--akzent{border-left:3px solid var(--v1)}
+.v-leer{text-align:center;padding:28px 16px}
+.v-leer .sym{width:48px;height:48px;border-radius:50%;background:var(--surface2);display:grid;place-items:center;margin:0 auto 12px;color:var(--subtle)}
+.v-leer .sym .v-ico{width:22px;height:22px}
+.v-leer .sym.akzent{background:var(--akzent-bg);color:var(--akzent-text)}
+.v-leer h3{margin:0;font-size:var(--t-lg);font-weight:var(--fw-sb)}
+.v-leer p{margin:6px 0 0;font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
+.v-leer .v-btn{margin-top:16px}
+.v-leer--gestrichelt{border:1.5px dashed var(--border-strong);border-radius:var(--r-md)}
+.v-leer--karte{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card)}
+.v-leer .v-stepper{margin:16px auto 0;max-width:260px}
+.v-modal{background:var(--surface);border-radius:var(--r-lg);padding:22px 20px;box-shadow:0 24px 60px rgba(27,24,38,.22);border:1px solid var(--border)}
+.v-modal h2{margin:0;font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.02em}
+.v-modal p{margin:6px 0 0;font-size:var(--t-sm);color:var(--muted);line-height:var(--lh-body)}
+.v-modal .v-btn-reihe,.v-modal .v-btn-stapel{margin-top:18px}
+.v-modal .v-feld{margin-top:14px}
+.v-modal .v-hinweis{margin-top:14px}
+.v-modal--mitte{text-align:center}
+.v-modal--mitte .sym{width:52px;height:52px;border-radius:50%;background:var(--red-bg);color:var(--red);display:grid;place-items:center;margin:0 auto 14px}
+.v-modal--mitte .sym .v-ico{width:24px;height:24px}
+.v-sheet{background:var(--surface);border-radius:var(--r-lg) var(--r-lg) 0 0;padding:8px 20px 20px;box-shadow:var(--sh-over);border:1px solid var(--border);border-bottom:0}
+.v-sheet-griff{width:36px;height:4px;border-radius:2px;background:var(--border-strong);margin:0 auto 14px}
+.v-sheet h2{margin:0 0 4px;font-size:var(--t-xl);font-weight:var(--fw-b)}
+.v-sheet p{margin:0 0 14px;font-size:var(--t-sm);color:var(--muted)}
+.v-sheet .v-btn--breit{margin-top:14px}
+.v-sheet-kopf{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.v-sheet-kopf h2{margin:0}
+.v-zeitlinie{list-style:none;margin:0;padding:0 0 0 22px;position:relative}
+.v-zeitlinie::before{content:"";position:absolute;left:6px;top:6px;bottom:6px;width:2px;background:var(--border)}
+.v-zeitlinie li{position:relative;padding-bottom:16px;font-size:var(--t-md)}
+.v-zeitlinie li:last-child{padding-bottom:0}
+.v-zeitlinie li::before{content:"";position:absolute;left:-21px;top:5px;width:10px;height:10px;border-radius:50%;background:var(--v1);box-shadow:0 0 0 3px var(--surface)}
+.v-zeitlinie li.fertig::before{background:var(--green)}
+.v-zeitlinie li.fehler::before{background:var(--red)}
+.v-zeitlinie li.offen::before{background:var(--surface);border:2px solid var(--border-strong);box-sizing:border-box}
+.v-zeitlinie li.laeuft::before{background:var(--v1);animation:v-puls 1.4s ease-in-out infinite}
+.v-zeitlinie strong{font-weight:var(--fw-sb)}
+.v-zeitlinie small{display:block;font-size:var(--t-xs);color:var(--subtle);margin-top:2px}
+.v-zeitlinie--karten li{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:10px}
+.v-zeitlinie--karten li:last-child{margin-bottom:0}
+.v-zeitlinie--karten li::before{top:14px}
+.v-zeitlinie--tag{padding-left:0}
+.v-zeitlinie--tag::before{display:none}
+.v-zeitlinie--tag li{display:grid;grid-template-columns:52px 1fr;gap:12px;padding-bottom:12px}
+.v-zeitlinie--tag li::before{display:none}
+.v-zeitlinie--tag .zeit{font-size:var(--t-xs);color:var(--subtle);padding-top:2px;font-family:var(--ziffern);font-variant-numeric:tabular-nums}
+.v-zeitlinie--tag .inhalt{padding:10px 12px;border-radius:var(--r-sm);background:var(--surface2)}
+.v-zeitlinie--tag .inhalt.gut{background:var(--green-bg)}
+.v-zeitlinie--tag .inhalt.fehler{background:var(--red-bg)}
+.v-preis{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);padding:20px;box-shadow:var(--sh-card);position:relative}
+.v-preis-name{font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted)}
+.v-preis-wert{font-size:var(--t-num);font-weight:var(--fw-b);letter-spacing:-.04em;margin-top:6px;line-height:1}
+.v-preis-wert small{font-size:var(--t-sm);font-weight:400;color:var(--subtle);letter-spacing:0}
+.v-preis ul{list-style:none;margin:16px 0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:var(--t-sm)}
+.v-preis li{display:flex;gap:8px;align-items:center}
+.v-preis li .v-ico{width:16px;height:16px;color:var(--green)}
+.v-preis li.nicht{color:var(--subtle)}.v-preis li.nicht .v-ico{color:var(--border-strong)}
+.v-preis--premium{border:1.5px solid transparent;background:linear-gradient(var(--surface),var(--surface)) padding-box,var(--verlauf) border-box}
+.v-preis-tag{position:absolute;top:-11px;left:20px}
+.v-preis--dunkel{background:var(--text);color:var(--bg);border-color:transparent}
+.v-preis--dunkel .v-preis-name,.v-preis--dunkel .v-preis-wert small{color:inherit;opacity:.65}
+.v-preis--dunkel li .v-ico{color:var(--v3)}
+.v-preis--dunkel li.nicht{opacity:.5}
+.v-preis-hinweis{font-size:var(--t-xs);color:var(--subtle);margin-top:10px;text-align:center}
+</style>
+
+<!-- ═══ BIBLIOTHEK: nur Chrome, wird nie mitkopiert ═══ -->
+<style id="lib">
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;font-size:var(--t-md);-webkit-font-smoothing:antialiased}
+.lib-top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.lib-top-in{max-width:1180px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.lib-marke{display:flex;align-items:center;gap:10px;font-weight:var(--fw-b);font-size:var(--t-xl);letter-spacing:-.03em}
+.lib-logo{width:32px;height:32px;border-radius:var(--r-xs);background:var(--verlauf);color:var(--auf-verlauf);display:grid;place-items:center;font-size:15px}
+.lib-marke small{font-weight:400;color:var(--subtle);font-size:var(--t-xs);letter-spacing:0;margin-left:4px}
+.lib-suche{flex:1;min-width:160px;max-width:320px;height:36px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);outline:none}
+.lib-suche:focus{border-color:var(--v1);box-shadow:0 0 0 3px var(--akzent-bg)}
+.lib-schalter{margin-left:auto;display:flex;gap:8px;align-items:center}
+.lib-schalter select,.lib-schalter button{height:36px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-sm);font-weight:var(--fw-sb);cursor:pointer}
+.lib-schalter button.an{background:var(--text);color:var(--bg);border-color:var(--text)}
+.lib-nav{max-width:1180px;margin:0 auto;padding:0 20px 12px;display:flex;gap:6px;flex-wrap:wrap}
+.lib-nav a{padding:6px 11px;border-radius:var(--r-full);font-size:var(--t-xs);font-weight:var(--fw-sb);color:var(--muted);text-decoration:none;background:var(--surface2)}
+.lib-nav a:hover{color:var(--text)}
+.lib-main{max-width:1180px;margin:0 auto;padding:28px 20px 120px}
+.lib-intro{margin-bottom:8px}
+.lib-intro h1{font-size:28px;letter-spacing:-.04em;margin:0 0 6px;font-weight:var(--fw-b)}
+.lib-intro p{color:var(--muted);margin:0;max-width:640px;line-height:var(--lh-body)}
+.lib-abschnitt{margin-top:44px;scroll-margin-top:120px}
+.lib-abschnitt>h2{font-size:var(--t-2xl);letter-spacing:-.03em;margin:0 0 4px;font-weight:var(--fw-b)}
+.lib-abschnitt>p{color:var(--muted);margin:0 0 18px;font-size:var(--t-sm)}
+.lib-gruppe{margin-top:22px}
+.lib-gruppe h3{font-size:var(--t-2xs);text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin:0 0 10px;font-weight:var(--fw-sb)}
+.lib-drei{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.lib-zelle{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md);box-shadow:var(--sh-card);display:flex;flex-direction:column;min-width:0}
+.lib-zelle-kopf{display:flex;align-items:center;gap:6px;padding:10px 12px 10px 16px;border-bottom:1px solid var(--border)}
+.lib-zelle-kopf span{flex:1;font-size:var(--t-sm);font-weight:var(--fw-sb);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-knopf{height:30px;padding:0 10px;border:1px solid var(--border-strong);border-radius:var(--r-xs);background:var(--surface);color:var(--text);font:inherit;font-size:var(--t-xs);font-weight:var(--fw-sb);cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.lib-knopf svg{width:13px;height:13px}
+.lib-knopf.kopiert{background:var(--green);border-color:var(--green);color:#fff}
+.lib-knopf.an{background:var(--text);color:var(--bg);border-color:var(--text)}
+.lib-demo{padding:18px 16px;flex:1;display:flex;flex-direction:column;justify-content:center;gap:10px;min-width:0;overflow:hidden}
+.lib-demo.mitte{align-items:center}
+.lib-demo.oben{justify-content:flex-start}
+.lib-demo.grau{background:var(--bg);border-radius:0 0 var(--r-md) var(--r-md)}
+.lib-demo.reihe{flex-direction:row;flex-wrap:wrap;align-items:center}
+.lib-code{display:none;margin:0;padding:14px 16px;background:#17151f;color:#d9d6e6;font:11px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;overflow:auto;max-height:320px;border-top:1px solid var(--border);white-space:pre;border-radius:0 0 var(--r-md) var(--r-md)}
+.lib-code.offen{display:block}
+html[data-farbmodus="dunkel"] .lib-code{background:#0d0c12}
+.lib-toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:var(--r-sm);font-size:var(--t-sm);font-weight:var(--fw-sb);opacity:0;pointer-events:none;transition:.2s;z-index:90;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.lib-toast.zeig{opacity:1;transform:translateX(-50%) translateY(0)}
+.lib-regeln{margin-top:44px;padding:20px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface)}
+.lib-regeln h2{font-size:var(--t-xl);margin:0 0 10px}
+.lib-regeln ul{margin:0;padding-left:18px;color:var(--muted);font-size:var(--t-sm);line-height:1.7}
+.lib-regeln b{color:var(--text)}
+@media(max-width:900px){.lib-drei{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.lib-drei{grid-template-columns:1fr}.lib-main{padding:20px 16px 100px}.lib-schalter{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+
+<header class="lib-top">
+  <div class="lib-top-in">
+    <div class="lib-marke"><span class="lib-logo">v</span>viuno UI<small>Bibliothek</small></div>
+    <input class="lib-suche" id="lib-suche" type="search" placeholder="Filtern: Button, Ring, Tabelle …">
+    <div class="lib-schalter">
+      <select id="lib-thema" title="Signatur des Creators">
+        <option value="color">Signatur: Color</option>
+        <option value="dark">Signatur: Dark</option>
+        <option value="clean">Signatur: Clean</option>
+      </select>
+      <button id="lib-dunkel" type="button">Dunkel</button>
+    </div>
+  </div>
+  <nav class="lib-nav">
+    <a href="#buttons">Buttons</a><a href="#laden">Laden</a><a href="#fortschritt">Fortschritt</a><a href="#diagramme">Diagramme</a><a href="#kennzahlen">Kennzahlen</a><a href="#menues">Menüs</a><a href="#eingaben">Eingaben</a><a href="#badges">Badges</a><a href="#hinweise">Hinweise</a><a href="#listen">Listen</a><a href="#karten">Karten &amp; Dialoge</a><a href="#weitere">Zeitlinie &amp; Preise</a>
+  </nav>
+</header>
+
+<main class="lib-main">
+<div class="lib-intro">
+  <h1>Bausteine für die viuno-App</h1>
+  <p>Jede Reihe zeigt drei Varianten einer Sorte, die zueinander passen und sich mischen lassen. <b>Kopieren</b> legt HTML plus genau die CSS-Regeln und Tokens in die Zwischenablage, die das Element braucht. Der Token-Block ist derselbe wie in der App; die Schalter oben zeigen, wie alles der Creator-Signatur und einem dunklen Modus folgt.</p>
+</div>
+
+<!-- ════════════════════════════ BUTTONS ════════════════════════════ -->
+<section class="lib-abschnitt" id="buttons">
+<h2>Buttons</h2>
+<p>Dunkel ist die Hauptaktion. Der Verlauf ist für das, was der Creator gewinnen kann. Rot nur, wenn etwas weg ist.</p>
+
+<div class="lib-gruppe" data-name="Normale Buttons Standard">
+<h3>Normal</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Dunkel · Hauptaktion"><div class="lib-demo mitte">
+<button class="v-btn v-btn--dunkel">Speichern</button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Mit Rand · Zweitaktion"><div class="lib-demo mitte">
+<button class="v-btn v-btn--rand">Vorschau ansehen</button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Leise · Abbrechen"><div class="lib-demo mitte">
+<button class="v-btn v-btn--leise">Abbrechen</button>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Premium Buttons Verlauf">
+<h3>Premium</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Premium · gefüllt"><div class="lib-demo mitte">
+<button class="v-btn v-btn--premium"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></svg>Analyse starten</button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Premium · Verlaufsrand"><div class="lib-demo mitte">
+<button class="v-btn v-btn--premium-rand">Premium freischalten</button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Premium · mit Glanz"><div class="lib-demo mitte">
+<button class="v-btn v-btn--premium-glanz v-btn--pille">Jetzt für 9,99 €</button>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Pro Buttons Upgrade">
+<h3>Pro</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Pro · mit Tag"><div class="lib-demo mitte">
+<button class="v-btn v-btn--pro">Media Kit exportieren <span class="v-pro-tag">PRO</span></button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Pro · Pille"><div class="lib-demo mitte">
+<button class="v-btn v-btn--pro-pille"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Nur mit Pro</button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Pro · breite Karte"><div class="lib-demo">
+<button class="v-btn v-btn--pro-breit">
+  <span class="v-btn-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></svg></span>
+  <span><span class="v-btn-titel">Auf Pro wechseln</span><span class="v-btn-sub">Alle Auswertungen, ohne Limit</span></span>
+  <svg class="v-ico v-btn-pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M9 6l6 6-6 6"/></svg>
+</button>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Icon Buttons Symbol">
+<h3>Icon-Buttons</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Eckig · mit Rand"><div class="lib-demo mitte">
+<div class="v-ibtn-reihe">
+  <button class="v-ibtn" aria-label="Teilen"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></button>
+  <button class="v-ibtn" aria-label="Bearbeiten"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16z"/></svg></button>
+  <button class="v-ibtn" aria-label="Neu laden"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></button>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Rund · leise"><div class="lib-demo mitte">
+<div class="v-ibtn-reihe">
+  <button class="v-ibtn v-ibtn--rund" aria-label="Zurück"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+  <button class="v-ibtn v-ibtn--rund" aria-label="Schließen"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <button class="v-ibtn v-ibtn--rund v-ibtn--klein" aria-label="Mehr"><svg class="v-ico" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Gefüllt · Verlauf und Dunkel"><div class="lib-demo mitte">
+<div class="v-ibtn-reihe">
+  <button class="v-ibtn v-ibtn--verlauf" aria-label="Hinzufügen"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button class="v-ibtn v-ibtn--dunkel" aria-label="Kopieren"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5h10"/></svg></button>
+  <button class="v-ibtn v-ibtn--verlauf v-ibtn--rund" aria-label="Senden"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Segment Gruppen Zeitraum Auswahl">
+<h3>Segmente und Gruppen</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Segment · Pille"><div class="lib-demo mitte">
+<div class="v-seg"><button class="aktiv">7 Tage</button><button>30 Tage</button><button>90 Tage</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Segment · dunkel, volle Breite"><div class="lib-demo">
+<div class="v-seg v-seg--dunkel v-seg--voll"><button class="aktiv">Instagram</button><button>TikTok</button><button>Threads</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Button-Reihe · Dialogfuß"><div class="lib-demo">
+<div class="v-btn-reihe"><button class="v-btn v-btn--rand">Abbrechen</button><button class="v-btn v-btn--dunkel">Speichern</button></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Status Buttons Gefahr Erfolg Laden Löschen">
+<h3>Zustände</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Gefahr · Löschen"><div class="lib-demo mitte">
+<button class="v-btn v-btn--gefahr"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Konto löschen</button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Erledigt · grün"><div class="lib-demo mitte">
+<button class="v-btn v-btn--gut"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px"><path d="M5 12l5 5 9-11"/></svg>Seite ist live</button>
+  </div></div>
+  <div class="lib-zelle" data-titel="Lädt · gesperrt"><div class="lib-demo mitte">
+<div class="v-btn-stapel" style="width:100%">
+  <button class="v-btn v-btn--dunkel v-btn--laden v-btn--breit"><span class="v-btn-spin"></span>Wird gespeichert …</button>
+  <button class="v-btn v-btn--rand v-btn--breit" disabled>Nicht verfügbar</button>
+</div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ LADEN ════════════════════════════ -->
+<section class="lib-abschnitt" id="laden">
+<h2>Ladezustände</h2>
+<p>Kreis für kurz, Balken für messbar, Skelett für Inhalt, der gleich da ist.</p>
+
+<div class="lib-gruppe" data-name="Spinner Kreis Laden">
+<h3>Kreis</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Spinner · dünn"><div class="lib-demo mitte">
+<div class="v-lade-zeile"><div class="v-spin"></div><div><strong>Daten werden geladen</strong>Einen Moment …</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Spinner · Verlauf"><div class="lib-demo mitte">
+<div class="v-lade-block"><div class="v-spin v-spin--verlauf"></div>Analyse läuft, etwa 2 Minuten</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Punkte · schreibt"><div class="lib-demo mitte">
+<div class="v-lade-zeile"><div class="v-punkte"><i></i><i></i><i></i></div>KI formuliert die Auswertung</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Ladebalken Balken Fortschritt">
+<h3>Balken</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Unbestimmt · gleitend"><div class="lib-demo">
+<div class="v-balken-kopf"><span>Seite wird erzeugt</span></div>
+<div class="v-balken v-balken--unbestimmt"><i></i></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Bestimmt · Verlauf"><div class="lib-demo">
+<div class="v-balken-kopf"><span>Upload</span><b class="v-num">62 %</b></div>
+<div class="v-balken v-balken--verlauf"><i style="width:62%"></i></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Gestreift · Schritte"><div class="lib-demo">
+<div class="v-balken-kopf"><span>Beiträge laden</span><b class="v-num">24 / 36</b></div>
+<div class="v-balken v-balken--streifen v-balken--dick"><i style="width:67%"></i></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Prozent Ring Halbring Anzeige">
+<h3>Prozent</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Ring · mit Zahl"><div class="lib-demo mitte">
+<div class="v-ring-reihe">
+  <div class="v-ring" style="--p:.78"><svg viewBox="0 0 88 88"><circle class="spur" cx="44" cy="44" r="36"/><circle class="wert" cx="44" cy="44" r="36"/></svg><b class="v-num">78 %</b></div>
+  <div><strong>Profil vollständig</strong><span>Noch 2 Angaben offen</span></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Zahl · mit Balken"><div class="lib-demo">
+<div class="v-prozent"><b class="v-num">44 %</b><div class="v-prozent-block"><div class="v-balken v-balken--verlauf"><i style="width:44%"></i></div><small>Klickrate seit 3. Sept.</small></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Halbring · Tacho"><div class="lib-demo mitte">
+<div class="v-halbring" style="--p:.44"><svg viewBox="0 0 140 76"><path class="spur" d="M10 70A60 60 0 0 1 130 70"/><path class="wert" d="M10 70A60 60 0 0 1 130 70"/></svg><b class="v-num">44 %</b><small>Klickrate</small></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Skeleton Skelett Platzhalter">
+<h3>Skelett</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Text · drei Zeilen"><div class="lib-demo">
+<div class="v-skel-stapel"><div class="v-skel v-skel--titel"></div><div class="v-skel"></div><div class="v-skel v-skel--kurz"></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Liste · mit Avatar"><div class="lib-demo">
+<div class="v-skel-stapel">
+  <div class="v-skel-zeile"><div class="v-skel v-skel--rund"></div><div class="v-skel-stapel"><div class="v-skel v-skel--kurz"></div><div class="v-skel v-skel--mini"></div></div></div>
+  <div class="v-skel-zeile"><div class="v-skel v-skel--rund"></div><div class="v-skel-stapel"><div class="v-skel v-skel--kurz"></div><div class="v-skel v-skel--mini"></div></div></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Kacheln · Kennzahlen"><div class="lib-demo">
+<div class="v-skel-stapel"><div class="v-skel-kacheln"><div class="v-skel v-skel--kachel"></div><div class="v-skel v-skel--kachel"></div></div><div class="v-skel v-skel--kurz"></div></div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ FORTSCHRITT ════════════════════════════ -->
+<section class="lib-abschnitt" id="fortschritt">
+<h2>Fortschritt</h2>
+<p>Grün ist erreicht. Die Signatur ist das, was noch zu holen ist.</p>
+
+<div class="lib-gruppe" data-name="Ziel Zielbalken Meilensteine">
+<h3>Ziele</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Zielbalken · klassisch"><div class="lib-demo">
+<div class="v-ziel">
+  <div class="v-ziel-kopf"><strong>1.000 Aufrufe im Monat</strong><span class="v-num">712</span></div>
+  <div class="v-balken v-balken--verlauf"><i style="width:71%"></i></div>
+  <div class="v-ziel-fuss"><span>noch 288</span><span>12 Tage übrig</span></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Kacheln · fünf Schritte"><div class="lib-demo">
+<div class="v-ziel">
+  <div class="v-ziel-kopf"><strong>Media Kit</strong><span class="v-num">3 / 5</span></div>
+  <div class="v-kacheln"><i class="voll"></i><i class="voll"></i><i class="voll"></i><i class="halb"></i><i></i></div>
+  <div class="v-ziel-fuss"><span>Bild und Preise fehlen</span></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Meilensteine · erreicht"><div class="lib-demo">
+<div class="v-ziel">
+  <div class="v-ziel-kopf"><strong>Follower</strong><span class="gut">2 von 4 erreicht</span></div>
+  <div class="v-meilen"><div class="v-balken v-balken--gruen v-balken--duenn"><i style="width:58%"></i></div><div class="v-meilen-punkte"><i class="erreicht"></i><i class="erreicht"></i><i></i><i></i></div></div>
+  <div class="v-meilen-labels"><span>1k</span><span>5k</span><span>10k</span><span>25k</span></div>
+</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Stepper Schritte Onboarding Pager">
+<h3>Schritte</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Stepper · nummeriert"><div class="lib-demo">
+<div class="v-stepper">
+  <div class="v-step fertig"><span class="v-step-n"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span><span>Profil</span></div>
+  <div class="v-step-linie fertig"></div>
+  <div class="v-step aktiv"><span class="v-step-n">2</span><span>BioLink</span></div>
+  <div class="v-step-linie"></div>
+  <div class="v-step"><span class="v-step-n">3</span><span>Kit</span></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Pager · Punkte"><div class="lib-demo">
+<div class="v-pager"><i class="aktiv"></i><i></i><i></i><i></i><span class="v-pager-text v-num">1 / 4</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Vertikal · mit Text"><div class="lib-demo oben">
+<div class="v-stepper v-stepper--vertikal">
+  <div class="v-step fertig"><span class="v-step-n"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span><span class="v-step-text">Bezahlt<small>15. Sept., 10:49</small></span></div>
+  <div class="v-step-linie fertig"></div>
+  <div class="v-step aktiv"><span class="v-step-n">2</span><span class="v-step-text">Beiträge werden gelesen<small>36 Beiträge, etwa 2 Minuten</small></span></div>
+  <div class="v-step-linie"></div>
+  <div class="v-step"><span class="v-step-n">3</span><span class="v-step-text">Auswertung per Mail<small>an anto@…</small></span></div>
+</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Checkliste Aufgaben Todo">
+<h3>Checklisten</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Schlicht"><div class="lib-demo oben">
+<ul class="v-check">
+  <li class="fertig"><i><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></i><span>Foto hochladen</span></li>
+  <li class="fertig"><i><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></i><span>Bio schreiben</span></li>
+  <li class="offen"><i></i><span>Kontakt-E-Mail eintragen</span></li>
+  <li class="gesperrt"><i><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></i><span>Media Kit veröffentlichen</span></li>
+</ul>
+  </div></div>
+  <div class="lib-zelle" data-titel="Mit Kopf und Zähler"><div class="lib-demo oben">
+<div class="v-check-kopf"><strong>Startklar</strong><span class="v-num">2 / 4</span></div>
+<div class="v-balken v-balken--gruen v-balken--duenn" style="margin-bottom:12px"><i style="width:50%"></i></div>
+<ul class="v-check">
+  <li class="fertig"><i><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></i><span>Konto angelegt</span></li>
+  <li class="fertig"><i><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></i><span>Instagram verknüpft</span></li>
+  <li class="offen"><i></i><span>BioLink aktivieren</span></li>
+  <li class="offen"><i></i><span>Link in die Bio setzen</span></li>
+</ul>
+  </div></div>
+  <div class="lib-zelle" data-titel="Karten · mit Aktion"><div class="lib-demo oben">
+<ul class="v-check v-check--karten">
+  <li class="fertig"><i><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></i><span>BioLink ist live</span></li>
+  <li class="offen"><i></i><span>Media Kit anlegen</span><button class="v-btn v-btn--dunkel v-btn--klein">Los</button></li>
+</ul>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ DIAGRAMME ════════════════════════════ -->
+<section class="lib-abschnitt" id="diagramme">
+<h2>Diagramme</h2>
+<p>Alles zeichnet mit den Tokens. Der beste Wert ist grün, der Rest trägt die Signatur.</p>
+
+<div class="lib-gruppe" data-name="Linie Linienchart Verlauf Sparkline">
+<h3>Linien</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Linie · mit Punkten"><div class="lib-demo">
+<svg class="v-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+  <line class="raster" x1="0" y1="10" x2="300" y2="10"/><line class="raster" x1="0" y1="60" x2="300" y2="60"/><line class="raster" x1="0" y1="110" x2="300" y2="110"/>
+  <path class="linie" d="M0 95L50 80L100 40L150 60L200 70L250 78L300 30"/>
+  <circle class="punkt" cx="0" cy="95" r="4"/><circle class="punkt" cx="50" cy="80" r="4"/><circle class="punkt" cx="100" cy="40" r="4"/><circle class="punkt" cx="150" cy="60" r="4"/><circle class="punkt" cx="200" cy="70" r="4"/><circle class="punkt" cx="250" cy="78" r="4"/><circle class="punkt punkt--best" cx="300" cy="30" r="5"/>
+</svg>
+<div class="v-achse"><span>Apr</span><span>Mai</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Fläche · Verlauf"><div class="lib-demo">
+<svg class="v-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="vLinG" x1="0" x2="1"><stop offset="0" style="stop-color:var(--v1)"/><stop offset=".55" style="stop-color:var(--v2)"/><stop offset="1" style="stop-color:var(--v3)"/></linearGradient>
+    <linearGradient id="vFlG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--v1)"/><stop offset="1" style="stop-color:var(--v1);stop-opacity:0"/></linearGradient>
+  </defs>
+  <path class="flaeche" d="M0 95L50 80L100 40L150 60L200 70L250 78L300 30L300 120L0 120Z"/>
+  <path class="linie linie--verlauf" d="M0 95L50 80L100 40L150 60L200 70L250 78L300 30"/>
+</svg>
+<div class="v-achse"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Zwei Linien · Vergleich"><div class="lib-demo">
+<svg class="v-chart" viewBox="0 0 300 120" preserveAspectRatio="none">
+  <line class="raster" x1="0" y1="10" x2="300" y2="10"/><line class="raster" x1="0" y1="60" x2="300" y2="60"/><line class="raster" x1="0" y1="110" x2="300" y2="110"/>
+  <path class="linie linie--zwei" d="M0 100L50 92L100 85L150 88L200 80L250 84L300 76"/>
+  <path class="linie" d="M0 95L50 80L100 40L150 60L200 70L250 78L300 30"/>
+</svg>
+<div class="v-legende"><span><i style="background:var(--v1)"></i>Diese Woche <b class="v-num">412</b></span><span><i style="background:var(--v3)"></i>Vorwoche <b class="v-num">288</b></span></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Balken Säulen Balkendiagramm">
+<h3>Balken</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Säulen · Wochentage"><div class="lib-demo">
+<div class="v-saeulen">
+  <div class="v-saeule"><i style="height:35%"></i><small>Mo</small></div>
+  <div class="v-saeule"><i style="height:52%"></i><small>Di</small></div>
+  <div class="v-saeule"><i style="height:44%"></i><small>Mi</small></div>
+  <div class="v-saeule best"><i style="height:100%"></i><small>Do</small></div>
+  <div class="v-saeule"><i style="height:70%"></i><small>Fr</small></div>
+  <div class="v-saeule"><i style="height:28%"></i><small>Sa</small></div>
+  <div class="v-saeule heute"><i style="height:18%"></i><small>So</small></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Liste · Herkunft"><div class="lib-demo">
+<div class="v-balkenliste">
+  <div class="v-balkenzeile best"><span>Instagram</span><div class="v-balken"><i style="width:100%"></i></div><b class="v-num">220</b></div>
+  <div class="v-balkenzeile"><span>viuno</span><div class="v-balken"><i style="width:32%"></i></div><b class="v-num">70</b></div>
+  <div class="v-balkenzeile"><span>Threads</span><div class="v-balken"><i style="width:19%"></i></div><b class="v-num">41</b></div>
+  <div class="v-balkenzeile"><span>Direkt</span><div class="v-balken"><i style="width:9%"></i></div><b class="v-num">20</b></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Paare · zwei Reihen"><div class="lib-demo">
+<div class="v-saeulen">
+  <div class="v-saeule"><div class="v-paar"><i style="height:40%"></i><i class="zwei" style="height:30%"></i></div><small>Jul</small></div>
+  <div class="v-saeule"><div class="v-paar"><i style="height:65%"></i><i class="zwei" style="height:45%"></i></div><small>Aug</small></div>
+  <div class="v-saeule"><div class="v-paar"><i style="height:100%"></i><i class="zwei" style="height:58%"></i></div><small>Sep</small></div>
+</div>
+<div class="v-legende"><span><i style="background:var(--v1)"></i>Aufrufe</span><span><i style="background:var(--v3)"></i>Klicks</span></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Donut Kreis Anteile Tortendiagramm">
+<h3>Kreise und Anteile</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Donut · mit Legende"><div class="lib-demo">
+<div class="v-donut-reihe">
+  <div class="v-donut"><b class="v-num">62 %<small>Instagram</small></b></div>
+  <div class="v-donut-liste">
+    <div><i style="background:var(--v1)"></i>Instagram<b class="v-num">62 %</b></div>
+    <div><i style="background:var(--v2)"></i>viuno<b class="v-num">21 %</b></div>
+    <div><i style="background:var(--v3)"></i>Threads<b class="v-num">8 %</b></div>
+    <div><i style="background:var(--surface2)"></i>Andere<b class="v-num">9 %</b></div>
+  </div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Anteile · gestapelt"><div class="lib-demo">
+<div class="v-balken-kopf"><span>Link-Klicks nach Art</span><b class="v-num">184</b></div>
+<div class="v-anteile"><i style="width:48%;background:var(--v1)"></i><i style="width:27%;background:var(--v2)"></i><i style="width:15%;background:var(--v3)"></i><i style="width:10%;background:var(--border-strong)"></i></div>
+<div class="v-legende"><span><i style="background:var(--v1)"></i>Instagram</span><span><i style="background:var(--v2)"></i>Kontakt</span><span><i style="background:var(--v3)"></i>TikTok</span><span><i style="background:var(--border-strong)"></i>Eigene</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Mini-Donuts · drei Werte"><div class="lib-demo reihe" style="justify-content:space-around">
+<div style="text-align:center"><div class="v-donut v-donut--klein" style="background:conic-gradient(var(--green) 0 78%,var(--surface2) 78%)"><b class="v-num">78</b></div><div class="v-kpi-label" style="margin-top:8px">Profil</div></div>
+<div style="text-align:center"><div class="v-donut v-donut--klein" style="background:conic-gradient(var(--v1) 0 44%,var(--surface2) 44%)"><b class="v-num">44</b></div><div class="v-kpi-label" style="margin-top:8px">Klickrate</div></div>
+<div style="text-align:center"><div class="v-donut v-donut--klein" style="background:conic-gradient(var(--red) 0 12%,var(--surface2) 12%)"><b class="v-num">12</b></div><div class="v-kpi-label" style="margin-top:8px">Kit</div></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Heatmap Stunden Uhrzeit Woche Kalender">
+<h3>Zeit und Verteilung</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Stunden · Heatmap"><div class="lib-demo">
+<div class="v-balken-kopf"><span>Aufrufe nach Uhrzeit</span><b>18 Uhr</b></div>
+<div class="v-heat">
+  <i style="--h:.05"></i><i style="--h:.02"></i><i style="--h:.01"></i><i style="--h:0"></i><i style="--h:0"></i><i style="--h:.04"></i><i style="--h:.12"></i><i style="--h:.25"></i><i style="--h:.4"></i><i style="--h:.38"></i><i style="--h:.3"></i><i style="--h:.5"></i>
+  <i style="--h:.62"></i><i style="--h:.45"></i><i style="--h:.4"></i><i style="--h:.42"></i><i style="--h:.55"></i><i style="--h:.7"></i><i class="best" style="--h:1"></i><i style="--h:.9"></i><i style="--h:.85"></i><i style="--h:.7"></i><i style="--h:.4"></i><i style="--h:.2"></i>
+</div>
+<div class="v-heat-achse"><span>0 Uhr</span><span>12 Uhr</span><span>23 Uhr</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Woche · Tageskacheln"><div class="lib-demo">
+<div class="v-woche">
+  <div><small>Mo</small><i class="v-num">12</i></div><div><small>Di</small><i class="mittel v-num">28</i></div><div><small>Mi</small><i class="v-num">9</i></div><div><small>Do</small><i class="best v-num">61</i></div><div><small>Fr</small><i class="stark v-num">44</i></div><div><small>Sa</small><i class="v-num">7</i></div><div><small>So</small><i class="v-num">5</i></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Verteilung · Punkte"><div class="lib-demo">
+<div class="v-verteilung">
+  <div>Deutsch<span><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i class="an"></i><i></i><i></i></span></div>
+  <div>Italienisch<span><i class="an"></i><i class="an"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+  <div>Englisch<span><i class="an"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ KENNZAHLEN ════════════════════════════ -->
+<section class="lib-abschnitt" id="kennzahlen">
+<h2>Kennzahlen</h2>
+<p>Zahlen laufen in Tabellenziffern: 18.400 und 19.200 sind exakt gleich breit.</p>
+
+<div class="lib-gruppe" data-name="KPI Kachel Kennzahl Karte">
+<h3>Kacheln</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Kachel · hell"><div class="lib-demo">
+<div class="v-kpi"><div class="v-kpi-label">BioLink-Aufrufe</div><div class="v-kpi-wert v-num">1.284</div><div class="v-kpi-delta hoch">18,4 % zur Vorwoche</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Kachel · dunkel"><div class="lib-demo">
+<div class="v-kpi v-kpi--dunkel"><div class="v-kpi-label">Umsatz Monat</div><div class="v-kpi-wert v-num">39,96 €</div><div class="v-kpi-delta hoch">4 Analysen</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Kachel · mit Sparkline"><div class="lib-demo">
+<div class="v-kpi v-kpi--spark"><div class="v-kpi-label">Klicks · 7 Tage</div><div class="v-kpi-wert v-num">412<small>+31</small></div>
+<svg class="v-spark" viewBox="0 0 200 40" preserveAspectRatio="none"><path class="flaeche" d="M0 30L30 26L60 28L90 14L120 20L150 10L180 12L200 4L200 40L0 40Z"/><path d="M0 30L30 26L60 28L90 14L120 20L150 10L180 12L200 4"/><circle cx="200" cy="4" r="3"/></svg></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="KPI Reihe Zeilen Vergleich">
+<h3>Reihen und Vergleich</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Drei nebeneinander"><div class="lib-demo">
+<div class="v-kpi-reihe v-kpi-reihe--drei">
+  <div class="v-kpi"><div class="v-kpi-label">Aufrufe</div><div class="v-kpi-wert v-num">712</div></div>
+  <div class="v-kpi"><div class="v-kpi-label">Klicks</div><div class="v-kpi-wert v-num">311</div></div>
+  <div class="v-kpi"><div class="v-kpi-label">Rate</div><div class="v-kpi-wert v-num">44 %</div></div>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Zeilen · Bestwert grün"><div class="lib-demo oben">
+<div class="v-kpi-zeile"><span>Follower</span><b class="v-num">18.400</b></div>
+<div class="v-kpi-zeile"><span>Engagement</span><b class="best v-num">6,2 %</b></div>
+<div class="v-kpi-zeile"><span>Beiträge / Woche</span><b class="v-num">3</b></div>
+<div class="v-kpi-zeile"><span>Kontakt-E-Mail</span><b class="fehlt">fehlt</b></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Vergleich · links gegen rechts"><div class="lib-demo">
+<div class="v-vergleich">
+  <div><div class="v-kpi-label">Du</div><div class="v-kpi-wert v-num">4,1 %</div></div>
+  <div class="vs">vs</div>
+  <div class="best"><div class="v-kpi-label">Nische</div><div class="v-kpi-wert v-num">6,2 %</div></div>
+</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="KPI Verlauf Hero Gewinn">
+<h3>Hervorgehoben</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Verlaufstext · Gewinn"><div class="lib-demo">
+<div class="v-kpi"><div class="v-kpi-label">Möglicher Gewinn</div><div class="v-kpi-wert v-num v-verlauf-text">+2.400</div><div class="v-kpi-delta">Follower bei 3 Beiträgen pro Woche</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Verlaufskachel"><div class="lib-demo">
+<div class="v-kpi v-kpi--verlauf"><div class="v-kpi-label">Brand Ready</div><div class="v-kpi-wert v-num">72 / 100</div><div class="v-kpi-delta">3 Punkte offen</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Große Zahl · mit Ring"><div class="lib-demo">
+<div class="v-ring-reihe">
+  <div class="v-ring v-ring--gruen" style="--p:.92"><svg viewBox="0 0 88 88"><circle class="spur" cx="44" cy="44" r="36"/><circle class="wert" cx="44" cy="44" r="36"/></svg><b class="v-num">92</b></div>
+  <div><div class="v-kpi-label">Seitenqualität</div><div class="v-kpi-wert v-num" style="font-size:var(--t-num-sm)">Sehr gut</div><span style="font-size:var(--t-xs);color:var(--subtle)">Bester Wert in deiner Nische</span></div>
+</div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ MENÜS ════════════════════════════ -->
+<section class="lib-abschnitt" id="menues">
+<h2>Menüs und Navigation</h2>
+<p>Die App hat unten fünf Ziele und oben eine Pillenreihe. Alles andere ist ein Menü, das kurz aufgeht.</p>
+
+<div class="lib-gruppe" data-name="Tab Leiste Tabbar Bottom Navigation unten">
+<h3>Tab-Leiste unten</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Leiste · wie in der App"><div class="lib-demo grau">
+<nav class="v-tabbar">
+  <a class="v-tab aktiv" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span>Start</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Analyse</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>Seiten</a>
+  <a class="v-tab" href="#"><span class="v-tab-punkt"></span><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></span>News</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><span class="v-tab-avatar">A</span></span>Profil</a>
+</nav>
+  </div></div>
+  <div class="lib-zelle" data-titel="Leiste · aktive Pille"><div class="lib-demo grau">
+<nav class="v-tabbar v-tabbar--pille">
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span>Start</a>
+  <a class="v-tab aktiv" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Analyse</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span>Seiten</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></span>News</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Profil</a>
+</nav>
+  </div></div>
+  <div class="lib-zelle" data-titel="Leiste · Mitte erhoben"><div class="lib-demo grau">
+<nav class="v-tabbar" style="margin-top:14px">
+  <a class="v-tab aktiv" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span>Start</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span>Analyse</a>
+  <a class="v-tab v-tab--mitte" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></span>Neu</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></span>News</a>
+  <a class="v-tab" href="#"><span class="v-tab-ico"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span>Profil</a>
+</nav>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Pillen Subnav Reiter Tabs oben">
+<h3>Pillenreihe und Reiter</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Pillen · dunkel aktiv"><div class="lib-demo">
+<div class="v-pillen"><button class="v-pille aktiv">BioLink</button><button class="v-pille">Media Kit</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Pillen · mit Zähler, Akzent"><div class="lib-demo">
+<div class="v-pillen v-pillen--akzent"><button class="v-pille aktiv">Alle <b class="v-num">12</b></button><button class="v-pille">Offen <b class="v-num">3</b></button><button class="v-pille">Fehler <b class="v-num">1</b></button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Reiter · Unterstrich"><div class="lib-demo">
+<div class="v-reiter"><button class="aktiv">Analyse</button><button>Brand Ready</button><button>Verlauf</button></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Dropdown Menü Kontextmenü Auswahl">
+<h3>Aufklappmenüs</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Menü · mit Symbolen"><div class="lib-demo mitte">
+<div class="v-menu">
+  <button><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l10-10-4-4L4 16z"/></svg>Bearbeiten</button>
+  <button><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5h10"/></svg>Link kopieren</button>
+  <button><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>Seite öffnen</button>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Menü · mit Gefahr getrennt"><div class="lib-demo mitte">
+<div class="v-menu">
+  <div class="v-menu-titel">Media Kit</div>
+  <button><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg>Neu erzeugen</button>
+  <button><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg>Teilen</button>
+  <hr>
+  <button class="gefahr"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>Löschen</button>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Menü · Auswahl mit Haken"><div class="lib-demo mitte">
+<div class="v-menu">
+  <div class="v-menu-titel">Zeitraum</div>
+  <button>7 Tage<svg class="v-ico haken" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></button>
+  <button class="gewaehlt">30 Tage<svg class="v-ico haken" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></button>
+  <button>90 Tage<svg class="v-ico haken" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></button>
+</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Liste Einstellungen Settings Zeilen Menü">
+<h3>Einstellungslisten</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Zeilen · mit Pfeil"><div class="lib-demo">
+<div class="v-liste">
+  <button class="v-liste-zeile"><span class="sym"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><span class="text">Name und Bio</span><svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button class="v-liste-zeile"><span class="sym akzent"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></span><span class="text">Social Kanäle</span><svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button class="v-liste-zeile"><span class="sym"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 21h4"/></svg></span><span class="text">Benachrichtigungen</span><svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Zeilen · mit Wert und Untertitel"><div class="lib-demo">
+<div class="v-liste">
+  <div class="v-liste-titel">Öffentliche Angaben</div>
+  <button class="v-liste-zeile"><span class="text">Instagram<small>Wird auf BioLink und Media Kit gezeigt</small></span><span class="wert">@antonietta</span><svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+  <button class="v-liste-zeile"><span class="text">Kontakt-E-Mail<small>Für den Kontakt-Knopf</small></span><span class="wert" style="color:var(--red)">fehlt</span><svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Zeilen · mit Schaltern"><div class="lib-demo">
+<div class="v-liste">
+  <div class="v-liste-zeile" style="cursor:default"><span class="sym gut"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span><span class="text">BioLink aktiv</span><button class="v-toggle an" aria-label="BioLink"><i></i></button></div>
+  <div class="v-liste-zeile" style="cursor:default"><span class="sym"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></span><span class="text">Creator News per Mail</span><button class="v-toggle v-toggle--akzent" aria-label="Newsletter"><i></i></button></div>
+  <button class="v-liste-zeile gefahr"><span class="sym" style="background:var(--red-bg);color:var(--red)"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></span><span class="text">Abmelden</span></button>
+</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Topbar Kopfzeile Titel Header">
+<h3>Kopfzeile</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Titel · mit Avatar"><div class="lib-demo grau">
+<div class="v-topbar"><h1>Start</h1><div class="v-avatar">A</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Zurück · Titel mittig"><div class="lib-demo grau">
+<div class="v-topbar"><button class="v-ibtn v-ibtn--rund v-ibtn--klein" aria-label="Zurück"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button><h1 class="mitte">Social Kanäle</h1><span style="width:32px"></span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Titel · Untertitel und Aktion"><div class="lib-demo grau">
+<div class="v-topbar v-topbar--dunkel"><h1>Analyse<small>Instagram · 30 Tage</small></h1><button class="v-ibtn v-ibtn--klein" aria-label="Teilen"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M8 7h9v9"/></svg></button></div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ EINGABEN ════════════════════════════ -->
+<section class="lib-abschnitt" id="eingaben">
+<h2>Eingaben</h2>
+<p>Eingaben haben 16 px Schrift, sonst zoomt iOS beim Tippen. Fehler stehen unter dem Feld, nicht in einem Toast.</p>
+
+<div class="lib-gruppe" data-name="Textfeld Input Eingabe Formular">
+<h3>Textfelder</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Feld · mit Hinweis"><div class="lib-demo">
+<div class="v-feld"><label>Anzeigename</label><input class="v-input" value="Antonietta"><span class="v-hint">Steht groß auf deinem BioLink.</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Feld · mit Fehler"><div class="lib-demo">
+<div class="v-feld"><label>Kontakt-E-Mail</label><input class="v-input fehler" value="anto@outlook"><span class="v-hint fehler">Das sieht nicht nach einer Adresse aus.</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Feld · Präfix und Zähler"><div class="lib-demo">
+<div class="v-feld"><label>Instagram</label><div class="v-input-huelle"><span class="praefix">@</span><input class="v-input v-input--mit-suffix gut" value="antonietta"><span class="suffix v-num">10 / 30</span></div><span class="v-hint gut">Handle ist frei.</span></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Textarea Select Auswahl Toggle Checkbox Radio">
+<h3>Auswahl</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Select und Textbereich"><div class="lib-demo">
+<div class="v-feld"><label>Nische</label><select class="v-input v-select"><option>Fashion</option><option>Food</option><option>Travel</option></select></div>
+<div class="v-feld"><label>Bio</label><textarea class="v-input" rows="3">Italienischer Lifestyle aus Mailand. Mode, Kaffee, kleine Fluchten.</textarea><div class="v-hint-zeile"><span class="v-hint">Max. 160 Zeichen</span><span class="v-hint v-num">71 / 160</span></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Schalter · Zeilen"><div class="lib-demo">
+<div class="v-schalter-zeile"><div><span>BioLink öffentlich</span><small>Deine Seite ist unter viuno.de/antonietta erreichbar.</small></div><button class="v-toggle an" aria-label="Öffentlich"><i></i></button></div>
+<div class="v-schalter-zeile"><div><span>Aufrufe zählen</span></div><button class="v-toggle v-toggle--akzent an" aria-label="Zählen"><i></i></button></div>
+<div class="v-schalter-zeile"><div><span>Wöchentliche Mail</span></div><button class="v-toggle" aria-label="Mail"><i></i></button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Häkchen und Auswahlkarten"><div class="lib-demo">
+<label class="v-checkbox"><input type="checkbox" checked>Ich habe die AGB gelesen</label>
+<label class="v-checkbox"><input type="checkbox"><span>Creator News abonnieren<small>Wöchentlich, jederzeit abbestellbar</small></span></label>
+<div class="v-auswahl" style="margin-top:6px">
+  <label class="v-auswahl-karte aktiv"><input type="radio" name="vk" checked><span class="text">Instagram<small>36 Beiträge, 9,99 €</small></span></label>
+  <label class="v-auswahl-karte"><input type="radio" name="vk"><span class="text">TikTok<small>bald</small></span></label>
+</div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Suche Filter Chips Upload Code Zähler">
+<h3>Suche, Filter, Sonstiges</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Suche · mit Löschen"><div class="lib-demo">
+<div class="v-input-huelle"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input class="v-input" value="antonietta"><button class="v-ibtn v-ibtn--klein" aria-label="Leeren"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="v-chips"><button class="v-chip aktiv">Alle</button><button class="v-chip">Zahlt</button><button class="v-chip">Admin</button><button class="v-chip"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Filter</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Upload · Foto"><div class="lib-demo">
+<label class="v-upload"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 8"/></svg><b>Foto auswählen</b><span>oder hierher ziehen</span><small>Wird auf 800 px verkleinert</small></label>
+  </div></div>
+  <div class="lib-zelle" data-titel="Code und Mengenwahl"><div class="lib-demo">
+<div class="v-feld"><label>Bestätigungscode</label><div class="v-code-eingabe"><input maxlength="1" value="4"><input maxlength="1" value="8"><input maxlength="1" value="2"><input maxlength="1"><input maxlength="1"><input maxlength="1"></div></div>
+<div class="v-feld"><label>Beiträge</label><div class="v-zaehler-feld"><button type="button">−</button><b class="v-num">36</b><button type="button">+</button></div></div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ BADGES ════════════════════════════ -->
+<section class="lib-abschnitt" id="badges">
+<h2>Badges und Status</h2>
+<p>Grün heißt fertig, Rot heißt es fehlt etwas, Orange heißt aufpassen, Blau ist nur Information.</p>
+
+<div class="lib-gruppe" data-name="Badge Etikett Label Status Chip">
+<h3>Badges</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Mit Punkt · vier Bedeutungen"><div class="lib-demo">
+<div class="v-badge-reihe"><span class="v-badge v-badge--gruen">Live</span><span class="v-badge v-badge--rot">Fehlt</span><span class="v-badge v-badge--orange">Offen</span><span class="v-badge v-badge--blau">Info</span><span class="v-badge">Entwurf</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Ohne Punkt · Rand, Akzent, Verlauf"><div class="lib-demo">
+<div class="v-badge-reihe"><span class="v-badge v-badge--ohne v-badge--akzent">Admin</span><span class="v-badge v-badge--ohne v-badge--verlauf">Pro</span><span class="v-badge v-badge--ohne v-badge--dunkel">Neu</span><span class="v-badge v-badge--ohne v-badge--rand v-badge--gruen">Zahlt</span><span class="v-badge v-badge--ohne v-badge--rand">Test</span></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Live-Puls, Zähler, Punkt"><div class="lib-demo">
+<div class="v-badge-reihe"><span class="v-badge v-badge--gruen v-badge--live">Läuft</span><span class="v-badge v-badge--ohne v-badge--orange"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 8v5M12 16h.01"/></svg>Testmodus</span><span class="v-zaehler v-num">3</span><span class="v-zaehler v-zaehler--dunkel v-num">12</span><span class="v-zaehler v-zaehler--leise v-num">0</span><span class="v-zaehler v-zaehler--akzent v-num">Neu</span><span class="v-punkt"></span></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Statusbanner Statuszeile aktiv inaktiv">
+<h3>Statuszeilen</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Aktiv · grün"><div class="lib-demo">
+<div class="v-status v-status--aktiv"><i></i><div class="text"><strong>BioLink ist live</strong><span>viuno.de/antonietta · zuletzt erzeugt vor 2 Std.</span></div><button class="v-btn v-btn--rand v-btn--klein">Öffnen</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Aus · grau"><div class="lib-demo">
+<div class="v-status v-status--aus"><i></i><div class="text"><strong>Media Kit ist aus</strong><span>Niemand kann die Seite sehen.</span></div><button class="v-toggle" aria-label="Einschalten"><i></i></button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Warnung und Fehler"><div class="lib-demo">
+<div class="v-status v-status--warn"><i></i><div class="text"><strong>Stripe im Testmodus</strong><span>Umsatzzahlen sind kein echtes Geld.</span></div></div>
+<div class="v-status v-status--fehler"><i></i><div class="text"><strong>Seite nicht erzeugt</strong><span>Link-Vorschau ist veraltet.</span></div><button class="v-btn v-btn--dunkel v-btn--klein">Erneut</button></div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ HINWEISE ════════════════════════════ -->
+<section class="lib-abschnitt" id="hinweise">
+<h2>Hinweise und Meldungen</h2>
+<p>Ein Hinweis bleibt stehen, ein Toast geht von selbst. Ein Banner hat immer einen Weg hinaus.</p>
+
+<div class="lib-gruppe" data-name="Alert Hinweis Warnung Fehler Erfolg">
+<h3>Hinweise</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Warnung · mit Aktion"><div class="lib-demo">
+<div class="v-hinweis v-hinweis--warn"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2zM12 10v4M12 17h.01"/></svg><div class="text"><strong>Handle wurde schon analysiert</strong><p>Wenn du ihn änderst, gehören die alten Zahlen zum neuen Namen.</p><button class="v-btn v-btn--dunkel v-btn--klein">Trotzdem ändern</button></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Erfolg und Fehler · knapp"><div class="lib-demo">
+<div class="v-hinweis v-hinweis--gut"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg><div class="text"><strong>Seite neu erzeugt</strong><p>Die Vorschau in WhatsApp zeigt jetzt die neue Bio.</p></div></div>
+<div class="v-hinweis v-hinweis--fehler"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/></svg><div class="text"><strong>Apify hat nicht geantwortet</strong><p>Der Kauf ist gespeichert. Versuch es in ein paar Minuten noch einmal.</p></div><svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Info und KI-Hinweis"><div class="lib-demo">
+<div class="v-hinweis v-hinweis--info"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg><div class="text"><strong>Aufrufe zählen ohne Cookie</strong><p>Gespeichert wird nur, was passiert ist. Kein Banner nötig.</p></div></div>
+<div class="v-hinweis v-hinweis--akzent"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z"/></svg><div class="text"><strong>Was auffällt</strong><p>Deine Aufrufe steigen, aber nur 1 von 9 klickt weiter zum Media Kit.</p></div></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Toast Snackbar Meldung kurz">
+<h3>Toasts</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Dunkel · Standard"><div class="lib-demo mitte">
+<div class="v-toast"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>Gespeichert</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Grün und Rot · mit Aktion"><div class="lib-demo mitte">
+<div class="v-toast v-toast--gut">Link kopiert<button>Öffnen</button></div>
+<div class="v-toast v-toast--fehler">Speichern fehlgeschlagen<button>Erneut</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Hell · mit Schließen"><div class="lib-demo mitte">
+<div class="v-toast v-toast--hell"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>Media Kit ist online<button class="v-toast-x" aria-label="Schließen">×</button></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Banner Promo Ankündigung Hinweisleiste">
+<h3>Banner</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Hell · schließbar"><div class="lib-demo">
+<div class="v-banner"><span class="sym"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M4 5h16v14H4zM8 9h8M8 13h5"/></svg></span><div class="text"><strong>Neue Creator News</strong><span>5 Karten für diese Woche</span></div><button class="schliessen" aria-label="Schließen"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Verlauf · Angebot"><div class="lib-demo">
+<div class="v-banner v-banner--verlauf"><div class="text"><strong>Instagram-Analyse</strong><span>36 Beiträge, KI-Auswertung per Mail</span></div><button class="v-btn v-btn--klein">9,99 €</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Dunkel · Zustand mit Wiederholen"><div class="lib-demo">
+<div class="v-banner v-banner--dunkel"><span class="sym"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></span><div class="text"><strong>Seite wird noch erzeugt</strong><span>Dauert etwa 20 Sekunden</span></div><button class="v-btn v-btn--klein">Erneut</button></div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ LISTEN ════════════════════════════ -->
+<section class="lib-abschnitt" id="listen">
+<h2>Listen und Tabellen</h2>
+<p>Zeilen für Menschen und Beiträge, Tabellen nur, wenn drei Spalten wirklich verglichen werden.</p>
+
+<div class="lib-gruppe" data-name="Zeile Liste Person User Beitrag Rang">
+<h3>Zeilen</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Menschen · Avatar, Badge, Zahl"><div class="lib-demo oben">
+<div class="v-zeile"><div class="v-avatar v-avatar--rund">A</div><div class="text"><strong>Antonietta <span class="v-badge v-badge--ohne v-badge--gruen">Zahlt</span></strong><span>seit 22. Apr. · Instagram</span></div><div class="zahl v-num">2.054<small>Aufrufe</small></div></div>
+<div class="v-zeile"><div class="v-avatar v-avatar--rund">B</div><div class="text"><strong>Bernidal</strong><span>seit 15. Sep. · TikTok</span></div><div class="zahl v-num">2<small>Aufrufe</small></div></div>
+<div class="v-zeile"><div class="v-avatar v-avatar--rund v-avatar--verlauf">H</div><div class="text"><strong>Heyno <span class="v-badge v-badge--ohne v-badge--akzent">Admin</span></strong><span>seit 28. Apr.</span></div><div class="zahl v-num">0<small>Aufrufe</small></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Rangliste · Top-Beiträge"><div class="lib-demo oben">
+<div class="v-zeile"><span class="rang top v-num">1</span><div class="vorschau"></div><div class="text"><strong>Mailand im Herbst</strong><span>Reel · 12. Sep.</span></div><div class="zahl hoch v-num">8,4 %</div></div>
+<div class="v-zeile"><span class="rang v-num">2</span><div class="vorschau" style="opacity:.6"></div><div class="text"><strong>Espresso-Routine</strong><span>Karussell · 9. Sep.</span></div><div class="zahl v-num">6,1 %</div></div>
+<div class="v-zeile"><span class="rang v-num">3</span><div class="vorschau" style="opacity:.4"></div><div class="text"><strong>Outfit der Woche</strong><span>Bild · 5. Sep.</span></div><div class="zahl v-num">4,9 %</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Karten · mit Pfeil"><div class="lib-demo oben">
+<div class="v-zeile v-zeile--karte"><div class="v-avatar">IG</div><div class="text"><strong>Instagram</strong><span>@antonietta · 18.400 Follower</span></div><svg class="v-ico pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>
+<div class="v-zeile v-zeile--karte"><div class="v-avatar">TT</div><div class="text"><strong>TikTok</strong><span>nicht verknüpft</span></div><button class="v-btn v-btn--rand v-btn--klein">Verknüpfen</button></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Tabelle Table Spalten Zahlen">
+<h3>Tabellen</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Schlicht · Zahlen rechts"><div class="lib-demo oben">
+<table class="v-tabelle"><thead><tr><th>Quelle</th><th class="r">Aufrufe</th><th class="r">Anteil</th></tr></thead><tbody>
+<tr><td>Instagram</td><td class="r v-num">220</td><td class="r v-num gut">62 %</td></tr>
+<tr><td>viuno</td><td class="r v-num">70</td><td class="r v-num">21 %</td></tr>
+<tr><td>Threads</td><td class="r v-num">41</td><td class="r v-num">8 %</td></tr>
+</tbody></table>
+  </div></div>
+  <div class="lib-zelle" data-titel="Mit Badges · Läufe"><div class="lib-demo oben">
+<table class="v-tabelle"><thead><tr><th>Lauf</th><th>Status</th><th class="r">Kosten</th></tr></thead><tbody>
+<tr><td>Bernidal<small>Instagram</small></td><td><span class="v-badge v-badge--gruen">Fertig</span></td><td class="r v-num">0,09 €</td></tr>
+<tr><td>Antonietta<small>Instagram</small></td><td><span class="v-badge v-badge--gruen">Fertig</span></td><td class="r v-num">0,09 €</td></tr>
+<tr><td>Bernidal<small>TikTok</small></td><td><span class="v-badge v-badge--rot">Fehler</span></td><td class="r v-num schlecht">–</td></tr>
+</tbody></table>
+  </div></div>
+  <div class="lib-zelle" data-titel="Zebra · mit Balken"><div class="lib-demo oben">
+<table class="v-tabelle v-tabelle--zebra v-tabelle--kompakt"><tbody>
+<tr><td>Mo</td><td><div class="v-balken v-balken--duenn"><i style="width:35%"></i></div></td><td class="r v-num">12</td></tr>
+<tr><td>Di</td><td><div class="v-balken v-balken--duenn"><i style="width:80%"></i></div></td><td class="r v-num">28</td></tr>
+<tr><td>Mi</td><td><div class="v-balken v-balken--duenn v-balken--gruen"><i style="width:100%"></i></div></td><td class="r v-num gut">35</td></tr>
+<tr><td>Do</td><td><div class="v-balken v-balken--duenn"><i style="width:26%"></i></div></td><td class="r v-num">9</td></tr>
+</tbody></table>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ KARTEN & DIALOGE ════════════════════════════ -->
+<section class="lib-abschnitt" id="karten">
+<h2>Karten, Leerzustände, Dialoge</h2>
+<p>Eine Karte hat Rand und Schatten zugleich. Ein Leerzustand sagt, was als Nächstes zu tun ist.</p>
+
+<div class="lib-gruppe" data-name="Karte Card Container">
+<h3>Karten</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Karte · Kopf mit Aktion"><div class="lib-demo">
+<div class="v-karte"><div class="v-karte-kopf"><div><h3>Wo die Leute herkommen</h3><p>BioLink-Aufrufe, 30 Tage</p></div><button class="v-ibtn v-ibtn--klein v-ibtn--rund" aria-label="Mehr"><svg class="v-ico" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg></button></div><p>Instagram bringt fast zwei von drei Besuchern. Threads wächst.</p><div class="v-karte-fuss"><span>Stand: heute, 09:12</span><a href="#" style="color:var(--akzent-text);font-weight:600;text-decoration:none">Alle Quellen</a></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Verlauf · Hero"><div class="lib-demo">
+<div class="v-karte v-karte--verlauf"><div class="v-karte-kopf"><div><h3>Brand Ready</h3><p>Dein Auftritt aus Sicht einer Marke</p></div></div><div class="v-kpi-wert v-num" style="margin:0 0 6px">72 / 100</div><p>Drei Punkte fehlen: Kontakt, Preise, ein aktuelles Foto.</p><button class="v-btn v-btn--klein" style="margin-top:14px">Jetzt angehen</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Flach und Akzentrand"><div class="lib-demo">
+<div class="v-karte v-karte--flach"><div class="v-karte-kopf"><div><h3>Nur für dich</h3><p>Nicht öffentlich</p></div></div><p>E-Mail, Passwort, Datenauskunft, Konto löschen.</p></div>
+<div class="v-karte v-karte--akzent"><div class="v-karte-kopf"><div><h3>Nächster Schritt</h3></div><span class="v-badge v-badge--ohne v-badge--akzent">Tipp</span></div><p>Setz den Link in deine Instagram-Bio, dann fangen die Zahlen an.</p></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Leerzustand Empty State keine Daten">
+<h3>Leerzustände</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Klassisch · Symbol, Text, Knopf"><div class="lib-demo">
+<div class="v-leer v-leer--karte"><div class="sym"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></div><h3>Noch keine Aufrufe</h3><p>Sobald jemand deinen BioLink öffnet, steht es hier.</p><button class="v-btn v-btn--dunkel">Link kopieren</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Gestrichelt · Platzhalter"><div class="lib-demo">
+<div class="v-leer v-leer--gestrichelt"><div class="sym akzent"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></div><h3>Eigenen Link hinzufügen</h3><p>Shop, Podcast, Newsletter, was du willst.</p></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Mit Schritten · Erster Start"><div class="lib-demo">
+<div class="v-leer"><h3>Dein Media Kit</h3><p>Drei Schritte, dann ist es online.</p>
+<div class="v-stepper"><div class="v-step fertig"><span class="v-step-n"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg></span></div><div class="v-step-linie fertig"></div><div class="v-step aktiv"><span class="v-step-n">2</span></div><div class="v-step-linie"></div><div class="v-step"><span class="v-step-n">3</span></div></div>
+<button class="v-btn v-btn--premium">Preise eintragen</button></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Modal Dialog Sheet Bestätigung Bottom Sheet">
+<h3>Dialoge</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Modal · Bestätigen"><div class="lib-demo grau">
+<div class="v-modal"><h2>Analyse starten?</h2><p>36 Beiträge werden gelesen und per Mail ausgewertet. Dauert etwa zwei Minuten.</p><div class="v-hinweis"><div class="text"><strong class="v-num">9,99 €</strong><p>einmalig, ohne Abo</p></div></div><div class="v-btn-reihe"><button class="v-btn v-btn--rand">Abbrechen</button><button class="v-btn v-btn--premium">Jetzt starten</button></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Modal · Gefahr mit Tippen"><div class="lib-demo grau">
+<div class="v-modal v-modal--mitte"><div class="sym"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg></div><h2>Konto löschen</h2><p>BioLink, Media Kit und alle Zahlen sind danach weg. Tipp deinen Namen zur Bestätigung.</p><div class="v-feld" style="text-align:left"><input class="v-input" placeholder="antonietta"></div><div class="v-btn-stapel"><button class="v-btn v-btn--gefahr v-btn--breit" disabled>Endgültig löschen</button><button class="v-btn v-btn--leise v-btn--breit">Abbrechen</button></div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Sheet · von unten"><div class="lib-demo grau" style="justify-content:flex-end;padding-bottom:0">
+<div class="v-sheet"><div class="v-sheet-griff"></div><div class="v-sheet-kopf"><h2>Kontakt-E-Mail</h2><button class="v-ibtn v-ibtn--rund v-ibtn--klein" aria-label="Schließen"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><p>Steht hinter dem Kontakt-Knopf auf BioLink und Media Kit.</p><div class="v-feld"><input class="v-input" type="email" placeholder="du@beispiel.de"></div><button class="v-btn v-btn--dunkel v-btn--breit">Speichern</button></div>
+  </div></div>
+</div></div>
+</section>
+
+<!-- ════════════════════════════ ZEITLINIE, PREISE, AVATARE ════════════════════════════ -->
+<section class="lib-abschnitt" id="weitere">
+<h2>Zeitlinie, Preise, Avatare</h2>
+<p>Was noch fehlt, damit ein ganzer Screen daraus wird.</p>
+
+<div class="lib-gruppe" data-name="Zeitlinie Timeline Verlauf Aktivität">
+<h3>Zeitlinie</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Linie · mit Zuständen"><div class="lib-demo oben">
+<ul class="v-zeitlinie">
+  <li class="fertig"><strong>Kauf abgeschlossen</strong><small>15. Sept. · 10:49</small></li>
+  <li class="laeuft"><strong>Beiträge werden gelesen</strong><small>läuft seit 2 Min.</small></li>
+  <li class="offen"><strong>Auswertung per Mail</strong><small>ausstehend</small></li>
+</ul>
+  </div></div>
+  <div class="lib-zelle" data-titel="Karten · Ereignisse"><div class="lib-demo oben">
+<ul class="v-zeitlinie v-zeitlinie--karten">
+  <li class="fertig"><strong>BioLink neu erzeugt</strong><small>heute, 09:12 · Bio geändert</small></li>
+  <li class="fehler"><strong>Media Kit fehlgeschlagen</strong><small>gestern, 18:40 · Bild zu groß</small></li>
+  <li><strong>Konto angelegt</strong><small>22. Apr.</small></li>
+</ul>
+  </div></div>
+  <div class="lib-zelle" data-titel="Tagesablauf · Zeit links"><div class="lib-demo oben">
+<ul class="v-zeitlinie v-zeitlinie--tag">
+  <li><span class="zeit">04:00</span><div class="inhalt gut"><strong>Creator News erzeugt</strong><small>5 Karten</small></div></li>
+  <li><span class="zeit">05:00</span><div class="inhalt"><strong>Tagesmail</strong><small>nichts zu melden, nicht verschickt</small></div></li>
+  <li><span class="zeit">06:00</span><div class="inhalt fehler"><strong>Wochenmail</strong><small>1 Adresse abgelehnt</small></div></li>
+</ul>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Preis Preistafel Plan Pricing Angebot">
+<h3>Preistafeln</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Einzelkauf · schlicht"><div class="lib-demo">
+<div class="v-preis"><div class="v-preis-name">Instagram-Analyse</div><div class="v-preis-wert v-num">9,99 €<small> einmalig</small></div><ul>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>36 Beiträge ausgewertet</li>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>KI-Empfehlungen per Mail</li>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>Teilbarer Link</li>
+</ul><button class="v-btn v-btn--dunkel v-btn--breit">Kaufen</button></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Premium · Verlaufsrand"><div class="lib-demo">
+<div class="v-preis v-preis--premium"><span class="v-badge v-badge--ohne v-badge--verlauf v-preis-tag">Empfohlen</span><div class="v-preis-name">Pro</div><div class="v-preis-wert v-num">4,99 €<small> / Monat</small></div><ul>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>Alle Auswertungen</li>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>Media Kit als PDF</li>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>Eigene Domain</li>
+</ul><button class="v-btn v-btn--premium v-btn--breit">Pro wählen</button><div class="v-preis-hinweis">Monatlich kündbar</div></div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Dunkel · mit Nicht-Enthaltenem"><div class="lib-demo">
+<div class="v-preis v-preis--dunkel"><div class="v-preis-name">Inklusive</div><div class="v-preis-wert v-num">0 €<small> ohne Aufpreis</small></div><ul>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>BioLink und Media Kit</li>
+<li><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-11"/></svg>Aufrufe und Klicks</li>
+<li class="nicht"><svg class="v-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>KI-Analyse</li>
+</ul><button class="v-btn v-btn--rand v-btn--breit" style="background:rgba(255,255,255,.12);color:inherit;border-color:transparent">Aktueller Plan</button></div>
+  </div></div>
+</div></div>
+
+<div class="lib-gruppe" data-name="Avatar Profilbild Initialen Stapel">
+<h3>Avatare</h3>
+<div class="lib-drei">
+  <div class="lib-zelle" data-titel="Initialen · eckig, rund, groß"><div class="lib-demo reihe" style="gap:14px;justify-content:center">
+<div class="v-avatar">A</div><div class="v-avatar v-avatar--rund">B</div><div class="v-avatar v-avatar--rund v-avatar--verlauf">H</div><div class="v-avatar v-avatar--gross v-avatar--verlauf">A</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Ring und Status"><div class="lib-demo reihe" style="gap:18px;justify-content:center">
+<div class="v-avatar v-avatar--rund v-avatar--ring">A</div><div class="v-avatar v-avatar--rund v-avatar--status">B</div><div class="v-avatar v-avatar--gross v-avatar--rund v-avatar--ring v-avatar--verlauf">H</div>
+  </div></div>
+  <div class="lib-zelle" data-titel="Stapel · mit Zähler"><div class="lib-demo mitte">
+<div class="v-avatar-stapel"><div class="v-avatar v-avatar--rund">A</div><div class="v-avatar v-avatar--rund v-avatar--verlauf">B</div><div class="v-avatar v-avatar--rund">H</div><div class="v-avatar v-avatar--rund v-num" style="font-size:11px">+4</div><span>7 Konten</span></div>
+  </div></div>
+</div></div>
+</section>
+
+<div class="lib-regeln">
+  <h2>Regeln, die in jeder Kopie stecken</h2>
+  <ul>
+    <li><b>Ein Token-Block.</b> Kopiert wird nur, was das Element wirklich braucht, plus die Dunkel- und Signatur-Overrides dazu. In der App ist der Block schon da, dann lässt du <code>:root</code> beim Einfügen einfach weg.</li>
+    <li><b>Farbe bedeutet etwas.</b> Grün ist erreicht oder der beste Wert. Rot heißt, es fehlt etwas. Der Verlauf ist das, was der Creator noch gewinnen kann.</li>
+    <li><b>Zahlen sind <code>.v-num</code>.</b> Tabellenziffern, gleiche Breite. Eine neue Zahlenklasse gehört in der App in die Liste bei <code>tabular-nums</code>.</li>
+    <li><b>Vier Größen.</b> 22 px Seitentitel, 15 bis 17 px Kartentitel, 14 px Zeilen, 11 px Meta. Eingaben immer 16 px.</li>
+    <li><b>Radien 9 / 11 / 18 / 22.</b> Kleine Bedienelemente, Buttons und Felder, Karten, Sheets.</li>
+  </ul>
+</div>
+</main>
+
+<div class="lib-toast" id="lib-toast">Kopiert</div>
+
+<script>
+(function(){
+  'use strict';
+  var html = document.documentElement;
+
+  /* ── Schalter: Signatur und Dunkelmodus ── */
+  var selThema = document.getElementById('lib-thema');
+  var btnDunkel = document.getElementById('lib-dunkel');
+  try {
+    var t = localStorage.getItem('lib-thema'); if (t) { html.dataset.thema = t; selThema.value = t; }
+    if (localStorage.getItem('lib-dunkel') === '1') { html.dataset.farbmodus = 'dunkel'; btnDunkel.classList.add('an'); }
+  } catch (e) {}
+  selThema.addEventListener('change', function(){ html.dataset.thema = this.value; try{localStorage.setItem('lib-thema', this.value)}catch(e){} });
+  btnDunkel.addEventListener('click', function(){
+    var an = html.dataset.farbmodus !== 'dunkel';
+    if (an) html.dataset.farbmodus = 'dunkel'; else delete html.dataset.farbmodus;
+    this.classList.toggle('an', an);
+    try{localStorage.setItem('lib-dunkel', an ? '1' : '0')}catch(e){}
+  });
+
+  /* ── Filter ── */
+  var suche = document.getElementById('lib-suche');
+  suche.addEventListener('input', function(){
+    var q = this.value.trim().toLowerCase();
+    document.querySelectorAll('.lib-abschnitt').forEach(function(sec){
+      var sichtbar = 0;
+      sec.querySelectorAll('.lib-gruppe').forEach(function(g){
+        var text = (g.dataset.name + ' ' + g.querySelector('h3').textContent + ' ' + sec.querySelector('h2').textContent + ' ' +
+          Array.prototype.map.call(g.querySelectorAll('.lib-zelle'), function(z){ return z.dataset.titel; }).join(' ')).toLowerCase();
+        var hit = !q || text.indexOf(q) > -1;
+        g.style.display = hit ? '' : 'none';
+        if (hit) sichtbar++;
+      });
+      sec.style.display = sichtbar ? '' : 'none';
+    });
+  });
+
+  /* ── Demo-Interaktion: aktive Zustände umschalten, damit sich alles anfühlt ── */
+  document.addEventListener('click', function(e){
+    var el = e.target.closest('.v-seg button, .v-pille, .v-reiter button, .v-tab, .v-chip, .v-toggle, .v-menu button, .v-auswahl-karte');
+    if (!el || !el.closest('.lib-demo')) return;
+    if (el.tagName === 'A') e.preventDefault();
+    if (el.classList.contains('v-toggle')) { el.classList.toggle('an'); return; }
+    if (el.closest('.v-menu')) { if (el.querySelector('.haken')) { el.parentElement.querySelectorAll('button').forEach(function(b){ b.classList.remove('gewaehlt'); }); el.classList.add('gewaehlt'); } return; }
+    if (el.classList.contains('v-auswahl-karte')) { el.parentElement.querySelectorAll('.v-auswahl-karte').forEach(function(b){ b.classList.remove('aktiv'); }); el.classList.add('aktiv'); return; }
+    if (el.classList.contains('v-chip')) { el.classList.toggle('aktiv'); return; }
+    var geschwister = el.parentElement.querySelectorAll(':scope > ' + (el.tagName === 'A' ? 'a' : 'button'));
+    geschwister.forEach(function(b){ b.classList.remove('aktiv'); });
+    el.classList.add('aktiv');
+  });
+
+  /* ── CSS-Extraktion ──────────────────────────────────────────────
+     Fuer ein Element werden alle Klassen im Teilbaum gesammelt, dann
+     die Regeln aus #v-comp geholt, deren Selektor eine davon nennt.
+     Dazu: Keyframes, die diese Regeln animieren, und die Tokens, die
+     sie per var() lesen, aufgeloest ueber Verweise wie --verlauf → --v1.
+     ──────────────────────────────────────────────────────────────── */
+  function sheetVon(id){ var n = document.getElementById(id); return n && n.sheet; }
+  function deklarationen(selector){
+    var out = {};
+    var sh = sheetVon('v-tokens'); if (!sh) return out;
+    Array.prototype.forEach.call(sh.cssRules, function(r){
+      if (r.selectorText !== selector) return;
+      for (var i = 0; i < r.style.length; i++) { var n = r.style[i]; if (n.indexOf('--') === 0) out[n] = r.style.getPropertyValue(n).trim(); }
+    });
+    return out;
+  }
+  var TOKENS = deklarationen(':root');
+  var OVERRIDES = ['html[data-thema="dark"]','html[data-thema="clean"]','html[data-farbmodus="dunkel"]','html[data-farbmodus="dunkel"][data-thema="dark"]','html[data-farbmodus="dunkel"][data-thema="clean"]']
+    .map(function(s){ return {sel: s, decl: deklarationen(s)}; });
+  var BASE = (document.getElementById('v-base').textContent || '').trim();
+
+  function klassenVon(root){
+    var set = {};
+    Array.prototype.forEach.call(root.querySelectorAll('*'), function(n){
+      if (n.classList) Array.prototype.forEach.call(n.classList, function(c){ set[c] = 1; });
+    });
+    return set;
+  }
+  /* Eine Regel passt, wenn in mindestens einem Teil ihres Selektors jede
+     genannte Klasse im Element vorkommt. So bleibt ".v-halbring .wert"
+     draussen, wenn nur ein Ring mit ".wert" kopiert wird. */
+  function passt(selector, set){
+    return selector.split(',').some(function(teil){
+      var klassen = teil.match(/\.([\w-]+)/g);
+      return !!klassen && klassen.every(function(k){ return set[k.slice(1)]; });
+    });
+  }
+  function regelnFuer(set){
+    var out = [], keyframes = {};
+    function lauf(rules, media){
+      Array.prototype.forEach.call(rules, function(r){
+        if (r.type === 1) { if (passt(r.selectorText, set)) out.push(media ? '@media ' + media + '{' + r.cssText + '}' : r.cssText); }
+        else if (r.type === 4) lauf(r.cssRules, r.conditionText || r.media.mediaText);
+        else if (r.type === 7) keyframes[r.name] = r.cssText;
+      });
+    }
+    var sh = sheetVon('v-comp'); if (sh) lauf(sh.cssRules, '');
+    var text = out.join('\n'), namen = {};
+    (text.match(/animation(?:-name)?\s*:\s*[^;}]+/g) || []).forEach(function(m){
+      m.replace(/^animation(?:-name)?\s*:\s*/, '').split(',').forEach(function(teil){
+        teil.trim().split(/\s+/).forEach(function(w){ if (keyframes[w]) namen[w] = 1; });
+      });
+    });
+    Object.keys(namen).forEach(function(n){ out.push(keyframes[n]); });
+    return out;
+  }
+  function tokensFuer(cssText){
+    var gebraucht = {}, queue = [];
+    function sammle(s){ (s.match(/var\(\s*--([\w-]+)/g) || []).forEach(function(m){ var n = '--' + m.replace(/var\(\s*--/, ''); if (!gebraucht[n]) { gebraucht[n] = 1; queue.push(n); } }); }
+    sammle(cssText);
+    while (queue.length) { var n = queue.shift(); if (TOKENS[n]) sammle(TOKENS[n]); OVERRIDES.forEach(function(o){ if (o.decl[n]) sammle(o.decl[n]); }); }
+    var namen = Object.keys(TOKENS).filter(function(n){ return gebraucht[n]; });
+    var bloecke = [];
+    if (namen.length) bloecke.push(':root{' + namen.map(function(n){ return n + ':' + TOKENS[n]; }).join(';') + '}');
+    OVERRIDES.forEach(function(o){
+      var ns = Object.keys(o.decl).filter(function(n){ return gebraucht[n]; });
+      if (ns.length) bloecke.push(o.sel + '{' + ns.map(function(n){ return n + ':' + o.decl[n]; }).join(';') + '}');
+    });
+    return bloecke;
+  }
+  function dedent(html){
+    var zeilen = html.replace(/^\s*\n|\n\s*$/g, '').split('\n');
+    var min = Infinity;
+    zeilen.forEach(function(z){ if (z.trim()) { var m = z.match(/^\s*/)[0].length; if (m < min) min = m; } });
+    if (!isFinite(min)) min = 0;
+    return zeilen.map(function(z){ return z.slice(min); }).join('\n');
+  }
+  function paketFuer(zelle){
+    var demo = zelle.querySelector('.lib-demo');
+    var regeln = regelnFuer(klassenVon(demo));
+    var css = regeln.join('\n');
+    var tokens = tokensFuer(css + '\n' + BASE);
+    var teile = ['<!-- viuno UI · ' + zelle.dataset.titel + ' -->', '<style>'];
+    teile = teile.concat(tokens, [BASE], regeln, ['</style>', dedent(demo.innerHTML)]);
+    return teile.join('\n');
+  }
+
+  /* ── Kopieren ── */
+  var toast = document.getElementById('lib-toast'), toastT;
+  function meld(text){ toast.textContent = text; toast.classList.add('zeig'); clearTimeout(toastT); toastT = setTimeout(function(){ toast.classList.remove('zeig'); }, 1600); }
+  function kopiere(text){
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise(function(res, rej){
+      var ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); res(); } catch (e) { rej(e); } document.body.removeChild(ta);
+    });
+  }
+  function escHtml(s){ return s.replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+
+  var ICO_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5h10"/></svg>';
+  var ICO_CODE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg>';
+
+  document.querySelectorAll('.lib-zelle').forEach(function(zelle){
+    var kopf = document.createElement('div'); kopf.className = 'lib-zelle-kopf';
+    kopf.innerHTML = '<span>' + escHtml(zelle.dataset.titel || '') + '</span>' +
+      '<button class="lib-knopf lib-code-btn" type="button" title="Code ansehen">' + ICO_CODE + '</button>' +
+      '<button class="lib-knopf lib-copy-btn" type="button">' + ICO_COPY + 'Kopieren</button>';
+    zelle.insertBefore(kopf, zelle.firstChild);
+    var pre = document.createElement('pre'); pre.className = 'lib-code'; zelle.appendChild(pre);
+    kopf.querySelector('.lib-copy-btn').addEventListener('click', function(){
+      var btn = this;
+      kopiere(paketFuer(zelle)).then(function(){
+        btn.classList.add('kopiert'); btn.innerHTML = ICO_COPY + 'Kopiert';
+        meld('HTML + CSS kopiert: ' + zelle.dataset.titel);
+        setTimeout(function(){ btn.classList.remove('kopiert'); btn.innerHTML = ICO_COPY + 'Kopieren'; }, 1500);
+      }, function(){ meld('Kopieren nicht möglich'); });
+    });
+    kopf.querySelector('.lib-code-btn').addEventListener('click', function(){
+      var offen = pre.classList.toggle('offen');
+      this.classList.toggle('an', offen);
+      if (offen) pre.textContent = paketFuer(zelle);
+    });
+  });
+})();
+</script>
+</body>
+</html>

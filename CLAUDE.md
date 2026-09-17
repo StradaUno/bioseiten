@@ -400,3 +400,33 @@ Was sich dadurch dauerhaft aendert und was jede spaetere Sitzung wissen muss:
   ist das Betriebshandbuch. Support-Adresse ueberall: `office@viuno.de`.
 - Das Wort „kostenlos" kommt auf der Plattform nicht vor. Inklusive heisst
   „inklusive" oder „ohne Aufpreis".
+
+## UI-Bibliothek und Testversion der App (17.09.2026)
+
+- **`public/design/`** ist die UI-Bibliothek: 41 Gruppen mit je drei Varianten
+  eines Bausteins (Buttons, Ladezustaende, Fortschritt, Diagramme, Kennzahlen,
+  Menues, Eingaben, Badges, Hinweise, Listen, Karten, Dialoge, Zeitlinie,
+  Preise, Avatare), alle mit Praefix `v-`. Der Kopieren-Knopf legt HTML plus
+  genau die CSS-Regeln, Keyframes und Tokens in die Zwischenablage, die das
+  Element braucht. Der Token-Block dort ist derselbe wie in der App, ergaenzt
+  um `html[data-farbmodus="dunkel"]` und `--auf-verlauf` (Schrift auf dem
+  Signaturverlauf). **Diese Datei bleibt, wie sie ist** — sie ist die
+  Referenz, nicht ein Entwurf.
+- **`public/test2/`** ist die App mit den Bausteinen der Bibliothek: dieselbe
+  Logik, dieselben Supabase-Aufrufe und dieselben `window.*`-Namen wie
+  `public/app/index.html`, nur Markup und CSS sind getauscht. Die drei
+  Style-Bloecke `#v-tokens`, `#v-base` und `#v-comp` sind wortgleich aus
+  `public/design/` kopiert; `#app` traegt nur Huelle und Abstaende. Sie laedt
+  `/app/brand-ready-regeln.js`, damit beide Fassungen dasselbe Regelwerk
+  rechnen, und spricht mit der echten Datenbank. `noindex`, nirgends verlinkt.
+- **Dunkelmodus** gibt es dort als Schalter im Profil unter „Nur fuer dich":
+  gespeichert wird nur eine ausdrueckliche Wahl (`viuno-farbmodus` im
+  localStorage), ohne Wahl folgt die App dem Geraet. Ein Script im `<head>`
+  setzt das Attribut vor dem ersten Zeichnen, sonst blitzt die helle Seite auf.
+- **Das Analyse-Cockpit** (`.ckpt`) behaelt seine Klassen; die `--c-*`-Palette
+  haengt jetzt an den App-Tokens, damit Signatur und Dunkelmodus mitlaufen.
+- Die Sheets behalten `.sheet-input-wrap` mit Praefix/Suffix als eigenen
+  Baustein, weil die Bibliothek fuer „weiblich 72 %" keinen hat. `.v-btn--gestrichelt`
+  (Link hinzufuegen) ist aus demselben Grund neu.
+- Zum lokalen Pruefen ohne Konto: `/test2/?mock=1` laedt `mock.js` mit
+  Beispieldaten — nur auf localhost, die Datei liegt nicht im Repo.
