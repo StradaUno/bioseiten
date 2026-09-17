@@ -53,7 +53,7 @@ const STR = {
     zzgl_ust:'Alle Preise netto, zzgl. gesetzlicher Umsatzsteuer.',
     inkl_ust:'Alle Preise inklusive gesetzlicher Umsatzsteuer.',
     offer_ugc_video:'UGC Video', offer_instagram_reel:'Instagram Reel',
-    offer_tiktok_post:'TikTok Video', offer_story_package:'Story-Paket' },
+    offer_tiktok_post:'TikTok Video', offer_story_package:'Story-Paket', links:'Links', ad:'Werbung' },
   en: { contact:'Contact', contact_btn:'Request a collaboration', imprint:'Imprint',
     imprint_empty:'No imprint provided.', other_platforms:'Other platforms',
     audience:'Audience', gender:'Gender', countries:'Top countries', age:'Age',
@@ -71,7 +71,7 @@ const STR = {
     zzgl_ust:'All prices net, plus statutory VAT.',
     inkl_ust:'All prices including statutory VAT.',
     offer_ugc_video:'UGC video', offer_instagram_reel:'Instagram Reel',
-    offer_tiktok_post:'TikTok video', offer_story_package:'Story package' },
+    offer_tiktok_post:'TikTok video', offer_story_package:'Story package', links:'Links', ad:'Ad' },
   it: { contact:'Contatti', contact_btn:'Richiedi una collaborazione', imprint:'Impressum',
     imprint_empty:'Nessun impressum.', other_platforms:'Altre piattaforme',
     audience:'Pubblico', gender:'Genere', countries:'Paesi principali', age:'Età',
@@ -89,10 +89,10 @@ const STR = {
     zzgl_ust:'Prezzi netti, IVA esclusa.',
     inkl_ust:'Prezzi IVA inclusa.',
     offer_ugc_video:'Video UGC', offer_instagram_reel:'Instagram Reel',
-    offer_tiktok_post:'Video TikTok', offer_story_package:'Pacchetto Story' }
+    offer_tiktok_post:'Video TikTok', offer_story_package:'Pacchetto Story', links:'Link', ad:'Pubblicità' }
 }
 
-let lang = 'de', u = null, brands = [], offers = [], preise = [], beitraege = []
+let lang = 'de', u = null, brands = [], offers = [], preise = [], beitraege = [], links = [], eigene = []
 const t = k => (STR[lang] && STR[lang][k]) || (STR.de[k] ?? k)
 
 const es = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))
@@ -327,7 +327,7 @@ function zielgruppeBlock() {
 }
 
 function leistungenBlock() {
-  if (!offers.length) return ''
+  if (!offers.length && !eigene.length) return ''
   const preisMap = new Map(preise.map(p => [p.offer_type, p]))
   let h = '<div class="mk-preise">'
   for (const o of offers) {
@@ -339,6 +339,16 @@ function leistungenBlock() {
         : `<span class="mk-preis-wert">${t('price_from')} ${euro(p.preis_von)}</span>`
     }
     h += `<div class="mk-preis"><span>${t('offer_' + o.offer_type)}</span>${wert}</div>`
+  }
+  /* Eigene Leistungen (App, 17.09.2026): bis zu vier Zeilen mit eigenem
+     Titel, dieselbe Darstellung wie die festen. */
+  for (const e of eigene) {
+    const wert = e.preis_von != null
+      ? (e.preis_bis != null && Number(e.preis_bis) > Number(e.preis_von)
+          ? `<span class="mk-preis-wert">${euro(e.preis_von)} – ${euro(e.preis_bis)}</span>`
+          : `<span class="mk-preis-wert">${t('price_from')} ${euro(e.preis_von)}</span>`)
+      : `<span class="mk-preis-wert leer">${t('on_request')}</span>`
+    h += `<div class="mk-preis"><span>${es(e.titel)}</span>${wert}</div>`
   }
   h += '</div>'
   if (u.preis_hinweis && STR[lang][u.preis_hinweis]) h += `<div class="mk-hinweis">${t(u.preis_hinweis)}</div>`
@@ -377,6 +387,14 @@ function weitereBlock() {
   return zeilen || ''
 }
 
+/* Eigene Links, die in der App fuer das Media Kit eingeschaltet sind
+   (View mediakit_links_public, Schalter im_mediakit). */
+function linksBlock() {
+  if (!links.length) return ''
+  return `<div class="mk-brands">${links.map(l =>
+    `<a class="mk-brand" href="${es(nu(l.url))}" target="_blank" rel="noopener">${es(l.title)}${l.is_paid ? ` <span class="mk-small-lbl">· ${t('ad')}</span>` : ''}<span class="mk-brand-arrow">↗</span></a>`).join('')}</div>`
+}
+
 function markenBlock() {
   if (!brands.length) return ''
   return `<div class="mk-brands">${brands.map(b => b.url
@@ -411,6 +429,7 @@ function zeichne() {
     abschnitt(t('offers'), leistungenBlock()),
     abschnitt(t('terms'), konditionenBlock()),
     abschnitt(t('brands'), markenBlock()),
+    abschnitt(t('links'), linksBlock()),
     `<div class="mk-section"><div class="mk-label">${t('contact')}</div>
       ${u.contact_email ? `<div class="mk-email">${IKON.mail}<span>${es(u.contact_email)}</span></div>` : ''}
       <a class="mk-cta" href="mailto:${es(u.contact_email || '')}">${t('contact_btn')}</a></div>`
@@ -468,13 +487,19 @@ async function laden() {
   if (error || !data) return location.replace('https://viuno.de')
   u = data
 
-  const [b, o, p, bt] = await Promise.all([
-    sb.from('mediakit_brands').select('*').eq('user_id', u.user_id).order('position', { ascending: true }),
+  /* Schalter aus der App (17.09.2026): eine Marke steht nur im Kit, wenn
+     im_mediakit gesetzt ist; eigene Links kommen ueber die View
+     mediakit_links_public, die nur eingeschaltete liefert. */
+  const [b, o, p, bt, li, ei] = await Promise.all([
+    sb.from('mediakit_brands').select('*').eq('user_id', u.user_id).neq('im_mediakit', false).order('position', { ascending: true }),
     sb.from('mediakit_content_offers').select('*').eq('user_id', u.user_id),
     sb.from('mediakit_preise').select('*').eq('user_id', u.user_id),
-    sb.from('mediakit_beitraege').select('*').eq('user_id', u.user_id).order('position', { ascending: true })
+    sb.from('mediakit_beitraege').select('*').eq('user_id', u.user_id).order('position', { ascending: true }),
+    sb.from('mediakit_links_public').select('*').eq('user_id', u.user_id).order('position', { ascending: true }),
+    sb.from('mediakit_eigene_leistungen').select('*').eq('user_id', u.user_id).order('position', { ascending: true })
   ])
   brands = b.data ?? []; offers = o.data ?? []; preise = p.data ?? []; beitraege = bt.data ?? []
+  links = li.data ?? []; eigene = ei.data ?? []
 
   const urlLang = new URLSearchParams(location.search).get('lang')
   const browser = (navigator.language || 'de').slice(0, 2)
