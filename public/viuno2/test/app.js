@@ -374,6 +374,10 @@ function linienChart(werte, { hoehe = 120 } = {}) {
 function bearbeitenBox(zeilen) {
   return `<div class="v-bearbeiten"><button class="v-btn v-btn--breit v-bearbeiten-knopf" data-ausklappen aria-expanded="false">Bearbeiten<svg class="v-ico v-bearbeiten-pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button><div class="v-bearbeiten-panel"><div class="v-bearbeiten-liste">${zeilen.map(([t, a]) => `<button type="button" class="v-bearbeiten-zeile" data-aktion="${a}"><span>${es(t)}</span>${ICO.pfeil}</button>`).join('')}</div></div></div>`
 }
+/* Ausklapper mit Inhalt: Knopf mit Titel und Untertitel, darunter die Karten. */
+function ausklappBox(titel, sub, inner) {
+  return `<div class="v-bearbeiten"><button class="v-btn v-btn--breit v-bearbeiten-knopf" data-ausklappen aria-expanded="false" style="height:auto;padding:12px 18px;flex-direction:column;gap:2px;align-items:center"><span style="display:flex;align-items:center;gap:8px">${es(titel)}<svg class="v-ico v-bearbeiten-pfeil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span><span class="text-klein" style="font-weight:var(--fw-md)">${es(sub)}</span></button><div class="v-bearbeiten-panel"><div class="v-bearbeiten-liste"><div style="display:flex;flex-direction:column;gap:12px;padding:12px">${inner}</div></div></div></div>`
+}
 function bearbeitenBinden(area, ctx, aktionen) {
   $$('[data-ausklappen]', area).forEach(k => ctx.on(k, 'click', () => { const box = k.closest('.v-bearbeiten'); const o = box.classList.toggle('offen'); k.setAttribute('aria-expanded', o ? 'true' : 'false') }))
   $$('.v-bearbeiten-zeile', area).forEach(z => ctx.on(z, 'click', () => { const a = z.dataset.aktion; if (aktionen[a]) aktionen[a](); else if (a.startsWith('#')) { Z.zurueckZu = location.hash; geh(a) } }))
@@ -819,20 +823,56 @@ async function renderAnalyse(area, ctx) {
   }
   let inhalt = ''
   if (stats) {
-    const fDelta = vorher && vorher.followers ? stats.followers - vorher.followers : null
-    inhalt += `<div class="v-kpi-reihe">${kpi('Follower', fm(stats.followers), fDelta != null ? (fDelta >= 0 ? '+' : '') + fm(fDelta) + ' seit letzter Analyse' : 'gemessen ' + datKurz(stats.created_at), fDelta > 0 ? 'hoch' : fDelta < 0 ? 'runter' : '')}${kpi('Engagement', dez(stats.engagement_rate, 1) + ' %', stats.resonanz_schnitt != null ? dez(stats.resonanz_schnitt, 1) + ' Reaktionen je 1.000' : '')}${kpi(pf === 'tiktok' ? 'Ø Aufrufe' : 'Ø Likes', fm(pf === 'tiktok' ? stats.avg_views : stats.avg_likes), stats.avg_comments != null ? fm(stats.avg_comments) + ' Ø Kommentare' : '')}${kpi('Beiträge / Woche', dez(stats.posts_per_week, 1), stats.best_posting_day ? 'am besten ' + es(stats.best_posting_day) + (stats.best_posting_hour != null ? ', ' + stats.best_posting_hour + ' Uhr' : '') : '')}</div>`
+    /* Zuerst die Auswertung als Text -- das ist die Staerke. Reine Kennzahlen
+       stehen am Ende in einem Ausklapper. */
+    const absaetze = t => String(t || '').split(/\n\s*\n/).map(x => x.trim()).filter(Boolean).map(x => `<p class="news-text" style="margin:0 0 10px;font-size:var(--t-md)">${es(x)}</p>`).join('').replace(/margin:0 0 10px;([^"]*)"><\/p>$/, '$1')
+    const textKarte = (titel, text, sub) => text && String(text).trim() ? karte(`${karteKopf(titel, sub || '')}${absaetze(text)}`) : ''
     if (ki) {
-      inhalt += karte(`${ki.kernaussage ? `<h3 style="margin:0 0 8px;font-size:var(--t-lg);font-weight:var(--fw-sb)">${es(ki.kernaussage)}</h3>` : ''}${ki.einordnung ? `<p class="news-text" style="font-size:var(--t-sm);color:var(--muted)">${es(ki.einordnung)}</p>` : ''}${Array.isArray(ki.tipps_zukunft) && ki.tipps_zukunft.length ? `<div class="abschnitt-titel" style="margin-top:12px">Was du tun kannst</div><ul class="v-check" style="margin-top:8px">${ki.tipps_zukunft.map(t => `<li class="offen"><i></i><span style="font-size:var(--t-sm);line-height:var(--lh-body)">${es(typeof t === 'string' ? t : t.text || JSON.stringify(t))}</span></li>`).join('')}</ul>` : ''}<div class="v-karte-fuss"><span>Auswertung vom ${dat(ki.created_at)}</span><button class="v-btn v-btn--rand v-btn--klein" data-teilen>${ICO.teilen} Teilen</button></div>`)
+      inhalt += karte(`${ki.kernaussage ? `<h3 style="margin:0 0 10px;font-size:var(--t-xl);font-weight:var(--fw-b);letter-spacing:-.02em;line-height:var(--lh-tight)">${es(ki.kernaussage)}</h3>` : ''}${absaetze(ki.einordnung)}<div class="v-karte-fuss"><span>Auswertung vom ${dat(ki.created_at)} · ${PLATTFORM_LABEL[pf]}</span><button class="v-btn v-btn--rand v-btn--klein" data-teilen>${ICO.teilen} Teilen</button></div>`)
+      inhalt += textKarte('Was gut lief', ki.was_gut_lief)
+      inhalt += textKarte('Wo Wirkung verloren geht', ki.verbesserungspotenzial)
+      inhalt += textKarte('Reichweite und Resonanz', ki.reichweite_resonanz, 'Resonanz = Likes je 1.000 Aufrufe')
+      const tp = Array.isArray(ki.top_posts) ? ki.top_posts.filter(t => t && (t.datum || t.warum_top)) : []
+      if (tp.length) inhalt += karte(`${karteKopf('Deine stärksten Beiträge', 'nach Likes, aus dieser Analyse')}<div class="v-liste" style="box-shadow:none">${tp.map((t, i) => `<div class="v-zeile" style="padding:10px 12px"><div class="v-avatar v-avatar--rund" style="width:30px;height:30px;font-size:var(--t-xs)">${i + 1}</div><div class="text"><strong>${es(t.datum || '')}</strong><span style="white-space:normal">${es(t.warum_top || '')}</span></div>${t.likes != null ? `<div class="zahl v-num">${fm(t.likes)}<small>Likes</small></div>` : ''}</div>`).join('')}</div>`)
+      inhalt += textKarte('Was die stärksten Beiträge verbindet', ki.top_posts_gemeinsamkeiten)
+      inhalt += textKarte('So sind deine Texte gebaut', ki.caption_struktur, 'starke gegen schwache Beiträge')
+      inhalt += textKarte('Töne', ki.sound_befund)
+      inhalt += textKarte('Was weniger werden sollte', ki.weglassen)
+      if (Array.isArray(ki.tipps_zukunft) && ki.tipps_zukunft.length) inhalt += karte(`${karteKopf('Was du tun kannst', ki.tipps_zukunft.length + ' Schritte, jeder mit Grund aus deinen Zahlen')}<ul class="v-check">${ki.tipps_zukunft.map(t => `<li class="offen"><i></i><span style="font-size:var(--t-md);line-height:var(--lh-body)">${es(typeof t === 'string' ? t : t.text || JSON.stringify(t))}</span></li>`).join('')}</ul>`)
+      inhalt += textKarte('Noch ein Befund', ki.weitere_insights)
+      inhalt += textKarte('Seit der letzten Analyse', ki.vergleich_vorherige)
     }
+    /* Kennzahlen: am Ende, zugeklappt. */
+    const fDelta = vorher && vorher.followers ? stats.followers - vorher.followers : null
+    let zahlen = `<div class="v-kpi-reihe">${kpi('Follower', fm(stats.followers), fDelta != null ? (fDelta >= 0 ? '+' : '') + fm(fDelta) + ' seit letzter Analyse' : 'gemessen ' + datKurz(stats.created_at), fDelta > 0 ? 'hoch' : fDelta < 0 ? 'runter' : '')}${kpi('Engagement', dez(stats.engagement_rate, 1) + ' %', 'je Follower')}${kpi(pf === 'tiktok' ? 'Ø Aufrufe' : 'Ø Likes', fm(pf === 'tiktok' ? stats.avg_views : stats.avg_likes), stats.avg_comments != null ? fm(stats.avg_comments) + ' Ø Kommentare' : '')}${kpi('Beiträge / Woche', dez(stats.posts_per_week, 1), stats.best_posting_day ? 'am besten ' + es(stats.best_posting_day) + (stats.best_posting_hour != null ? ', ' + stats.best_posting_hour + ' Uhr' : '') : '')}</div>`
+    const zeilen = []
+    if (stats.resonanz_schnitt != null) zeilen.push(['Resonanz im Schnitt', dez(stats.resonanz_schnitt, 1) + ' je 1.000'])
+    if (stats.resonanz_top != null) zeilen.push(['Stärkste Beiträge', dez(stats.resonanz_top, 1) + ' je 1.000'])
+    if (stats.resonanz_flop != null) zeilen.push(['Schwächste Beiträge', dez(stats.resonanz_flop, 1) + ' je 1.000'])
+    if (stats.kommentarrate_schnitt != null) zeilen.push(['Kommentarrate', dez(stats.kommentarrate_schnitt, 1) + ' je 1.000'])
+    if (stats.avg_views != null && pf !== 'tiktok') zeilen.push(['Ø Aufrufe', fm(stats.avg_views)])
+    if (stats.avg_shares != null) zeilen.push(['Ø geteilt', fm(stats.avg_shares)])
+    if (stats.avg_video_duration != null) zeilen.push(['Ø Videolänge', dez(stats.avg_video_duration, 0) + ' s'])
+    if (stats.min_likes != null && stats.max_likes != null) zeilen.push(['Likes-Spanne', fm(stats.min_likes) + ' bis ' + fm(stats.max_likes)])
+    if (stats.posts_count != null) zeilen.push(['Beiträge gesamt', fm(stats.posts_count)])
+    if (stats.following != null) zeilen.push(['Folgt', fm(stats.following)])
+    if (zeilen.length) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:6px"><strong>Resonanz und Größen</strong><span>${fm(stats.best_time_sample || 0)} Beiträge</span></div>${zeilen.map(([l, w]) => `<div class="v-kpi-zeile"><span>${es(l)}</span><b class="v-num">${w}</b></div>`).join('')}`)
     const fs = Array.isArray(stats.format_stats) ? stats.format_stats.filter(f => f.n >= 1) : []
-    if (fs.length > 1) inhalt += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Formate</strong><span>Ø Likes</span></div>${balkenListe(fs.map(f => ({ label: f.typ + ' (' + f.n + ')', wert: Math.round(f.avg_likes || 0) })).sort((a, b) => b.wert - a.wert))}`)
-    inhalt += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Follower-Verlauf</strong><span>${verlauf.length ? verlauf.length + ' Messungen' : '180 Tage'}</span></div>${linienChart(verlauf.map(v => v.followers))}${verlauf.length >= 2 ? `<div class="v-achse"><span>${datKurz(verlauf[0].tag)}</span><span>${datKurz(verlauf[verlauf.length - 1].tag)}</span></div>` : ''}`)
-    if (stats.ausreisser && stats.ausreisser.views) inhalt += karte(`<div class="zeile-zwischen" style="margin-bottom:8px"><strong>Größte Reichweite</strong><span>${datKurz(stats.ausreisser.datum)}</span></div><p class="text-muted" style="margin:0;font-size:var(--t-sm);line-height:var(--lh-body)">${fm(stats.ausreisser.views)} Aufrufe, aber nur ${dez(stats.ausreisser.resonanz, 1)} Reaktionen je 1.000 – dein Schnitt liegt bei ${dez(stats.resonanz_schnitt, 1)}. Viel Reichweite, wenig Reaktion.</p>${stats.ausreisser.url ? `<a class="v-btn v-btn--leise v-btn--klein" style="margin-top:10px" href="${es(stats.ausreisser.url)}" target="_blank" rel="noopener">Beitrag ansehen ${ICO.extern}</a>` : ''}`)
+    if (fs.length > 1) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Formate</strong><span>Ø Likes</span></div>${balkenListe(fs.map(f => ({ label: f.typ + ' (' + f.n + ')', wert: Math.round(f.avg_likes || 0) })).sort((a, b) => b.wert - a.wert))}`)
+    const ds = Array.isArray(stats.duration_stats) ? stats.duration_stats.filter(d => d.n >= 1 && d.avg_views != null) : []
+    if (ds.length > 1) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Videolänge</strong><span>Ø Aufrufe</span></div>${balkenListe(ds.map(d => ({ label: d.bucket + ' (' + d.n + ')', wert: Math.round(d.avg_views || 0) })).sort((a, b) => b.wert - a.wert))}`)
+    const sounds = Array.isArray(stats.sound_stats) ? stats.sound_stats : []
+    if (sounds.length) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:6px"><strong>Töne, die mehrfach vorkommen</strong><span>Resonanz</span></div>${sounds.map(x => `<div class="v-kpi-zeile"><span style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${es(x.sound)} · ${x.n}×</span><b class="v-num">${(x.werte || []).map(w => dez(w, 1)).join(' / ')}</b></div>`).join('')}`)
+    zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Follower-Verlauf</strong><span>${verlauf.length ? verlauf.length + ' Messungen' : '180 Tage'}</span></div>${linienChart(verlauf.map(v => v.followers))}${verlauf.length >= 2 ? `<div class="v-achse"><span>${datKurz(verlauf[0].tag)}</span><span>${datKurz(verlauf[verlauf.length - 1].tag)}</span></div>` : ''}`)
+    if (stats.ausreisser && stats.ausreisser.views) zahlen += karte(`<div class="zeile-zwischen" style="margin-bottom:8px"><strong>Größte Reichweite</strong><span>${datKurz(stats.ausreisser.datum)}</span></div><p class="text-muted" style="margin:0;font-size:var(--t-sm);line-height:var(--lh-body)">${fm(stats.ausreisser.views)} Aufrufe, aber nur ${dez(stats.ausreisser.resonanz, 1)} Reaktionen je 1.000 – dein Schnitt liegt bei ${dez(stats.resonanz_schnitt, 1)}. Viel Reichweite, wenig Reaktion.</p>${stats.ausreisser.url ? `<a class="v-btn v-btn--leise v-btn--klein" style="margin-top:10px" href="${es(stats.ausreisser.url)}" target="_blank" rel="noopener">Beitrag ansehen ${ICO.extern}</a>` : ''}`)
+    inhalt += ausklappBox('Kennzahlen', 'Follower, Resonanz, Formate, Verlauf', zahlen)
+    if (!ki) inhalt += karte(`${karteKopf('Auswertung fehlt', 'Die Zahlen sind da, der Text nicht.')}<p class="text-muted" style="margin:0;font-size:var(--t-sm)">Die Auswertung dieses Laufs ist nicht angekommen. Schreib an <a href="mailto:office@viuno.de">office@viuno.de</a>, wir sehen nach.</p>`)
   } else if (!laeuft && handle) {
-    inhalt = leer('Noch keine Analyse für ' + PLATTFORM_LABEL[pf], 'Nach der ersten Analyse stehen hier Follower, Engagement, Formate und die Auswertung.')
+    inhalt = leer('Noch keine Analyse für ' + PLATTFORM_LABEL[pf], 'Nach der ersten Analyse stehen hier Auswertung, Tipps und Kennzahlen.')
   }
   area.innerHTML = seg + kopf + inhalt
   $$('[data-pf]', area).forEach(b => ctx.on(b, 'click', () => { Z.plattform = b.dataset.pf; renderAnalyse(area, ctx) }))
+  $$('[data-ausklappen]', area).forEach(k => ctx.on(k, 'click', () => { const box = k.closest('.v-bearbeiten'); const o = box.classList.toggle('offen'); k.setAttribute('aria-expanded', o ? 'true' : 'false') }))
   ctx.on($('[data-kanaele]', area), 'click', () => { Z.zurueckZu = location.hash; geh('#/kanaele') })
   ctx.on($('[data-analyse-start]', area), 'click', e => analyseStarten(pf, true, e.currentTarget, () => renderAnalyse(area, ctx)))
   ctx.on($('[data-abo-start]', area), 'click', e => aboStarten(e.currentTarget))

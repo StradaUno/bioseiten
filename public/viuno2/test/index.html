@@ -649,6 +649,7 @@ a{color:inherit}
 .v-bearbeiten.offen{border-radius:var(--r-md);box-shadow:var(--sh-card)}
 .v-bearbeiten.offen .v-bearbeiten-panel{grid-template-rows:1fr}
 .v-bearbeiten.offen .v-bearbeiten-pfeil{transform:rotate(180deg)}
+.v-bearbeiten-liste .v-karte{box-shadow:none}
 .wahl-reihe{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .wahl{display:flex;flex-direction:column;align-items:center;gap:8px;padding:14px 8px;border:1px solid var(--border);border-radius:var(--r-md);background:var(--surface);font-size:var(--t-sm);font-weight:var(--fw-sb);color:var(--muted);cursor:pointer}
 .wahl.aktiv{border-color:var(--v1);box-shadow:0 0 0 1px var(--v1);color:var(--text)}
@@ -742,6 +743,6 @@ a{color:inherit}
 <div id="sheet" class="v-sheet" role="dialog" aria-modal="true"></div>
 <div id="modal"></div>
 <div id="toast" class="v-toast" role="status"></div>
-<script type="module" src="./app.js?v=6"></script>
+<script type="module" src="./app.js?v=7"></script>
 </body>
 </html>
