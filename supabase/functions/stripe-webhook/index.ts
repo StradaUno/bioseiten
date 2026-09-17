@@ -50,6 +50,90 @@ async function sendPurchaseConfirmation(sessionId: string): Promise<void> {
   }
 }
 
+function stripeFor(mode: string): Stripe {
+  const key = mode === 'test' ? (Deno.env.get('STRIPE_SECRET_KEY_TEST') || '') : (Deno.env.get('STRIPE_SECRET_KEY') || '')
+  if (!key) throw new Error(`Kein Stripe-Key fuer Modus "${mode}" hinterlegt`)
+  return new Stripe(key)
+}
+
+/* ── Abo (seit 17.09.2026) ─────────────────────────────────────────────────
+   Zustand in subscriptions (plan 'abo', payment_ref = Stripe-Subscription-ID).
+   checkout.session.completed (mode subscription) legt die Zeile an,
+   invoice.paid verlaengert, customer.subscription.updated traegt Kuendigung
+   und Status nach, customer.subscription.deleted beendet. */
+function istAboEreignis(event: Stripe.Event): boolean {
+  const t = event.type
+  if (t.startsWith('customer.subscription.') || t.startsWith('invoice.')) return true
+  if (t === 'checkout.session.completed') return (event.data.object as any).mode === 'subscription'
+  return false
+}
+/* Solange stripe_prices keine live/abo-Zeile traegt, laeuft das Abo im Test
+   ("Test jetzt, Live spaeter") -- dann duerfen Test-Abo-Ereignisse auch im
+   Live-Betrieb verbucht werden. */
+async function aboImTest(): Promise<boolean> {
+  const { data } = await supabase.from('stripe_prices').select('price_id').eq('mode', 'live').eq('platform', 'abo').maybeSingle()
+  return !data?.price_id
+}
+const iso = (sek: number | null | undefined) => sek ? new Date(sek * 1000).toISOString() : null
+
+async function aboAnlegen(session: Stripe.Checkout.Session, mode: string): Promise<void> {
+  const userId = session.metadata?.user_id || session.client_reference_id
+  const subId = typeof session.subscription === 'string' ? session.subscription : (session.subscription as any)?.id
+  if (!userId || !subId) { await melden(`Abo-Session ${session.id} ohne user_id oder subscription`); return }
+  let periodeEnde: string | null = null, status = 'active', kuendigung: string | null = null
+  try {
+    const sub: any = await stripeFor(mode).subscriptions.retrieve(subId)
+    periodeEnde = iso(sub.current_period_end); status = sub.status
+    kuendigung = sub.cancel_at_period_end ? periodeEnde : null
+  } catch (e: any) { console.warn('Abo nachladen fehlgeschlagen:', e.message) }
+  const jetzt = new Date().toISOString()
+  const zeile = {
+    user_id: userId, plan: 'abo', is_active: true, payment_ref: subId,
+    stripe_customer_id: typeof session.customer === 'string' ? session.customer : null,
+    stripe_mode: mode, status, expires_at: periodeEnde, kuendigung_zum: kuendigung, updated_at: jetzt,
+  }
+  const { data: vorhanden } = await supabase.from('subscriptions').select('id').eq('user_id', userId).eq('plan', 'abo').maybeSingle()
+  const { error } = vorhanden
+    ? await supabase.from('subscriptions').update(zeile).eq('id', vorhanden.id)
+    : await supabase.from('subscriptions').insert({ ...zeile, started_at: jetzt })
+  if (error) { await melden('subscriptions (abo) schreiben: ' + error.message); return }
+  console.log(`Abo ${subId} fuer User ${userId} aktiv (${mode})`)
+  await supabase.from('withdrawal_consents').update({ effective_at: jetzt })
+    .eq('stripe_checkout_session_id', session.id).is('effective_at', null)
+}
+
+async function aboStand(sub: any, mode: string, typ: string): Promise<void> {
+  const periodeEnde = iso(sub.current_period_end)
+  const beendet = typ === 'customer.subscription.deleted'
+  const patch = {
+    status: beendet ? 'canceled' : sub.status,
+    expires_at: beendet ? new Date().toISOString() : periodeEnde,
+    kuendigung_zum: beendet ? null : (sub.cancel_at_period_end ? periodeEnde : iso(sub.cancel_at)),
+    is_active: !beendet && ['active', 'trialing', 'past_due'].includes(sub.status),
+    stripe_mode: mode, updated_at: new Date().toISOString(),
+  }
+  const { data, error } = await supabase.from('subscriptions').update(patch).eq('payment_ref', sub.id).select('id')
+  if (error) { await melden('subscriptions (abo) Stand: ' + error.message); return }
+  if (!data?.length && sub.metadata?.user_id && !beendet) {
+    await supabase.from('subscriptions').insert({ user_id: sub.metadata.user_id, plan: 'abo', payment_ref: sub.id, started_at: new Date().toISOString(), ...patch })
+  }
+}
+
+async function aboRechnung(invoice: any, mode: string, typ: string): Promise<void> {
+  const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id
+  if (!subId) return
+  if (typ === 'invoice.paid') {
+    const ende = invoice.lines?.data?.[0]?.period?.end
+    const patch: Record<string, unknown> = { is_active: true, status: 'active', stripe_mode: mode, updated_at: new Date().toISOString() }
+    if (ende) patch.expires_at = iso(ende)
+    const { error } = await supabase.from('subscriptions').update(patch).eq('payment_ref', subId)
+    if (error) await melden('subscriptions (abo) Rechnung: ' + error.message)
+  } else {
+    await supabase.from('subscriptions').update({ status: 'past_due', updated_at: new Date().toISOString() }).eq('payment_ref', subId)
+    await melden(`Abo-Zahlung fehlgeschlagen: ${subId} (${mode}) -- Stripe versucht es erneut, Konto bleibt bis expires_at aktiv`)
+  }
+}
+
 async function melden(text: string) {
   try { await supabase.rpc('log_error', { function_name: 'stripe-webhook', error_message: text }) } catch (_) {}
 }
@@ -151,7 +235,7 @@ Deno.serve(async (req) => {
      Freischaltung mehr erzeugen -- auch nicht mit gueltiger Test-Signatur.
      Das Event wird bestaetigt (200), aber nicht verbucht. */
   const betriebsmodus = (Deno.env.get('VIUNO_STRIPE_MODE') || 'live').toLowerCase()
-  if (betriebsmodus === 'live' && mode === 'test') {
+  if (betriebsmodus === 'live' && mode === 'test' && !(istAboEreignis(event) && await aboImTest())) {
     console.warn(`Test-Event ${event.id} im Live-Betrieb ignoriert`)
     return new Response(JSON.stringify({ received: true, skipped: 'test_event_in_live_mode' }), { status: 200 })
   }
@@ -169,12 +253,18 @@ Deno.serve(async (req) => {
 
     if (event.type === 'checkout.session.completed' || event.type === 'checkout.session.async_payment_succeeded') {
       const session = event.data.object as Stripe.Checkout.Session
-      if (session.payment_status !== 'paid') {
+      if (session.mode === 'subscription') {
+        await aboAnlegen(session, mode)
+      } else if (session.payment_status !== 'paid') {
         // Verzoegerte Zahlart: das Geld kommt spaeter, dann meldet sich async_payment_succeeded.
         console.log(`Session ${session.id} noch nicht bezahlt (status: ${session.payment_status}) -- warte auf async_payment_succeeded`)
       } else {
         await freischalten(session, mode)
       }
+    } else if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
+      await aboStand(event.data.object, mode, event.type)
+    } else if (event.type === 'invoice.paid' || event.type === 'invoice.payment_failed') {
+      await aboRechnung(event.data.object, mode, event.type)
     } else if (event.type === 'checkout.session.async_payment_failed') {
       const session = event.data.object as Stripe.Checkout.Session
       await melden(`Verzoegerte Zahlung fehlgeschlagen: Session ${session.id} (${mode}) -- keine Freischaltung, Kunde ggf. anschreiben`)

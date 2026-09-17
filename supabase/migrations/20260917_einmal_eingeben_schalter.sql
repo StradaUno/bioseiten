@@ -129,3 +129,12 @@ alter table public.analysis_purchases alter column stripe_checkout_session_id dr
 -- nutzungsbedingungen_zustimmen(p_typ) schreibt die Zustimmung zu
 -- biopage_terms / mediakit_terms nach user_consents (Version = Datum von
 -- legal_texts.updated_at); die App fragt vor dem Einschalten einer Seite danach.
+
+-- 17.09.2026 (Abo): subscriptions bekommt stripe_customer_id, stripe_mode, status,
+-- kuendigung_zum, updated_at; abo_aktiv(p_user) prueft plan='abo' + is_active +
+-- expires_at (3 Tage Karenz). mediakit_viuno.avg_views_30_instagram/_tiktok werden
+-- von mediakit_auto_sync() aus Puls und Analyse gefuellt (je Beitrag einmal,
+-- letzte 30 Tage), mediakit_public gibt sie aus. pg_cron 'abo-wochenanalyse'
+-- (Sonntag 03:00 UTC) ruft viuno_cron_post('abo-wochenanalyse').
+-- deals und competitor_accounts sind geloescht (brand_ratings verlor dabei nur
+-- den Fremdschluessel), viuno_news_profil kommt ohne deals aus.

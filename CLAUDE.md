@@ -512,3 +512,37 @@ Version = Datum von `legal_texts.updated_at`; gefragt wird je Fassung einmal.
 Werbung ist je Link ein Schalter in der Linkliste. Die News-Seite zeigt oben
 einen Abo-Banner, solange `newsletter_subscribers.status` nicht `active` ist.
 "Anderer Anbieter" steht nur noch bei Brand Ready, direkt unter der Zeile.
+
+## Das Abo (17.09.2026)
+
+Ein Preismodell: die erste Analyse je Kanal ist inklusive
+(`erstanalyse_freischalten`, `analysis_purchases.grund = 'willkommen'`), danach
+**viuno Abo, 4,99 EUR im Monat**. Der Einmalkauf fuer 9,99 EUR wird in der App
+nicht mehr angeboten; der Weg in `create-checkout-session` bleibt fuer Altbestand.
+
+- **Stripe**: `create-checkout-session` mit `body.art = 'abo'` erzeugt eine
+  Subscription-Session mit dem Preis aus `stripe_prices` (`platform = 'abo'`).
+  Solange dort **keine live/abo-Zeile** steht, laeuft das Abo im Testmodus,
+  und `stripe-webhook` verbucht Test-Abo-Ereignisse auch im Live-Betrieb.
+  Den Preis legt `viuno-stripe-setup` an (`{"produkt":"abo","mode":"test"}`,
+  Header `x-setup-token` aus `setup_tokens`) -- **dafuer braucht Supabase das
+  Secret `STRIPE_SECRET_KEY_TEST`** (und fuer die Ereignisse
+  `STRIPE_WEBHOOK_SIGNING_SECRET_TEST` mit einem Test-Webhook auf
+  `checkout.session.completed`, `customer.subscription.updated`,
+  `customer.subscription.deleted`, `invoice.paid`, `invoice.payment_failed`).
+  Beides fehlte am 17.09.2026; bis dahin endet „Abo starten" mit einer
+  Fehlermeldung.
+- **Zustand** in `subscriptions` (`plan = 'abo'`, `payment_ref` =
+  Stripe-Subscription-ID, `stripe_mode`, `status`, `expires_at`,
+  `kuendigung_zum`), geschrieben vom Webhook. `abo_aktiv()` ist die eine
+  Wahrheit, mit drei Tagen Karenz fuer spaete Buchungen.
+- **Sonntags 03:00 UTC** ruft pg_cron `abo-wochenanalyse`: je Abo-Konto und je
+  hinterlegtem Kanal eine Freischaltung (`grund = 'abo'`, 0 EUR) und
+  `start-analysis` mit dem Service-Role-Key (`body.user_id`); nichts doppelt,
+  wenn in den letzten fuenf Tagen schon ein Lauf war. Kostenrahmen: rund
+  0,25 $ je Kanal und Woche.
+- **Media Kit**: `mediakit_viuno.avg_views_30_*` (Ø Aufrufe der letzten 30
+  Tage) aus Puls und Analyse, `kit-renderer.js` zeigt die Zeile.
+- **Kuendigung** im Profil („Abo"): `abo-verwalten` setzt
+  `cancel_at_period_end`, das Abo endet zum bezahlten Monatsende, bis dahin
+  ruecknehmbar.

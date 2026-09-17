@@ -94,6 +94,13 @@ const uid = () => Z.session?.user?.id
 const token = () => Z.session?.access_token
 const slug = () => slugify(Z.p?.display_name || '')
 
+/* Abo: aktiv, solange Stripe bezahlt hat (drei Tage Karenz fuer verspaetete Buchungen). */
+const aboAktiv = () => !!(Z.abo && Z.abo.is_active && (!Z.abo.expires_at || new Date(Z.abo.expires_at).getTime() > Date.now() - 3 * 86400000))
+async function aboNeuLaden() {
+  const { data } = await sb.from('subscriptions').select('*').eq('user_id', uid()).eq('plan', 'abo').order('updated_at', { ascending: false }).limit(1).maybeSingle()
+  Z.abo = data || null
+}
+
 /* ── Oberflaeche: Toast, Sheet, Modal ────────────────────────────────── */
 let toastTimer = null
 function toast(text, art) {
@@ -205,7 +212,7 @@ async function ladeKonto() {
 }
 async function ladeAlles() {
   const id = uid()
-  const [bl, mk, links, marken, offers, preise, eigene, beitraege, angaben] = await Promise.all([
+  const [bl, mk, links, marken, offers, preise, eigene, beitraege, angaben, abo] = await Promise.all([
     sb.from('biolink_viuno').select('*').eq('user_id', id).maybeSingle(),
     sb.from('mediakit_viuno').select('*').eq('user_id', id).maybeSingle(),
     sb.from('biolink_custom_links').select('*').eq('user_id', id).order('position'),
@@ -215,8 +222,10 @@ async function ladeAlles() {
     sb.from('mediakit_eigene_leistungen').select('*').eq('user_id', id).order('position'),
     sb.from('mediakit_beitraege').select('*').eq('user_id', id).order('position'),
     sb.from('brand_ready_angaben').select('kriterium,wert').eq('user_id', id),
+    sb.from('subscriptions').select('*').eq('user_id', id).eq('plan', 'abo').order('updated_at', { ascending: false }).limit(1).maybeSingle(),
   ])
   Z.angaben = {}; (angaben.data || []).forEach(a => { Z.angaben[a.kriterium] = !!a.wert })
+  Z.abo = abo.data || null
   Z.bl = bl.data; Z.mk = mk.data; Z.links = links.data || []; Z.marken = marken.data || []
   Z.offers = offers.data || []; Z.preise = preise.data || []; Z.eigene = eigene.data || []; Z.beitraege = beitraege.data || []
   Z.geladen = true
@@ -765,8 +774,13 @@ async function renderAnalyse(area, ctx) {
   // Rueckkehr aus dem Bezahlvorgang
   const q = new URLSearchParams(location.search)
   if (q.get('checkout')) {
-    toast(q.get('checkout') === 'success' ? 'Bezahlt. Du kannst die Analyse jetzt starten.' : 'Bezahlvorgang abgebrochen', q.get('checkout') === 'success' ? 'gut' : 'fehler')
+    const art = q.get('checkout')
     history.replaceState(null, '', location.pathname + location.hash)
+    if (art === 'abo') {
+      toast('Danke! Dein Abo wird gerade aktiviert.', 'gut')
+      /* Der Stripe-Webhook schreibt die Abo-Zeile ein paar Sekunden spaeter. */
+      for (let i = 0; i < 6 && !aboAktiv(); i++) { await schlaf(2500); await aboNeuLaden() }
+    } else toast(art === 'success' ? 'Bezahlt. Du kannst die Analyse jetzt starten.' : 'Bezahlvorgang abgebrochen', art === 'success' ? 'gut' : 'fehler')
   }
   Z.plattform = Z.plattform || (Z.p.instagram_handle ? 'instagram' : Z.p.tiktok_handle ? 'tiktok' : 'instagram')
   const pf = Z.plattform
@@ -787,13 +801,21 @@ async function renderAnalyse(area, ctx) {
   const seg = `<div class="v-seg v-seg--dunkel v-seg--voll">${['instagram', 'tiktok'].map(k => `<button class="${k === pf ? 'aktiv' : ''}" data-pf="${k}">${PLATTFORM_LABEL[k]}</button>`).join('')}</div>`
   let kopf = ''
   if (laeuft) {
-    kopf = karte(`<ul class="v-zeitlinie"><li class="fertig"><strong>Analyse gestartet</strong><small>${datKurz(run.started_at)} · ${new Date(run.started_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</small></li><li class="laeuft"><strong>${run.status === 'scraping' ? 'Beiträge werden gelesen' : 'KI schreibt die Auswertung'}</strong><small>dauert etwa zwei Minuten</small></li><li class="offen"><strong>Ergebnis hier und per Mail</strong><small>ausstehend</small></li></ul>`)
+    kopf = karte(`<ul class="v-zeitlinie"><li class="fertig"><strong>Analyse gestartet</strong><small>${datKurz(run.started_at)} · ${new Date(run.started_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}</small></li><li class="laeuft"><strong>${run.status === 'scraping' ? 'Beiträge werden gelesen' : 'Auswertung läuft'}</strong><small>dauert etwa zwei Minuten</small></li><li class="offen"><strong>Ergebnis hier und per Mail</strong><small>ausstehend</small></li></ul>`)
     ctx.interval(async () => { const { data } = await sb.from('analysis_runs').select('status').eq('id', run.id).maybeSingle(); if (data && data.status !== run.status && !ctx.stale()) renderAnalyse(area, ctx) }, 8000)
   } else if (!handle) {
     kopf = leer('Kein ' + PLATTFORM_LABEL[pf] + '-Kanal hinterlegt', 'Trag deinen @Namen unter Kanäle ein, dann kann viuno messen.', 'Kanäle öffnen', 'kanaele')
   } else {
     const frei = kaeufe.length > 0
-    kopf = karte(`${karteKopf(stats ? 'Neue Analyse' : 'Erste Analyse', frei ? (kaeufe[0].grund === 'willkommen' ? 'Deine Willkommens-Analyse ist freigeschaltet.' : 'Freischaltung vorhanden, noch nicht verbraucht.') : '36 Beiträge, Zahlen und eine Auswertung per Mail · 9,99 € einmalig')}<button class="v-btn ${frei ? 'v-btn--premium' : 'v-btn--dunkel'} v-btn--breit" data-analyse-start>${ICO.stern}${frei ? 'Analyse starten' : 'Freischalten · 9,99 €'}</button>${run && run.status === 'failed' && run.platform === pf ? `<div class="v-hinweis v-hinweis--fehler" style="margin-top:12px">${ICO.warn}<div class="text"><p style="margin:0">${es(run.error || 'Der letzte Lauf ist gescheitert.')}</p></div></div>` : ''}`)
+    const fehlerHtml = run && run.status === 'failed' && run.platform === pf ? `<div class="v-hinweis v-hinweis--fehler" style="margin-top:12px">${ICO.warn}<div class="text"><p style="margin:0">${es(run.error || 'Der letzte Lauf ist gescheitert.')}</p></div></div>` : ''
+    if (frei) {
+      kopf = karte(`${karteKopf(stats ? 'Neue Analyse' : 'Erste Analyse', kaeufe[0].grund === 'willkommen' ? 'Deine erste Analyse ist inklusive.' : kaeufe[0].grund === 'abo' ? 'Deine Wochenanalyse steht bereit.' : 'Freischaltung vorhanden, noch nicht verbraucht.')}<button class="v-btn v-btn--premium v-btn--breit" data-analyse-start>${ICO.stern}Analyse starten</button>${fehlerHtml}`)
+    } else if (aboAktiv()) {
+      const a = Z.abo
+      kopf = karte(`${karteKopf('Abo aktiv', a.kuendigung_zum ? 'Gekündigt zum ' + dat(a.kuendigung_zum) + '. Bis dahin läuft alles weiter.' : 'Jeden Sonntag wird dein Kanal neu analysiert, das Media Kit zieht die Zahlen nach.')}<div class="v-kpi-zeile"><span>Nächste Analyse</span><b>${naechsterSonntag()}</b></div><div class="v-kpi-zeile"><span>Bezahlt bis</span><b>${dat(a.expires_at)}</b></div>${fehlerHtml}`)
+    } else {
+      kopf = `<div class="v-preis v-preis--premium"><span class="v-pro-tag v-preis-tag">ABO</span><div class="v-preis-name">viuno Abo</div><div class="v-preis-wert v-num">4,99 €<small> im Monat</small></div><ul><li>${ICO.haken}Jede Woche eine Analyse, sonntags automatisch</li><li>${ICO.haken}Aktuelle Zahlen im Media Kit, dazu Ø Aufrufe der letzten 30 Tage</li><li>${ICO.haken}Brand-Ready-Check</li><li>${ICO.haken}Monatlich kündbar</li></ul><button class="v-btn v-btn--premium v-btn--breit" data-abo-start>${ICO.stern}Abo starten</button><div class="v-preis-hinweis">Kleinunternehmer nach § 19 UStG, keine Umsatzsteuer</div>${fehlerHtml}</div>`
+    }
   }
   let inhalt = ''
   if (stats) {
@@ -812,28 +834,53 @@ async function renderAnalyse(area, ctx) {
   area.innerHTML = seg + kopf + inhalt
   $$('[data-pf]', area).forEach(b => ctx.on(b, 'click', () => { Z.plattform = b.dataset.pf; renderAnalyse(area, ctx) }))
   ctx.on($('[data-kanaele]', area), 'click', () => { Z.zurueckZu = location.hash; geh('#/kanaele') })
-  ctx.on($('[data-analyse-start]', area), 'click', e => analyseStarten(pf, kaeufe.length > 0, e.currentTarget, () => renderAnalyse(area, ctx)))
+  ctx.on($('[data-analyse-start]', area), 'click', e => analyseStarten(pf, true, e.currentTarget, () => renderAnalyse(area, ctx)))
+  ctx.on($('[data-abo-start]', area), 'click', e => aboStarten(e.currentTarget))
   ctx.on($('[data-teilen]', area), 'click', async e => {
     laden(e.currentTarget, true)
     try { const r = await fn('analyse-freigeben', { analysis_run_id: stats.analysis_run_id }); await kopieren('https://viuno.de/analyse/' + r.token, 'Link kopiert · gilt 90 Tage') } catch (er) { fehler(er) } finally { laden(e.currentTarget, false) }
   })
 }
+function naechsterSonntag() {
+  const d = new Date(); const t = (7 - d.getDay()) % 7 || 7; d.setDate(d.getDate() + t)
+  return d.toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long' })
+}
 async function analyseStarten(pf, frei, btn, danach) {
-  if (frei) {
-    const ok = await bestaetigen({ titel: 'Analyse starten?', text: '36 Beiträge werden gelesen und ausgewertet. Dauert etwa zwei Minuten, das Ergebnis kommt hierher und per Mail.', ja: 'Jetzt starten' })
-    if (!ok) return
-    laden(btn, true)
-    try { await fn('start-analysis', { platform: pf }); toast('Analyse läuft'); danach() } catch (e) { fehler(e); laden(btn, false) }
-    return
-  }
-  const el = modal(`<h2>Analyse freischalten</h2><p>36 Beiträge werden gelesen, ausgewertet und per Mail geschickt. Dauert etwa zwei Minuten.</p><div class="v-hinweis"><div class="text"><strong class="v-num">9,99 €</strong><p>einmalig, ohne Abo · Kleinunternehmer nach § 19 UStG</p></div></div><label class="v-checkbox" style="margin-top:14px"><input type="checkbox" id="widerruf"><span style="font-size:var(--t-sm)">Ich stimme zu, dass die Analyse sofort nach Zahlung beginnt, und verliere damit mein 14-tägiges Widerrufsrecht.</span></label><div class="v-btn-reihe"><button class="v-btn v-btn--rand" data-modal-zu>Abbrechen</button><button class="v-btn v-btn--premium" data-zahlen>Zur Zahlung</button></div>`)
+  const ok = await bestaetigen({ titel: 'Analyse starten?', text: '36 Beiträge werden gelesen und ausgewertet. Dauert etwa zwei Minuten, das Ergebnis kommt hierher und per Mail.', ja: 'Jetzt starten' })
+  if (!ok) return
+  laden(btn, true)
+  try { await fn('start-analysis', { platform: pf }); toast('Analyse läuft'); danach() } catch (e) { fehler(e); laden(btn, false) }
+}
+/* Abo abschliessen: Zustimmung zur sofortigen Ausfuehrung, dann Stripe Checkout
+   (Abo-Modus). Zurueck kommt man mit ?checkout=abo, der Webhook schreibt die Zeile. */
+function aboStarten(btn) {
+  const el = modal(`<h2>viuno Abo</h2><p>4,99 € im Monat, monatlich kündbar. Jede Woche eine Analyse, aktuelle Zahlen im Media Kit, Brand-Ready-Check.</p><label class="v-checkbox" style="margin-top:14px"><input type="checkbox" id="widerruf"><span style="font-size:var(--t-sm)">Ich stimme zu, dass das Abo sofort nach Zahlung beginnt, und verliere damit mein 14-tägiges Widerrufsrecht für die begonnene Laufzeit.</span></label><div class="v-btn-reihe"><button class="v-btn v-btn--rand" data-modal-zu>Abbrechen</button><button class="v-btn v-btn--premium" data-zahlen>Zur Zahlung</button></div>`)
   $('[data-zahlen]', el).addEventListener('click', async e => {
     if (!$('#widerruf', el).checked) return toast('Bitte der sofortigen Ausführung zustimmen', 'fehler')
     laden(e.currentTarget, true)
     try {
-      const r = await fn('create-checkout-session', { platform: pf, consent: true })
+      const r = await fn('create-checkout-session', { art: 'abo', consent: true, rueckkehr: location.origin + location.pathname.replace(/[^/]*$/, '') })
       if (r.url) location.href = r.url; else throw new Error('Kein Bezahl-Link erhalten')
     } catch (er) { fehler(er); laden(e.currentTarget, false) }
+  })
+}
+/* Abo-Sheet im Profil: Stand, Kuendigung zum Monatsende, Ruecknahme. */
+function aboSheet(neu) {
+  const a = Z.abo, aktiv = aboAktiv()
+  const stand = !aktiv ? '<p>Du hast kein aktives Abo. Die erste Analyse je Kanal ist inklusive, alles Weitere kommt mit dem Abo.</p>'
+    : a.kuendigung_zum ? `<div class="v-status v-status--warn"><i></i><div class="text"><strong>Gekündigt zum ${dat(a.kuendigung_zum)}</strong><span>Bis dahin läuft alles weiter. Du kannst die Kündigung zurücknehmen.</span></div></div>`
+    : `<div class="v-status v-status--aktiv"><i></i><div class="text"><strong>Abo aktiv</strong><span>4,99 € im Monat · bezahlt bis ${dat(a.expires_at)}${a.status === 'past_due' ? ' · Zahlung offen' : ''}</span></div></div>`
+  const el = sheet(`${stand}<div class="v-btn-stapel" style="margin-top:14px">${!aktiv ? `<button class="v-btn v-btn--premium" data-abo-geh>Abo starten</button>` : a.kuendigung_zum ? `<button class="v-btn v-btn--dunkel" data-abo-zurueck>Kündigung zurücknehmen</button>` : `<button class="v-btn v-btn--gefahr" data-abo-kuendigen>Zum Monatsende kündigen</button>`}</div><p class="text-klein" style="margin:12px 0 0">Rechnungen schickt dir Stripe per Mail. Fragen an <a href="mailto:office@viuno.de">office@viuno.de</a>.</p>`, { titel: 'Abo' })
+  $('[data-abo-geh]', el)?.addEventListener('click', () => { sheetZu(); geh('#/analyse/analyse') })
+  $('[data-abo-kuendigen]', el)?.addEventListener('click', async e => {
+    const ok = await bestaetigen({ titel: 'Abo kündigen?', text: 'Es endet zum ' + dat(a.expires_at) + '. Bis dahin läuft alles weiter, danach gibt es keine Wochenanalysen mehr.', ja: 'Kündigen', gefahr: true })
+    if (!ok) return
+    laden(e.currentTarget, true)
+    try { const r = await fn('abo-verwalten', { aktion: 'kuendigen' }); Z.abo = r.abo; sheetZu(); toast('Gekündigt zum ' + dat(r.abo.kuendigung_zum)); neu && neu() } catch (er) { fehler(er); laden(e.currentTarget, false) }
+  })
+  $('[data-abo-zurueck]', el)?.addEventListener('click', async e => {
+    laden(e.currentTarget, true)
+    try { const r = await fn('abo-verwalten', { aktion: 'zurueck' }); Z.abo = r.abo; sheetZu(); toast('Abo läuft weiter', 'gut'); neu && neu() } catch (er) { fehler(er); laden(e.currentTarget, false) }
   })
 }
 const BR_ZIEL = { bio: '#/kanaele', kontakt: '#/profil', takt: '#/analyse/analyse', biolink: '#/seiten/biolink', mediakit: '#/seiten/mediakit', preise: '#/leistungen', impressum: '#/profil', referenzen: '#/marken', kategorie: '#/profil', messung: '#/analyse/analyse' }
@@ -847,11 +894,35 @@ async function renderBrandReady(area, ctx) {
     ${karte(`<div class="v-ring-reihe">${ring(pc.prozent / 100, pc.prozent + ' %', pc.prozent >= 70 ? 'v-ring--gruen' : '')}<div><strong>Brand Ready</strong><span>${pc.punkte} von ${pc.max} Punkten · ${pc.offen.length ? pc.offen.length + ' Punkte offen' : 'alles erfüllt'}</span></div></div>`)}
     ${sc ? karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Score ${sc.gesamt}</strong><span>vier Säulen</span></div>${balkenListe(sc.saeulen.map(s => ({ label: s.titel, wert: s.punkte })))}<div class="text-klein" style="margin-top:10px;line-height:var(--lh-body)">${sc.saeulen.map(s => `<div><b>${es(s.titel)}:</b> ${es(s.quelle)}</div>`).join('')}</div>`) : ''}
     <div class="v-liste">${pc.teile.map(t => { const [k, i] = zustand[t.zustand] || ['', '']; const ziel = BR_ZIEL[t.id] || null; const extern = t.id === 'biolink' ? externZeile('biolink', 'Ich habe schon eine BioLink-Seite bei einem anderen Anbieter') : t.id === 'mediakit' ? externZeile('kit_vorhanden', 'Ich habe schon ein Media Kit bei einem anderen Anbieter') : ''; return listeZeile({ sym: i, symKlasse: k === 'gut' ? 'gut' : k === 'warn' ? 'warn' : (t.zustand === 'offen' ? 'rot' : ''), text: t.titel, small: es(t.sub), wert: `<b class="v-num ${t.zustand === 'erfuellt' ? 'gut' : ''}">${t.punkte}/${t.max}</b>`, pfeil: !!ziel && t.zustand !== 'erfuellt', attrs: ziel && t.zustand !== 'erfuellt' ? `data-geh="${ziel}"` : 'disabled style="cursor:default;opacity:1"' }) + extern }).join('')}</div>
+    <button class="v-btn v-btn--rand v-btn--breit" data-br-teilen>${ICO.teilen} Stand teilen</button>
     <p class="text-klein zentriert">Stand ${dat(pc.stichtag)} · Grün ist erfüllt, Orange teilweise, Rot fehlt.</p>
   `
+  ctx.on($('[data-br-teilen]', area), 'click', brandReadyTeilen)
   $$('.sym.rot', area).forEach(s => { s.style.background = 'var(--red-bg)'; s.style.color = 'var(--red)' })
   $$('[data-geh]', area).forEach(el => ctx.on(el, 'click', () => { Z.zurueckZu = location.hash; geh(el.dataset.geh) }))
   externBinden(area, ctx, () => { if (!ctx.stale()) renderBrandReady(area, ctx) })
+}
+
+/* Geteilter Brand-Ready-Stand: brand-ready-freigeben legt je Kanal einen Link
+   an (90 Tage). Der Link zeigt Punktestand und zwei bis drei Saetze -- gerechnet
+   in der Function nach public/app/brand-ready-regeln.js, nicht nach dem
+   Profilcheck dieser Ansicht; die Zahl kann deshalb abweichen. */
+async function brandReadyTeilen() {
+  const { data: stats } = await sb.from('analyse_stats').select('platform').eq('user_id', uid()).order('created_at', { ascending: false })
+  const plattformen = [...new Set((stats || []).map(s => s.platform))]
+  if (!plattformen.length) return toast('Erst nach einer Analyse teilbar', 'fehler')
+  const { data: frei } = await sb.from('brand_ready_freigaben').select('platform,token,expires_at,revoked_at,aufrufe').eq('user_id', uid())
+  const aktiv = (frei || []).find(f => !f.revoked_at && new Date(f.expires_at) > new Date())
+  const link = t => 'https://viuno.de/brandready/?b=' + t
+  const el = sheet(`<p>Ein öffentlicher Link mit deinem Punktestand und zwei bis drei Sätzen, 90 Tage gültig. Kriterien und Zahlen bleiben privat.</p>${aktiv ? `<div class="v-status v-status--aktiv"><i></i><div class="text"><strong>Link ist aktiv</strong><span>${es(link(aktiv.token))} · ${fm(aktiv.aufrufe)} Aufrufe</span></div></div>` : ''}<div class="v-btn-stapel" style="margin-top:14px"><button class="v-btn v-btn--dunkel" data-br-link>${aktiv ? 'Link kopieren' : 'Link erzeugen und kopieren'}</button>${aktiv ? `<button class="v-btn v-btn--rand" data-br-weg>Freigabe zurücknehmen</button>` : ''}</div>`, { titel: 'Stand teilen' })
+  $('[data-br-link]', el).addEventListener('click', async e => {
+    laden(e.currentTarget, true)
+    try { const r = await fn('brand-ready-freigeben', { platform: aktiv ? aktiv.platform : plattformen[0] }); sheetZu(); await kopieren(link(r.token), 'Link kopiert · gilt 90 Tage') } catch (er) { fehler(er); laden(e.currentTarget, false) }
+  })
+  $('[data-br-weg]', el)?.addEventListener('click', async e => {
+    laden(e.currentTarget, true)
+    try { await fn('brand-ready-freigeben', { platform: aktiv.platform, aktion: 'zuruecknehmen' }); sheetZu(); toast('Freigabe zurückgenommen') } catch (er) { fehler(er); laden(e.currentTarget, false) }
+  })
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -872,18 +943,32 @@ async function renderNews(area, ctx) {
     sb.from('digest_cards_past').select('slug,headline,platform,platform_label,date,published_date,relevance_score,summary,impact,full_content,source,source_url,image_url').limit(40),
   ])
   if (ctx.stale()) return
-  const heute = heuteQ.data || [], alt = altQ.data || []
-  const abonniert = nlQ.data?.status === 'active'
+  let heute = heuteQ.data || [], alt = altQ.data || []
+  /* "Fuer mich": viuno_news_profil liefert Merkmale wie plattform_instagram;
+     gefiltert wird nach der Plattform der Karte. Allgemeine Karten bleiben,
+     Meta-Karten gehoeren zu Instagram und Threads. */
+  let fuerMich = false
+  try { fuerMich = localStorage.getItem('viuno-news-filter') === 'mich' } catch (_) {}
+  if (fuerMich) {
+    const tags = await rpc('viuno_news_profil').catch(() => [])
+    if (ctx.stale()) return
+    const meine = new Set((tags || []).filter(t => t.startsWith('plattform_')).map(t => t.slice(10)))
+    const passt = k => { const p = (k.platform || 'allgemein').toLowerCase(); return p === 'allgemein' || !p || meine.has(p) || (p === 'meta' && (meine.has('instagram') || meine.has('threads'))) }
+    heute = heute.filter(passt); alt = alt.filter(passt)
+  }
+  const abonniert = nlQ.data?.status === 'active', bestaetigungOffen = nlQ.data?.status === 'pending'
   Z.newsNeu = false
   if (heute.length) sb.from('page_views').insert({ user_id: uid(), page: 'news', source: 'app' }).then(() => {})
   area.innerHTML = `
-    ${abonniert ? '' : `<div class="v-banner"><span class="sym">${ICO.mail}</span><div class="text"><strong>Creator News per Mail</strong><span>Jeden Montag, jederzeit abbestellbar.</span></div><button class="v-btn v-btn--dunkel v-btn--klein" data-abo>Abonnieren</button></div>`}
-    ${heute.length ? `<div class="abschnitt"><div class="abschnitt-titel">Ausgabe vom ${datKurz(heute[0].date)}</div>${heute.map(k => newsKarte(k)).join('')}</div>` : leer('Diese Woche noch keine Ausgabe', 'Die Creator News erscheinen jeden Montag.')}
+    <div class="v-seg v-seg--dunkel v-seg--voll"><button class="${fuerMich ? '' : 'aktiv'}" data-filter="alle">Alle News</button><button class="${fuerMich ? 'aktiv' : ''}" data-filter="mich">Für mich</button></div>
+    ${abonniert ? '' : bestaetigungOffen ? `<div class="v-banner"><span class="sym">${ICO.mail}</span><div class="text"><strong>Bitte bestätigen</strong><span>Wir haben dir eine Mail an ${es(Z.session.user.email)} geschickt. Erst nach dem Klick darin kommen die News.</span></div><button class="v-btn v-btn--rand v-btn--klein" data-abo>Erneut senden</button></div>` : `<div class="v-banner"><span class="sym">${ICO.mail}</span><div class="text"><strong>Creator News per Mail</strong><span>Jeden Montag, jederzeit abbestellbar. Du bestätigst per Mail.</span></div><button class="v-btn v-btn--dunkel v-btn--klein" data-abo>Abonnieren</button></div>`}
+    ${heute.length ? `<div class="abschnitt"><div class="abschnitt-titel">Ausgabe vom ${datKurz(heute[0].date)}</div>${heute.map(k => newsKarte(k)).join('')}</div>` : fuerMich ? leer('Nichts für deine Kanäle diese Woche', 'Unter „Alle News“ steht die ganze Ausgabe.') : leer('Diese Woche noch keine Ausgabe', 'Die Creator News erscheinen jeden Montag.')}
     ${alt.length ? `<div class="abschnitt"><div class="abschnitt-titel">Frühere Ausgaben</div>${alt.map(k => newsKarte(k, true)).join('')}</div>` : ''}
   `
+  $$('[data-filter]', area).forEach(b => ctx.on(b, 'click', () => { try { localStorage.setItem('viuno-news-filter', b.dataset.filter) } catch (_) {} renderNews(area, ctx) }))
   ctx.on($('[data-abo]', area), 'click', async e => {
     laden(e.currentTarget, true)
-    try { await fn('newsletter-subscribe', { source: 'app' }); toast('Creator News abonniert', 'gut'); if (!ctx.stale()) renderNews(area, ctx) } catch (er) { fehler(er); laden(e.currentTarget, false) }
+    try { const r = await fn('newsletter-subscribe', { source: 'app' }); toast(r.status === 'schon_aktiv' ? 'Schon abonniert' : 'Bestätigungsmail unterwegs', 'gut'); if (!ctx.stale()) renderNews(area, ctx) } catch (er) { fehler(er); laden(e.currentTarget, false) }
   })
   const alle = [...heute, ...alt]
   $$('[data-news]', area).forEach(el => ctx.on(el, 'click', () => {
@@ -903,7 +988,7 @@ async function renderProfil(area, ctx) {
   const kanaele = KANAELE.filter(k => p[k.spalte])
   const nl = await sb.from('newsletter_subscribers').select('status').eq('user_id', uid()).maybeSingle()
   if (ctx.stale()) return
-  const newsletterAn = nl.data?.status === 'active'
+  const newsletterAn = nl.data?.status === 'active', newsletterOffen = nl.data?.status === 'pending'
   const dunkel = document.documentElement.dataset.farbmodus === 'dunkel'
   const fehltWert = '<span class="fehlt">fehlt</span>'
   area.innerHTML = `
@@ -926,7 +1011,8 @@ async function renderProfil(area, ctx) {
     </div>
     <div class="v-liste"><div class="v-liste-titel">Nur für dich</div>
       <div class="v-liste-zeile" style="cursor:default"><span class="sym">${dunkel ? ICO.mond : ICO.sonne}</span><span class="text">Dunkelmodus<small>Ohne Wahl folgt die App dem Gerät</small></span>${toggle(dunkel, 'data-dunkel', 'v-toggle--dunkel')}</div>
-      <div class="v-liste-zeile" style="cursor:default"><span class="sym">${ICO.news}</span><span class="text">Creator News per Mail<small>Jeden Montag, jederzeit abbestellbar</small></span>${toggle(newsletterAn, 'data-newsletter', 'v-toggle--akzent')}</div>
+      <div class="v-liste-zeile" style="cursor:default"><span class="sym">${ICO.news}</span><span class="text">Creator News per Mail<small>${newsletterOffen ? 'Bestätigung steht aus – schau in dein Postfach' : 'Jeden Montag, jederzeit abbestellbar'}</small></span>${toggle(newsletterAn, 'data-newsletter', 'v-toggle--akzent')}</div>
+      ${listeZeile({ sym: ICO.stern, text: 'Abo', small: aboAktiv() ? (Z.abo.kuendigung_zum ? 'Gekündigt zum ' + dat(Z.abo.kuendigung_zum) : 'Wochenanalyse, Media-Kit-Zahlen, Brand Ready') : 'Erste Analyse inklusive, dann 4,99 € im Monat', wert: aboAktiv() ? (Z.abo.kuendigung_zum ? 'endet' : 'aktiv') : 'kein Abo', wertKlasse: aboAktiv() && !Z.abo.kuendigung_zum ? 'gut' : '', attrs: 'data-aktion="abo"' })}
       ${listeZeile({ sym: ICO.mail, text: 'Login-E-Mail', wert: es(Z.session.user.email), attrs: 'data-aktion="email"' })}
       ${listeZeile({ sym: ICO.schloss, text: 'Passwort ändern', attrs: 'data-aktion="passwort"' })}
       ${listeZeile({ sym: ICO.doc, text: 'Datenauskunft', small: 'Alle Daten zu deinem Konto, innerhalb von 48 Stunden', attrs: 'data-aktion="auskunft"' })}
@@ -941,7 +1027,7 @@ async function renderProfil(area, ctx) {
   const aktionen = {
     username: () => usernameSheet(neu), bio: () => bioSheet(neu), foto: () => fotoSheet(neu), nische: () => nischeSheet(neu),
     kontakt: () => kontaktSheet(neu), impressum: () => impressumSheet(neu), sprache: spracheSheet, design: designSheet,
-    email: () => emailSheet(neu), passwort: passwortSheet, auskunft: datenauskunft, logout: abmelden, loeschen: kontoLoeschen,
+    email: () => emailSheet(neu), passwort: passwortSheet, auskunft: datenauskunft, logout: abmelden, loeschen: kontoLoeschen, abo: () => aboSheet(neu),
   }
   $$('[data-aktion]', area).forEach(el => ctx.on(el, 'click', () => aktionen[el.dataset.aktion] && aktionen[el.dataset.aktion]()))
   ctx.on($('[data-dunkel]', area), 'click', e => {
@@ -952,7 +1038,11 @@ async function renderProfil(area, ctx) {
   })
   ctx.on($('[data-newsletter]', area), 'click', async e => {
     const btn = e.currentTarget, an = !btn.classList.contains('an'); btn.disabled = true; btn.classList.toggle('an', an)
-    try { await fn('newsletter-subscribe', an ? { source: 'app' } : { abmelden: true }); toast(an ? 'Creator News abonniert' : 'Abbestellt') }
+    try {
+      const r = await fn('newsletter-subscribe', an ? { source: 'app' } : { abmelden: true })
+      if (an && r.status === 'bestaetigung_unterwegs') { btn.classList.remove('an'); toast('Bestätigungsmail an ' + (r.email || Z.session.user.email) + ' unterwegs', 'gut'); if (!ctx.stale()) renderProfil(area, ctx); return }
+      toast(an ? 'Creator News abonniert' : 'Abbestellt')
+    }
     catch (er) { fehler(er); btn.classList.toggle('an', !an) }
     btn.disabled = false
   })

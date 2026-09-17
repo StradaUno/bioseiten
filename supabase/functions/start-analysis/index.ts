@@ -97,16 +97,26 @@ Deno.serve(async (req) => {
   try {
     if (!APIFY_TOKEN) throw new Error('APIFY_TOKEN fehlt')
 
-    // Auth: JWT validieren
+    /* Auth: entweder das JWT des Creators (die App) oder der Service-Role-Key
+       mit user_id im Body (abo-wochenanalyse, der Sonntagslauf fuer Abo-Konten,
+       seit 17.09.2026). Bezahl-Check und alles Weitere bleiben gleich -- der
+       Sonntagslauf legt vorher eine Freischaltung mit grund 'abo' an. */
     const authHeader = req.headers.get('Authorization') || ''
     if (!authHeader) throw new Error('Kein Authorization Header')
     const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
-    if (authError || !user) throw new Error('Auth fehlgeschlagen')
-    const userId = user.id
+    const body = await req.json().catch(() => ({}))
+    const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
+    let userId: string
+    if (serviceKey && token === serviceKey) {
+      userId = String(body.user_id || '')
+      if (!userId) throw new Error('user_id fehlt')
+    } else {
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+      if (authError || !user) throw new Error('Auth fehlgeschlagen')
+      userId = user.id
+    }
 
     // Option C: ein Lauf deckt genau eine Plattform ab. Die Plattform kommt vom Client.
-    const body = await req.json().catch(() => ({}))
     const platform = String(body.platform || '').toLowerCase()
     if (platform !== 'instagram' && platform !== 'tiktok') {
       return json({ success: false, error: 'invalid_platform', message: 'Bitte waehle Instagram oder TikTok.' }, 400)

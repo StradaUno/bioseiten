@@ -53,7 +53,7 @@ const STR = {
     zzgl_ust:'Alle Preise netto, zzgl. gesetzlicher Umsatzsteuer.',
     inkl_ust:'Alle Preise inklusive gesetzlicher Umsatzsteuer.',
     offer_ugc_video:'UGC Video', offer_instagram_reel:'Instagram Reel',
-    offer_tiktok_post:'TikTok Video', offer_story_package:'Story-Paket', links:'Links', ad:'Werbung' },
+    offer_tiktok_post:'TikTok Video', offer_story_package:'Story-Paket', links:'Links', ad:'Werbung', avg_30:'Ø Aufrufe, letzte 30 Tage' },
   en: { contact:'Contact', contact_btn:'Request a collaboration', imprint:'Imprint',
     imprint_empty:'No imprint provided.', other_platforms:'Other platforms',
     audience:'Audience', gender:'Gender', countries:'Top countries', age:'Age',
@@ -71,7 +71,7 @@ const STR = {
     zzgl_ust:'All prices net, plus statutory VAT.',
     inkl_ust:'All prices including statutory VAT.',
     offer_ugc_video:'UGC video', offer_instagram_reel:'Instagram Reel',
-    offer_tiktok_post:'TikTok video', offer_story_package:'Story package', links:'Links', ad:'Ad' },
+    offer_tiktok_post:'TikTok video', offer_story_package:'Story package', links:'Links', ad:'Ad', avg_30:'Avg views, last 30 days' },
   it: { contact:'Contatti', contact_btn:'Richiedi una collaborazione', imprint:'Impressum',
     imprint_empty:'Nessun impressum.', other_platforms:'Altre piattaforme',
     audience:'Pubblico', gender:'Genere', countries:'Paesi principali', age:'Età',
@@ -89,7 +89,7 @@ const STR = {
     zzgl_ust:'Prezzi netti, IVA esclusa.',
     inkl_ust:'Prezzi IVA inclusa.',
     offer_ugc_video:'Video UGC', offer_instagram_reel:'Instagram Reel',
-    offer_tiktok_post:'Video TikTok', offer_story_package:'Pacchetto Story', links:'Link', ad:'Pubblicità' }
+    offer_tiktok_post:'Video TikTok', offer_story_package:'Pacchetto Story', links:'Link', ad:'Pubblicità', avg_30:'Media views, ultimi 30 giorni' }
 }
 
 let lang = 'de', u = null, brands = [], offers = [], preise = [], beitraege = [], links = [], eigene = []
@@ -262,6 +262,9 @@ function plattformBlock(art) {
   let zeilen = ''
   if (komm != null) zeilen += `<div class="mk-row"><span>${t('avg_comments')}</span><span>${fm(komm)}</span></div>`
   if (zweite != null) zeilen += `<div class="mk-row"><span>${zweiteLbl}</span><span>${fm(zweite)}</span></div>`
+  /* Ø Aufrufe der letzten 30 Tage (Abo: automatisch aus dem Wochenpuls). */
+  const dreissig = ig ? u.avg_views_30_instagram : u.avg_views_30_tiktok
+  if (dreissig != null) zeilen += `<div class="mk-row"><span>${t('avg_30')}</span><span>${fm(dreissig)}</span></div>`
 
   return `<div class="mk-platform">
     <div class="mk-plat-head">
