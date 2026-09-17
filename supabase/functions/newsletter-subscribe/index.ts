@@ -126,34 +126,23 @@ Deno.serve(async (req) => {
       .ilike('email', adresse)
       .maybeSingle()
 
-    // Mit Konto: direkt aktiv, ohne zweiten Schritt.
-    if (kontoId) {
-      const satz = {
-        email: adresse, user_id: kontoId, source, status: 'active',
-        subscribed_at: new Date().toISOString(), confirmed_at: new Date().toISOString(),
-        unsubscribed_at: null,
-      }
-      const { error } = vorhanden
-        ? await supabase.from('newsletter_subscribers').update(satz).eq('id', vorhanden.id)
-        : await supabase.from('newsletter_subscribers').insert(satz)
-      if (error) throw new Error(error.message)
-      return antwort({ status: 'aktiv' })
-    }
-
-    // Ohne Konto: bestaetigen lassen.
+    /* Mit und ohne Konto: bestaetigen lassen. Seit 17.09.2026 auch fuer
+       angemeldete Konten -- vorher wurde ein Konto direkt "active" gesetzt,
+       der Betreiber will aber in jedem Fall die Bestaetigung per Mail. Mit
+       Konto traegt die Zeile die user_id, damit die App den Stand sieht. */
     if (vorhanden?.status === 'active') return antwort({ status: 'schon_aktiv' })
 
     // Gegen versehentliches und absichtliches Mehrfachanfordern.
     if (vorhanden?.status === 'pending' && vorhanden.updated_at) {
       const alter = Date.now() - new Date(vorhanden.updated_at).getTime()
-      if (alter < 2 * 60 * 1000) return antwort({ status: 'bestaetigung_unterwegs' })
+      if (alter < 2 * 60 * 1000) return antwort({ status: 'bestaetigung_unterwegs', email: adresse })
     }
 
     let token = vorhanden?.token
     if (vorhanden) {
       const { data, error } = await supabase
         .from('newsletter_subscribers')
-        .update({ status: 'pending', source, subscribed_at: new Date().toISOString(), unsubscribed_at: null })
+        .update({ status: 'pending', source, subscribed_at: new Date().toISOString(), unsubscribed_at: null, user_id: kontoId ?? vorhanden.user_id ?? null })
         .eq('id', vorhanden.id)
         .select('token').single()
       if (error) throw new Error(error.message)
@@ -161,14 +150,14 @@ Deno.serve(async (req) => {
     } else {
       const { data, error } = await supabase
         .from('newsletter_subscribers')
-        .insert({ email: adresse, source, status: 'pending', subscribed_at: new Date().toISOString() })
+        .insert({ email: adresse, user_id: kontoId, source, status: 'pending', subscribed_at: new Date().toISOString() })
         .select('token').single()
       if (error) throw new Error(error.message)
       token = data.token
     }
 
     await bestaetigungSenden(adresse, token!)
-    return antwort({ status: 'bestaetigung_unterwegs' })
+    return antwort({ status: 'bestaetigung_unterwegs', email: adresse })
   } catch (err: any) {
     console.error('newsletter-subscribe:', err.message)
     try { await supabase.rpc('log_error', { function_name: 'newsletter-subscribe', error_message: err.message }) } catch (_) {}
