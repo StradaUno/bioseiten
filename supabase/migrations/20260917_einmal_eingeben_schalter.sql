@@ -1,0 +1,114 @@
+-- Neue App (17.09.2026): "einmal eingeben, ueberall aktivieren".
+-- Je Link und je Kanal ein Schalter fuer BioLink und Media Kit. Fehlt ein
+-- Eintrag, gilt "an" -- bestehende Seiten verhalten sich unveraendert.
+-- Rueckbau: die vier Spalten, die Tabelle mediakit_eigene_leistungen, die
+-- View mediakit_links_public und die Policy mediakit_aufrufe_eigene_lesen
+-- entfernen; die drei Views biopage_v2 / mediakit_public /
+-- biolink_links_public auf den Stand vor dem 17.09. zuruecksetzen.
+
+alter table public.biolink_custom_links
+  add column if not exists im_biolink boolean not null default true,
+  add column if not exists im_mediakit boolean not null default false;
+
+-- {"instagram":{"biolink":true,"mediakit":false}, ...}; fehlender Eintrag = an.
+alter table public.users
+  add column if not exists kanal_anzeige jsonb not null default '{}'::jsonb;
+
+alter table public.mediakit_brands
+  add column if not exists im_mediakit boolean not null default true;
+
+create or replace function public.kanal_an(p jsonb, p_kanal text, p_seite text)
+returns boolean language sql immutable set search_path = public as $$
+  select coalesce((p -> p_kanal ->> p_seite)::boolean, true)
+$$;
+
+-- Eigene Leistungen (bis zu vier), neben den vier festen offer_types.
+create table if not exists public.mediakit_eigene_leistungen (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references public.users(id) on delete cascade,
+  titel text not null,
+  preis_von numeric,
+  preis_bis numeric,
+  position smallint not null default 0,
+  created_at timestamptz not null default now()
+);
+alter table public.mediakit_eigene_leistungen enable row level security;
+drop policy if exists mediakit_eigene_leistungen_own on public.mediakit_eigene_leistungen;
+create policy mediakit_eigene_leistungen_own on public.mediakit_eigene_leistungen
+  for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+drop policy if exists mediakit_eigene_leistungen_read on public.mediakit_eigene_leistungen;
+create policy mediakit_eigene_leistungen_read on public.mediakit_eigene_leistungen
+  for select to anon, authenticated using (public.is_mediakit_active(user_id));
+grant select, insert, update, delete on public.mediakit_eigene_leistungen to authenticated;
+grant select on public.mediakit_eigene_leistungen to anon;
+
+create or replace function public.check_eigene_leistungen_max()
+returns trigger language plpgsql set search_path = public as $$
+begin
+  if (select count(*) from public.mediakit_eigene_leistungen where user_id = new.user_id) >= 4 then
+    raise exception 'Maximal 4 eigene Leistungen';
+  end if;
+  return new;
+end $$;
+drop trigger if exists trg_eigene_leistungen_max on public.mediakit_eigene_leistungen;
+create trigger trg_eigene_leistungen_max before insert on public.mediakit_eigene_leistungen
+  for each row execute function public.check_eigene_leistungen_max();
+
+-- Media-Kit-Aufrufe: der eigene Account darf sie lesen (wie biolink_aufrufe).
+drop policy if exists mediakit_aufrufe_eigene_lesen on public.mediakit_aufrufe;
+create policy mediakit_aufrufe_eigene_lesen on public.mediakit_aufrufe
+  for select to authenticated using (auth.uid() = user_id);
+
+-- Oeffentliche Views respektieren die Schalter. Spaltenliste unveraendert.
+create or replace view public.biolink_links_public as
+ select l.id, l.user_id, l."position", l.title, l.url, l.is_paid
+   from public.biolink_custom_links l
+   join public.users u on u.id = l.user_id
+  where u.bio_active = true and coalesce(l.im_biolink, true);
+
+create or replace view public.mediakit_links_public as
+ select l.id, l.user_id, l."position", l.title, l.url, l.is_paid
+   from public.biolink_custom_links l
+   join public.users u on u.id = l.user_id
+  where u.mediakit_active = true and coalesce(l.im_mediakit, false);
+grant select on public.mediakit_links_public to anon, authenticated;
+
+create or replace view public.biopage_v2 as
+ select u.id as user_id, u.display_name, u.profile_image_url,
+    case when public.kanal_an(u.kanal_anzeige,'instagram','biolink') then u.instagram_handle end as instagram_handle,
+    case when public.kanal_an(u.kanal_anzeige,'tiktok','biolink')    then u.tiktok_handle    end as tiktok_handle,
+    case when public.kanal_an(u.kanal_anzeige,'youtube','biolink')   then u.youtube_handle   end as youtube_handle,
+    case when public.kanal_an(u.kanal_anzeige,'threads','biolink')   then u.threads_handle   end as threads_handle,
+    u.contact_email, u.niche_category, u.city, u.is_verified, u.bio_active, u.impressum_text,
+    b.theme, u.bio, b.default_language
+   from public.users u
+   left join public.biolink_viuno b on b.user_id = u.id
+  where u.bio_active = true;
+
+create or replace view public.mediakit_public as
+ select u.id as user_id, u.display_name, u.profile_image_url,
+    case when public.kanal_an(u.kanal_anzeige,'instagram','mediakit') then u.instagram_handle end as instagram_handle,
+    case when public.kanal_an(u.kanal_anzeige,'tiktok','mediakit')    then u.tiktok_handle    end as tiktok_handle,
+    case when public.kanal_an(u.kanal_anzeige,'youtube','mediakit')   then u.youtube_handle   end as youtube_handle,
+    case when public.kanal_an(u.kanal_anzeige,'threads','mediakit')   then u.threads_handle   end as threads_handle,
+    u.contact_email, public.nische_label(u.niche_category) as niche_category, u.city, u.bio, u.impressum_text, u.mediakit_active,
+    mv.er_instagram, mv.er_tiktok, mv.avg_likes_instagram, mv.avg_views_tiktok, mv.gender_female_pct, mv.gender_male_pct,
+    mv.top_country_1, mv.top_country_1_pct, mv.top_country_2, mv.top_country_2_pct,
+    mv.followers_instagram, mv.followers_tiktok, mv.followers_youtube, mv.followers_threads,
+    coalesce(mv.default_language, 'de'::text) as default_language, mv.pitch,
+    mv.avg_comments_instagram, mv.avg_comments_tiktok, mv.avg_views_instagram, mv.avg_shares_tiktok,
+    mv.gemessen_am_instagram, mv.gemessen_am_tiktok,
+    mv.alter_18_24, mv.alter_25_34, mv.alter_35_44, mv.alter_45plus,
+    mv.vorlauf_tage, mv.nutzungsrechte, mv.exklusivitaet, mv.freigabe_schleifen, mv.preis_hinweis
+   from public.users u
+   left join public.mediakit_viuno mv on mv.user_id = u.id
+  where u.mediakit_active = true;
+
+-- users hat spaltenweise UPDATE-Rechte fuer authenticated; eine neue Spalte
+-- ist ohne eigenen Grant nicht schreibbar ("permission denied for table users").
+grant update (kanal_anzeige) on public.users to authenticated;
+
+-- Willkommens-Analyse: erstanalyse_freischalten() legt eine Kaufzeile ohne
+-- Stripe-Session an, die Spalte war aber NOT NULL -- die Funktion ist seit
+-- ihrer Einfuehrung an dieser Stelle gescheitert (UNIQUE bleibt, NULL ist dort erlaubt).
+alter table public.analysis_purchases alter column stripe_checkout_session_id drop not null;

@@ -441,3 +441,52 @@ Was sich dadurch dauerhaft aendert und was jede spaetere Sitzung wissen muss:
   eine Quelle, kein Abschreiben. Entwuerfe liegen im localStorage, Export und
   Import als JSON. Die Bibliothek selbst (`public/design/index.html`) bleibt
   unveraendert.
+
+## Die neue App unter `/viuno2/test/` (17.09.2026)
+
+`public/viuno2/test/` ist der Neubau der App auf den Bausteinen aus `public/design/`:
+`index.html` (Huelle, die drei Style-Bloecke `#v-tokens`, `#v-base`, `#v-comp`
+wortgleich aus der Bibliothek kopiert, plus `#app` fuer Lage und Abstaende) und
+`app.js` (Hash-Router, alle Ansichten, Supabase ueber `/vendor/supabase-js.mjs`).
+`noindex`, nirgends verlinkt, ersetzt `/app/` erst nach Freigabe.
+
+**Der Grundsatz: jede Angabe genau einmal.** Das Profil ist die Quelle, die
+Seiten BioLink und Media Kit werden mit Schaltern daraus zusammengesetzt:
+
+- Kanaele (Instagram, TikTok, Threads, YouTube) stehen in `users.*_handle`;
+  je Kanal zwei Schalter in `users.kanal_anzeige` (jsonb,
+  `{"instagram":{"biolink":true,"mediakit":false}}`, **fehlender Eintrag = an**).
+  Die oeffentlichen Views `biopage_v2` und `mediakit_public` blenden einen
+  Handle per `kanal_an()` aus, deshalb braucht `generate-biolink` keine Aenderung.
+- Eigene Links in `biolink_custom_links` mit `im_biolink` (Standard an) und
+  `im_mediakit` (Standard aus). `biolink_links_public` filtert auf `im_biolink`,
+  die neue View `mediakit_links_public` auf `im_mediakit`; `kit-renderer.js`
+  zeigt sie als Abschnitt „Links".
+- Marken in `mediakit_brands` mit `im_mediakit`; der Kit-Renderer liest nur
+  eingeschaltete.
+- Eigene Leistungen (bis zu vier, Trigger) in der neuen Tabelle
+  `mediakit_eigene_leistungen`; der Kit-Renderer haengt sie an die festen vier.
+- Sprache schreibt `biolink_viuno.default_language` **und**
+  `mediakit_viuno.default_language`, Design schreibt `biolink_viuno.theme`.
+
+Alles dazu steht in `supabase/migrations/20260917_einmal_eingeben_schalter.sql`
+(angewendet am 17.09.2026, Rueckbau im Kopf der Datei). Zwei Dinge darin sind
+Reparaturen, keine neuen Funktionen: `users` hat spaltenweise UPDATE-Rechte,
+eine neue Spalte braucht einen eigenen Grant (sonst „permission denied for
+table users"); und `analysis_purchases.stripe_checkout_session_id` war NOT NULL,
+womit `erstanalyse_freischalten()` seit jeher gescheitert ist -- die
+Willkommens-Analyse hat bis dahin nie jemand bekommen.
+
+Was die App sonst nutzt, ohne es zu veraendern: `viuno_score`,
+`viuno_profilcheck` (Brand Ready), `viuno_preis` (Preisrechner unter
+Leistungen), `viuno_verlauf`, `growth_jetzt` / `aufgabe_setzen` (Start),
+`biolink_*`-RPCs, die beiden News-Views, und die Functions `generate-biolink`,
+`generate-mediakit`, `start-analysis`, `create-checkout-session`,
+`analyse-freigeben`, `mediakit-bilder`, `change-username`, `delete-account`,
+`datenauskunft`, `konto-warnung`, `newsletter-subscribe`. `mediakit_aufrufe`
+hat jetzt eine SELECT-Policy fuer den eigenen Account, damit die Seite die
+Media-Kit-Zahlen zeigen kann.
+
+Registrieren mit `example.com`-Adressen scheitert am Mailversand (Resend lehnt
+die Domain ab); zum Testen `delivered@resend.dev` nehmen und die Adresse per
+SQL bestaetigen. Das Testkonto vom 17.09. ist wieder geloescht.
