@@ -499,3 +499,16 @@ Richtwert. Die Bio hat je Seite einen Schalter (`kanal_anzeige.bio`), dafuer ist
 `generate-biolink` als v27 deployt. "Habe ich bei einem anderen Anbieter"
 schreibt `brand_ready_angaben` (`biolink`, `kit_vorhanden`) und zaehlt im
 Profilcheck als erfuellt. Nische "Sonstiges" ist im Check-Constraint erlaubt.
+
+Nachtrag 17.09.2026 (Nacht): Die Reihenfolge ALLER Links auf dem BioLink
+(Kanaele und eigene, gemischt) steht in `users.kanal_anzeige.reihenfolge`
+als Liste von Schluesseln (`instagram`, `tiktok`, `youtube`, `threads`,
+`link:<uuid>`); `biopage_v2.reihenfolge` gibt sie aus, und die Vorlage sortiert
+danach (`generate-biolink` v28 -- Seiten von vor v28 zeigen weiter Kanaele
+zuerst, bis sie neu erzeugt werden). Vor dem Einschalten einer Seite fragt die
+App die Nutzungsbedingungen ab (Checkbox, nicht vorausgewaehlt) und haelt die
+Zustimmung ueber `nutzungsbedingungen_zustimmen()` in `user_consents` fest,
+Version = Datum von `legal_texts.updated_at`; gefragt wird je Fassung einmal.
+Werbung ist je Link ein Schalter in der Linkliste. Die News-Seite zeigt oben
+einen Abo-Banner, solange `newsletter_subscribers.status` nicht `active` ist.
+"Anderer Anbieter" steht nur noch bei Brand Ready, direkt unter der Zeile.

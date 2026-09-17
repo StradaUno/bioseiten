@@ -472,6 +472,10 @@ function renderLinks(){
   const c=document.getElementById('links'); c.innerHTML=''
   const s=document.getElementById('socials'); s.innerHTML=''
   const u=creatorData; if(!u) return
+  /* Reihenfolge der Buttons kommt aus der App (biopage_v2.reihenfolge,
+     Schluessel: instagram | tiktok | youtube | threads | link:<id>).
+     Ohne Angabe bleibt es bei Kanaelen zuerst, dann eigene Links. */
+  const eintraege=[]
   /* Jeder Kanal erscheint zweimal: als Icon-Reihe im Kopf und als Button in
      der Spalte. Die Reihe ist die visuelle Abkuerzung, der Button traegt den
      lesbaren Namen — deshalb ist die Reihe fuer Screenreader ausgeblendet. */
@@ -486,7 +490,7 @@ function renderLinks(){
     s.appendChild(a)
     const b=makeBtn({href, label, icon:icon(name)})
     klickZaehlen(b,name,label,null)
-    c.appendChild(b)
+    eintraege.push({key:name,el:b})
   }
   kanal(u.instagram_handle,'https://instagram.com/','Instagram','instagram')
   kanal(u.tiktok_handle,'https://tiktok.com/@','TikTok','tiktok')
@@ -495,8 +499,11 @@ function renderLinks(){
   for(const link of customLinks){
     const b=makeBtn({href:normalizeUrl(link.url), label:link.title, icon:icon('link'), adLabel:link.is_paid?t('ad_label'):null})
     klickZaehlen(b,'custom',link.title,link.id)
-    c.appendChild(b)
+    eintraege.push({key:'link:'+link.id,el:b})
   }
+  const reihenfolge=Array.isArray(u.reihenfolge)?u.reihenfolge:[]
+  if(reihenfolge.length){eintraege.sort((x,y)=>{const ix=reihenfolge.indexOf(x.key),iy=reihenfolge.indexOf(y.key);return (ix<0?1e9:ix)-(iy<0?1e9:iy)})}
+  for(const e of eintraege) c.appendChild(e.el)
   /* Kontakt-Button: direkter mailto:-Link auf die im BioLink hinterlegte
      Adresse. Ist keine hinterlegt, erscheint der Button gar nicht. */
   const kontaktMail=(creatorData?.contact_email||'').trim()

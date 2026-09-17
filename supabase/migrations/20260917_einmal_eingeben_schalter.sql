@@ -122,3 +122,10 @@ alter table public.analysis_purchases alter column stripe_checkout_session_id dr
 
 -- Nische "Sonstiges": users_niche_category_check um 'sonstiges' erweitert
 -- (angewendet 17.09.2026; nische_label() liefert dafuer "Sonstiges" ueber initcap).
+
+-- 17.09.2026 (spaet): biopage_v2 bekommt die Spalte reihenfolge
+-- (users.kanal_anzeige -> "reihenfolge", Liste aus instagram | tiktok | youtube |
+-- threads | link:<uuid>), die BioLink-Vorlage sortiert danach (generate-biolink v28).
+-- nutzungsbedingungen_zustimmen(p_typ) schreibt die Zustimmung zu
+-- biopage_terms / mediakit_terms nach user_consents (Version = Datum von
+-- legal_texts.updated_at); die App fragt vor dem Einschalten einer Seite danach.

@@ -592,12 +592,10 @@ async function renderBiolinkSeite(area, ctx) {
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Aufrufe</strong><span>30 Tage</span></div>${balkenListe(tageSortiert.filter(t => t.wert > 0).length ? tageSortiert : [], { leerText: 'In den letzten 30 Tagen hat niemand deinen BioLink geöffnet.' })}`)}
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Von hier kommen sie</strong><span>30 Tage</span></div>${balkenListe(herkunft)}`)}
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Hier klicken sie</strong><span>${rate && rate.seit ? 'seit ' + datKurz(rate.seit) : '30 Tage'}</span></div>${balkenListe(klicks, { leerText: 'Noch kein Klick gezählt.' })}${rate && rate.aufrufe > 0 ? `<div class="v-karte-fuss"><span>Klickrate</span><b class="v-num">${dez(rate.klicks / rate.aufrufe * 100, 0)} %</b></div>` : ''}`)}
-    ${Z.p.bio_active ? '' : externZeile('biolink', 'Ich habe schon eine BioLink-Seite bei einem anderen Anbieter')}
     ${bearbeitenBox([['Design', 'design'], ['Links', '#/links'], ['Sprache', 'sprache']])}
     ${Z.p.bio_active ? `<a class="v-btn v-btn--leise v-btn--breit" href="https://${es(url)}" target="_blank" rel="noopener">Seite ansehen ${ICO.extern}</a>` : ''}
   `
   bearbeitenBinden(area, ctx, { design: designSheet, sprache: spracheSheet })
-  externBinden(area, ctx)
   ctx.on($('[data-kopieren]', area), 'click', e => kopieren(e.currentTarget.dataset.kopieren, 'Adresse kopiert'))
   ctx.on($('[data-bio-schalter]', area), 'click', e => seiteSchalten('biolink', e.currentTarget, () => renderBiolinkSeite(area, ctx)))
 }
@@ -620,12 +618,10 @@ async function renderMediakitSeite(area, ctx) {
     ${statusZeile({ an: !!Z.p.mediakit_active, titel: 'Media Kit', url, schalterAttr: 'data-kit-schalter' })}
     <div class="v-kpi-reihe v-kpi-reihe--drei">${kpi('7 Tage', fm(tage7))}${kpi('30 Tage', fm(tage30))}${kpi('Gesamt', fm(gesamtQ.count || 0))}</div>
     ${karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Aufrufe</strong><span>12 Monate</span></div>${balkenListe(aufrufe.length ? [...monate].sort((a, b) => b.wert - a.wert) : [], { leerText: 'Noch keine Aufrufe gezählt.' })}`)}
-    ${Z.p.mediakit_active ? '' : externZeile('kit_vorhanden', 'Ich habe schon ein Media Kit bei einem anderen Anbieter')}
     ${bearbeitenBox([['Zielgruppe', '#/zielgruppe'], ['Leistungen & Preise', '#/leistungen'], ['Zusammenarbeit', '#/marken'], ['Referenzen', '#/referenzen']])}
     ${Z.p.mediakit_active ? `<a class="v-btn v-btn--leise v-btn--breit" href="https://${es(url)}" target="_blank" rel="noopener">Seite ansehen ${ICO.extern}</a>` : ''}
   `
   bearbeitenBinden(area, ctx, {})
-  externBinden(area, ctx)
   ctx.on($('[data-kopieren]', area), 'click', e => kopieren(e.currentTarget.dataset.kopieren, 'Adresse kopiert'))
   ctx.on($('[data-kit-schalter]', area), 'click', e => seiteSchalten('mediakit', e.currentTarget, () => renderMediakitSeite(area, ctx)))
 }
@@ -633,13 +629,13 @@ async function renderMediakitSeite(area, ctx) {
    (kriterium biolink / kit_vorhanden), zaehlt im Profilcheck als erfuellt. */
 function externZeile(kriterium, text) {
   const an = !!(Z.angaben && Z.angaben[kriterium])
-  return `<div class="v-schalter-zeile" style="padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r-md)"><div><span style="font-size:var(--t-sm)">${es(text)}</span><small>Zählt bei Brand Ready als erfüllt.</small></div>${toggle(an, `data-extern="${kriterium}"`, 'v-toggle--akzent')}</div>`
+  return `<div class="v-schalter-zeile" style="padding:10px 16px 12px 60px;border-bottom:1px solid var(--border)"><div><span style="font-size:var(--t-sm)">${es(text)}</span><small>Zählt hier als erfüllt.</small></div>${toggle(an, `data-extern="${kriterium}"`, 'v-toggle--akzent')}</div>`
 }
-function externBinden(area, ctx) {
+function externBinden(area, ctx, danach) {
   $$('[data-extern]', area).forEach(t => ctx.on(t, 'click', async () => {
     const an = !t.classList.contains('an'); t.classList.toggle('an', an)
     const { error } = await sb.from('brand_ready_angaben').upsert({ user_id: uid(), kriterium: t.dataset.extern, wert: an, updated_at: new Date().toISOString() }, { onConflict: 'user_id,kriterium' })
-    if (error) { fehler(error); t.classList.toggle('an', !an) } else { Z.angaben = Z.angaben || {}; Z.angaben[t.dataset.extern] = an; toast(an ? 'Gemerkt' : 'Zurückgesetzt') }
+    if (error) { fehler(error); t.classList.toggle('an', !an) } else { Z.angaben = Z.angaben || {}; Z.angaben[t.dataset.extern] = an; toast(an ? 'Gemerkt' : 'Zurückgesetzt'); danach && danach() }
   }))
 }
 /* Ein- und Ausschalten erzeugt bzw. loescht die oeffentliche Datei im Repo.
@@ -659,6 +655,7 @@ async function seiteSchalten(art, btn, danach) {
       return
     }
   }
+  if (!an) { const ok = await nutzungsbedingungenPruefen(bio ? 'biopage_terms' : 'mediakit_terms', name); if (!ok) return }
   btn.disabled = true; btn.classList.toggle('an', !an)
   const schirm = an ? null : ladeSchirm({ titel: name + ' wird erzeugt', text: 'Die Seite wird gebaut und veröffentlicht. Das dauert etwa eine Minute.' })
   try {
@@ -673,6 +670,34 @@ async function seiteSchalten(art, btn, danach) {
   } catch (e) { schirm && schirm.schliessen(); fehler(e, name + ' konnte nicht umgeschaltet werden'); btn.classList.toggle('an', an) }
   btn.disabled = false
   danach && danach()
+}
+/* Zustimmung zu den Nutzungsbedingungen der Seite, einmal je Fassung der
+   legal_texts. Festgehalten in user_consents ueber nutzungsbedingungen_zustimmen(). */
+async function nutzungsbedingungenPruefen(typ, name) {
+  const [lt, uc] = await Promise.all([
+    sb.from('legal_texts').select('updated_at').order('id').limit(1).maybeSingle(),
+    sb.from('user_consents').select('version').eq('user_id', uid()).eq('consent_type', typ).order('accepted_at', { ascending: false }).limit(1).maybeSingle(),
+  ])
+  const version = lt.data ? new Date(lt.data.updated_at).toISOString().slice(0, 10) : '1'
+  if (uc.data && uc.data.version === version) return true
+  return new Promise(res => {
+    const el = modal(`<h2>Nutzungsbedingungen</h2><p>Bevor ${es(name)} online geht, brauchen wir deine Zustimmung zu den Nutzungsbedingungen für diese Seite.</p><button type="button" class="v-btn v-btn--leise v-btn--klein" data-lesen style="margin-top:10px">Nutzungsbedingungen lesen</button><div data-text class="news-text" style="display:none;max-height:38vh;overflow:auto;margin-top:10px;padding:12px;border:1px solid var(--border);border-radius:var(--r-sm);font-size:var(--t-sm);color:var(--muted)"></div><label class="v-checkbox" style="margin-top:14px"><input type="checkbox" id="nb-ok"><span style="font-size:var(--t-sm)">Ich habe die Nutzungsbedingungen gelesen und stimme ihnen zu.</span></label><div class="v-btn-reihe"><button class="v-btn v-btn--rand" data-modal-zu>Abbrechen</button><button class="v-btn v-btn--dunkel" data-nb-weiter disabled>Zustimmen und einschalten</button></div>`)
+    const weiter = $('[data-nb-weiter]', el), box = $('#nb-ok', el)
+    box.addEventListener('change', () => { weiter.disabled = !box.checked })
+    $('[data-lesen]', el).addEventListener('click', async e => {
+      const t = $('[data-text]', el); if (t.style.display !== 'none') { t.style.display = 'none'; return }
+      laden(e.currentTarget, true)
+      const { data } = await sb.from('legal_texts').select(typ).order('id').limit(1).maybeSingle()
+      laden(e.currentTarget, false)
+      t.textContent = (data && data[typ]) || 'Der Text ist gerade nicht abrufbar. Er steht auch unter viuno.de/legal.'; t.style.display = 'block'
+    })
+    $('[data-modal-zu]', el).addEventListener('click', () => res(false), { once: true })
+    weiter.addEventListener('click', async () => {
+      laden(weiter, true)
+      try { await rpc('nutzungsbedingungen_zustimmen', { p_typ: typ }); sheetZu(); res(true) }
+      catch (e) { fehler(e); laden(weiter, false) }
+    })
+  })
 }
 /* Ladeschirm: Vollbild, Spinner, Balken, der ueber eine Minute fuellt. */
 function ladeSchirm({ titel, text }) {
@@ -821,11 +846,12 @@ async function renderBrandReady(area, ctx) {
   area.innerHTML = `
     ${karte(`<div class="v-ring-reihe">${ring(pc.prozent / 100, pc.prozent + ' %', pc.prozent >= 70 ? 'v-ring--gruen' : '')}<div><strong>Brand Ready</strong><span>${pc.punkte} von ${pc.max} Punkten · ${pc.offen.length ? pc.offen.length + ' Punkte offen' : 'alles erfüllt'}</span></div></div>`)}
     ${sc ? karte(`<div class="zeile-zwischen" style="margin-bottom:12px"><strong>Score ${sc.gesamt}</strong><span>vier Säulen</span></div>${balkenListe(sc.saeulen.map(s => ({ label: s.titel, wert: s.punkte })))}<div class="text-klein" style="margin-top:10px;line-height:var(--lh-body)">${sc.saeulen.map(s => `<div><b>${es(s.titel)}:</b> ${es(s.quelle)}</div>`).join('')}</div>`) : ''}
-    <div class="v-liste">${pc.teile.map(t => { const [k, i] = zustand[t.zustand] || ['', '']; const ziel = BR_ZIEL[t.id] || null; return listeZeile({ sym: i, symKlasse: k === 'gut' ? 'gut' : k === 'warn' ? 'warn' : (t.zustand === 'offen' ? 'rot' : ''), text: t.titel, small: es(t.sub), wert: `<b class="v-num ${t.zustand === 'erfuellt' ? 'gut' : ''}">${t.punkte}/${t.max}</b>`, pfeil: !!ziel && t.zustand !== 'erfuellt', attrs: ziel && t.zustand !== 'erfuellt' ? `data-geh="${ziel}"` : 'disabled style="cursor:default;opacity:1"' }) }).join('')}</div>
+    <div class="v-liste">${pc.teile.map(t => { const [k, i] = zustand[t.zustand] || ['', '']; const ziel = BR_ZIEL[t.id] || null; const extern = t.id === 'biolink' ? externZeile('biolink', 'Ich habe schon eine BioLink-Seite bei einem anderen Anbieter') : t.id === 'mediakit' ? externZeile('kit_vorhanden', 'Ich habe schon ein Media Kit bei einem anderen Anbieter') : ''; return listeZeile({ sym: i, symKlasse: k === 'gut' ? 'gut' : k === 'warn' ? 'warn' : (t.zustand === 'offen' ? 'rot' : ''), text: t.titel, small: es(t.sub), wert: `<b class="v-num ${t.zustand === 'erfuellt' ? 'gut' : ''}">${t.punkte}/${t.max}</b>`, pfeil: !!ziel && t.zustand !== 'erfuellt', attrs: ziel && t.zustand !== 'erfuellt' ? `data-geh="${ziel}"` : 'disabled style="cursor:default;opacity:1"' }) + extern }).join('')}</div>
     <p class="text-klein zentriert">Stand ${dat(pc.stichtag)} · Grün ist erfüllt, Orange teilweise, Rot fehlt.</p>
   `
   $$('.sym.rot', area).forEach(s => { s.style.background = 'var(--red-bg)'; s.style.color = 'var(--red)' })
   $$('[data-geh]', area).forEach(el => ctx.on(el, 'click', () => { Z.zurueckZu = location.hash; geh(el.dataset.geh) }))
+  externBinden(area, ctx, () => { if (!ctx.stale()) renderBrandReady(area, ctx) })
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
@@ -840,18 +866,25 @@ function newsKarte(k, klein) {
   return `<div class="v-karte news-karte" data-news="${es(k.slug)}" style="cursor:pointer">${!klein && k.image_url ? `<img class="news-bild" src="${es(k.image_url)}" alt="" loading="lazy">` : ''}<div class="news-kopf">${plattformPille(k)}${dringPille(k)}<span class="text-klein" style="margin-left:auto">${datKurz(k.published_date || k.date)}</span></div><h3>${es(k.headline)}</h3>${klein ? '' : `<p>${es(ersteSaetze(k.summary))}</p>`}</div>`
 }
 async function renderNews(area, ctx) {
-  const [heuteQ, altQ] = await Promise.all([
+  const [heuteQ, nlQ, altQ] = await Promise.all([
     sb.from('digest_cards_today').select('*'),
+    sb.from('newsletter_subscribers').select('status').eq('user_id', uid()).maybeSingle(),
     sb.from('digest_cards_past').select('slug,headline,platform,platform_label,date,published_date,relevance_score,summary,impact,full_content,source,source_url,image_url').limit(40),
   ])
   if (ctx.stale()) return
   const heute = heuteQ.data || [], alt = altQ.data || []
+  const abonniert = nlQ.data?.status === 'active'
   Z.newsNeu = false
   if (heute.length) sb.from('page_views').insert({ user_id: uid(), page: 'news', source: 'app' }).then(() => {})
   area.innerHTML = `
+    ${abonniert ? '' : `<div class="v-banner"><span class="sym">${ICO.mail}</span><div class="text"><strong>Creator News per Mail</strong><span>Jeden Montag, jederzeit abbestellbar.</span></div><button class="v-btn v-btn--dunkel v-btn--klein" data-abo>Abonnieren</button></div>`}
     ${heute.length ? `<div class="abschnitt"><div class="abschnitt-titel">Ausgabe vom ${datKurz(heute[0].date)}</div>${heute.map(k => newsKarte(k)).join('')}</div>` : leer('Diese Woche noch keine Ausgabe', 'Die Creator News erscheinen jeden Montag.')}
     ${alt.length ? `<div class="abschnitt"><div class="abschnitt-titel">Frühere Ausgaben</div>${alt.map(k => newsKarte(k, true)).join('')}</div>` : ''}
   `
+  ctx.on($('[data-abo]', area), 'click', async e => {
+    laden(e.currentTarget, true)
+    try { await fn('newsletter-subscribe', { source: 'app' }); toast('Creator News abonniert', 'gut'); if (!ctx.stale()) renderNews(area, ctx) } catch (er) { fehler(er); laden(e.currentTarget, false) }
+  })
   const alle = [...heute, ...alt]
   $$('[data-news]', area).forEach(el => ctx.on(el, 'click', () => {
     const k = alle.find(x => x.slug === el.dataset.news); if (!k) return
@@ -1085,13 +1118,22 @@ async function renderKanaele(area, ctx) {
    Links: Kanaele plus eigene Links, sortierbar, je zwei Schalter
    ═══════════════════════════════════════════════════════════════════════ */
 async function renderLinks(area, ctx) {
+  const schalterHtml = (an, attr, label) => `<label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(an, attr)}${label}</label>`
   const zeichne = () => {
-    const kanaele = KANAELE.filter(k => Z.p[k.spalte])
+    const eintraege = linkEintraege()
+    const zeile = (e, i) => {
+      const knoepfe = `<button class="v-ibtn" data-bewege="${i}:-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICO.auf}</button><button class="v-ibtn" data-bewege="${i}:1" ${i === eintraege.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICO.ab}</button>`
+      if (e.art === 'kanal') {
+        const k = e.kanal
+        return `<div class="sort-zeile" data-key="${e.key}"><span class="sym" style="width:32px;height:32px;border-radius:var(--r-xs);display:grid;place-items:center;background:var(--surface2);color:var(--muted);flex-shrink:0">${ICO[k.key]}</span><div class="text"><strong>${k.label}</strong><small>@${es(handleRein(Z.p[k.spalte]))}</small><div class="schalter">${schalterHtml(kanalAn(k.key, 'biolink'), `data-kanal="${k.key}:biolink"`, 'BioLink')}${schalterHtml(kanalAn(k.key, 'mediakit'), `data-kanal="${k.key}:mediakit"`, 'Media Kit')}</div></div><div class="sort-knoepfe">${knoepfe}<button class="v-ibtn" data-kanal-edit="${k.key}" aria-label="Bearbeiten">${ICO.stift}</button></div><span class="griff" data-griff="${i}" aria-label="Ziehen zum Sortieren">${ICO.griff}</span></div>`
+      }
+      const l = e.link
+      return `<div class="sort-zeile" data-key="${e.key}"><span class="sym" style="width:32px;height:32px;border-radius:var(--r-xs);display:grid;place-items:center;background:var(--surface2);color:var(--muted);flex-shrink:0">${ICO.link}</span><div class="text"><strong>${es(l.title)}${l.is_paid ? ' ' + badge('Werbung', 'orange') : ''}</strong><small>${es(l.url)}</small><div class="schalter">${schalterHtml(l.im_biolink !== false, `data-link-schalter="${l.id}:im_biolink"`, 'BioLink')}${schalterHtml(!!l.im_mediakit, `data-link-schalter="${l.id}:im_mediakit"`, 'Media Kit')}${schalterHtml(!!l.is_paid, `data-link-schalter="${l.id}:is_paid"`, 'Werbung')}</div></div><div class="sort-knoepfe">${knoepfe}<button class="v-ibtn" data-link-edit="${l.id}" aria-label="Bearbeiten">${ICO.stift}</button><button class="v-ibtn rot" data-loesche="${l.id}" aria-label="Entfernen">${ICO.x}</button></div><span class="griff" data-griff="${i}" aria-label="Ziehen zum Sortieren">${ICO.griff}</span></div>`
+    }
     area.innerHTML = `
       ${feld('Link hinzufügen', `<select class="v-input v-select" id="l-art"><option value="">Auswählen …</option>${KANAELE.map(k => `<option value="${k.key}">${k.label}</option>`).join('')}<option value="eigen">Eigener Link</option></select>`)}
       <div class="v-karte" id="l-form" hidden></div>
-      ${kanaele.length ? `<div class="abschnitt"><div class="abschnitt-titel">Kanäle</div><div class="v-liste">${kanaele.map(k => `<div class="sort-zeile"><span class="sym" style="width:32px;height:32px;border-radius:var(--r-xs);display:grid;place-items:center;background:var(--surface2);color:var(--muted);flex-shrink:0">${ICO[k.key]}</span><div class="text"><strong>${k.label}</strong><small>@${es(handleRein(Z.p[k.spalte]))}</small><div class="schalter"><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(kanalAn(k.key, 'biolink'), `data-kanal="${k.key}:biolink"`)}BioLink</label><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(kanalAn(k.key, 'mediakit'), `data-kanal="${k.key}:mediakit"`)}Media Kit</label></div></div><div class="sort-knoepfe"><button class="v-ibtn" data-kanal-edit="${k.key}" aria-label="Bearbeiten">${ICO.stift}</button></div></div>`).join('')}</div></div>` : ''}
-      <div class="abschnitt"><div class="abschnitt-titel">Eigene Links · Reihenfolge wie auf der Seite</div>${Z.links.length ? `<div class="v-liste">${Z.links.map((l, i) => `<div class="sort-zeile" data-id="${l.id}"><div class="text"><strong>${es(l.title)}${l.is_paid ? ' ' + badge('Werbung', 'orange') : ''}</strong><small>${es(l.url)}</small><div class="schalter"><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(l.im_biolink !== false, `data-link-schalter="${l.id}:im_biolink"`)}BioLink</label><label style="display:flex;align-items:center;gap:6px;font-size:var(--t-xs)">${toggle(!!l.im_mediakit, `data-link-schalter="${l.id}:im_mediakit"`)}Media Kit</label></div></div><div class="sort-knoepfe"><button class="v-ibtn" data-bewege="${i}:-1" ${i === 0 ? 'disabled' : ''} aria-label="Nach oben">${ICO.auf}</button><button class="v-ibtn" data-bewege="${i}:1" ${i === Z.links.length - 1 ? 'disabled' : ''} aria-label="Nach unten">${ICO.ab}</button><button class="v-ibtn" data-link-edit="${l.id}" aria-label="Bearbeiten">${ICO.stift}</button><button class="v-ibtn rot" data-loesche="${l.id}" aria-label="Entfernen">${ICO.x}</button></div><span class="griff" data-griff="${i}" aria-label="Ziehen zum Sortieren">${ICO.griff}</span></div>`).join('')}</div><p class="text-klein">Reihenfolge: Pfeile antippen oder am Griff ziehen.</p>` : `<p class="text-klein">Noch keine eigenen Links. Bis zu 10 sind möglich.</p>`}</div>
+      <div class="abschnitt"><div class="abschnitt-titel">Deine Links · Reihenfolge wie auf dem BioLink</div>${eintraege.length ? `<div class="v-liste">${eintraege.map(zeile).join('')}</div><p class="text-klein">Reihenfolge: Pfeile antippen oder am Griff ziehen. Werbung kennzeichnet Affiliate- und bezahlte Links auf der Seite.</p>` : `<p class="text-klein">Noch keine Links. Wähle oben einen Kanal oder einen eigenen Link. Bis zu 10 eigene Links sind möglich.</p>`}</div>
     `
     const art = $('#l-art', area), form = $('#l-form', area)
     ctx.on(art, 'change', () => linkForm(art.value, null))
@@ -1114,7 +1156,7 @@ async function renderLinks(area, ctx) {
             if (!title || !url) throw new Error('Titel und Link eingeben')
             if (link) { const { error } = await sb.from('biolink_custom_links').update({ title, url, is_paid }).eq('id', link.id); if (error) throw error; Object.assign(link, { title, url, is_paid }) }
             else {
-              if (Z.links.length >= 10) throw new Error('Höchstens 10 Links')
+              if (Z.links.length >= 10) throw new Error('Höchstens 10 eigene Links')
               const { data, error } = await sb.from('biolink_custom_links').insert({ user_id: uid(), title, url, is_paid, position: Z.links.length, im_biolink: true, im_mediakit: false }).select('*').single(); if (error) throw error; Z.links.push(data)
             }
           }
@@ -1132,29 +1174,29 @@ async function renderLinks(area, ctx) {
     $$('[data-link-schalter]', area).forEach(t => ctx.on(t, 'click', async () => {
       const [id, spalte] = t.dataset.linkSchalter.split(':'); const an = !t.classList.contains('an'); t.classList.toggle('an', an)
       const { error } = await sb.from('biolink_custom_links').update({ [spalte]: an }).eq('id', id)
-      if (error) { fehler(error); t.classList.toggle('an', !an) } else { const l = Z.links.find(x => x.id === id); if (l) l[spalte] = an }
+      if (error) { fehler(error); t.classList.toggle('an', !an) } else { const l = Z.links.find(x => x.id === id); if (l) l[spalte] = an; if (spalte === 'is_paid') zeichne() }
     }))
-    const reihenfolgeSpeichern = () => Promise.all(Z.links.map((l, p) => sb.from('biolink_custom_links').update({ position: p }).eq('id', l.id)))
-    $$('[data-bewege]', area).forEach(b => ctx.on(b, 'click', async () => {
-      const [i, d] = b.dataset.bewege.split(':').map(Number); const j = i + d; if (j < 0 || j >= Z.links.length) return
-      const t = Z.links[i]; Z.links[i] = Z.links[j]; Z.links[j] = t
-      zeichne(); await reihenfolgeSpeichern()
-    }))
-    /* Ziehen am Griff: die Zeile folgt dem Finger, beim Loslassen wird
-       die Reihenfolge gespeichert. Pfeile bleiben fuer Tastatur und Vorleser. */
+    const verschieben = async (von, zu) => {
+      if (zu < 0 || zu >= eintraege.length || zu === von) return
+      const [e] = eintraege.splice(von, 1); eintraege.splice(zu, 0, e)
+      try { await reihenfolgeSpeichern(eintraege); zeichne(); toast('Reihenfolge gespeichert') } catch (er) { fehler(er); zeichne() }
+    }
+    $$('[data-bewege]', area).forEach(b => ctx.on(b, 'click', () => { const [i, d] = b.dataset.bewege.split(':').map(Number); verschieben(i, i + d) }))
+    /* Ziehen am Griff: die Zeile folgt dem Finger, beim Loslassen wird die
+       Reihenfolge gespeichert. Pfeile bleiben fuer Tastatur und Vorleser. */
     $$('[data-griff]', area).forEach(g => ctx.on(g, 'pointerdown', e => {
       e.preventDefault()
       const zeile = g.closest('.sort-zeile'), liste = zeile.parentElement, zeilen = () => $$('.sort-zeile', liste)
-      let von = Number(g.dataset.griff), zu = von
+      const von = Number(g.dataset.griff); let zu = von
       zeile.classList.add('zieht'); g.setPointerCapture(e.pointerId)
       const bewegen = ev => {
         const y = ev.clientY
         zeilen().forEach((z, idx) => { if (z === zeile) return; const r = z.getBoundingClientRect(); if (y > r.top && y < r.bottom) { if (idx < zu) liste.insertBefore(zeile, z); else liste.insertBefore(zeile, z.nextSibling); zu = zeilen().indexOf(zeile) } })
       }
-      const ende = async () => {
+      const ende = () => {
         g.removeEventListener('pointermove', bewegen); g.removeEventListener('pointerup', ende); g.removeEventListener('pointercancel', ende)
         zeile.classList.remove('zieht')
-        if (zu !== von) { const [l] = Z.links.splice(von, 1); Z.links.splice(zu, 0, l); zeichne(); await reihenfolgeSpeichern(); toast('Reihenfolge gespeichert') }
+        if (zu !== von) verschieben(von, zu)
       }
       g.addEventListener('pointermove', bewegen); g.addEventListener('pointerup', ende); g.addEventListener('pointercancel', ende)
     }))
@@ -1166,6 +1208,24 @@ async function renderLinks(area, ctx) {
     }))
   }
   zeichne()
+}
+/* Kanaele und eigene Links in einer Reihenfolge. Sie steht als Liste von
+   Schluesseln in users.kanal_anzeige.reihenfolge (instagram | link:<id> | ...);
+   die BioLink-Seite liest sie ueber biopage_v2.reihenfolge. Unbekannte
+   Eintraege haengen hinten an, damit ein neuer Link sofort erscheint. */
+function linkEintraege() {
+  const kanaele = KANAELE.filter(k => Z.p[k.spalte]).map(k => ({ key: k.key, art: 'kanal', kanal: k }))
+  const links = Z.links.map(l => ({ key: 'link:' + l.id, art: 'link', link: l }))
+  const alle = [...kanaele, ...links]
+  const ord = (Z.p.kanal_anzeige || {}).reihenfolge
+  if (Array.isArray(ord) && ord.length) alle.sort((a, b) => { const ia = ord.indexOf(a.key), ib = ord.indexOf(b.key); return (ia < 0 ? 1e9 : ia) - (ib < 0 ? 1e9 : ib) })
+  return alle
+}
+async function reihenfolgeSpeichern(eintraege) {
+  const anzeige = JSON.parse(JSON.stringify(Z.p.kanal_anzeige || {})); anzeige.reihenfolge = eintraege.map(e => e.key)
+  await userSpeichern({ kanal_anzeige: anzeige })
+  Z.links = eintraege.filter(e => e.art === 'link').map(e => e.link)
+  await Promise.all(Z.links.map((l, p) => sb.from('biolink_custom_links').update({ position: p }).eq('id', l.id)))
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
